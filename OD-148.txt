@@ -1,0 +1,878 @@
+# OD-148_Rev-21.txt
+#
+# BBF report tool CWMP index page configuration file (htmlbbf report type)
+#
+# Summary:
+#   This configuration file is read by the BBF report tool when
+#   generating the CWMP index page using the htmlbbf report type.
+#
+#   Notes within the body of the file explain and illustrate the
+#   syntax, which is similar to that of a Windows "ini" file.  Also
+#   see:
+#   http://search.cpan.org/~wadg/Config-IniFiles-2.38/IniFiles.pm#FILE_FORMAT
+#   (the -allowcontinue option is assumed to be set) 
+#
+#   To generate the CWMP index page, the command is something like
+#   this:
+#
+#   report.exe --configfile=<this-file> --report=htmlbbf \
+#   <all-xml-schemas> <all-dm-instances> --outfile=<something>.html
+#
+#   The order in which the XML Schemas and DM Instances are specified
+#   does not matter.  The generated web page will include details of
+#   all files that are imported by the specified files, so in fact it
+#   is not necessary to specify _everything_.  However, it does no
+#   harm.
+#
+#   In an ideal world, this file would not be needed, because all the
+#   relevant information would be extracted from the DM Instances.
+#   This is not yet the case...
+#
+#   This file is maintained by the BroadbandHome Working Group as
+#   OD-148.
+#
+#  Revision History:
+#    January 2012: OD-148_Rev-12.txt:
+#      * Initial version of config file
+#    February 2012: OD-148_Rev-13.txt:
+#      * Removed reference to never-released tr-143-1-0-0.xml
+#    November 2013: OD-148_Rev-14.txt:
+#      * Added entry for cwmp-datamodel-1-5.xsd
+#      * Added entry for cwmp-devicetype-1-2.xsd and cwmp-devicetype-1-3.xsd
+#      * Added entries for tr-157-1-6.xml (and corresponding root data models)
+#      * Added entries for tr-157-1-7.xml (and corresponding root data models)
+#      * Removed entry for tr-196-2-0-1.xml, because it now uses the new OD-290
+#        templates
+#      * Removed "i-a-c" from tr-106-1-0-0-types.xml (to support corrigenda)
+#    January 2014: OD-148_Rev-15.txt:
+#      * Added entries for TR-069a5: cwmp-1-4.xsd, cwmp-UDPLightweight-
+#        Notification-1-0.xsd and cwmp-xmppConnReq-1-0.xsd, tr-157-1-8-0.xml,
+#        tr-098-1-7-0.xml, tr-181-1-5-0.xml
+#      * Added entries for TR-181i2a7: tr-181-2-7-0.xml
+#      * Updated entries for support files
+#    January 2014: OD-148_Rev-16.txt:
+#      * Corrected / completed support file history
+#    April 2014: OD-148_Rev-17.txt:
+#      * Added introductory text from contribution bbf2014.229.00
+#      * Changed pubdate (publication date) to appdate (approval date)
+#      * Added entries for TR-104a2: tr-104-2-0-0.xml
+#    June 2014: OD-148_Rev-18:
+#      * Minor changes to introductory text following feedback
+#      * Fixed various approval dates per Secretariat feedback
+#      * Added IL-181 "Document" column entry
+#      * Added explicit corrigendum numbers for all data model files except
+#        for tr-196-2-0 (it's too easy inadvertently to pick up information
+#        from XML files)
+#    September 2014: OD-148_Rev-19:
+#      * Cosmetic changes to introductory text
+#      * Added entries for tr-157-1-9, tr-181-1-6, tr-098-1-8 and tr-181-2-8
+#    September 2014: OD-148_Rev-20:
+#      * Added reference to the CWMP Tools and Resources page to the
+#        introductory text
+#      * Fixed minor problems with the tr-157-1-9-0.xml settings
+#    November 2016, January 2017: OD-148_Rev-21:
+#      * Reversed order of support file history prior to versioned files (so
+#        all history is latest first)
+#      * Added support file history for versioned files (it's not in the files)
+#      * Commented out tr-181-2-0-1.xml entry to work around report tool
+#        problem/feature
+#      * In line with discussion, deleted last two lines from preamble text
+
+###############################################################################
+# global settings, e.g. HTML style values
+
+[global]
+
+# This introductory text is placed at the top of the index file, just before
+# the TOC
+intro = <<.
+The Broadband Forum defines several data models for use with the CPE WAN Management Protocol ({{trref|TR-069 Amendment 5}}).  These data models contain objects and parameters that describe the many different functions and capabilities available to devices and services that are manageable via CWMP.
+CWMP data models are divided into two types: ''Root'' and ''Service''.  The root data model, ''Device''{{footnote|Early versions of the CWMP data model defined two root data models, ''InternetGatewayDevice'' and ''Device''.  Version 2 of the ''Device'' root data model (''Device:2'') deprecates ''InternetGatewayDevice'' and ''Device:1'' in favor of a single root data model.}}, is used to describe the major functions of a network aware device, including interfaces, software/firmware, diagnostics, components common to CWMP and other services, and the basic device information necessary to CWMP.
+Service data models describe modular functionality that allow the extension of the root data model on a device (under ''Device.Services.'') to provide particular services, such as a voice service, set top box service, network attached storage, etc.
+Each data model is defined by a ''Name:Version'' syntax. A device defines its data model by defining a [file://#TR-069%20Device%20Type%20Schema%20%28DT%20Schema%29 device type], an XML document that maps to (imports) BBF official data model objects and/or vendor specific objects. A full explanation of how to develop compliant CWMP data models can be found in {{trref|TR-154}}.
+{{footnotes}}
+Note: All the files below are directly reachable via: ''http://www.broadband-forum.org/cwmp/''<''filename''>.
+.
+
+# remaining entries are file names; values can come from two places,
+# with the following priority:
+#   1. taken from this file
+#   2. extracted from the XSD / XML
+#
+# this means that this file can override a value extracted from the XSD / XML,
+# but if this happens, the report tool will issue a warning, because this is
+# likely to be unintentional (we want to move towards taking all values from
+# the XSD / XML and rendering this config file unnecessary)
+
+# each file provides a document name (not needed for data models), TR name
+# (tr-nnn-i-a[-c]), publication date (yyyy-mm) and description
+#
+#   if no TR corresponds to the file (because it wasn't updated when the file
+#   was published), it is omitted
+
+###############################################################################
+# CWMP Schema
+
+[cwmp.xsd]
+document    = TR-069 RPCs
+
+[cwmp-1-0.xsd]
+trname	    = tr-069-1-1
+appdate	    = 2006-11
+description = <<.
+v1.0 (CWMP v1.0): Original
+''Note that the first version of TR-069 did not include a formal XML Schema.''
+.
+
+[cwmp-1-1.xsd]
+trname	    = tr-069-1-2
+appdate     = 2007-11
+description = v1.1 (CWMP v1.1): Added autonomous transfer RPCs
+
+[cwmp-1-2.xsd]
+trname	    = tr-069-1-3
+appdate     = 2010-11
+description = v1.2 (CWMP v1.2): Added software management RPCs
+
+[cwmp-1-3.xsd]
+trname	    = tr-069-1-4
+appdate     = 2011-07
+description = v1.2 (CWMP v1.3): Added ''SessionTimeout'' SOAP header parameter
+
+[cwmp-1-4.xsd]
+trname	    = tr-069-1-5
+appdate     = 2013-11
+description = v1.2 (CWMP v1.4): Added ''13 WAKEUP'' event code, CWMP version \
+              negotiation SOAP headers, and lightweight notification \
+              attribute values
+
+###############################################################################
+# CWMP Lightweight Notification Schema(s)
+
+[cwmp-UDPLightweightNotification.xsd]
+document    = UDP Lightweight Notification
+
+[cwmp-UDPLightweightNotification-1-0.xsd]
+document    = UDP Lightweight Notification
+trname	    = tr-069-1-5
+appdate     = 2013-11
+description = Original
+
+###############################################################################
+# CWMP Connection Request Schema(s)
+
+[cwmp-xmppConnReq.xsd]
+document    = XMPP Connection Request
+
+[cwmp-xmppConnReq-1-0.xsd]
+trname	    = tr-069-1-5
+appdate     = 2013-11
+description = Original
+
+###############################################################################
+# DM Schema
+
+[cwmp-datamodel.xsd]
+document    = TR-069 Data Model Definition Schema (DM Schema)
+
+[cwmp-datamodel-1-0.xsd]
+trname	    = tr-106-1-2
+appdate     = 2008-11
+description = Original
+
+[cwmp-datamodel-1-1.xsd]
+trname	    = tr-106-1-3
+appdate     = 2009-09
+description = Made ''import/@file'' optional; supported ''range/@step''
+
+[cwmp-datamodel-1-2.xsd]
+trname	    = tr-106-1-4
+appdate     = 2010-03
+# backslash is a continuation character, so this is in fact a single long
+# line (it includes the spaces before "supported" but these don't affect
+# the look of the HTML and so do no harm)
+description = Distinguished functional and non-functional keys; \
+              supported ''#.A'' relative path syntax
+
+[cwmp-datamodel-1-3.xsd]
+trname	    = tr-106-1-5
+appdate     = 2010-11
+description = <<.
+Relaxed some referential constraints (in the light of experience)
+Added ''description/@action'' ''prefix'' option
+Added ''syntax/@command''
+.
+
+[cwmp-datamodel-1-4.xsd]
+trname	    = tr-106-1-6
+appdate     = 2011-07
+description = Added top-level ''file'' attribute
+
+[cwmp-datamodel-1-5.xsd]
+trname	    = tr-106-1-7
+appdate     = 2013-09
+description = <<.
+Added ''profile/@minVersion'' attribute
+Allowed ''uniqueKey'' parameters to be in sub-objects
+Added ''UUID'' data type
+Added ''nestedBrackets'' attribute, and allowed use of the ''list'' facet in named data type definitions
+Several other minor updates and clarifications
+.
+
+###############################################################################
+# DMR Schema
+
+[cwmp-datamodel-report.xsd]
+document    = TR-069 Data Model Report Schema (DMR Schema)
+trname	    = tr-106-1-3
+appdate     = 2009-09
+description = <<.
+Nov 2008: Original
+Sep 2009: Added ''noUniqueKeys''
+.
+
+###############################################################################
+# DT Schema
+
+[cwmp-devicetype.xsd]
+document    = TR-069 Device Type Schema (DT Schema)
+
+[cwmp-devicetype-1-0.xsd]
+trname	    = tr-106-1-3
+appdate     = 2009-09
+description = Original
+
+[cwmp-devicetype-1-1.xsd]
+trname	    = tr-106-1-5
+appdate     = 2010-11
+description = Minor changes tracking DM Schema v1.3 changes
+
+[cwmp-devicetype-1-2.xsd]
+trname	    = tr-106-1-6
+appdate     = 2012-11
+description = Added top-level UUID data type and attribute
+
+[cwmp-devicetype-1-3.xsd]
+trname	    = tr-106-1-7
+appdate     = 2013-09
+description = Many minor updates and clarifications
+
+###############################################################################
+# DTF Schema
+
+[cwmp-devicetype-features.xsd]
+document    = TR-069 DT (Device Type) Features Schema (DTF Schema)
+trname	    = tr-106-1-3
+appdate     = 2009-09
+description = Original
+
+###############################################################################
+# TR-232 Schema
+
+[tr-232-1-0-serviceSpec.xsd]
+document    = IPDR Service Specification for Bulk Data Collection
+trname	    = tr-232-1-0
+appdate	    = 2012-05
+description = Original
+
+###############################################################################
+# DM Instances
+#
+# corrigendum numbers should be omitted unless specifically needed, e.g. to
+# reference a specific TR Corrigendum
+
+###############################################################################
+# DM Support Files
+
+# XXX nothing in this file indicates that a given file is a support file; the
+#     report tool has to know this
+
+[tr-069-biblio.xml]
+document    = TR-069 Data Model Bibliographic References
+appdate     = 2014-03
+description = <<.
+Mar 2014: Added TR-104i2 references
+Nov 2013: Added ''Device:2.7'' and TR-157a8 references
+Nov 2012: Added TR-157a7 references
+May 2012: Added ''Device:2.5'' references
+Dec 2011: Added ''Device:2.4'', ''FAPService:2.0'' and TR-262 references
+Jul 2011: Added Alias-based addressing and proxy management references
+May 2011: Added ''FAPService:1.1'' references
+Mar 2011: Added ''Device:2.2'' references
+Nov 2010: Added ''Device:2.1'' references
+May 2010: Added ''Device:2.0'' references
+Sep 2009: Minor changes, e.g. added missing dates
+Mar 2009: Original
+.
+
+[tr-069-1-1-biblio.xml]
+appdate     = 2014-09
+description = <<.
+Added ''Device:2.8'', TR-143a1 and TR-157a9 references
+.
+
+[tr-069-1-2-biblio.xml]
+appdate     = 2014-12
+description = <<.
+Added ''Device:2.9'' references
+.
+
+[tr-069-1-3-biblio.xml]
+appdate     = 2015-08
+description = <<.
+Added TR-196i2a1 references
+.
+
+[tr-069-1-4-biblio.xml]
+appdate     = 2015-11
+description = <<.
+Added ''Device:2.10'' references
+.
+
+[tr-069-1-5-biblio.xml]
+appdate     = 2016-07
+description = <<.
+Added ''Device:2.11'' references
+.
+
+[tr-106-types.xml]
+document    = TR-069 Data Model Data Types
+
+[tr-106-1-0-types.xml]
+appdate     = 2013-11
+description = <<.
+Nov 2013: Added ''IEEE_EUI64'' and ''ZigBeeNetworkAddress''
+Sep 2013: Clarified use of the ''Alias'' ''cpe-'' prefix
+Nov 2012: Added ''UUID'' and updated ''IPPrefix'' and ''IPv4Prefix''
+Nov 2011: Added ''Dbm1000'' and updated statistics counter types
+Jul 2011: Added ''Alias''
+Nov 2010: Added IPv6 and statistics counter types
+May 2010: Added ''IPPrefix'' and ''IPAddress''
+Sep 2009: Minor changes, e.g. imported ''tr-069-biblio.xml''
+Nov 2008: Original
+.
+
+[tr-106-1-1-types.xml]
+appdate	    = 2015-11
+description = <<.
+Added ''DiagnosticsState''
+.
+
+###############################################################################
+# TR-143 Components
+
+# XXX nothing in this file indicates that a given file contains components;
+#     the report tool knows about the 143 and 157 versions that defined both
+#     components and models; for these versions, "descr_model" contains the
+#     description to be used with models
+
+[tr-143.xml]
+document    = Network Performance Tests
+
+[tr-143-1-0-2.xml]
+# here we include the corrigendum because the Corrigendum PDF was published
+trname      = tr-143-1-0-1
+appdate     = 2010-05
+description = <<.
+Nov 2008: Original
+Mar 2009: {{xmlref|tr-143-1-0-1|Corrigendum 1}}
+* Changed to use new global bibliography, plus a few editorial changes
+May 2010: {{xmlref|tr-143-1-0-2|Corrigendum 2}}
+* Incorporated editorial changes from {{xmlref|tr-106-1-2-0.xml}}
+.
+descr_model = Incorporated new components from TR-143
+
+###############################################################################
+# TR-157 Components
+
+[tr-157.xml]
+document    = Component Objects for CWMP
+
+[tr-157-1-0-0.xml]
+trname      = tr-157-1-0
+# this is the XML publication date, not the PDF publication date (2009-03)
+appdate     = 2009-09
+description = Original
+# XXX could use {{xmlref}} to hyperlink to XML documents (DM Instances), e.g.
+#     {{xmlref|tr-157-1-0}}, with {{xmlref}} meaning the current doc, which
+#     would work for all the cases below (and mean that descr_model could be
+#     defined on tr-157.xml)
+# XXX {{xmlref}} is only partly implemented at present
+descr_model = Incorporated new components from TR-157
+
+[tr-157-1-1-0.xml]
+trname      = tr-157-1-1
+appdate     = 2009-09
+description = Addition of ''SupportedDataModel'' component
+descr_model = Incorporated new components from TR-157 Amendment 1
+
+[tr-157-1-2-0.xml]
+trname      = tr-157-1-2
+appdate     = 2010-05
+description = Support for TR-181 Issue 2
+descr_model = Incorporated new components from TR-157 Amendment 2
+
+[tr-157-1-3-0.xml]
+trname      = tr-157-1-3
+appdate     = 2010-11
+description = Support for Software Module Management
+descr_model = Incorporated new components from TR-157 Amendment 3
+
+[tr-157-1-4-0.xml]
+appdate     = 2011-07
+description = Support for CWMP Proxy Management and Alias-Based Addressing
+
+[tr-157-1-5-0.xml]
+trname      = tr-157-1-5
+appdate     = 2011-11
+description = Addition of ''Location'', ''FaultManagement'' and ''Security'' \
+              components
+
+[tr-157-1-6-0.xml]
+appdate	    = 2012-05
+description = Addition of ''BulkDataCollection'' component
+
+[tr-157-1-7-0.xml]
+appdate	    = 2012-11
+description = Addition of ''DNS_SD'' component; other minor updates
+
+[tr-157-1-8-0.xml]
+appdate	    = 2013-11
+description = Addition of ''MS_StandbyPolicy'', ''XMPP'' and ''XMPPConnReq'' \
+              components; other minor updates
+
+# override trname because it is wrong in the XML, and appdate because it
+# includes the day number
+[tr-157-1-9-0.xml]
+trname      =
+appdate     = 2014-09
+
+###############################################################################
+# TR-262 Components
+
+[tr-262.xml]
+document    = Femto Components
+
+[tr-262-1-0-0.xml]
+description = Original
+trname      = tr-262-1-0
+appdate     = 2011-11
+
+###############################################################################
+# TR-098 Root Data Model
+
+[tr-069.xml]
+document    = CPE WAN Management Protocol
+
+[tr-098.xml]
+document    = Internet Gateway Device Data Model for TR-069
+
+# InternetGatewayDevice:1.0
+[tr-069-1-0-0.xml]
+trname	    = tr-069-1-0
+# this is the XML publication date, not the PDF publication date (2004-05)
+appdate     = 2009-09
+description = Original
+
+# InternetGatewayDevice:1.1
+[tr-098-1-0-0.xml]
+trname      = tr-098-1-0
+# this is the XML publication date, not the PDF publication date (2005-09)
+appdate     = 2009-09
+description = Added ''QoS'' and ''Layer2Bridging'' objects
+
+# InternetGatewayDevice:1.2
+[tr-098-1-1-0.xml]
+trname      = tr-098-1-1
+# this is the XML publication date, not the PDF publication date (2006-12)
+appdate     = 2009-09
+description = <<.
+Added TR-069 Annex F and G ("TR-111") objects
+Many clarifications to parameter descriptions
+.
+
+# InternetGatewayDevice:1.3
+[tr-143-1-0-2.xml]
+
+# InternetGatewayDevice:1.4
+[tr-098-1-2-1.xml]
+trname      = tr-098-1-2
+# this is the XML publication date, not the PDF publication date (2008-09)
+appdate     = 2011-12
+description = <<.
+Sep 2009: {{xmlref|tr-098-1-2-0|Original}}
+* Enhanced management of LAN hosts, and addition of DHCP conditional serving capabilities
+* Improvements to management of QoS, routing, and bridging
+* Significant WiFi improvements, including configuration of WMM and U-APSD, and various fixes to the existing WiFi data model
+* PPPoE and NAT management enhancements
+* Enhancements to DSL and Ethernet statistics, including support for VDSL2
+Dec 2011: {{xmlref|tr-098-1-2-1|Corrigendum 1}}
+* Fixed data type for QoS QueueStats Interface
+* Various other minor changes
+.
+
+# InternetGatewayDevice:1.5
+[tr-157-1-0-0.xml]
+
+# InternetGatewayDevice:1.6
+[tr-157-1-1-0.xml]
+
+# InternetGatewayDevice:1.7
+[tr-157-1-2-0.xml]
+
+# InternetGatewayDevice:1.8
+[tr-157-1-3-0.xml]
+
+# InternetGatewayDevice:1.9
+[tr-098-1-3-0.xml]
+# trname needs to be re-stated because of intervening TR-157 versions
+trname      = tr-098-1-2
+appdate     = 2011-12
+description = <<.
+Incorporated new components from TR-157 Amendment 4
+Added ''Alias'' parameters
+.
+
+# InternetGatewayDevice:1.10
+[tr-098-1-4-0.xml]
+appdate     = 2011-11
+description = <<.
+Incorporated new components from TR-157 Amendment 5
+Incorporated Femto components from TR-262
+.
+
+# InternetGatewayDevice:1.11
+[tr-098-1-5-0.xml]
+appdate     = 2012-05
+description = <<.
+Incorporated new components from TR-157 Amendment 6
+.
+
+# InternetGatewayDevice:1.12
+[tr-098-1-6-0.xml]
+appdate     = 2012-11
+description = <<.
+Incorporated ''DNS_SD'' component from TR-157 Amendment 7
+.
+
+# InternetGatewayDevice:1.13
+[tr-098-1-7-0.xml]
+appdate     = 2013-11
+description = <<.
+Incorporated new components from TR-157 Amendment 8
+.
+
+# InternetGatewayDevice:1.14
+[tr-098-1-8-0.xml]
+appdate     = 2014-09
+description = <<.
+Incorporated new components from TR-157 Amendment 9
+.
+
+###############################################################################
+# TR-181 Root Data Model
+
+# Issue 1
+
+[tr-106.xml]
+document    = Data Model Template for TR-069-Enabled Devices
+
+[tr-181.xml]
+document    = Device Data Model for TR-069
+
+# Device:1.0
+[tr-106-1-0-0.xml]
+trname	    = tr-106-1-0
+# this is the XML publication date, not the PDF publication date (2005-09)
+appdate     = 2009-09
+description = Original
+
+# Device:1.1
+[tr-106-1-1-0.xml]
+trname	    = tr-106-1-1
+# this is the XML publication date, not the PDF publication date (2006-11)
+appdate     = 2009-09
+description = <<.
+Added TR-069 Annex F and G ("TR-111") objects
+Many clarifications to parameter descriptions
+.
+
+# Device:1.2
+[tr-143-1-0-2.xml]
+
+# Device:1.2 (errata and clarifications)
+[tr-106-1-2-0.xml]
+trname	    = tr-106-1-2
+# this is the XML publication date, not the PDF publication date (2008-11)
+appdate     = 2009-09
+description = Minor clarifications
+
+# Device:1.3
+[tr-157-1-0-0.xml]
+
+# Device:1.4
+[tr-157-1-1-0.xml]
+
+# Device:1.5
+[tr-181-1-0-0.xml]
+trname	    = tr-181-1-0
+appdate     = 2010-02
+description = Minor clarifications and additions
+
+# Device:1.6
+[tr-157-1-2-0.xml]
+
+# Device:1.7
+[tr-157-1-3-0.xml]
+
+# Device:1.8
+[tr-181-1-1-0.xml]
+# trname needs to be re-stated because of intervening TR-157 versions
+trname      = tr-181-1-0
+appdate     = 2011-07
+description = <<.
+Incorporated new components from TR-157 Amendment 4
+Added ''Alias'' parameters
+.
+
+# Device:1.9
+[tr-181-1-2-0.xml]
+appdate     = 2011-11
+description = <<.
+Incorporated new components from TR-157 Amendment 5
+Incorporated Femto components from TR-262
+.
+
+# Device:1.10
+[tr-181-1-3-0.xml]
+appdate     = 2012-05
+description = <<.
+Incorporated new components from TR-157 Amendment 6
+.
+
+# Device:1.11
+[tr-181-1-4-0.xml]
+appdate     = 2012-11
+description = <<.
+Incorporated ''DNS_SD'' component from TR-157 Amendment 7
+.
+
+# Device:1.12
+[tr-181-1-5-0.xml]
+appdate     = 2013-11
+description = <<.
+Incorporated new components from TR-157 Amendment 8
+.
+
+# Device:1.13
+[tr-181-1-6-0.xml]
+appdate     = 2014-09
+description = <<.
+Incorporated new components from TR-157 Amendment 9
+.
+
+# Issue 2
+
+# Device:2.0
+# XXX commented out Corrigendum 1 because otherwise get duplicate info for
+#     later Corrigenda
+#[tr-181-2-0-1.xml]
+#trname	    = tr-181-2-0
+# this is the XML publication date, not the PDF publication date (2010-05)
+#appdate     = 2010-11
+#description = <<.
+#May 2010: {{xmlref|tr-181-2-0-0|Original}}
+#Nov 2010: {{xmlref|tr-181-2-0-1|Corrigendum 1}}
+#* Fixed various ranges and defaults
+#* Removed non interface object ''Alias'' parameters from profiles
+#.
+
+# Device:2.1
+[tr-181-2-1-0.xml]
+appdate     = 2010-11
+description = Incorporated new components from TR-157 Amendment 3
+
+# Device:2.2
+[tr-181-2-2-0.xml]
+trname      = tr-181-2-2
+appdate     = 2011-02
+description = IPv6 and Firewall additions
+
+# Device:2.3
+[tr-181-2-3-0.xml]
+appdate     = 2011-07
+description = <<.
+Incorporated new components from TR-157 Amendment 4
+Added ''Alias'' parameters
+.
+
+# Device:2.4
+[tr-181-2-4-0.xml]
+appdate     = 2011-11
+description = <<.
+Added ''G.hn'' and ''Optical'' interfaces, and additional ''WiFi'' parameters
+Incorporated new components from TR-157 Amendment 5
+Incorporated Femto components from TR-262
+.
+
+# Device:2.5
+[tr-181-2-5-0.xml]
+trname      = tr-181-2-5
+appdate     = 2012-05
+description = <<.
+Added ''IPsec'' data model
+Incorporated ''BulkDataCollection'' component from TR-157 Amendment 6
+.
+
+# Device:2.6
+[tr-181-2-6-0.xml]
+trname      = tr-181-2-6
+appdate     = 2012-11
+description = <<.
+Incorporated ''DNS_SD'' component from TR-157 Amendment 7
+.
+
+# Device:2.7
+[tr-181-2-7-0.xml]
+trname      = tr-181-2-7
+appdate     = 2013-11
+description = <<.
+Added ZigBee data model, Provider Bridge data model, and various other items
+Incorporated new components from TR-157 Amendment 8
+.
+
+# Device:2.8
+# XXX override trname because BBF Report Tool can’t handle “TR-181i2a8” syntax,
+#     and appdate because it includes day number
+[tr-181-2-8-0.xml]
+trname      = tr-181-2-8
+appdate     = 2014-09
+
+###############################################################################
+# IL-181 Device:2 Data Model and TR-181 Issue 2 Proposed Changes
+
+[il-181.xml]
+document    = Device:2 Data Model Proposed Changes
+
+###############################################################################
+# TR-104 Service Data Model
+
+[tr-104.xml]
+document    = Provisioning Parameters for VoIP CPE
+
+# VoiceService:1.0
+[tr-104-1-0-0.xml]
+trname      = tr-104-1-0
+# this is the XML publication date, not the PDF publication date (2005-09)
+appdate     = 2009-09
+description = Original
+
+# VoiceService:1.1
+[tr-104-1-1-0.xml]
+appdate     = 2011-07
+description = Added ''Alias'' parameters
+
+# Issue 2
+
+# VoiceService:2.0
+[tr-104-2-0-0.xml]
+trname      = tr-104-2-0
+appdate     = 2014-03
+description = Original
+
+###############################################################################
+# TR-135i1 Service Data Model
+
+[tr-135.xml]
+document    = Data Model for a TR-069 Enabled STB
+
+# STBService:1.0
+[tr-135-1-0-0.xml]
+trname      = tr-135-1-0
+# this is the XML publication date, not the PDF publication date (2007-12)
+appdate     = 2009-09
+description = Original
+
+# STBService:1.1
+# XXX need to describe corrigenda
+[tr-135-1-1-1.xml]
+trname      = tr-135-1-1
+appdate     = 2013-02
+description = Added CDS, HDMI and S/PDIF objects
+
+# STBService:1.2
+[tr-135-1-2-0.xml]
+appdate     = 2011-07
+description = Added ''Alias'' parameters
+
+# STBService:1.3
+[tr-135-1-3-0.xml]
+trname      = tr-135-1-3
+appdate     = 2012-11
+description = Added loss event histograms
+
+###############################################################################
+# TR-140i1 Service Data Model
+
+[tr-140.xml]
+document    = TR-069 Data Model for Storage Service Enabled Devices
+
+# StorageService:1.0
+# XXX need to describe corrigenda
+[tr-140-1-0-2.xml]
+trname      = tr-140-1-0
+# this is the XML publication date, not the PDF publication date (2007-12)
+# the XML for corrigenda 0 and 1 is not available (was never published?)
+appdate     = 2010-04
+description = Apr 2010: Corrigendum 2
+
+# StorageService:1.1
+[tr-140-1-1-1.xml]
+trname      = tr-140-1-1
+appdate     = 2011-12
+description = <<.
+Apr 2010: {{xmlref|tr-140-1-1-0|Original}}
+* Added missing ''NumberOfEntries'' and ''Enable'' parameters
+Dec 2011: {{xmlref|tr-140-1-1-1|Corrigendum 1}}
+* Corrected import of tr-140-1-0.xml
+.
+
+# StorageService:1.2
+[tr-140-1-2-0.xml]
+appdate     = 2011-07
+description = Added ''Alias'' parameters
+
+###############################################################################
+# TR-196 Service Data Model
+
+# Issue 1
+
+[tr-196.xml]
+document    = Femto Access Point Service Data Model
+
+# FAPService:1.0
+[tr-196-1-0-0.xml]
+trname      = tr-196-1-0
+# this is the XML publication date, not the PDF publication date (2009-04)
+appdate     = 2009-09
+description = Original
+
+# FAPService:1.1
+# XXX need to describe corrigenda
+[tr-196-1-1-1.xml]
+trname      = tr-196-1-1
+appdate     = 2012-11
+description = <<.
+Supported 3GPP releases 9 and 10
+Added ''Alias'' parameters
+.
+
+# Issue 2
+
+# FAPService:2.0
+# XXX didn't add explicit corrigendum 1 because the XML contains details
+#     of the corrigenda
+[tr-196-2-0.xml]
+trname      = tr-196-2-0
+appdate     = 2012-11
+description = Original
