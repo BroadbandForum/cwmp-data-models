@@ -1,3 +1,10 @@
+# makefile
+
+# XXX the 'link' target can't be made until 'all' has been made; this is
+#     because it searches for "latest corrigendum" files in the current
+#     directory (to fix this, we'd need to be much more careful about
+#     deriving all variables only from CWMPDIR)
+
 TOPDIR = .
 
 include $(TOPDIR)/../../install/etc/defs.mk
@@ -70,9 +77,14 @@ ifneq "$(sort $(SRCXML))" "$(sort $(SUPPORTXML) $(COMPXML) $(MODELXML))"
   $(info $(sort $(filter-out $(SUPPORTXML) $(COMPXML) $(MODELXML), $(SRCXML))))
 endif
 
-# all XML (source and generated)
-XML = $(SUPPORTXML) $(COMPXML) $(MODELXML) \
-      $(MODELXML:%.xml=%-full.xml)
+# sed script for generating "no corrigendum" file name
+nocsed = -e 's/tr-([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+)/tr-\1-\2-\3/g'
+
+# all XML (source and generated) excluding "no corrigendum" soft links
+XML = $(SUPPORTXML) $(COMPXML) $(MODELXML) $(MODELXML:%.xml=%-full.xml)
+
+# all XML (source and generated) "no corrigendum" soft links
+XML1 = $(sort $(filter-out $(XML), $(shell echo $(XML) | sed -E $(nocsed))))
 
 # support HTML
 BIBLIOHTML = $(BIBLIOXML:%.xml=%.html)
@@ -95,9 +107,15 @@ COMPHTML = $(COMPXML:%.xml=%.html)
 # index HTML
 INDEXHTML = index.html
 
-# all HTML
+# all HTML excluding "no corrigendum" soft links
 HTML = $(SUPPORTHTML) $(DIFFSMODELHTML) $(FULLMODELHTML) \
        $(DEVMODELHTML) $(IGDMODELHTML) $(COMPHTML) $(INDEXHTML)
+
+# all HTML "no corrigendum" soft links
+HTML1 = $(sort $(filter-out $(HTML), $(shell echo $(HTML) | sed -E $(nocsed))))
+
+# all soft links
+LINKS = $(XML1) $(HTML1)
 
 # overrides
 $(BIBLIOHTML): REPORTFLAGS += --allbibrefs
@@ -109,6 +127,8 @@ $(COMPHTML): REPORTFLAGS += --nomodels --automodel
 TARGETS = $(SRCXSD) $(XML) $(HTML)
 
 # build in the local directory
+# XXX not be a good idea, because it mixes source and targets, but it's not
+#     trivial to change it
 TARGETDIR =
 
 include $(TOPDIR)/../../install/etc/rules.mk
@@ -119,3 +139,17 @@ $(SRCXSD) $(SRCXML): %: $(CWMPDIR)%
 # XXX these dependencies are incomplete (need proper dependencies)
 $(INDEXHTML): $(SRCXSD) $(LATESTXML)
 	$(REPORT) $(REPORTFLAGS) $(REPORTINDEXFLAGS) --outfile=$@ $^
+
+# XXX a (better?) alternative would be for it to output to an included (and
+#     therefore remade) makefile; I tried this... and failed...
+LATEST = ./latest.py --format '%s:_%s;_ln_-sf_$$<_$$@'
+$(foreach LINE,$(shell $(LATEST) $(LINKS)), \
+  $(eval $(subst _, ,$(LINE))) \
+)
+
+link: $(LINKS)
+
+unlink:
+	$(RM) $(LINKS)
+
+CLEAN += $(LINKS)
