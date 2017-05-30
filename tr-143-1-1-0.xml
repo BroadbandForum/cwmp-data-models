@@ -1,0 +1,1654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-143 Issue 1 Amendment 1
+
+  Copyright (c) 2008-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-143 Issue 1 Amendment 1
+ 
+  Editors:
+    * Sharam Hakimi, EXFO
+    * Steve Nicolai, Arris, Inc.
+ 
+  BroadbandHome Working Group Chairs:
+    * Jason Walls, QA Cafe
+    * John Blackford, Pace
+ 
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    * tr-143-1-0.xml: November 2008:
+      - corresponds to TR-143 section 5 (Parameter Definitions), 
+      - section 6 (Notification Requirements)
+      - section 7 (Profile Definitions).
+    * tr-143-1-0-1.xml: March 2009:
+      - changed to use new global bibliography, plus a few editorial changes
+    * tr-143-1-0-2.xml: May 2010:
+      - Added two Device:2 specific components (DownloadDiagnostics_Device2
+        and UploadDiagnostics_Device2).
+      - Also brought in the tr-143 related changes (all editorial)
+        that had been implemented in the tr-106-1-2-0.xml file (otherwise 
+        these changes would not have been visible to Device:2)
+    * tr-143-1-1-0.xml: 1 December 2014: 11 February 2015:
+      - Added multiple connections to DownloadDiagnostics and UploadDiagnostics
+      - Added time based testing to DownloadDiagnostics and UploadDiagnostics
+      - Added UDPEchoDiagnostics
+      - Added ServerSelectionDiagnostics
+      - Added IPv4 vs IPv6 selection to all tests.
+
+ -->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+  http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-0-1
+  http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+  spec="urn:broadband-forum-org:tr-143-1-1-0"
+  file="tr-143-1-1-0.xml">
+  <description>
+    {{docname|Network Performance Tests}}
+    {{appdate|1 December 2014}}
+    {{trname|TR-143a1}}
+    * Added multiple connections to DownloadDiagnostics and UploadDiagnostics
+    * Added time based testing to DownloadDiagnostics and UploadDiagnostics
+    * Added UDPEchoDiagnostics
+    * Added ServerSelectionDiagnostics
+    * Added IPv4 vs IPv6 selection to all tests.
+  </description>
+  
+  <import file="tr-069-1-2-biblio.xml" spec="urn:broadband-forum-org:tr-069-1-2"/>
+
+  <import file="tr-143-1-0.xml" spec="urn:broadband-forum-org:tr-143-1-0">
+    <component name="_Capabilities" ref="Capabilities"/>
+    <component name="_DownloadDiagnostics" ref="DownloadDiagnostics"/>
+    <component name="_DownloadDiagnostics_Device2" ref="DownloadDiagnostics_Device2"/>
+    <component name="_UploadDiagnostics" ref="UploadDiagnostics"/>
+    <component name="_UploadDiagnostics_Device2" ref="UploadDiagnostics_Device2"/>
+  </import>
+
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="IPAddress"/>
+  </import>
+  
+  <!-- Update DownloadDiagnostics Component-->
+  <component name="DownloadDiagnosticsDiffs">
+    <object base="DownloadDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">
+          Indicate the availability of diagnostic data.  {{enum}}
+          If the ACS sets the value of this parameter to {{enum|Requested}}, the CPE MUST initiate the corresponding diagnostic test.  When writing, the only allowed value is {{enum|Requested}}.  To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the {{param}} to {{enum|Requested}}.
+          When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
+          When the test is completed, the value of this parameter MUST be either {{enum|Completed}} (if the test completed successfully), or one of the ''Error'' values listed above.
+          If the value of this parameter is anything other than {{enum|Completed}}, the values of the results parameters for this test are indeterminate.
+          When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform message.
+          After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots.  After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to {{enum|None}} and remove all object instances from {{object|PerConnectionResult}} and {{object|IncrementalResult}}.
+          Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to {{enum|None}} and remove all object instances from {{object|PerConnectionResult}} and {{object|IncrementalResult}}.
+          While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to {{enum|None}} and remove all object instances from {{object|PerConnectionResult}} and {{object|IncrementalResult}}.
+          While the test is in progress, setting this parameter to {{enum|Requested}} (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Completed" access="readOnly"/>
+            <enumeration value="Error_CannotResolveHostName" access="readOnly"/>
+            <enumeration value="Error_NoRouteToHost" access="readOnly"/>
+            <enumeration value="Error_InitConnectionFailed" access="readOnly"/>
+            <enumeration value="Error_NoResponse" access="readOnly"/>
+            <enumeration value="Error_TransferFailed" access="readOnly"/>
+            <enumeration value="Error_PasswordRequestFailed" access="readOnly"/>
+            <enumeration value="Error_LoginFailed" access="readOnly"/>
+            <enumeration value="Error_NoTransferMode" access="readOnly"/>
+            <enumeration value="Error_NoPASV" access="readOnly"/>
+            <enumeration value="Error_IncorrectSize" access="readOnly"/>
+            <enumeration value="Error_Timeout" access="readOnly"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter base="Interface" access="readWrite">
+        <description action="replace">
+          {{reference}} The IP-layer interface over which the test is to be performed. Example: Device.IP.Interface.1
+          If {{empty}} is specified, the CPE MUST use the interface as directed by its routing policy (''Forwarding'' table entries) to determine the appropriate interface.
+        </description>
+      </parameter>
+      <parameter base="DownloadURL" access="readWrite">
+        <description action="append">
+          Note: For time based tests ({{param|TimeBasedTestDuration}} &gt; 0) the ACS MAY add a hint to duration of the test to the URL.  See {{bibref|TR-143a1|Section 4.3}} for more details.
+        </description>
+      </parameter>
+      <parameter name="TimeBasedTestDuration" access="readWrite" dmr:previousParameter="EthernetPriority">
+        <description>
+          Controls time based testing {{bibref|TR-143a1|Section 4.3}}. When {{param}} &gt; 0, {{param}} is the duration in {{units}} of a time based test. If {{param}} is 0, the test is not based on time, but on the size of the file to be downloaded.  The default value SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+            <range minInclusive="0" maxInclusive="999"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TimeBasedTestMeasurementInterval" access="readWrite">
+        <description>
+          The measurement interval duration in {{units}} for objects in {{object|IncrementalResult}} for a time based FTP/HTTP download test (when {{param|TimeBasedTestDuration}} &gt; 0).  The default value SHOULD be 0, which implies {{object|IncrementalResult}} collection is disabled.
+          For example if {{param|TimeBasedTestDuration}} is 90 seconds and {{param}} is 10 {{units}}, there will be 9 results in {{object|IncrementalResult}}, each with a 10 {{units}} duration.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="999"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TimeBasedTestMeasurementOffset" access="readWrite">
+        <description>
+          This {{param}} works in conjunction with {{param|TimeBasedTestMeasurementInterval}} to allow the interval measurement to start a number of {{units}} after {{param|BOMTime}}. The test measurement interval in {{object|IncrementalResult}} starts at time {{param|BOMTime}} + {{param}} to allow for slow start window removal of file transfers.
+          This {{param}} is in {{units}}.  The default value SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="IPAddressUsed" access="readOnly" activeNotify="canDeny">
+        <description>
+          Indicates which IP address was used to send the request.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter base="ROMTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the client sends the GET command.
+          * For FTP this is the time at which the client sends the RTRV command.
+          If multiple connections are used, then {{param}} is set to the earliest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="BOMTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Begin of transmission time in UTC, which MUST be specified to microsecond precision
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the first data packet is received.
+          * For FTP this is the time at which the client receives the first data packet on the data connection.
+          If multiple connections are used, then {{param}} is set to the earliest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="EOMTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          End of transmission in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the last data packet is received.
+          * For FTP this is the time at which the client receives the last packet on the data connection.
+          If multiple connections are used, then {{param}} is set to the latest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="TCPOpenRequestTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.
+          * For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.
+          Note: Interval of 1 microsecond SHOULD be supported.
+          If multiple connections are used, then {{param}} is set to the latest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="TCPOpenResponseTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Response time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.
+          * For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.
+          Note: Interval of 1 microsecond SHOULD be supported.
+          If multiple connections are used, then {{param}} is set to the latest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="TestBytesReceived" access="readOnly">
+        <description action="replace">
+          The number of {{units}} received during the FTP/HTTP transaction including FTP/HTTP headers, between {{param|BOMTime}} and {{param|EOMTime}} across all connections.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter base="TotalBytesReceived" access="readOnly">
+        <description action="replace">
+          The total number of {{units}} (at the IP layer) received on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesSent" access="readOnly" dmr:previousParameter="TotalBytesReceived">
+        <description>
+          The total number of {{units}} (at the IP layer) sent on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesSent on the {{param|Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TestBytesReceivedUnderFullLoading" access="readOnly">
+        <description>
+          The number of {{units}} of the test file received between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}} across all connections.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesReceivedUnderFullLoading" access="readOnly">
+        <description>
+          The total number of {{units}} (at the IP layer) received in between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}}.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|Interface}} object at the latest {{param|PerConnectionResult.{i}.BOMTime}} and at the earliest {{param|PerConnectionResult.{i}.EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesSentUnderFullLoading" access="readOnly">
+        <description>
+          The total number of {{units}} (at the IP layer) sent between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}}.  This MAY be calculated by sampling Stats.bytesSent on the {{param|Interface}} object at the latest {{param|PerConnectionResult.{i}.BOMTime}} and at the earliest {{param|PerConnectionResult.{i}.EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PeriodOfFullLoading" access="readOnly">
+        <description>
+          The period of time in {{units}} between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}} of the test.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PerConnectionResultNumberOfEntries" access="readOnly" dmr:previousParameter="TCPOpenResponseTime">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="EnablePerConnectionResults" access="readWrite" activeNotify="canDeny">
+        <description>
+          The results must be returned in the {{object|PerConnectionResult}} table for every connection when set to {{true}}. The default value SHOULD be {{false}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="IncrementalResultNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="DownloadDiagnostics.PerConnectionResult.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="PerConnectionResultNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>
+        Results for individual connections.  This table is only populated when {{param|#.EnablePerConnectionResults}} is {{true}}.  A new object is created for each connection specified in {{param|#.NumberOfConnections}}.  Instance numbers MUST start at 1 and sequentially increment as new instances are created.  All instances are removed when {{param|#.DiagnosticsState}} is set to {{enum|Requested|#.DiagnosticsState}} or {{enum|None|#.DiagnosticsState}}.
+      </description>
+      <parameter name="ROMTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the client sends the GET command.
+          * For FTP this is the time at which the client sends the RTRV command.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="BOMTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Begin of transmission time in UTC, which MUST be specified to microsecond precision
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the first data packet is received.
+          * For FTP this is the time at which the client receives the first data packet on the data connection.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="EOMTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          End of transmission in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the last data packet is received.
+          * For FTP this is the time at which the client receives the last packet on the data connection.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="TestBytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The number of {{units}} of the test file received during the FTP/HTTP transaction including FTP/HTTP headers, between {{param|BOMTime}} and {{param|EOMTime}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} (at the IP layer) received on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|#.Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} (at the IP layer) sent on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesSent on the {{param|#.Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TCPOpenRequestTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.
+          * For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="TCPOpenResponseTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Response time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.
+          * For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="DownloadDiagnostics.IncrementalResult.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="IncrementalResultNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>
+        Results for time segmented tests (tests where {{param|#.TimeBasedTestDuration}} &gt; 0 and {{param|#.TimeBasedTestMeasurementInterval}} &gt; 0).  This data is totaled across all connections in the test.  A new object is created every {{param|#.TimeBasedTestMeasurementInterval}} after that interval has completed.  Instance numbers MUST start at 1 and sequentially increment as new instances are created.  All instances are removed when {{param|#.DiagnosticsState}} is set to {{enum|Requested|#.DiagnosticsState}} or {{enum|None|#.DiagnosticsState}}.
+      </description>
+      <parameter name="TestBytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          Change in the value of {{param|#.TestBytesReceivedUnderFullLoading}} between {{param|StartTime}} and {{param|EndTime}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} (at the IP layer) received on the Interface between {{param|StartTime}} and {{param|EndTime}}.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|#.Interface}} object at {{param|StartTime}} and at {{param|EndTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesSent" access="readOnly" dmr:previousParameter="TotalBytesReceived">
+        <description>
+          The total number of {{units}} (at the IP layer) sent on the Interface between {{param|StartTime}} and {{param|EndTime}}.  This MAY be calculated by sampling Stats.bytesSent on the {{param|#.Interface}} object at {{param|StartTime}} and at {{param|EndTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="StartTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          The start time of this interval which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="EndTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          The end time of this interval which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+  
+  <component name="DownloadDiagnostics">
+    <component ref="_DownloadDiagnostics"/>
+    <component ref="DownloadDiagnosticsDiffs"/>
+  </component>
+  
+  <component name="DownloadDiagnostics_Device2Diffs">
+    <parameter name="IPv4DownloadDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that Download Diagnostics over IPv4 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <parameter name="IPv6DownloadDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that Download Diagnostics over IPv6 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <object base="DownloadDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="NumberOfConnections" access="readWrite" dmr:previousParameter="TimeBasedTestMeasurementOffset">
+        <description>
+          The number of connections to be used in the test.  The default value SHOULD be 1.  {{param}} MUST NOT be set to a value greater than {{param|DownloadDiagnosticMaxConnections}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DownloadDiagnosticMaxConnections" access="readOnly" dmr:previousParameter="DownloadTransports">
+        <description>
+          Indicates the maximum number of connections that are supported by Download Diagnostics.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DownloadDiagnosticsMaxIncrementalResult" access="readOnly">
+        <description>
+          The maximum number of rows in {{object|IncrementalResult}} that the CPE will store.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ProtocolVersion" access="readWrite" dmr:previousParameter="TimeBasedTestMeasurementOffset">
+        <description>
+          Indicates the IP protocol version to be used.  The default value SHOULD be {{enum|Any}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Any">
+              <description>Use either IPv4 or IPv6 depending on the system preference.</description>
+            </enumeration>
+            <enumeration value="IPv4">
+              <description>Use IPv4 for the requests</description>
+            </enumeration>
+            <enumeration value="IPv6">
+              <description>Use IPv6 for the requests.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <profile base="Download:1">
+      <parameter ref="IPv4DownloadDiagnosticsSupported" requirement="readOnly"/>
+      <parameter ref="IPv6DownloadDiagnosticsSupported" requirement="readOnly"/>
+    </profile>
+  </component>
+
+  <component name="DownloadDiagnostics_Device2">
+    <component ref="_DownloadDiagnostics_Device2"/>
+    <component ref="DownloadDiagnostics_Device2Diffs"/>
+  </component>
+
+  <component name="DownloadDiagnostics_LegacyDiffs">
+    <object base="DownloadDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="NumberOfConnections" access="readWrite" dmr:previousParameter="TimeBasedTestMeasurementOffset">
+        <description>
+          The number of connections to be used in the test.  The default value SHOULD be 1.  {{param}} MUST NOT be set to a value greater than {{param|.Capabilities.PerformanceDiagnostic.DownloadDiagnosticMaxConnections}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+  
+  <!-- Update UploadDiagnostics Component-->
+  <component name="UploadDiagnosticsDiffs">
+    <object base="UploadDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">
+          Indicate the availability of diagnostic data.  {{enum}}
+          If the ACS sets the value of this parameter to {{enum|Requested}}, the CPE MUST initiate the corresponding diagnostic test.  When writing, the only allowed value is {{enum|Requested}}.  To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the {{param}} to {{enum|Requested}}.
+          When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
+          When the test is completed, the value of this parameter MUST be either {{enum|Completed}} (if the test completed successfully), or one of the ''Error'' values listed above.
+          If the value of this parameter is anything other than {{enum|Completed}}, the values of the results parameters for this test are indeterminate.
+          When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform message.
+          After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots.  After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to {{enum|None}} and remove all object instances from {{object||PerConnectionResult}} and {{object|IncrementalResult}}.
+          Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to {{enum|None}} and remove all object instances from {{object|PerConnectionResult}} and {{object|IncrementalResult}}.
+          While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to {{enum|None}} and remove all object instances from {{object|PerConnectionResult}} and {{object|IncrementalResult}}.
+          While the test is in progress, setting this parameter to {{enum|Requested}} (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Completed" access="readOnly"/>
+            <enumeration value="Error_CannotResolveHostName" access="readOnly"/>
+            <enumeration value="Error_NoRouteToHost" access="readOnly"/>
+            <enumeration value="Error_InitConnectionFailed" access="readOnly"/>
+            <enumeration value="Error_NoResponse" access="readOnly"/>
+            <enumeration value="Error_PasswordRequestFailed" access="readOnly"/>
+            <enumeration value="Error_LoginFailed" access="readOnly"/>
+            <enumeration value="Error_NoTransferMode" access="readOnly"/>
+            <enumeration value="Error_NoPASV" access="readOnly"/>
+            <enumeration value="Error_NoCWD" access="readOnly"/>
+            <enumeration value="Error_NoSTOR" access="readOnly"/>
+            <enumeration value="Error_NoTransferComplete" access="readOnly"/>
+            <enumeration value="Error_Timeout" access="readOnly"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter base="Interface" access="readWrite">
+        <description action="replace">
+          {{reference}} The IP-layer interface over which the test is to be performed. Example: Device.IP.Interface.1
+          If {{empty}} is specified, the CPE MUST use the interface as directed by its routing policy (''Forwarding'' table entries) to determine the appropriate interface.
+        </description>
+      </parameter>
+      <parameter name="TimeBasedTestDuration" access="readWrite" dmr:previousParameter="TestFileLength">
+        <description>
+          Controls time based testing {{bibref|TR-143a1|Section 4.3}}. When {{param}} &gt; 0, {{param}} is the duration in {{units}} of a time based test. If {{param}} is 0, the test is not based on time, but on the size of the file to be uploaded.  The default value SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+            <range minInclusive="0" maxInclusive="999"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TimeBasedTestMeasurementInterval" access="readWrite">
+        <description>
+          The measurement interval duration in {{units}} for objects in {{object|IncrementalResult}} for a time based FTP/HTTP upload test (when {{param|TimeBasedTestDuration}} &gt; 0).  The default value SHOULD be 0, which implies {{object|IncrementalResult}} collection is disabled.
+          For example if {{param|TimeBasedTestDuration}} is 90 seconds and {{param}} is 10 {{units}}, there will be 9 results in {{object|IncrementalResult}}, each with a 10 {{units}} duration.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="999"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TimeBasedTestMeasurementOffset" access="readWrite">
+        <description>
+          This {{param}} works in conjunction with {{param|TimeBasedTestMeasurementInterval}} and allows the interval measurement to start a number of {{units}} after {{param|BOMTime}}. The test measurement interval in  {{object|IncrementalResult}} starts at time {{param|BOMTime}} + {{param}} to allow for slow start window removal of file transfers.
+          This {{param}} is in {{units}}.  The default value SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="IPAddressUsed" access="readOnly">
+        <description>
+          Indicates which IP address was used to send the request.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter base="ROMTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the client sends the GET command.
+          * For FTP this is the time at which the client sends the RTRV command.
+          If multiple connections are used, then {{param}} is set to the earliest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="BOMTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Begin of transmission time in UTC, which MUST be specified to microsecond precision
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the first data packet is received.
+          * For FTP this is the time at which the client receives the first data packet on the data connection.
+          If multiple connections are used, then {{param}} is set to the earliest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="EOMTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          End of transmission in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the last data packet is received.
+          * For FTP this is the time at which the client receives the last packet on the data connection.
+          If multiple connections are used, then {{param}} is set to the latest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="TCPOpenRequestTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.
+          * For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.
+          Note: Interval of 1 microsecond SHOULD be supported.
+          If multiple connections are used, then {{param}} is set to the latest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter base="TCPOpenResponseTime" access="readOnly" activeNotify="canDeny">
+        <description action="replace">
+          Response time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.
+          * For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.
+          Note: Interval of 1 microsecond SHOULD be supported.
+          If multiple connections are used, then {{param}} is set to the latest {{param}} across all connections.
+        </description>
+      </parameter>
+      <parameter name="TestBytesSent" access="readOnly" dmr:previousParameter="EOMTime">
+        <description>
+          The number of {{units}} of the test file sent during the FTP/HTTP transaction including FTP/HTTP headers, between {{param|BOMTime}} and {{param|EOMTime}} acrosss all connections.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} (at the IP layer) received on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter base="TotalBytesSent" access="readOnly">
+        <description action="replace">
+          The total number of {{units}} (at the IP layer) sent on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesSent on the {{param|Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TestBytesSentUnderFullLoading" access="readOnly">
+        <description>
+          The number of {{units}} of the test file sent between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}} across all connections.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesReceivedUnderFullLoading" access="readOnly">
+        <description>
+          The total number of {{units}} (at the IP layer) received between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}} across all connections in the test.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|Interface}} object at the latest {{param|PerConnectionResult.{i}.BOMTime}} and at the earliest {{param|PerConnectionResult.{i}.EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesSentUnderFullLoading" access="readOnly">
+        <description>
+          The total number of {{units}} (at the IP layer) sent between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}} across all connections in the test.  This MAY be calculated by sampling Stats.bytesSent on the {{param|Interface}} object at the latest {{param|PerConnectionResult.{i}.BOMTime}} and at the earliest {{param|PerConnectionResult.{i}.EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PeriodOfFullLoading" access="readOnly">
+        <description>
+          The period of time in {{units}} between the latest {{param|PerConnectionResult.{i}.BOMTime}} and the earliest {{param|PerConnectionResult.{i}.EOMTime}} of the test.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PerConnectionResultNumberOfEntries" access="readOnly" dmr:previousParameter="TCPOpenResponseTime">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="EnablePerConnectionResults" access="readWrite" activeNotify="canDeny">
+        <description>
+          The results must be returned in the {{object|PerConnectionResult}} table for every connection when set to {{true}}. The default value SHOULD be {{false}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="IncrementalResultNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="UploadDiagnostics.PerConnectionResult.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="PerConnectionResultNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>
+        Results for individual connections.  This table is only populated when {{param|#.EnablePerConnectionResults}} is {{true}}.  A new object is created for each connection specified in {{param|#.NumberOfConnections}}.  Instance numbers MUST start at 1 and sequentially increment as new instances are created.  All instances are removed when {{param|#.DiagnosticsState}} is set to {{enum|Requested|#.DiagnosticsState}} or {{enum|None|#.DiagnosticsState}}.
+      </description>
+      <parameter name="ROMTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the client sends the GET command.
+          * For FTP this is the time at which the client sends the RTRV command.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="BOMTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Begin of transmission time in UTC, which MUST be specified to microsecond precision
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the first data packet is received.
+          * For FTP this is the time at which the client receives the first data packet on the data connection.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="EOMTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          End of transmission in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the last data packet is received.
+          * For FTP this is the time at which the client receives the last packet on the data connection.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="TestBytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The number of {{units}} of the test file sent during the FTP/HTTP transaction including FTP/HTTP headers, between {{param|BOMTime}} and {{param|EOMTime}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} (at the IP layer) received on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|#.Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} (at the IP layer) sent on the Interface between {{param|BOMTime}} and {{param|EOMTime}}.  This MAY be calculated by sampling Stats.bytesSent on the {{param|#.Interface}} object at {{param|BOMTime}} and at {{param|EOMTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TCPOpenRequestTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Request time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.
+          * For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="TCPOpenResponseTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Response time in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          * For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.
+          * For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="UploadDiagnostics.IncrementalResult.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="IncrementalResultNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>
+        Results for time segmented tests (tests where {{param|#.TimeBasedTestDuration}} &gt; 0 and {{param|#.TimeBasedTestMeasurementInterval}} &gt; 0).  This data is totaled across all connections in the test.  A new object is created every {{param|#.TimeBasedTestMeasurementInterval}} after that interval has completed.  Instance numbers MUST start at 1 and sequentially increment as new instances are created.  All instances are removed when {{param|#.DiagnosticsState}} is set to {{enum|Requested|#.DiagnosticsState}} or {{enum|None|#.DiagnosticsState}}.
+      </description>
+      <parameter name="TestBytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          Change in the value of {{param|#.TestBytesSent}} between {{param|StartTime}} and {{param|EndTime}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} (at the IP layer) received on the Interface between {{param|StartTime}} and {{param|EndTime}}.  This MAY be calculated by sampling Stats.bytesReceived on the {{param|#.Interface}} object at {{param|StartTime}} and at {{param|EndTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TotalBytesSent" access="readOnly" dmr:previousParameter="TotalBytesReceived">
+        <description>
+          The total number of {{units}} (at the IP layer) sent on the Interface between {{param|StartTime}} and {{param|EndTime}}.  This MAY be calculated by sampling Stats.bytesSent on the {{param|#.Interface}} object at {{param|StartTime}} and at {{param|EndTime}} and subtracting.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="StartTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          The start time of this interval which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="EndTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          The end time of this interval which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+  
+  <component name="UploadDiagnostics">
+    <component ref="_UploadDiagnostics"/>
+    <component ref="UploadDiagnosticsDiffs"/>
+  </component>
+  
+  <component name="UploadDiagnostics_Device2Diffs">
+    <parameter name="IPv4UploadDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that Upload Diagnostics over IPv4 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <parameter name="IPv6UploadDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that Upload Diagnostics over IPv6 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <object base="UploadDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="UploadDiagnosticsMaxConnections" access="readOnly" dmr:previousParameter="UploadTransports">
+        <description>
+          Indicates the maximum number of connections that are supported by Upload Diagnostics.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="NumberOfConnections" access="readWrite" dmr:previousParameter="TimeBasedTestMeasurementOffset">
+        <description>
+          The number of connections to be used in the test.  The default value SHOULD be 1.  {{param}} MUST NOT be set to a value greater than {{param|UploadDiagnosticsMaxConnections}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UploadDiagnosticsMaxIncrementalResult" access="readOnly" dmr:previousParameter="UploadDiagnosticsMaxConnections">
+        <description>
+          The maximum number of rows in {{object|IncrementalResult}} that the CPE will store.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ProtocolVersion" access="readWrite" dmr:previousParameter="TimeBasedTestMeasurementOffset">
+        <description>
+          Indicates the IP protocol version to be used.  The default value SHOULD be {{enum|Any}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Any">
+              <description>Use either IPv4 or IPv6 depending on the system preference.</description>
+            </enumeration>
+            <enumeration value="IPv4">
+              <description>Use IPv4 for the requests</description>
+            </enumeration>
+            <enumeration value="IPv6">
+              <description>Use IPv6 for the requests.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <profile base="Upload:1">
+      <parameter ref="IPv4UploadDiagnosticsSupported" requirement="readOnly" dmr:previousParameter="UploadURL"/>
+      <parameter ref="IPv6UploadDiagnosticsSupported" requirement="readOnly"/>
+    </profile>
+  </component>
+
+  <component name="UploadDiagnostics_Device2">
+    <component ref="_UploadDiagnostics_Device2"/>
+    <component ref="UploadDiagnostics_Device2Diffs"/>
+  </component>
+
+  <component name="UploadDiagnostics_LegacyDiffs">
+    <object base="UploadDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="NumberOfConnections" access="readWrite" dmr:previousParameter="TimeBasedTestMeasurementOffset">
+        <description>
+          The number of connections to be used in the test.  The default value SHOULD be 1.  {{param}} MUST NOT be set to a value greater than {{param|.Capabilities.PerformanceDiagnostic.UploadDiagnosticsMaxConnections}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <!--New Component: Client for UDP Echo Diagnostics-->
+  <component name="UDPEchoDiagnostics">
+    <object name="UDPEchoDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object defines the diagnostics configuration for a UDP Echo test {{bibref|TR-143a1|Appendix A.1}} defined in {{bibref|RFC862}} or a UDP Echo Plus test defined in {{bibref|TR-143a1|Appendix A.1}}.
+      </description>
+      <parameter name="DiagnosticsState" access="readWrite" activeNotify="canDeny">
+        <description>
+          Indicate the availability of diagnostic data. {{enum}}
+          If the ACS sets the value of this parameter to {{enum|Requested}}, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is {{enum|Requested}}. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the {{param}} to {{enum|Requested}}.
+          When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic. When the test is completed, the value of this parameter MUST be either {{enum|Completed}} (if the test completed successfully), or one of the ''Error'' values listed above.
+          If the value of this parameter is anything other than {{enum|Completed}}, the values of the results parameters for this test are indeterminate.
+          When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform message.
+          After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to {{enum|None}} and remove all object instances from {{object|IndividualPacketResult}}.
+          Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to {{enum|None}} and remove all object instances from {{object|IndividualPacketResult}}.
+          While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to {{enum|None}} and remove all object instances from {{object|IndividualPacketResult}}.
+          While the test is in progress, setting this parameter to {{enum|Requested}} (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Completed" access="readOnly"/>
+            <enumeration value="Error_CannotResolveHostName" access="readOnly"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference|the IP-layer interface over which the test is to be performed|ignore}} Example: Device.IP.Interface.1
+          If {{empty}} is specified, the CPE MUST use the interface as directed by its routing policy (''Forwarding'' table entries) to determine the appropriate interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection. .WANDevice.{i}.WANConnectionDevice.{i}.WANPPPConnection. .IP.Interface." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Host" access="readWrite" activeNotify="canDeny">
+        <description>
+          Host name or address of the host to perform tests to.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Port" access="readWrite" activeNotify="canDeny">
+        <description>
+          Port on the host to perform tests to.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="NumberOfRepetitions" access="readWrite" activeNotify="canDeny">
+        <description>
+          Number of repetitions of the test to perform before reporting the results. The default value SHOULD be 1.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Timeout" access="readWrite" activeNotify="canDeny">
+        <description>
+          Timeout in {{units}} for the test. That is, the amount of time to wait for the return of a packet that was sent to the {{param|Host}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DataBlockSize" access="readWrite" activeNotify="canDeny">
+        <description>
+          Size of the data block in {{units}} to be sent for each packet.  The default value SHOULD be 24.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DSCP" access="readWrite" activeNotify="canDeny">
+        <description>
+          DiffServ codepoint to be used for the test packets. The default value SHOULD be zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="63"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="InterTransmissionTime" access="readWrite" activeNotify="canDeny">
+        <description>
+          The time in {{units}} between the {{param|NumberOfRepetitions}} of packets sent during a given test.  The default value SHOULD be 1000.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="IPAddressUsed" access="readOnly">
+        <description>
+          Indicates which IP address was used to send the request.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessCount" access="readOnly">
+        <description>
+          Result parameter indicating the number of successful packets (those in which a successful response was received prior to the timeout) in the most recent test.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="FailureCount" access="readOnly">
+        <description>
+          Result parameter indicating the number of failed packets (those in which a successful response was not received prior to the timeout) in the most recent test.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="AverageResponseTime" access="readOnly">
+        <description>
+          Result parameter indicating the average response time in {{units}} over all repetitions with successful responses of the most recent test. If there were no successful responses, this value MUST be zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MinimumResponseTime" access="readOnly">
+        <description>
+          Result parameter indicating the minimum response time in {{units}} over all repetitions with successful responses of the most recent test. If there were no successful responses, this value MUST be zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaximumResponseTime" access="readOnly">
+        <description>
+          Result parameter indicating the maximum response time in {{units}} over all repetitions with successful responses of the most recent test. If there were no successful responses, this value MUST be zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="EnableIndividualPacketResults" access="readWrite" activeNotify="canDeny">
+        <description>
+          The results must be returned in the {{object|IndividualPacketResult}} table for every repetition of the test when set to {{true}}. The default value SHOULD be {{false}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="IndividualPacketResultNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <!--New Object:  Two way testing individual result parameters-->
+    <object name="UDPEchoDiagnostics.IndividualPacketResult.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="IndividualPacketResultNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>
+        This object provides the results from individual UDPEchoPlus test packets collected during a test if {{param|#.EnableIndividualPacketResults}} is set to true.  When {{param|#.DiagnosticsState}} is set to {{enum|Completed|#.DiagnosticsState}} it should contain {{param|#.NumberOfRepetitions}} objects.  Instance numbers MUST start at 1 and sequentially increment as new instances are created.  The instance number should match the TestIterationNumber field of the request and response packet.  All instances are removed when {{param|#.DiagnosticsState}} is set to {{enum|Requested|#.DiagnosticsState}} or {{enum|None|#.DiagnosticsState}}.
+      </description>
+      <parameter name="PacketSuccess" access="readOnly">
+        <description>
+          Indicates that the response to this UDP Echo Plus packet sent was received by the client. When this value is {{true}}, then all the remaining parameters in this instance are valid. Otherwise only the values originally set by the CPE client (e.g. {{param|PacketSendTime}} and {{param|TestGenSN}}) MAY be set to valid values.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketSendTime" access="readOnly">
+        <description>
+          Time the client sent this UDP Echo Plus packet in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketReceiveTime" access="readOnly">
+        <description>
+          Time the client receives the response packet in UTC, which MUST be specified to microsecond precision.
+          For example: 2008-04-09T15:01:05.123456Z
+          If this response is never received, {{param}} SHOULD be set to the Unknown Time value as specified in {{bibref|TR-106a7|Section 3.2.2}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="TestGenSN" access="readOnly">
+        <description>
+          The TestGenSN field in the UDPEcho Plus packet {{bibref|TR-143a1|Section A.1.4}} sent by the CPE client.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="TestRespSN" access="readOnly">
+        <description>
+          The TestRespSN field in the response packet {{bibref|TR-143a1|Section A.1.4}} from the UDP Echo Plus server (i.e. {{param|#.Host}}) for this Echo Plus packet sent by the CPE client. If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="TestRespRcvTimeStamp" access="readOnly">
+        <description>
+          The TestRespRcvTimeStamp field in the response packet {{bibref|TR-143a1|Section A.1.4}} from the UDP Echo Plus server (i.e. {{param|#.Host}}) to record the reception time of this UDP Echo Plus packet sent from the CPE client. If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TestRespReplyTimeStamp" access="readOnly">
+        <description>
+          The TestRespReplyTimeStamp field in the response packet {{bibref|TR-143a1|Section A.1.4}} from the UDP Echo Plus server (i.e. {{param|#.Host}}) to record the server reply time of this UDP Echo Plus packet sent from the CPE client.
+          That is, the time that the server returned the UDP Echo Plus packet. If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TestRespReplyFailureCount" access="readOnly">
+        <description>
+          The count value that was set by the UDP Echo Plus server (i.e. {{param|#.Host}}) to record the number of dropped echo response packets by the server. This count is incremented if a valid echo request packet is received at a UDP EchoPlus server but for some reason cannot be responded to (e.g. due to local buffer overflow, CPU utilization, etc...).  If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <!--New Profile: UDPEchoDiag:1 -->
+    <profile name="UDPEchoDiag:1">
+      <object ref="UDPEchoDiagnostics." requirement="present">
+        <parameter ref="DiagnosticsState" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="Host" requirement="readWrite"/>
+        <parameter ref="NumberOfRepetitions" requirement="readWrite"/>
+        <parameter ref="EnableIndividualPacketResults" requirement="readWrite"/>
+        <parameter ref="Timeout" requirement="readWrite"/>
+        <parameter ref="DataBlockSize" requirement="readWrite"/>
+        <parameter ref="DSCP" requirement="readWrite"/>
+        <parameter ref="InterTransmissionTime" requirement="readWrite"/>
+        <parameter ref="SuccessCount" requirement="readOnly"/>
+        <parameter ref="FailureCount" requirement="readOnly"/>
+        <parameter ref="AverageResponseTime" requirement="readOnly"/>
+        <parameter ref="MinimumResponseTime" requirement="readOnly"/>
+        <parameter ref="MaximumResponseTime" requirement="readOnly"/>
+        <parameter ref="IndividualPacketResultNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="UDPEchoDiagnostics.IndividualPacketResult.{i}." requirement="present">
+        <parameter ref="PacketSuccess" requirement="readOnly"/>
+        <parameter ref="PacketSendTime" requirement="readOnly"/>
+        <parameter ref="PacketReceiveTime" requirement="readOnly"/>
+        <parameter ref="TestGenSN" requirement="readOnly"/>
+        <parameter ref="TestRespSN" requirement="readOnly"/>
+        <parameter ref="TestRespRcvTimeStamp" requirement="readOnly"/>
+        <parameter ref="TestRespReplyTimeStamp" requirement="readOnly"/>
+        <parameter ref="TestRespReplyFailureCount" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <component name="UDPEchoDiagnostics_Device2">
+    <component ref="UDPEchoDiagnostics"/>
+    <parameter name="IPv4UDPEchoDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that UDPEcho Diagnostics over IPv4 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <parameter name="IPv6UDPEchoDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that UDPEcho Diagnostics over IPv6 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <object base="UDPEchoDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="UDPEchoDiagnosticsMaxResults" access="readOnly" activeNotify="canDeny" dmr:previousParameter="DiagnosticState">
+        <description>
+          The maximum number of rows in {{object|IndividualPacketResult}} that the CPE will store.  If a test would create more rows than {{param}} only the first {{param}} rows are present in {{object|IndividualPacketResult}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ProtocolVersion" access="readWrite" dmr:previousParameter="InterTransmissionTime">
+        <description>
+          Indicates the IP protocol version to be used.  The default value SHOULD be {{enum|Any}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Any">
+              <description>Use either IPv4 or IPv6 depending on the system preference.</description>
+            </enumeration>
+            <enumeration value="IPv4">
+              <description>Use IPv4 for the requests</description>
+            </enumeration>
+            <enumeration value="IPv6">
+              <description>Use IPv6 for the requests.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <!--New component: ServerSelectionDiagnostics component-->
+  <component name="ServerSelectionDiagnostics">
+    <object name="ServerSelectionDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object provides access to a diagnostics test that performs either an ICMP Ping or UDP Echo ping against multiple hosts determining which one has the smallest average response time. There MUST be a ping response to the transmitted ping, or timeout, before the next ping is sent out.
+      </description>
+      <parameter name="DiagnosticsState" access="readWrite" activeNotify="canDeny">
+        <description>
+          Indicates availability of diagnostic data.  {{enum}}
+          If the ACS sets the value of this parameter to {{enum|Requested}}, the CPE MUST initiate the corresponding diagnostic test.  When  writing, the only allowed value is {{enum|Requested}}.  To ensure the use of the proper test parameters (the writable parameters in  this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the  {{param}} to {{enum|Requested}}.
+          When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
+          When the test is completed, the value of this parameter MUST be either {{enum|Completed}} (if the test completed successfully), or one  of the ''Error'' values listed above.
+          If the value of this parameter is anything other than {{enum|Completed}}, the values of the results parameters for this test are  indeterminate.
+          When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to  allow the ACS to view the results, indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform message.
+          After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by  the CPE until either this diagnostic is run again, or the CPE reboots.  After a reboot, if the CPE has not retained the result  parameters from the most recent test, it MUST set the value of this parameter to {{enum|None}}.
+          Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to  {{enum|None}}.
+          While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test  being terminated and the value of this parameter being set to {{enum|None}}.
+          While the test is in progress, setting this parameter to {{enum|Requested}} (and possibly modifying other writable parameters in this  object) MUST result in the test being terminated and then restarted using the current values of the test parameters.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Completed" access="readOnly"/>
+            <enumeration value="Error_CannotResolveHostName" access="readOnly"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference|the IP-layer interface over which the test is to be performed|ignore}} Example: Device.IP.Interface.1
+          If {{empty}} is specified, the CPE MUST use the interface as directed by its routing policy (''Forwarding'' table entries) to determine the appropriate interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection. .WANDevice.{i}.WANConnectionDevice.{i}.WANPPPConnection. .IP.Interface." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          The protocol over which the test is to be performed.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ICMP"/>
+            <enumeration value="UDP Echo"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="HostList" access="readWrite">
+        <description>Each entry is a Host name or address of a host to ping.</description>
+        <syntax>
+          <list maxItems="10"/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NumberOfRepetitions" access="readWrite">
+        <description>
+          Number of repetitions of the ping test to perform for each {{param|HostList}} entry before reporting the results.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Timeout" access="readWrite">
+        <description>
+          Timeout in {{units}} for each iteration of the ping test where the total number of iterations is the value of {{param|NumberOfRepetitions}} times the number of entities in the {{param|HostList}} Parameter.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="FastestHost" access="readOnly" activeNotify="canDeny">
+        <description>
+          Result parameter indicating the Host (one of the items within the {{param|HostList}} Parameter) with the smallest average response time.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="MinimumResponseTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Result parameter indicating the minimum response time in {{units}} over all repetitions with successful responses of the most recent ping test for the Host identified in {{param|FastestHost}}. Success is defined by the underlying protocol used.   If there were no successful responses across all Hosts, this value MUST be zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="AverageResponseTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Result parameter indicating the average response time in {{units}} over all repetitions with successful responses of the most recent ping test for the Host identified in {{param|FastestHost}}. Success is defined by the underlying protocol used.   If there were no successful responses across all Hosts, this value MUST be zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaximumResponseTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Result parameter indicating the maximum response time in {{units}} over all repetitions with successful responses of the most recent ping test for the Host identified in {{param|FastestHost}}. Success is defined by the underlying protocol used.   If there were no successful responses across all Hosts, this value MUST be zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="IPAddressUsed" access="readOnly">
+        <description>
+          Indicates which IP address was used to send the request to the host identified in {{param|FastestHost}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <profile name="ServerSelectionDiag:1">
+      <object ref="ServerSelectionDiagnostics." requirement="present">
+        <parameter ref="DiagnosticsState" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="HostList" requirement="readWrite"/>
+        <parameter ref="NumberOfRepetitions" requirement="readWrite"/>
+        <parameter ref="Timeout" requirement="readWrite"/>
+        <parameter ref="FastestHost" requirement="readOnly"/>
+        <parameter ref="AverageResponseTime" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+  
+  <component name="ServerSelectionDiagnostics_Device2">
+    <parameter name="IPv4ServerSelectionDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that ServerSelection Diagnostics over IPv4 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <parameter name="IPv6ServerSelectionDiagnosticsSupported" access="readOnly">
+      <description>
+        Indicates that ServerSelection Diagnostics over IPv6 is supported.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+    <component ref="ServerSelectionDiagnostics"/>
+    <object base="ServerSelectionDiagnostics." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="ProtocolVersion" access="readWrite" dmr:previousParameter="Interface">
+        <description>
+          Indicates the IP protocol version to be used.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Any">
+              <description>Use either IPv4 or IPv6 depending on the system preference.</description>
+            </enumeration>
+            <enumeration value="IPv4">
+              <description>Use IPv4 for the requests.</description>
+            </enumeration>
+            <enumeration value="IPv6">
+              <description>Use IPv6 for the requests.</description>
+            </enumeration>
+          </string>
+          <default type="factory" value="Any"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="CapabilitiesDiffs">
+    <object base="Capabilities.PerformanceDiagnostic." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="DownloadDiagnosticMaxConnections" access="readOnly" dmr:previousParameter="DownloadTransports">
+        <description>
+          Indicates the maximum number of connections that are supported by Download Diagnostics.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DownloadDiagnosticsMaxIncrementalResult" access="readOnly" dmr:previousParameter="DownloadDiagnosticMaxConnections">
+        <description>
+          The maximum number of rows in {{object|.DownloadDiagnostics.IncrementalResult}} that the CPE will store.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UploadDiagnosticsMaxConnections" access="readOnly" dmr:previousParameter="UploadTransports">
+        <description>
+          Indicates the maximum number of connections that are supported by Upload Diagnostics.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UploadDiagnosticsMaxIncrementalResult" access="readOnly" dmr:previousParameter="UploadDiagnosticMaxConnections">
+        <description>
+          The maximum number of rows in {{object|.UploadDiagnostics.IncrementalResult}} that the CPE will store.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UDPEchoDiagnosticsMaxResults" access="readOnly" activeNotify="canDeny">
+        <description>
+          The maximum number of rows in {{object|.UDPEchoDiagnostics.IndividualPacketResult}} that the CPE will store.  If a test would create more rows than {{param}} only the first {{param}} rows are present in {{object|.UDPEchoDiagnostics.IndividualPacketResult}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="Capabilities">
+    <component ref="_Capabilities"/>
+    <component ref="CapabilitiesDiffs"/>
+  </component>
+
+</dm:document>

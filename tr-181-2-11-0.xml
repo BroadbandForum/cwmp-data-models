@@ -1,0 +1,2207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 Device:2.11 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:2.11 Root Object definition.
+  
+  Editors:
+    * Mark Tabry, Google
+    * Klaus Wich, Axiros
+
+  Broadband User Service Work Area Directors:
+    * Jason Walls, QA Cafe
+    * John Blackford, Arris
+
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    * tr-181-2-0-0.xml: May 2010:
+      - corresponds to TR-181 Issue 2.
+    * tr-181-2-1-0.xml: November 2010:
+      - corresponds to TR-181 Issue 2 Amendment 1.
+    * tr-181-2-2-0.xml: March 2011:
+      - corresponds to TR-181 Issue 2 Amendment 2.
+    * tr-181-2-3-0.xml: September 2011:
+      - corresponds to TR-181 Issue 2 Amendment 3.
+    * tr-181-2-4-0.xml: November 2011:
+      - corresponds to TR-181 Issue 2 Amendment 4.
+    * tr-181-2-5-0.xml: May 2012:
+      - corresponds to TR-181 Issue 2 Amendment 5.
+    * tr-181-2-6-0.xml: November 2012:
+      - corresponds to TR-181 Issue 2 Amendment 6.
+    * tr-181-2-7-0.xml: November 2013: January 17, 2014
+      - corresponds to TR-181 Issue 2 Amendment 7.
+    * tr-181-2-8-0.xml: 8 September 2014: 17 September 2014:
+      - corresponds to TR-181 Issue 2 Amendment 8.
+    * tr-181-2-9-0.xml:  1 December 2014:  4 February 2015:
+      - Added WiFi MAC Address Filtering
+      - Added Traceroute fixes
+      - Added IEEE 1905 data model
+      - Incorporated TR-143a1
+    * tr-181-2-10-0.xml: 9 November 2015: 13 November 2015:
+      - corresponds to TR-181 Issue 2 Amendment 10.
+    * tr-181-2-11-0.xml: 18 July 2016: 12 August 2016
+      - corresponds to TR-181 Issue 2 Amendment 11.
+    
+-->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5"
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-181-2-11-0" file="tr-181-2-11-0.xml">
+
+  <description>
+    {{docname|Device Data Model for TR-069}}
+    {{appdate|July 2016}}
+    {{trname|TR-181i2a11}}
+    * Added LED status model
+    * Added layer 2 tunnel support to IP diagnostics model
+    * Added DSL G.fast model
+    * Added Management Frame Protection support to WiFi model
+    * Added WPS 2.0 support to WiFi model
+    * Added user interface toggle
+    * Added user interface messaging model
+    * Added ConnectionRequest HTTP service toggle
+    * Resolved lack of DNS fallback support for XMPP connections
+  </description>
+
+  <import file="tr-069-1-5-biblio.xml" spec="urn:broadband-forum-org:tr-069-1-5"/>
+  
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"/>
+  </import>
+
+  <!-- import previous version of data model -->
+  <import file="tr-181-2-10.xml" spec="urn:broadband-forum-org:tr-181-2-10">
+    <model name="Device:2.10"/>
+  </import>
+
+  <model name="Device:2.11" base="Device:2.10">
+    <!-- LED Status -->
+    <object base="Device.DeviceInfo." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="DeviceImageNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LEDs." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object describes the LEDs on the device.
+      </description>
+      <parameter name="LEDNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.LEDs.LED.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="LEDNumberOfEntries" >
+      <description>
+        Each instance of this object describes an LED on the device.
+        The default illumination characteristics (e.g., Color, Brightness) of an in use LED is vendor specific. When a cycle completes (i.e., {{param|CyclePeriodRepetitions}} = 0), the LED reverts back to its default illumination characteristics.
+        When the value of the {{param|Status}} parameter is {{enum|Controlled|Status}}, then the value of {{param|CycleElementNumberOfEntries}} and {{param|CycleElementNumberOfEntries}} parameters SHOULD be 0.
+        When the value of the {{param|RelativeXPosition}} and {{param|RelativeYPosition}} parameters are 0, this indicates that the position of the LED is unknown.
+      </description>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readWrite">
+        <description>
+          The internal name used to identify this LED.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the LED.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                The LED is currently not in use.
+              </description>
+            </enumeration>
+            <enumeration value="InUse">
+              <description>
+                The LED is currently being used by the CPE.
+              </description>
+            </enumeration>
+            <enumeration value="Controlled">
+              <description>
+                Indicates that the LED is controlled from an electronic circuit which cannot be monitored.
+              </description>
+           </enumeration>
+            <enumeration value="Error">
+              <description>
+                The LED status cannot be determined by the CPE.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Reason" access="readOnly" activeNotify="canDeny" >
+        <description>
+          The textual purpose that represents the visual display of the LED (e.g., Broadband Down).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="CyclePeriodRepetitions" access="readOnly" activeNotify="canDeny">
+        <description>
+          The number of cycle periods left for this LED. As each cycle period is completed this parameter is reduced by 1. A value of -1 indicates an infinite number of cycle period repetitions.
+        </description>
+        <syntax>
+          <int><range minInclusive="-1"/></int>
+        </syntax>
+      </parameter>
+      <parameter name="Location" access="readOnly">
+        <description>
+          The location of the LED as the user looks at the front of the device in its typical orientation (e.g., on-end, flat).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Front"/>
+            <enumeration value="Back"/>
+            <enumeration value="Left"/>
+            <enumeration value="Right"/>
+            <enumeration value="Top"/>
+            <enumeration value="Bottom"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="RelativeXPosition" access="readOnly">
+        <description>
+          The relative x position of the LED from left to right (x) and top to bottom (y) as the user looks at the device from the orientation identified in the {{param|Location}} parameter in its typical orientation (e.g., on-end, flat).
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="RelativeYPosition" access="readOnly">
+        <description>
+          The relative y position of the LED from left to right (x) and top to bottom (y) as the user looks at the device from the orientation identified in the {{param|Location}} parameter in its typical orientation (e.g., on-end, flat).
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="CycleElementNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.LEDs.LED.{i}.CycleElement.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" enableParameter="Enable" numEntriesParameter="CycleElementNumberOfEntries">
+      <description>
+        Each instance of this object describes the LED characteristics for a portion of the LED cycle period. 
+        The pattern of lighting for the LED corresponding to this table (i.e., the LED cycle period) is defined by the illumination of the LED according to the entries in this table, taken sequentially in the order specified by the {{param|Order}} parameter, with the duration for the portion of the LED illumination corresponding to a given instance specified by the {{param|Duration}} parameter.
+        The other parameters of the instance of this object (e.g., Color, Brightness) describes the illumination characteristics applied to the LED for this {{object}} instance.
+        The length of the complete LED cycle is the sum of the Duration parameters for all of the entries in this table.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Order"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Order" access="readWrite">
+        <description>
+          The relative order of this {{object}} in the LED's cycle period.
+        </description>
+        <syntax>
+         <unsignedInt><range minInclusive="1"/></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Color" access="readWrite">
+        <description>
+          The color being displayed by the LED RGB hexadecimal notation (e.g., FF0088).
+          Note: If the parameter is set to an unsupported color the CPE MUST NOT infer a different color.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="Duration" access="readWrite">
+        <description>
+          The duration, in {{units}}, for this element of the cycle period.
+        </description>
+        <syntax>
+          <unsignedInt><units value="milliseconds"/></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="FadeInterval" access="readWrite">
+        <description>
+          The interval corresponding to this {{object}} instance, in {{units}}, from the starting from the target illumination characteristics of the previous {{object}} instance to the target illumination characteristics of this {{object}} instance.
+          The transition to the target illumination characteristics is uniformly interpolated "perceptually" over the value of this {{param}} parameter.
+        </description>
+        <syntax>
+          <unsignedInt><units value="milliseconds"/></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.LEDs.LED.{i}.CurrentCycleElement." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object describes the status of the current cycle element for this LED.
+      </description>
+      <parameter name="CycleElementReference" access="readOnly" activeNotify="canDeny" >
+        <description>
+          This object describes the current properties of the {{object|#.CycleElement.{i}}} object instance that is currently active.
+          {{reference}} If the LED instances does not have a current cycle element active, this parameter MUST be set to {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row" targetParent="#.CycleElement."/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Color" access="readOnly" activeNotify="canDeny" >
+        <description>
+          The color, formatted as RGB hexadecimal notation (e.g., FF0088), that is currently being displayed by the LED.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="Duration" access="readOnly" activeNotify="canDeny" >
+        <description>
+          The remaining duration, in {{units}}, for this element of the cycle period.
+        </description>
+        <syntax>
+          <unsignedInt><units value="milliseconds"/></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.DeviceInfo.DeviceImageFile.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="DeviceImageNumberOfEntries" >
+      <description>
+        This object describes an image of the device.
+      </description>
+      <uniqueKey>
+        <parameter ref="Location"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Location" access="readOnly">
+        <description>
+          The location of the device that represents the image as the user looks at the front of the device in its typical orientation (e.g., on-end, flat).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Front"/>
+            <enumeration value="Back"/>
+            <enumeration value="Left"/>
+            <enumeration value="Right"/>
+            <enumeration value="Top"/>
+            <enumeration value="Bottom"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Image" access="readOnly">
+        <description>
+          The device image in PNG, JPEG or GIF format.
+        </description>
+        <syntax>
+          <base64/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- Diagnostics support for layer 2 tunnels  -->
+    <object base="Device.IP.Diagnostics.IPPing." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="Interface" access="readWrite">
+        <description action="replace">
+          {{reference}} The layer 2 or layer 3 interface over which the test is to be performed. Example: ''Device.IP.Interface.1'', ''Device.Bridge.1.Port.2''
+          If {{empty}} is specified, the CPE MUST use the interface as directed by its bridging or routing policy (''Forwarding'' table entries) to determine the appropriate interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="weak" targetParent=".IP.Interface. .Bridging.Bridge.{i}.Port." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Diagnostics.TraceRoute." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="Interface" access="readWrite">
+        <description action="replace">
+          {{reference}} The layer 2 or layer 3 interface over which the test is to be performed. Example: ''Device.IP.Interface.1'', ''Device.Bridge.1.Port.2''
+          If {{empty}} is specified, the CPE MUST use the interface as directed by its bridging or routing policy (''Forwarding'' table entries) to determine the appropriate interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="weak" targetParent=".IP.Interface. .Bridging.Bridge.{i}.Port." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- G.fast -->
+    <object base="Device.PTM.Link.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <description action="replace">
+        PTM link-layer table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Models a layer 2 variable-sized packet interface. A PTM Link entry is typically stacked on top of either a {{object|.FAST.Line.}}, {{object|.DSL.Channel.}}, or a {{object|.DSL.BondingGroup.}} object.
+        When a ''PTM Link'' interface is used, a lower-layer {{object|.DSL.Channel}} interface MUST be configured with PTM encapsulation (see {{param|.DSL.Channel.{i}.LinkEncapsulationUsed}}).
+      </description>
+    </object>
+    <object name="Device.FAST." access="readOnly" minEntries="1" maxEntries="1" dmr:previousObject="Device.DSL.">
+      <description>
+        This object models FAST (defined in ITU Recommendation {{bibref|G.9701}}) lines. Each {{object|Line}} models a layer 1 FAST Line interface.
+      </description>
+      <parameter name="LineNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.FAST.Line.{i}." access="readOnly" numEntriesParameter="LineNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <description>
+        FAST Line table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). 
+        This table models physical FAST lines.
+</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the FAST line. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the FAST line (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface).
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason.
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the FAST line as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the FAST line entered its current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately below this interface object}}  See {{bibref|TR-181i2|Section 4.2.1}}.
+          Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}).
+          For example:
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces.
+          * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface.
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="FirmwareVersion" access="readOnly">
+        <description>
+          A string identifying the version of the modem firmware currently installed for this interface. This is applicable only when the modem firmware is separable from the overall CPE software.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LinkStatus" access="readOnly">
+        <description>
+          Status of the FAST physical link. {{enum}}
+          When {{param}} is {{enum|Up}}, {{param|Status}} is expected to be {{enum|Up|Status}}. When {{param}} is {{enum|Initializing}} or {{enum|EstablishingLink}} or {{enum|NoSignal}} or {{enum|Disabled}}, {{param|Status}} is expected to be {{enum|Down|Status}}.
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Initializing"/>
+            <enumeration value="EstablishingLink"/>
+            <enumeration value="NoSignal"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="AllowedProfiles" access="readOnly">
+        <description>
+          {{list}} List items indicate which FAST profiles are allowed on the line. {{enum}}
+          Note:  In G.997.2, this parameter is called PROFILES. See ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="106a"/>
+            <enumeration value="212a"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CurrentProfile" access="readOnly">
+        <description>
+          Indicates which FAST profile is currently in use on the line.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="AllowedProfiles" nullValue=""/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="PowerManagementState" access="readOnly">
+        <description>
+          The power management state of the line. {{enum}}
+          Note: See ITU-T Recommendation {{bibref|G.9701}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="L0"/>
+            <enumeration value="L2.1"/>
+            <enumeration value="L2.2"/>
+            <enumeration value="L3"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessFailureCause" access="readOnly">
+        <description>
+          The success failure cause of the initialization. An enumeration of the following integer values:
+          * 0: Successful
+          * 1: Configuration error. Configuration error. This error occurs if the line cannot reach L0 state due to a mismatch of configuration and FTU capabilities.
+          * 2: Configuration not feasible on the line. This error occurs if the line cannot reach the L0 state due to a mismatch of configuration of line and noise characteristics.
+          * 3: Communication problem. This error occurs, for example, due to corrupted messages or bad syntax messages or if no common mode can be selected in the G.994.1 handshaking procedure or due to a timeout.
+          * 4: No far-end FTU detected. This error occurs if the far-end FTU is not powered or not connected or if the line is too long to allow detection of a far-end FTU.
+          * 5: Any other or unknown initialization failure cause.
+          Note: In G.997.2, this parameter is called "Initialization success/failure cause". See Clause 7.20.2.1 of ITU-T
+          Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="5"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UPBOKLER" access="readOnly">
+        <description>
+          This parameter reports the estimate of the electrical length expressed in {{units}}, as determined by the FTU-R (see clause 7.3.1.4.2.1/{{bibref|G.9701}}) and conveyed in the R-MSG1 initialization message (see clause 12.3.3.2.3/{{bibref|G.9701}}). The value is coded as an unsignedInt in the range 0 (coded as 0) to 128 dB (coded as 1280) in steps of {{units}}.
+          Note: This parameter is defined as UPBOKLE-R in Clause 7.10.4.2 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1280"/>
+            <units value="0.1 dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LastTransmittedDownstreamSignal" access="readOnly">
+        <description>
+          This parameter reports the downstream signal count of the last transmitted initialization signal in the last full or short initialization performed on the line. The valid values are 0..21. The downstream signal count is defined in clause 12.3.1/{{bibref|G.9701}}.
+          Note: See clause 7.10.2.2 ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+          <range minInclusive="0" maxInclusive="21"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LastTransmittedUpstreamSignal" access="readOnly">
+        <description>
+          This parameter reports the upstream signal count of the last transmitted initialization signal in the last full or short initialization performed on the line. The valid values are 0..21. The upstream signal count is defined in clause 12.3.1/{{bibref|G.9701}}.
+          Note: See clause 7.10.2.3 ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+          <range minInclusive="0" maxInclusive="21"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UPBOKLE" access="readOnly">
+        <description>
+          This parameter reports the electrical length that would have been sent from the FTU-O to the FTU-R if the electrical length was not forced by the DPU-MIB. If the electrical length is not forced by the DPU-MIB, then this object reports the final electrical length, as determined by the FTU-O (see clause 7.3.1.4.2.1/{{bibref|G.9701}}) and conveyed in the O-UPDATE initialization message (see clause 12.3.3.2.4/{{bibref|G.9701}}).
+          Note: See clause 7.10.4.1 in ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1280"/>
+            <units value="0.1dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LineNumber" access="readOnly">
+        <description>
+          Signifies the line pair that the modem is using to connection. {{param}} = 1 is the innermost  pair.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="1"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamMaxBitRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the attainable net data rate expressed in {{units}} as defined in clause 11.4.1.1.2/{{bibref|G.9701}}.
+          Note: This parameter is related to the G.997.2 parameter ATTNDRus. See clause 7.11.2.1 ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DownstreamMaxBitRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the attainable net data rate expressed in {{units}} as defined in clause 11.4.1.1.2/{{bibref|G.9701}}.
+          Note: This parameter is related to the G.997.2 parameter ATTNDRds. See clause 7.11.2.1 ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamNoiseMargin" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the signal-to-noise ratio margin (as defined in clause 9.8.3.2/{{bibref|G.9701}} and 11.4.1.3/{{bibref|G.9701}}) in the upstream direction. A special value indicates that the signal-to-noise ratio margin is out of the range to be represented. The parameter is expressed in {{units}}.
+          Note: In G.997.2, this parameter is called SNRMus. See ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dB"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="DownstreamNoiseMargin" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the signal-to-noise ratio margin (as defined in clause 9.8.3.2/{{bibref|G.9701}} and 11.4.1.3/{{bibref|G.9701}}) in the upstream direction. A special value indicates that the signal-to-noise ratio margin is out of the range to be represented. The parameter is expressed in {{units}}.
+          Note: In G.997.2, this parameter is called SNRMds. See ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dB"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamAttenuation" access="readOnly" activeNotify="canDeny">
+        <description>
+          The current upstream signal loss (expressed in {{units}}).
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dB"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="DownstreamAttenuation" access="readOnly" activeNotify="canDeny">
+        <description>
+          The current downstream signal loss (expressed in {{units}}).
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dB"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamPower" access="readOnly" activeNotify="canDeny">
+        <description>
+          The current output power at the CPE's FAST line (expressed in {{units}}).
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dBmV"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="DownstreamPower" access="readOnly" activeNotify="canDeny">
+        <description>
+          The current received power at the CPE's FAST line (expressed in {{units}}).
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dBmV"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="SNRMRMCds" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the signal-to-noise margin for the robust management channel (RMC) in the downstream direction (express in {{units}}). A special value (-512)  indicates that the signal-to-noise ratio margin for the RMC is out of the range to be represented. This parameter is defined in clauses 7.10.12.1 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dB"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="SNRMRMCus" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the signal-to-noise margin for the robust management channel (RMC) in the upstream direction (express in {{units}}). A special value (-512)  indicates that the signal-to-noise ratio margin for the RMC is out of the range to be represented. This parameter is defined in clauses 7.10.12.2 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1dB"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="BITSRMCpsds" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} List items report the bit allocation values on RMC sub-carriers in RMC symbols in the downstream direction. Each pair composes of a sub-carrier index from 0..4095 and an 8 bit allocation value. There are maximum 512 pairs. This parameter is defined in clause 7.10.12.3 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="4610"/>
+          </list>
+          <int/>
+        </syntax>
+      </parameter>
+      <parameter name="BITSRMCpsus" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} List items report the bit allocation values on RMC sub-carriers in RMC symbols in the upstream direction. Each pair composes of a sub-carrier index from 0..4095 and an 8 bit allocation value. There are maximum 512 pairs. This parameter is defined in clause 7.10.12.4 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="4610"/>
+          </list>
+          <int/>
+        </syntax>
+      </parameter>
+      <parameter name="FEXTCANCELds" access="readOnly">
+        <description>
+          This indicates whether FEXT cancellation in the downstream direction from all the other vectored lines into the line in the vectored group is enabled (TRUE) or disabled (FALSE). This parameter is defined as FEXT_TO_CANCEL_ENABLEds in clause 7.1.7.1 of ITU Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>      
+      <parameter name="FEXTCANCELus" access="readOnly">
+        <description>
+          This indicates whether FEXT cancellation in the upstream direction from all the other vectored lines into the line in the vectored group is enabled (TRUE) or disabled (FALSE). This parameter is defined as FEXT_TO_CANCEL_ENABLEds in clause 7.1.7.1 of ITU Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="ETRds" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the expected throughput rate expressed in {{units}} as defined in clause 7.11.1.2 of ITU-T Recommendation {{bibref|G.997.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ETRus" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the expected throughput rate expressed in {{units}} as defined in clause 7.11.1.2 of ITU-T Recommendation {{bibref|G.997.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ATTETRds" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the attainable expected throughput expressed in {{units}} as defined in clause 7.11.2.2 of ITU-T Recommendation {{bibref|G.997.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>  
+      <parameter name="ATTETRus" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the attainable expected throughput expressed in {{units}} as defined in clause 7.11.2.2 of ITU-T Recommendation {{bibref|G.997.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MINEFTR" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports the minimum error free throughput value expressed in {{units}} computed from power up as defined in clause 11.4.1.1.3 of ITU-T Recommendation {{bibref|G.9701}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>      
+    </object>
+    <object name="Device.FAST.Line.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Throughput statistics for this interface.
+        The CPE MUST reset the interface's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|#.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|#.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2|section 4.2.2}}.
+      </description>
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted because of errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded even though no errors had been detected to prevent their being delivered. One possible reason for discarding such a packet could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="TotalStart" access="readOnly" activeNotify="canDeny">
+        <description>
+          FAST-specific statistic. The Number of {{units}} since the beginning of the period used for collection of {{object|Total}} statistics.
+          Statistics SHOULD continue to be accumulated across CPE reboots, though this might not always be possible.
+          Note: {{param}} SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ShowtimeStart" access="readOnly" activeNotify="canDeny">
+        <description>
+          FAST-specific statistic. The Number of {{units}} since the most recent DSL Showtime - the beginning of the period used for collection of {{object|Showtime}} statistics.
+          Showtime is defined as successful completion of the DSL link establishment process. The ''Showtime'' statistics are those collected  since the most recent establishment of the DSL link.
+          Note: {{param}} SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LastShowtimeStart" access="readOnly" activeNotify="canDeny">
+        <description>
+          FAST-specific statistic. The Number of {{units}} since the second most recent DSL Showtime-the beginning of the period used for collection of {{object|LastShowtime}} statistics.
+          If the CPE has not retained information about the second most recent Showtime (e.g., on reboot), the start of ''LastShowtime''  statistics MAY temporarily coincide with the start of ''Showtime'' statistics.
+          Note: {{param}} SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="CurrentDayStart" access="readOnly" activeNotify="canDeny">
+        <description>
+          FAST-specific statistic. The Number of {{units}} since the beginning of the period used for collection of {{object|CurrentDay}} statistics.
+          The CPE MAY align the beginning of each ''CurrentDay'' interval with days in the UTC time zone, but is not required to do so.
+          Statistics SHOULD continue to be accumulated across CPE reboots, though this might not always be possible.
+          Note: {{param}} SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="QuarterHourStart" access="readOnly" activeNotify="canDeny">
+        <description>
+          FAST-specific statistic. The Number of {{units}} since the beginning of the period used for collection of {{object|QuarterHour}} statistics.
+          The CPE MAY align the beginning of each ''QuarterHour'' interval with real-time quarter-hour intervals, but is not required to do so.
+          Statistics SHOULD continue to be accumulated across CPE reboots, though this might not always be possible.
+          Note: {{param}} SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.FAST.Line.{i}.Stats.Total." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains DSL line total statistics.
+        Note: The {{object}} parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+      </description>
+      <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}. An errored second (ES) is declared if, during a 1-second interval, there are one or more crc anomalies, or one or more los defects, or one or more lor defects, or one or more lpr primitives.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SeverelyErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of severely errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LOSS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of signal seconds (LOSS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LOSS is declared if, during a 1-second interval, there are one or more los defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LORS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of RMC seconds (LORS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LORS is declared if, during a 1-second interval, there are one or more lor defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="UAS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of unavailable seconds (UAS) as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>      
+      <parameter name="RTXUC" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of uncorrected DTU anomalies (rtx_uc). This parameter is defined in clause 7.8.5 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="RTXTX" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of retransmitted DTU anomalies (rtx_tx). This parameter is defined in clause 7.8.6 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessBSW" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful bit swap (BSW) primitives. This parameter is defined as success_BSW in clause 7.7.20 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessSRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful autonomous SRA (seamless rate adaptation) primitives. This parameter is defined as success_SRA in clause 7.7.21 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessFRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful FRA (fast rate adaptation)  primitives. This parameter is defined as success_FRA in clause 7.7.22 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessRPA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful RPA (RMC parameter adjustment)  primitives. This parameter is defined as success_RPA in clause 7.7.23 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>        
+      <parameter name="SuccessTIGA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful TIGA (transmitter initiated gain adjustment)  primitives. This parameter is defined as success_TIGA in clause 7.7.24 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>              
+    </object>
+    <object name="Device.FAST.Line.{i}.Stats.Showtime." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains FAST line statistics since the most recent showtime.
+        Note: The Total parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+      </description>
+      <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}. An errored second (ES) is declared if, during a 1-second interval, there are one or more crc anomalies, or one or more los defects, or one or more lor defects, or one or more lpr primitives.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SeverelyErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of severely errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LOSS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of signal seconds (LOSS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LOSS is declared if, during a 1-second interval, there are one or more los defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LORS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of RMC seconds (LORS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LORS is declared if, during a 1-second interval, there are one or more lor defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="UAS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of unavailable seconds (UAS) as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>      
+      <parameter name="RTXUC" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of uncorrected DTU anomalies (rtx_uc). This parameter is defined in clause 7.8.5 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="RTXTX" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of retransmitted DTU anomalies (rtx_tx). This parameter is defined in clause 7.8.6 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessBSW" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful bit swap (BSW) primitives. This parameter is defined as success_BSW in clause 7.7.20 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessSRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful autonomous SRA (seamless rate adaptation) primitives. This parameter is defined as success_SRA in clause 7.7.21 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessFRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful FRA (fast rate adaptation)  primitives. This parameter is defined as success_FRA in clause 7.7.22 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessRPA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful RPA (RMC parameter adjustment)  primitives. This parameter is defined as success_RPA in clause 7.7.23 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>        
+      <parameter name="SuccessTIGA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful TIGA (transmitter initiated gain adjustment)  primitives. This parameter is defined as success_TIGA in clause 7.7.24 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>              
+    </object>
+    <object name="Device.FAST.Line.{i}.Stats.LastShowtime." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains FAST line statistics since the second most recent showtime.
+        Note: The Total parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+      </description>
+      <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}. An errored second (ES) is declared if, during a 1-second interval, there are one or more crc anomalies, or one or more los defects, or one or more lor defects, or one or more lpr primitives.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SeverelyErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of severely errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LOSS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of signal seconds (LOSS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LOSS is declared if, during a 1-second interval, there are one or more los defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LORS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of RMC seconds (LORS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LORS is declared if, during a 1-second interval, there are one or more lor defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="UAS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of unavailable seconds (UAS) as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>      
+      <parameter name="RTXUC" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of uncorrected DTU anomalies (rtx_uc). This parameter is defined in clause 7.8.5 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="RTXTX" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of retransmitted DTU anomalies (rtx_tx). This parameter is defined in clause 7.8.6 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessBSW" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful bit swap (BSW) primitives. This parameter is defined as success_BSW in clause 7.7.20 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessSRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful autonomous SRA (seamless rate adaptation) primitives. This parameter is defined as success_SRA in clause 7.7.21 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessFRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful FRA (fast rate adaptation)  primitives. This parameter is defined as success_FRA in clause 7.7.22 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessRPA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful RPA (RMC parameter adjustment)  primitives. This parameter is defined as success_RPA in clause 7.7.23 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>        
+      <parameter name="SuccessTIGA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful TIGA (transmitter initiated gain adjustment)  primitives. This parameter is defined as success_TIGA in clause 7.7.24 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>              
+    </object>
+    <object name="Device.FAST.Line.{i}.Stats.CurrentDay." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains FAST line statistics accumulated during the current day.
+        Note: The Total parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+      </description>
+      <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}. An errored second (ES) is declared if, during a 1-second interval, there are one or more crc anomalies, or one or more los defects, or one or more lor defects, or one or more lpr primitives.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SeverelyErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of severely errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LOSS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of signal seconds (LOSS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LOSS is declared if, during a 1-second interval, there are one or more los defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LORS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of RMC seconds (LORS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LORS is declared if, during a 1-second interval, there are one or more lor defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="UAS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of unavailable seconds (UAS) as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>      
+      <parameter name="RTXUC" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of uncorrected DTU anomalies (rtx_uc). This parameter is defined in clause 7.8.5 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="RTXTX" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of retransmitted DTU anomalies (rtx_tx). This parameter is defined in clause 7.8.6 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessBSW" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful bit swap (BSW) primitives. This parameter is defined as success_BSW in clause 7.7.20 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessSRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful autonomous SRA (seamless rate adaptation) primitives. This parameter is defined as success_SRA in clause 7.7.21 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessFRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful FRA (fast rate adaptation)  primitives. This parameter is defined as success_FRA in clause 7.7.22 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessRPA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful RPA (RMC parameter adjustment)  primitives. This parameter is defined as success_RPA in clause 7.7.23 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>        
+      <parameter name="SuccessTIGA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful TIGA (transmitter initiated gain adjustment)  primitives. This parameter is defined as success_TIGA in clause 7.7.24 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>              
+    </object>
+    
+    <object name="Device.FAST.Line.{i}.Stats.QuarterHour." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains FAST line statistics accumulated during the current quarter hour.
+        Note: The Total parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.
+      </description>
+      <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}. An errored second (ES) is declared if, during a 1-second interval, there are one or more crc anomalies, or one or more los defects, or one or more lor defects, or one or more lpr primitives.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SeverelyErroredSecs" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of severely errored seconds as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LOSS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of signal seconds (LOSS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LOSS is declared if, during a 1-second interval, there are one or more los defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LORS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of loss of RMC seconds (LORS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LORS is declared if, during a 1-second interval, there are one or more lor defects.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="UAS" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of unavailable seconds (UAS) as defined in ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>      
+      <parameter name="RTXUC" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of uncorrected DTU anomalies (rtx_uc). This parameter is defined in clause 7.8.5 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="RTXTX" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of retransmitted DTU anomalies (rtx_tx). This parameter is defined in clause 7.8.6 of ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessBSW" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful bit swap (BSW) primitives. This parameter is defined as success_BSW in clause 7.7.20 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessSRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful autonomous SRA (seamless rate adaptation) primitives. This parameter is defined as success_SRA in clause 7.7.21 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+      <parameter name="SuccessFRA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful FRA (fast rate adaptation)  primitives. This parameter is defined as success_FRA in clause 7.7.22 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccessRPA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful RPA (RMC parameter adjustment)  primitives. This parameter is defined as success_RPA in clause 7.7.23 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>        
+      <parameter name="SuccessTIGA" access="readOnly" activeNotify="canDeny">
+        <description>
+          This parameter reports a count of the successful TIGA (transmitter initiated gain adjustment)  primitives. This parameter is defined as success_TIGA in clause 7.7.24 of  ITU-T Rec. {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>              
+    </object>
+    <object name="Device.FAST.Line.{i}.TestParams." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains the FAST line test parameters that are available during the L0 (i.e., Showtime)  state.
+      </description>
+      <parameter name="SNRGds" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the number of sub-carriers in any one sub-carrier group used to represent the downstream SNR(f) values. Valid values are 1, 2, 4, and 8.
+          Note: In ITU-T G.9701-2014, the only valid value is G = 1. See clause 7.10.8.2 ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SNRGus" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the number of sub-carriers in any one sub-carrier group used to represent the upstream SNR(f) values. Valid values are 1, 2, 4, and 8.
+          Note: In ITU-T G.9701-2014, the only valid value is G = 1. See clause 7.10.8.5 ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SNRpsds" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} Reports the downstream SNR(f) values. A special value indicates that no measurement could be done for this sub-carrier group because it is out of the downstream MEDLEY set or its transmit power is zero. The number of elements will depend on the value of SNRGds. Interpretation of the values is as defined in clause 11.4.1.2.2.of ITU-T Rec. {{bibref|G.9701}}.
+          Note: See clause 7.10.8.3 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="2047"/>
+          </list>
+          <int/>
+        </syntax>
+      </parameter>
+      <parameter name="SNRpsus" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} Reports the upstream SNR(f) values. A special value indicates that no measurement could be done for this sub-carrier group because it is out of the downstream MEDLEY set or its transmit power is zero. The number of elements will depend on the value of SNRGds. Interpretation of the values is as defined in clause 11.4.1.2.2.of ITU-T Rec. {{bibref|G.9701}}.
+          Note: See clause 7.10.8.6 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="2047"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SNRMTds" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the number of symbols used to measure the downstream SNR(f) values. The valid values 0..65535.
+          Note: See clause 7.10.8.1 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SNRMTus" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the number of symbols used to measure the upstream SNR(f) values. The valid values 0..65535.
+          Note: See clause 7.10.8.4 of ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="ACTINP" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the actual INP against SHINE as defined in clause 11.4.1.1.7/{{bibref|G.9701}}. A special value indicates an actual INP against SHINE of 2047 symbols or higher. The valid values are 0..2046 and 2047 is the special value.
+          Note: See ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="NFEC" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the DTU FEC codeword length (expressed in 1 byte unit) as defined in clause 9.3/{{bibref|G.9701}}. The valid range is 32..255.
+          Note: See clause 7.11.4.1 ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="RFEC" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the DTU FEC codeword redundancy as defined in clause 9.3/{{bibref|G.9701}}.
+          Note: See ITU-T Recommendation {{bibref|G.997.2}}.
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamCurrRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the current physical layer aggregate data rate (expressed in {{units}}) of the upstream FAST as defined in clause 11.4.1.1.1/{{bibref|G.9701}}.
+          The current physical layer aggregate data rate (expressed in Kbps) of the upstream FAST connection. The valid values are 0..4294967295(0 to 232-1 kbit/s).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+    </parameter>
+      <parameter name="DownstreamCurrRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the current physical layer aggregate data rate (expressed in {{units}}) of the upstream FAST as defined in clause 11.4.1.1.1/{{bibref|G.9701}}.
+          The current physical layer aggregate data rate (expressed in Kbps) of the downstream FAST connection. The valid values are 0..4294967295(0 to 232-1 kbit/s).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>      
+     <parameter name="ACTINPREIN" access="readOnly" activeNotify="canDeny">
+        <description>
+          Reports the actual INP against REIN as defined in clause 11.4.1.1.8/{{bibref|G.9701}}. A special value indicates an actual INP against REIN of 63 symbols or higher. The valid range is 0..62 symbols, and 63 is the special value.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>  
+    </object> 
+
+    <object base="Device.DSL.BondingGroup.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <description action="replace">
+        DSL bonding group table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Each instance is a bonding group, and is expected to be stacked above a {{object|.DSL.Channel}} instance or a {{object|.FAST.Line}} instance for each bonded channel in the group.
+        Many of the parameters within this object, including {{param|LowerLayers}}, are read-only because bonding is not expected to be configured via {{bibref|TR-069}}.
+        The DSL bonding data model is closely aligned with {{bibref|TR-159}}. Corresponds to {{bibref|TR-159}} ''oBondingGroup''.
+      </description>
+    </object>    
+
+    <object base="Device.DSL.BondingGroup.{i}.BondedChannel.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <description action="replace">
+        DSL bonded channel table. Each table entry represents a bonded channel within the bonding group, and is associated with exactly one {{object|.DSL.Channel}} instance or one {{object|.FAST.Line}} instance. There MUST be an instance of {{object}} for each DSL channel or FAST line that is bonded.
+        When a {{object|.DSL.Channel}} or {{object|.FAST.Line}} is no longer bonded, then the CPE MUST delete the corresponding {{object}} instance. However, when a bonded {{object|.DSL.Channel}} or {{object|.FAST.Line}} becomes disabled, the channel remains bonded and so the corresponding {{object}} instance MUST NOT be deleted.
+      </description> 
+      <parameter base="Channel" access="readOnly">
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".DSL.Channel. .FAST.Line." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.AccessPoint.{i}.Security." access="readOnly" minEntries="1" maxEntries="1">
+      <!-- WPS 2.0 -->
+      <parameter base="Reset" access="readWrite">
+        <description action="replace">
+          When set to {{true}}, this {{object|#}} instance's WiFi security settings are reset to their factory default values. The affected settings include {{param|ModeEnabled}}, {{param|WEPKey}}, {{param|PreSharedKey}} , {{param|KeyPassphrase}} and {{param|#.WPS.PIN}} (if applicable).
+          If the parameter cannot be set, the CPE MUST reject the request as an invalid parameter value. Possible failure reasons include a lack of default values or if {{param|ModeEnabled}} is an Enterprise type, i.e. {{enum|WPA-Enterprise|ModesSupported}}, {{enum|WPA2-Enterprise|ModesSupported}} or {{enum|WPA-WPA2-Enterprise|ModesSupported}}.
+        </description>
+        <syntax command="true">
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <!-- WiFi Management Frame Protection -->
+      <parameter name="MFPConfig" access="readWrite">
+        <description>
+          Management Frame Protection configuration applicable when {{param|ModeEnabled}} is set to {{enum|WPA2-Personal|ModeEnabled}} or {{enum|WPA2-Enterprise|ModeEnabled}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Optional"/>
+            <enumeration value="Required"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>  
+    </object>
+
+    <!-- WPS 2.0 -->
+    <object base="Device.WiFi.AccessPoint.{i}.WPS." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">
+        This object contains parameters related to Wi-Fi Protected Setup for this access point (as specified in {{bibref|WPSv1.0}} or {bibref|WPSv2.0}}).
+      </description>
+      <parameter name="Status" access="readOnly">
+        <description>
+          {{list}} Indicates the current status of WPS. If the device goes to {{enum|SetupLocked}} the WPS needs to be disabled and re-enabled to come out of state.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Error"/>
+            <enumeration value="Unconfigured"/>
+            <enumeration value="Configured"/>
+            <enumeration value="SetupLocked"/>
+          </string>
+        </syntax>
+      </parameter>
+      
+      <parameter name="Version" access="readOnly">
+        <description>
+          The Wi-Fi Simple Configuration version supported by the device, a string of the form ''m.n'' where ''m'' is the major version and ''n'' is the minor version.
+          For example, a value of ''1.0'' denotes WSC 1.0 and a value of ''2.0'' denotes WSC 2.0.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="PIN" access="readWrite">
+        <description>
+          Represents the Device PIN used for PIN based pairing between WPS peers. This PIN is either a four digit number or an eight digit number.
+          {{hidden}}
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="8"/>
+            <pattern value="\d{4}|\d{8}"/>
+          </string>
+        </syntax>
+      </parameter>    
+      
+      <parameter base="ConfigMethodsSupported" access="readOnly">
+        <description action="replace">
+          WPS configuration methods supported by the device. {{enum}}
+          This parameter corresponds directly to the "Config Methods" attribute of {{bibref|WPS 2.0}}.
+          The {{enum|USBFlashDrive}} and {{enum|Ethernet}} are only applicable in WPS 1.0 and are deprecated in WPS 2.x. The {{enum|PhysicalPushButton}}, {{enum|VirtualPushButton}}, {{enum|PhysicalDisplay}} and {{enum|VirtualDisplay}} are applicable to WPS 2.x only.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="USBFlashDrive"/>
+            <enumeration value="Ethernet"/>
+            <enumeration value="Label"/>
+            <enumeration value="Display"/>
+            <enumeration value="ExternalNFCToken"/>
+            <enumeration value="IntegratedNFCToken"/>
+            <enumeration value="NFCInterface"/>
+            <enumeration value="PushButton"/>
+            <enumeration value="PIN"/>
+            <enumeration value="PhysicalPushButton"/>
+            <enumeration value="PhysicalDisplay"/>
+            <enumeration value="VirtualPushButton"/>
+            <enumeration value="VirtualDisplay"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Device.WiFi.EndPoint.{i}.WPS." access="readOnly" minEntries="1" maxEntries="1">
+      
+      <parameter name="Status" access="readOnly">
+        <description>
+          {{list}} Indicates the current status of WPS in EndPoint.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Error"/>
+            <enumeration value="Unconfigured"/>
+            <enumeration value="Configured"/>
+          </string>
+        </syntax>
+      </parameter>
+      
+      <parameter name="Version" access="readOnly">
+        <description>
+          The Wi-Fi Simple Configuration version supported by the device, a string of the form ''m.n'' where ''m'' is the major version and ''n'' is the minor version.
+          For example, a value of ''1.0'' denotes WSC 1.0 and a value of ''2.0'' denotes WSC 2.0.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="PIN" access="readWrite">
+        <description>
+          Represents the Device PIN used for PIN based pairing between WPS peers. This PIN is either a four digit number or an eight digit number.
+          {{hidden}}
+        </description>
+        <syntax hidden="true">
+          <unsignedInt>
+            <range minInclusive="4" maxInclusive="4"/>
+            <range minInclusive="8" maxInclusive="8"/>            
+          </unsignedInt>
+        </syntax>
+      </parameter>    
+      
+      <parameter base="ConfigMethodsSupported" access="readOnly">
+        <description action="replace">
+          WPS configuration methods supported by the device. {{enum}}
+          This parameter corresponds directly to the "Config Methods" attribute of {{bibref|WPS 2.0}}.
+          The {{enum|USBFlashDrive}} and {{enum|Ethernet}} are only applicable in WPS 1.0 and are deprecated in WPS 2.x. The {{enum|PhysicalPushButton}}, {{enum|VirtualPushButton}}, {{enum|PhysicalDisplay}} and {{enum|VirtualDisplay}} are applicable to WPS 2.x only.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="USBFlashDrive"/>
+            <enumeration value="Ethernet"/>
+            <enumeration value="Label"/>
+            <enumeration value="Display"/>
+            <enumeration value="ExternalNFCToken"/>
+            <enumeration value="IntegratedNFCToken"/>
+            <enumeration value="NFCInterface"/>
+            <enumeration value="PushButton"/>
+            <enumeration value="PIN"/>
+            <enumeration value="PhysicalPushButton"/>
+            <enumeration value="PhysicalDisplay"/>
+            <enumeration value="VirtualPushButton"/>
+            <enumeration value="VirtualDisplay"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- WiFi Management Frame Protection -->
+    <object base="Device.WiFi.EndPoint.{i}.Profile.{i}.Security." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="MFPConfig" access="readWrite">
+        <description>
+          Management Frame Protection configuration applicable when {{param|ModeEnabled}} is set to {{enum|WPA2-Personal|ModeEnabled}} or {{enum|WPA2-Enterprise|ModeEnabled}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Optional"/>
+            <enumeration value="Required"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>    
+    </object>
+
+    <!-- OperatingChannelBandwidth -->
+    <object base="Device.WiFi.Radio.{i}." access="readOnly"  minEntries="0" maxEntries="unbounded" numEntriesParameter="RadioNumberOfEntries">
+      <parameter base="OperatingChannelBandwidth" access="readWrite" dmr:version="2.0">
+        <description action="replace">
+          The preferred channel bandwidth to be used (applicable to 802.11n and 802.11ac specifications only).
+        </description>
+      </parameter>
+      
+      <parameter name="CurrentOperatingChannelBandwidth" access="readOnly" dmr:version="2.11">
+        <description>
+          The channel bandwidth currently in use.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="20MHz"/>
+            <enumeration value="40MHz"/>
+            <enumeration value="80MHz"/>
+            <enumeration value="160MHz"/>
+          </string>
+        </syntax>
+      </parameter>        
+    </object>
+
+    <!-- UI Enable -->
+    <object base="Device.UserInterface." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="Enable" access="readWrite" dmr:previousParameter="">
+        <description>
+          Enables and disables the CPE's user interface.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="true"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!--Device.UserInterface.Messages-->
+    <object name="Device.UserInterface.Messages." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Definition of user information message displays.
+      </description>
+      <parameter name="Enable" access="readWrite" dmr:previousParameter="">
+        <description>
+          Enables and displays the user information message.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="true"/>
+        </syntax>
+      </parameter>
+      <parameter name="Title" access="readWrite">
+        <description>
+          Message title to be displayed.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SubTitle" access="readWrite">
+        <description>
+          Message sub title to be displayed.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Text" access="readWrite">
+        <description>
+          Message text.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="IconType" access="readWrite">
+        <description>
+          Icon to be displayed.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>  
+            <enumeration value="Greeting"/> 
+            <enumeration value="Information"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Important"/>
+            <enumeration value="Urgent"/>
+            <enumeration value="Advertisement"/>
+          </string>
+        </syntax>      
+      </parameter>
+      <parameter name="MessageColor" access="readWrite">
+        <description>
+          The color of message text in RGB hexadecimal notation (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="BackgroundColor" access="readWrite">
+        <description>
+          The color of the message screen background in RGB hexadecimal notation (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="TitleColor" access="readWrite">
+        <description>
+          The color of the message title in RGB hexadecimal notation (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="SubTitleColor" access="readWrite">
+        <description>
+          The color of the sub title in RGB hexadecimal notation (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="RequestedNumberOfRepetitions" access="readWrite">
+        <description>
+          The number of times the device SHOULD repeat the message.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="ExecutedNumberOfRepetitions" access="readOnly">
+        <description>
+          The number of times the device repeated the message.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- HTTP Connection Request -->
+    <object base="Device.ManagementServer." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="HTTPConnectionRequestEnable" access="readWrite" dmr:previousParameter="CWMPRetryIntervalMultiplier">
+        <description>
+          Enables or disables HTTP connection request handling on the CPE. 
+          If HTTP connection request handling is disabled ({{param}} is set to {{false}}), {{param|ConnectionRequestURL}} MUST be set to {{empty}} and the CPE MUST close the port used by the HTTP connection request server.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="true"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- XMPP Connect -->
+    <object base="Device.XMPP." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="SupportedServerConnectAlgorithms" access="readOnly">
+        <description>
+          The algorithms supported by the CPE for resolving XMPP server addresses and ports. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DNS-SRV">
+              <description>
+                Use the preferred connection algorithm as specified in {{bibref|RFC6120|Section 3.2.1}} where the value of the {{param|Connection.{i}.Domain}} parameter is used to look up the server address and port to use.
+              </description>
+            </enumeration>
+            <enumeration value="DNS">
+              <description>
+                Use the fallback connection mechanism as specified in {{bibref|RFC6120|Section 3.2.2}}, where the value of the {{param|Connection.{i}.Domain}} parameter is used to look up the server address, and the port is the ''xmpp-client'' port (5222).
+              </description>
+            </enumeration>
+            <enumeration value="ServerTable">
+              <description>
+                Use the instances of the {{object|Connection.{i}.Server}} table based on the values of the {{param|Connection.{i}.Server.{i}.Priority}} and {{param|Connection.{i}.Server.{i}.Weight}} parameters as the basis for reconnect. Instances MUST be reachable and reachable instances with the lowest value MUST be preferred.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>      
+    </object>
+    <object base="Device.XMPP.Connection.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="ServerConnectAlgorithm" access="readWrite">
+        <description action="replace">
+          The algorithm the {{object}} uses when connecting with the associated lists of servers.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.SupportedServerConnectAlgorithms"/>
+          </string>
+          <default type="object" value="DNS-SRV"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <!--
+************************
+*                      *
+*   P R O F I L E S    *
+*                      *
+************************
+-->
+
+    <!-- LED Status profiles -->
+    <profile name="LEDBasic:1">
+      <object ref="Device.LEDs." requirement="present">
+        <parameter ref="LEDNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}." requirement="present">
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Reason" requirement="readOnly"/>
+        <parameter ref="CyclePeriodRepetitions" requirement="readOnly"/>
+        <parameter ref="Location" requirement="readOnly"/>
+        <parameter ref="RelativeXPosition" requirement="readOnly"/>
+        <parameter ref="RelativeYPosition" requirement="readOnly"/>
+        <parameter ref="CycleElementNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CycleElement.{i}." requirement="present">
+        <parameter ref="Order" requirement="readOnly"/>
+        <parameter ref="Color" requirement="readOnly"/>
+        <parameter ref="Duration" requirement="readOnly"/>
+        <parameter ref="FadeInterval" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CurrentCycleElement." requirement="present">
+        <parameter ref="CycleElementReference" requirement="readOnly"/>
+        <parameter ref="Color" requirement="readOnly"/>
+        <parameter ref="Duration" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="LEDAdv:1">
+      <object ref="Device.LEDs." requirement="present">
+        <parameter ref="LEDNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}." requirement="present">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Reason" requirement="readOnly"/>
+        <parameter ref="CyclePeriodRepetitions" requirement="readOnly"/>
+        <parameter ref="Location" requirement="readOnly"/>
+        <parameter ref="RelativeXPosition" requirement="readOnly"/>
+        <parameter ref="RelativeYPosition" requirement="readOnly"/>
+        <parameter ref="CycleElementNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CycleElement.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Color" requirement="readWrite"/>
+        <parameter ref="Duration" requirement="readWrite"/>
+        <parameter ref="FadeInterval" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CurrentCycleElement." requirement="present">
+        <parameter ref="CycleElementReference" requirement="readOnly"/>
+        <parameter ref="Color" requirement="readOnly"/>
+        <parameter ref="Duration" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="DeviceImage:1">
+      <object ref="Device.DeviceInfo." requirement="present">
+        <parameter ref="DeviceImageNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DeviceInfo.DeviceImageFile.{i}." requirement="present">
+        <parameter ref="Location" requirement="readOnly"/>
+        <parameter ref="Image" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <!-- G.fast profiles -->
+    <profile name="FAST:1">
+       <description>
+         Note: This profile is valid for G.9701 modems.
+       </description>
+       <object ref="Device.FAST." requirement="present">
+         <parameter ref="LineNumberOfEntries" requirement="readOnly"/>
+       </object>
+       <object ref="Device.FAST.Line.{i}." requirement="present">
+         <parameter ref="Enable" requirement="readWrite"/>
+         <parameter ref="Status" requirement="readOnly"/>
+         <parameter ref="Alias" requirement="readWrite"/>
+         <parameter ref="Name" requirement="readOnly"/>
+         <parameter ref="LastChange" requirement="readOnly"/>
+         <parameter ref="Upstream" requirement="readOnly"/>
+         <parameter ref="AllowedProfiles" requirement="readOnly"/>
+         <parameter ref="CurrentProfile" requirement="readOnly"/>
+         <parameter ref="UPBOKLE" requirement="readOnly"/>
+         <parameter ref="UpstreamMaxBitRate" requirement="readOnly"/>
+         <parameter ref="DownstreamMaxBitRate" requirement="readOnly"/>
+         <parameter ref="UpstreamNoiseMargin" requirement="readOnly"/>
+         <parameter ref="DownstreamNoiseMargin" requirement="readOnly"/>
+         <parameter ref="UpstreamAttenuation" requirement="readOnly"/>
+         <parameter ref="DownstreamAttenuation" requirement="readOnly"/>
+         <parameter ref="UpstreamPower" requirement="readOnly"/>
+         <parameter ref="DownstreamPower" requirement="readOnly"/>
+         <parameter ref="SNRMRMCds" requirement="readOnly"/>
+         <parameter ref="SNRMRMCus" requirement="readOnly"/>
+         <parameter ref="FEXTCANCELds" requirement="readOnly"/>
+         <parameter ref="FEXTCANCELus" requirement="readOnly"/>
+         <parameter ref="ETRds" requirement="readOnly"/>
+         <parameter ref="ETRus" requirement="readOnly"/>
+         <parameter ref="ATTETRds" requirement="readOnly"/>
+         <parameter ref="ATTETRus" requirement="readOnly"/>
+         <parameter ref="MINEFTR" requirement="readOnly"/>
+       </object>
+       <object ref="Device.FAST.Line.{i}.Stats." requirement="present">
+         <parameter ref="BytesSent" requirement="readOnly"/>
+         <parameter ref="BytesReceived" requirement="readOnly"/>
+         <parameter ref="PacketsSent" requirement="readOnly"/>
+         <parameter ref="PacketsReceived" requirement="readOnly"/>
+         <parameter ref="ErrorsSent" requirement="readOnly"/>
+         <parameter ref="ErrorsReceived" requirement="readOnly"/>
+       </object>
+       <object ref="Device.FAST.Line.{i}.TestParams." requirement="present">
+         <parameter ref="SNRGds" requirement="readOnly"/>
+         <parameter ref="SNRGus" requirement="readOnly"/>
+         <parameter ref="SNRpsds" requirement="readOnly"/>
+         <parameter ref="SNRpsus" requirement="readOnly"/>      
+         <parameter ref="SNRMTds" requirement="readOnly"/>
+         <parameter ref="SNRMTus" requirement="readOnly"/>
+       </object>      
+     </profile>
+     
+     <!-- UserInterface Messages profiles -->
+     <profile name="UserInformationBasic:1">
+      <object ref="Device.UserInterface.Messages." requirement="present">
+         <parameter ref="Title" requirement="readWrite"/>
+         <parameter ref="SubTitle" requirement="readWrite"/>
+         <parameter ref="Text" requirement="readWrite"/>
+      </object>
+     </profile>
+     <profile name="UserInformationExtended:1">
+      <object ref="Device.UserInterface.Messages." requirement="present">
+         <parameter ref="Title" requirement="readWrite"/>
+         <parameter ref="SubTitle" requirement="readWrite"/>
+         <parameter ref="Text" requirement="readWrite"/>
+         <parameter ref="IconType" requirement="readWrite"/>
+         <parameter ref="MessageColor" requirement="readWrite"/>
+         <parameter ref="BackgroundColor" requirement="readWrite"/>
+         <parameter ref="TitleColor" requirement="readWrite"/>
+         <parameter ref="SubTitleColor" requirement="readWrite"/>
+         <parameter ref="RequestedNumberOfRepetitions" requirement="readWrite"/>
+         <parameter ref="ExecutedNumberOfRepetitions" requirement="readOnly"/>
+      </object>
+     </profile>
+  </model>
+</dm:document>

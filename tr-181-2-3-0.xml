@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  TR-069 Device:2.3 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:2.3 Root Object definition.
+
+
+  Editors:
+    Sarah Banks, Cisco
+    Andrea Colmegna, FASTWEB
+    Tim Spets, Motorola Mobility
+
+  Editors Object Addressing Extensions:
+    Sarah Banks, Cisco
+    Andrea Colmegna, FASTWEB
+    Ping Fang, Huawei Technologies
+    Nils Magnusson, TeliaSonera
+    Anton Okmyanskiy, Cisco
+    Staffan Ungsgard, TeliaSonera
+
+  Editors Remote Management of non-TR-069 devices:
+    John Blackford, Pace
+    Ping Fang, Huawei Technologies
+    Tim Spets, Motorola Mobility
+
+  BroadbandHome™ Working Group Chairs:
+    Greg Bathrick, PMC-Sierra
+    Heather Kirksey, Alcatel-Lucent
+
+  Vice Chair: 
+    Jason Walls, UNH
+
+  Chief Editor: 
+    Michael Hanrahan, Huawei Technologies
+
+
+  Version History:
+    * May 2010: tr-181-2-0-0.xml, corresponds to TR-181 Issue 2.
+    * November 2010: tr-181-2-1-0.xml, 
+        corresponds to TR-181 Issue 2 Amendment 1.
+    * March 2011: tr-181-2-2-0,
+        corresponds to TR-181 Issue 2 Amendment 2.
+    * July 2011: tr-181-2-3-0,
+        corresponds to TR-181 Issue 2 Amendment 3.
+
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-4"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-4
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-4.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-3-0" file="tr-181-2-3-0.xml">
+
+  <description>Device:2.3 data model</description>
+
+  <!-- import Alias DT definition -->
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"/>
+  </import>
+
+  <!-- imports Device:2.2 datamodel from tr-181-2-2 -->
+  <import file="tr-181-2-2.xml" spec="urn:broadband-forum-org:tr-181-2-2">
+    <component name="_DeviceInfo" ref="DeviceInfo"/>
+    <component name="Time"/>
+    <component name="UserInterface"/>
+    <model name="Device:2.2"/>
+  </import>
+
+  <!-- imports modified/new common objects from tr-157-1-4 -->
+  <import file="tr-157-1-4.xml" spec="urn:broadband-forum-org:tr-157-1-4">
+    <component name="DI_SupportedDataModelDiffs"/>
+    <component name="DI_TemperatureStatusDiffs"/>
+    <component name="DI_ProcessorsDiffs"/>
+    <component name="DI_VendorLogFilesDiffs"/>
+    <component name="DownloadAvailabilityDiffs"/>
+    <component name="USBHosts_Device2Diffs"/>
+    <component name="SoftwareModulesDiffs"/>
+    <component name="UserDiffs"/>
+    <component name="SmartCardReaderDiffs"/>
+    <component name="PeriodicStatisticsDiffs"/>
+    <component name="NSLookupDiagDiffs"/>
+    
+    <!-- new in tr 157-1-4 -->
+    <component name="DI_ProxierInfo"/>
+    <component name="MS_EmbeddedDevice_Device2"/>
+    <component name="MS_VirtualDevice_Device2"/>
+  </import>
+
+  <!-- Update the DeviceInfo Component for the Device:2 data model -->
+  <component name="DeviceInfoDiffs">
+    <object base="DeviceInfo.VendorConfigFile.{i}." access="readOnly" numEntriesParameter="VendorConfigFileNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="DeviceInfo">
+    <component ref="_DeviceInfo"/>
+    <component ref="DeviceInfoDiffs"/>
+  </component>
+
+  <model name="Device:2.3" base="Device:2.2">
+    <!-- adds new objects from tr-157-1-4 -->
+    <component path="Device." ref="DI_ProxierInfo"/>
+    <component path="Device." ref="MS_EmbeddedDevice_Device2"/>
+    <component path="Device." ref="MS_VirtualDevice_Device2"/>
+
+    <!-- replace modified objects from tr-157-1-4 -->
+    <component path="Device." ref="DI_SupportedDataModelDiffs"/>
+    <component path="Device." ref="DI_TemperatureStatusDiffs"/>
+    <component path="Device." ref="DI_ProcessorsDiffs"/>
+    <component path="Device." ref="DI_VendorLogFilesDiffs"/>
+    <component path="Device.ManagementServer." ref="DownloadAvailabilityDiffs"/>
+    <component path="Device.USB." ref="USBHosts_Device2Diffs"/>
+    <component path="Device." ref="SoftwareModulesDiffs"/>
+    <component path="Device.Users." ref="UserDiffs"/>
+    <component path="Device.SmartCardReaders." ref="SmartCardReaderDiffs"/>
+    <component path="Device." ref="PeriodicStatisticsDiffs"/>
+    <component path="Device.DNS.Diagnostics." ref="NSLookupDiagDiffs"/>
+    
+    <!-- replace modified objects from tr-181-2-3 -->
+    <component path="Device." ref="DeviceInfoDiffs"/>
+
+    <!-- update Alias parameter -->
+    <object base="Device.DSL.Line.{i}." access="readOnly" numEntriesParameter="LineNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DSL.Channel.{i}." access="readOnly" numEntriesParameter="ChannelNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DSL.BondingGroup.{i}." access="readOnly" numEntriesParameter="BondingGroupNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DSL.BondingGroup.{i}.BondedChannel.{i}." access="readOnly" numEntriesParameter="BondedChannelNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.ATM.Link.{i}." access="readWrite" numEntriesParameter="LinkNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.PTM.Link.{i}." access="readWrite" numEntriesParameter="LinkNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Ethernet.Interface.{i}." access="readOnly" numEntriesParameter="InterfaceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Ethernet.Link.{i}." access="readWrite" numEntriesParameter="LinkNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Ethernet.VLANTermination.{i}." access="readWrite" numEntriesParameter="VLANTerminationNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.USB.Interface.{i}." access="readOnly" numEntriesParameter="InterfaceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.USB.Port.{i}." access="readOnly" numEntriesParameter="PortNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.HPNA.Interface.{i}." access="readOnly" numEntriesParameter="InterfaceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.HPNA.Interface.{i}.QoS.FlowSpec.{i}." access="readWrite" numEntriesParameter="FlowSpecNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.MoCA.Interface.{i}." access="readOnly" numEntriesParameter="InterfaceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.HomePlug.Interface.{i}." access="readOnly" numEntriesParameter="InterfaceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.UPA.Interface.{i}." access="readOnly" numEntriesParameter="InterfaceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.UPA.Interface.{i}.ActiveNotch.{i}." access="readWrite" numEntriesParameter="ActiveNotchNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.UPA.Interface.{i}.BridgeFor.{i}." access="readOnly" numEntriesParameter="BridgeForNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.Radio.{i}." access="readOnly" numEntriesParameter="RadioNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.SSID.{i}." access="readWrite" numEntriesParameter="SSIDNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.AccessPoint.{i}." access="readWrite" numEntriesParameter="AccessPointNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.EndPoint.{i}." access="readWrite" numEntriesParameter="EndPointNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.EndPoint.{i}.Profile.{i}." access="readWrite" numEntriesParameter="ProfileNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Bridging.Bridge.{i}." access="readWrite" numEntriesParameter="BridgeNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Bridging.Bridge.{i}.Port.{i}." access="readWrite" numEntriesParameter="PortNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Bridging.Bridge.{i}.VLAN.{i}." access="readWrite" numEntriesParameter="VLANNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Bridging.Bridge.{i}.VLANPort.{i}." access="readWrite" numEntriesParameter="VLANPortNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Bridging.Filter.{i}." access="readWrite" numEntriesParameter="FilterNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.PPP.Interface.{i}." access="readWrite" numEntriesParameter="InterfaceNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Interface.{i}." access="readWrite" numEntriesParameter="InterfaceNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Interface.{i}.IPv4Address.{i}." access="readWrite" numEntriesParameter="IPv4AddressNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}
+This parameter can only be modified if {{param|AddressingType}} is {{enum|Static|AddressingType}}.</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Interface.{i}.IPv6Address.{i}." access="readWrite" numEntriesParameter="IPv6AddressNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}
+This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Interface.{i}.IPv6Prefix.{i}." access="readWrite" numEntriesParameter="IPv6PrefixNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}
+This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Routing.Router.{i}." access="readWrite" numEntriesParameter="RouterNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Routing.Router.{i}.IPv4Forwarding.{i}." access="readWrite" numEntriesParameter="IPv4ForwardingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Routing.Router.{i}.IPv6Forwarding.{i}." access="readWrite" numEntriesParameter="IPv6ForwardingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Routing.RIP.InterfaceSetting.{i}." access="readWrite" numEntriesParameter="InterfaceSettingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.NeighborDiscovery.InterfaceSetting.{i}." access="readWrite" numEntriesParameter="InterfaceSettingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.RouterAdvertisement.InterfaceSetting.{i}." access="readWrite" numEntriesParameter="InterfaceSettingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.RouterAdvertisement.InterfaceSetting.{i}.Option.{i}." access="readWrite" numEntriesParameter="OptionNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IPv6rd.InterfaceSetting.{i}." access="readOnly" numEntriesParameter="InterfaceSettingNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DSLite.InterfaceSetting.{i}." access="readOnly" numEntriesParameter="InterfaceSettingNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.QoS.Classification.{i}." access="readWrite" numEntriesParameter="ClassificationNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.QoS.App.{i}." access="readWrite" numEntriesParameter="AppNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.QoS.Flow.{i}." access="readWrite" numEntriesParameter="FlowNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.QoS.Policer.{i}." access="readWrite" numEntriesParameter="PolicerNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.QoS.Queue.{i}." access="readWrite" numEntriesParameter="QueueNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.QoS.QueueStats.{i}." access="readWrite" numEntriesParameter="QueueStatsNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.QoS.Shaper.{i}." access="readWrite" numEntriesParameter="ShaperNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DNS.Client.Server.{i}." access="readWrite" numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DNS.Relay.Forwarding.{i}." access="readWrite" numEntriesParameter="ForwardNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.NAT.InterfaceSetting.{i}." access="readWrite" numEntriesParameter="InterfaceSettingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.NAT.PortMapping.{i}." access="readWrite" numEntriesParameter="PortMappingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}
+Note: There is no guarantee that the {{param}} value on automatically-created {{object}} instances will be retained. This is because automatically-created {{object}} instances can be transitory.</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Client.{i}." access="readWrite" numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable" minEntries="1" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Client.{i}.SentOption.{i}." access="readWrite" numEntriesParameter="SentOptionNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Client.{i}.ReqOption.{i}." access="readWrite" numEntriesParameter="ReqOptionNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Server.Pool.{i}." access="readWrite" numEntriesParameter="PoolNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}." access="readWrite" numEntriesParameter="StaticAddressNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Server.Pool.{i}.Option.{i}." access="readWrite" numEntriesParameter="OptionNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Server.Pool.{i}.Client.{i}." access="readOnly" numEntriesParameter="ClientNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}
+Note: There is no guarantee that the {{param}} value on automatically-created {{object}} instances will be retained. This is because automatically-created {{object}} instances can be transitory.</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv4.Relay.Forwarding.{i}." access="readWrite" numEntriesParameter="ForwardingNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv6.Client.{i}." access="readWrite" numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable" minEntries="1" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv6.Client.{i}.SentOption.{i}." access="readWrite" numEntriesParameter="SentOptionNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv6.Server.Pool.{i}." access="readWrite" numEntriesParameter="PoolNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv6.Server.Pool.{i}.Client.{i}." access="readOnly" numEntriesParameter="ClientNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}
+Note: There is no guarantee that the {{param}} value on automatically-created {{object}} instances will be retained. This is because automatically-created {{object}} instances can be transitory.</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.DHCPv6.Server.Pool.{i}.Option.{i}." access="readWrite" numEntriesParameter="OptionNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IEEE8021x.Supplicant.{i}." access="readWrite" numEntriesParameter="SupplicantNumberOfEntries" enableParameter="Enable" minEntries="1" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Firewall.Level.{i}." numEntriesParameter="LevelNumberOfEntries" access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Firewall.Chain.{i}." access="readWrite" numEntriesParameter="ChainNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Firewall.Chain.{i}.Rule.{i}." access="readWrite" numEntriesParameter="RuleNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" activeNotify="canDeny">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- extends non-transient objects adding Alias parameter -->
+    <object base="Device.InterfaceStack.{i}." access="readOnly" numEntriesParameter="InterfaceStackNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny" dmr:previousParameter="">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- Alias parameter in ManageableDevice table is deprecated -->
+    <object base="Device.ManagementServer.ManageableDevice.{i}." access="readOnly"  numEntriesParameter="ManageableDeviceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" status="deprecated">
+        <description action="append">This parameter is DEPRECATED because {{object}} is a transient object.</description>
+      </parameter>
+    </object>
+
+    <!-- Alias parameter in Host table is deprecated -->
+    <object base="Device.Hosts.Host.{i}." access="readOnly" numEntriesParameter="HostNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Alias" access="readWrite" status="deprecated">
+        <description action="append">This parameter is DEPRECATED because {{object}} is a transient object.</description>
+      </parameter>
+    </object>
+
+    <!-- new parameters -->
+    <object base="Device.ManagementServer." access="readOnly" minEntries="1" maxEntries="1" dmr:version="1.0">
+      <parameter name="AliasBasedAddressing" access="readOnly" forcedInform="true" dmr:previousParameter="NATDetected">
+        <description>Indicates whether or not the Alias-Based Addressing Mechanism is supported.
+A {{true}} value indicates that the CPE supports the Alias-Based Addressing Mechanism, as defined in {{bibref|TR-069a4|3.6.1}} and described in {{bibref|TR-069a4|Appendix II}}.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InstanceMode" access="readWrite">
+        <description>Instance identification mode as defined in {{bibref|TR-069a4|3.6.1}}. When {{param|AliasBasedAddressing}} is {{true}}, {{param}} is used by the ACS to control whether the CPE will use Instance Numbers or Instance Aliases in returned Path Names.  {{enum}} 
+This parameter is REQUIRED for any CPE supporting Alias-Based Addressing.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="InstanceNumber"/>
+            <enumeration value="InstanceAlias"/>
+          </string>
+          <default type="factory" value="InstanceNumber"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoCreateInstances" access="readWrite">
+        <description>Enable or disable the Auto-Create Instance Mechanism. When {{param|AliasBasedAddressing}} is {{true}}, {{param}} indicates whether or not the CPE will automatically create instances while processing a SetParameterValues RPC (as defined in {{bibref|TR-069a4|A.3.2.1}}).
+*A {{true}} value indicates that the CPE will perform auto-creation of instances when the Alias-Based Addressing Mechanism is used in SetParameterValues RPC.
+*A {{false}} value indicates that the CPE will not create new object instances. Instead, it will reject the setting of parameters in unrecognized instances and respond with a fault code.
+This parameter is REQUIRED for any CPE supporting Alias-Based Addressing.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="false"/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+  </model>
+
+</dm:document>

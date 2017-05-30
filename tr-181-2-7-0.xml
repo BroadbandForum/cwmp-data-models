@@ -1,0 +1,2300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--      
+  TR-069 Device:2.7 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:2.7 Root Object definition.
+
+  Issue History:
+    * May 2010: tr-181-2-0-0.xml:
+        corresponds to TR-181 Issue 2.
+    * November 2010: tr-181-2-1-0.xml: 
+        corresponds to TR-181 Issue 2 Amendment 1.
+    * March 2011: tr-181-2-2-0:
+        corresponds to TR-181 Issue 2 Amendment 2.
+    * September 2011: tr-181-2-3-0:
+        corresponds to TR-181 Issue 2 Amendment 3.
+    * November 2011: tr-181-2-4-0:
+        corresponds to TR-181 Issue 2 Amendment 4.
+    * May 2012: tr-181-2-5-0:
+        corresponds to TR-181 Issue 2 Amendment 5.
+    * November 2012: tr-181-2-6-0:
+        corresponds to TR-181 Issue 2 Amendment 6.
+    * November 2013: tr-181-2-7-0:
+        corresponds to TR-181 Issue 2 Amendment 7.
+        
+  Publication Date:
+    * January 17, 2014
+            
+-->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5" xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd" spec="urn:broadband-forum-org:tr-181-2-7-0" file="tr-181-2-7-0.xml">
+
+
+  <description>
+    TR-069 Device:2.7 Root Object definition
+    November 2013
+    Added ZigBee data model, Provider Bridge data model, and various other items
+  </description>
+
+
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"></dataType>
+    <dataType name="StatsCounter32"></dataType>
+    <dataType name="StatsCounter64"></dataType>
+    <dataType name="MACAddress"></dataType>
+    <dataType name="IEEE_EUI64"></dataType>
+    <dataType name="ZigBeeNetworkAddress"></dataType>
+  </import>
+  
+  <import file="tr-157-1-8.xml" spec="urn:broadband-forum-org:tr-157-1-8">
+    <component name="MS_StandbyPolicy"></component>
+    <component name="XMPP"></component>
+    <component name="XMPPConnReq"></component>
+    <component name="HTTPCompression"></component>
+    <component name="LwNotif"></component>
+  </import>
+
+  <!-- imports Device:2.6 data model from tr-181-2-6 -->
+  <import file="tr-181-2-6.xml" spec="urn:broadband-forum-org:tr-181-2-6">
+    <model name="Device:2.6"></model>
+  </import>
+  
+  
+  <model name="Device:2.7" base="Device:2.6">    
+    <component path="Device." ref="MS_StandbyPolicy"></component>
+    <component path="Device." ref="XMPP"></component>
+    <component path="Device." ref="XMPPConnReq"></component>
+    <component path="Device." ref="HTTPCompression"></component>
+    <component path="Device." ref="LwNotif"></component>
+
+
+    <!-- 802.1Q provider bridge support (Bridging) -->
+    <object base="Device.Bridging." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">
+        Layer 2 bridging configuration. Specifies bridges between different layer 2 interfaces. Bridges can be defined to include layer 2 filter criteria to selectively bridge traffic between interfaces.
+        This object can be used to configure both 802.1D {{bibref|802.1D-2004}} and 802.1Q {{bibref|802.1Q-2011}} bridges.
+        Not all 802.1D and 802.1Q features are modeled, and some additional features not present in either 802.1D or 802.1Q are modeled.
+        802.1Q {{bibref|802.1Q-2011}} bridges incorporate 802.1Q {{bibref|802.1Q-2005}} customer and 802.1ad {{bibref|802.1ad-2005}} provider bridges.
+      </description>
+      <parameter base="MaxQBridgeEntries" access="readOnly">
+        <description action="replace">The maximum number of 802.1Q {{bibref|802.1Q-2011}} entries available in the {{object|.Bridging.Bridge}} table. A non-zero value for this parameter implies support for 802.1Q.
+There is no guarantee that this many 802.1Q Bridges can be configured. For example, the CPE might not be able simultaneously to support both 802.1D and 802.1Q Bridges.</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter base="MaxVLANEntries" access="readOnly">
+        <description action="replace">The maximum number of 802.1Q {{bibref|802.1Q-2011}} VLANs supported per {{object|.Bridging.Bridge}} table entry.</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaxProviderBridgeEntries" access="readOnly">
+        <description>The maximum number of entries available in the {{object|.Bridging.ProviderBridge}} table. A non-zero value for this parameter implies support for 802.1Q Provider Bridges.</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ProviderBridgeNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Bridging.Bridge.{i}." access="readWrite" numEntriesParameter="BridgeNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <description action="replace">Bridge table.</description>
+      <parameter base="Standard" access="readWrite">
+        <description action="replace">Selects the standard supported by this Bridge table entry.</description>
+        <syntax>
+          <string>
+            <enumeration value="802.1D-2004"></enumeration>
+            <enumeration value="802.1Q-2005"></enumeration>
+            <enumeration value="802.1Q-2011">
+              <description>The {{object}} provides support for at least one feature defined in {{bibref|802.1Q-2011}} that was not defined in {{bibref|802.1Q-2005}}.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Bridging.Bridge.{i}.Port.{i}." access="readWrite" numEntriesParameter="PortNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <description action="replace">
+        Bridge Port table, which MUST contain an entry for each bridge port (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}).
+        There are two types of bridge ports: management (upward facing) and non-management (downward facing). This is determined by configuring the Boolean {{param|ManagementPort}} parameter. The CPE will automatically configure each management bridge port to appear in the interface stack above all non-management bridge ports that share the same {{object|##.Bridge}} instance.
+      </description>
+      <parameter name="Type" access="readWrite" dmr:previousParameter="ManagementPort">
+        <description>
+          The type of bridge port as defined in 802.1Q {{bibref|802.1Q-2011|Section 17 IEEE8021BridgePortType}}.
+          Enumeration of:
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ProviderNetworkPort">
+              <description>Indicates this {{object}} is an S-TAG aware port of a {{object|##.ProviderBridge}}.</description>
+            </enumeration>
+            <enumeration value="CustomerNetworkPort">
+              <description>Indicates this {{object}} is an S-TAG aware port of a {{object|##.ProviderBridge}}.</description>
+            </enumeration>
+            <enumeration value="CustomerEdgePort">
+              <description>Indicates this {{object}} is an C-TAG aware port of a {{object|##.ProviderBridge}}.</description>
+            </enumeration>
+            <enumeration value="CustomerVLANPort">
+              <description>Indicates this {{object}} is an C-TAG aware port of a Customer Bridge.</description>
+            </enumeration>
+            <enumeration value="VLANUnawarePort">
+              <description>Indicates this {{object}} is a VLAN unaware member of an {{enum|802.1D-2004|#.Standard}} bridge.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter base="Status" access="readOnly">
+        <description action="replace">The current operational state of the bridge port (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+When {{param|Enable}} is {{false}} then this parameter SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). 
+When {{param|Enable}} is changed to {{true}} then this parameter SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason.
+This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.</description>
+      </parameter>
+      <parameter base="PortState" access="readOnly">
+        <description action="replace">Bridge Port state as defined in 802.1D {{bibref|802.1D-2004}} and 802.1Q {{bibref|802.1Q-2011}}.</description>
+      </parameter>
+      <parameter base="PVID" access="readWrite">
+        <description action="replace">PVID (or Port VID) is the VLAN ID with which an untagged or priority tagged frame that arrives on this port will be associated (i.e. default Port VLAN ID as defined in 802.1Q {{bibref|802.1Q-2011}}).
+For an 802.1D Bridge {{bibref|802.1D-2004}}, this parameter MUST be ignored.</description>
+      </parameter>
+      <parameter name="TPID" access="readWrite" dmr:previousParameter="PVID">
+        <description>
+          The Tag Protocol Identifier (TPID) assigned to this {{object}}. The TPID is an EtherType value used to identify the frame as a tagged frame.
+          Standard {{bibref|802.1Q-2011|Table 9.1}} TPID values are:
+          *S-TAG 0x88A8 = 34984
+          *C-TAG 0x8100 = 33024
+          Non-Standard TPID values are:
+          *S-TAG 0x9100 = 37120</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+          <default type="object" value="33024"></default>
+        </syntax>
+      </parameter>
+      <parameter base="AcceptableFrameTypes" access="readWrite">
+        <description action="replace">Indicates which types of frame arriving on this port will be admitted to the bridge (i.e. Bridge Port acceptable frame types as defined in 802.1Q {{bibref|802.1Q-2011}}).  {{enum}}
+For an 802.1D {{bibref|802.1D-2004}} Bridge, the value of this parameter MUST be {{enum|AdmitAll}}.</description>
+      </parameter>
+      <parameter base="IngressFiltering" access="readWrite">
+        <description action="replace">Enables or disables Ingress Filtering as defined in 802.1Q {{bibref|802.1Q-2011}}. If enabled ({{true}}), causes frames arriving on this port to be discarded if the port is not in the VLAN ID's member set (which is configured via the {{object|#.VLANPort}} table).
+For an 802.1D {{bibref|802.1D-2004}} Bridge, the value of this parameter MUST be {{false}}.</description>
+      </parameter>
+      <parameter name="ServiceAccessPrioritySelection" access="readWrite">
+        <description>
+          This parameter controls the Service Access Priority selection function as described in {{bibref|802.1Q-2011|section 6.13}}.
+          The parameter is applicable to deployments of {{object|##.Bridge}} instances that are referenced by {{param|###.Bridging.ProviderBridge.{i}.SVLANComponent}}.
+        </description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+      <parameter name="ServiceAccessPriorityTranslation" access="readWrite">
+        <description>
+          {{list}} List items represent service access priority translation values for each ingress priority on this {{object}} as described in {{bibref|802.1Q-2011|section 6.13}}.
+          The parameter is applicable to deployments of {{object|##.Bridge}} instances that are referenced by {{param|###.Bridging.ProviderBridge.{i}.SVLANComponent}}.
+        </description>
+        <syntax>
+          <list minItems="8" maxItems="8"></list>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"></range>
+          </unsignedInt>
+          <default type="object" value="0,1,2,3,4,5,6,7"></default>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.Bridging.Bridge.{i}.Port.{i}.PriorityCodePoint." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        {{object}} provides the management control for the processing of the Priority Code Point (PCP) field for the 802.1Q header as defined in {{bibref|802.1Q-2011|section 6.9.3 Priority Code Point Encoding}}.
+        The object is applicable to deployments of  {{object|####.Bridging.ProviderBridge}} where the {{object|###.Bridge}} instance is referenced by {{param|####.Bridging.ProviderBridge.{i}.SVLANComponent}} or {{param|####.Bridging.ProviderBridge.{i}.CVLANComponents}} parameters.
+      </description>
+      <parameter name="PCPSelection" access="readWrite">
+        <description>
+          This parameter identifies the row in the {{param|PCPEncoding}} and {{param|PCPDecoding}} parameter lists. The value of 1 points to the 8P0D row in the corresponding parameter lists.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="4"></range>
+          </unsignedInt>
+          <default type="object" value="1"></default>
+        </syntax>
+      </parameter>
+      <parameter name="UseDEI" access="readWrite">
+        <description>
+          This parameter controls the processing of the drop_eligible field and is described in {{bibref|802.1Q-2011|section 6.9.3}}.
+        </description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+      <parameter name="RequireDropEncoding" access="readWrite">
+        <description>
+          This parameter controls the processing of the encoding or decoding of the drop_eligible component in the PCP field and is described in {{bibref|802.1Q-2011|section 8.6.7}}.
+        </description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+      <parameter name="PCPEncoding" access="readWrite">
+        <description>
+          This parameter provides the management control for the processing of the encoding of the Priority Code Point (PCP) field for the 802.1Q header as defined in {{bibref|802.1Q-2011|section 6.9.3 Priority Code Point Encoding}} and {{bibref|802.1Q-2011|Table 6-3}}.
+          The list is an ordered list that contains entries for the following 4 PCP Values: "8P0D","7P1D", "6P2D" "5P3D".  Each list entry matches the following pattern:
+          {{pattern}}
+          The value of this parameter MUST use square brackets to protect comma separators within nested lists.  For example, this corresponds to Table 6-3 (mentioned above):
+          : [7,7,6,6,5,5,4,4,3,3,2,2,1,1,0,0],[7,7,6,6,5,4,5,4,3,3,2,2,1,1,0,0],[7,7,6,6,5,4,5,4,3,2,3,2,1,1,0,0],[7,7,6,6,5,4,5,4,3,2,3,2,1,0,1,0]
+        </description>
+        <syntax>
+          <list minItems="4" maxItems="4" nestedBrackets="required"></list>
+          <string>
+            <size minLength="31" maxLength="31"></size>
+            <pattern value="([0-7],){15}[0-7]"><description>PCP for each priority and drop_eligible field (7, 7DE, 6, 6DE, ..., 1, 1DE, 0, 0DE)</description></pattern>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="PCPDecoding" access="readWrite">
+        <description>
+          This parameter provides the management control for the processing of the decoding of the Priority Code Point (PCP) field for the 802.1Q header as defined in {{bibref|802.1Q-2011|section 6.9.3 Priority Code Point Encoding}} and {{bibref|802.1Q-2011|Table 6-4}}.
+          The list is an ordered list that contains entries for the following 4 PCP Values: "8P0D","7P1D", "6P2D" "5P3D".  Each list entry matches the following pattern:
+          {{pattern}}
+          The value of this parameter MUST use square brackets to protect comma separators within nested lists.  For example, this corresponds to Table 6-4 (mentioned above):
+          : [7,0,6,0,5,0,4,0,3,0,2,0,1,0,0,0],[7,0,6,0,4,0,4,1,3,0,2,0,1,0,0,0],[7,0,6,0,4,0,4,1,2,0,2,1,1,0,0,0],[7,0,6,0,4,0,4,1,2,0,2,1,0,0,0,1]
+        </description>
+        <syntax>
+          <list minItems="4" maxItems="4" nestedBrackets="required"></list>
+          <string>
+            <size minLength="15" maxLength="15"></size>
+            <pattern value="([0-7],[0-1],){7}[0-7],[0-1]"><description>Priority (0-7) and drop_eligible field (0-1) for each PCP value (7, 6, ..., 1, 0).</description></pattern>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Device.Bridging.Bridge.{i}.VLAN.{i}." access="readWrite" numEntriesParameter="VLANNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <description action="replace">Bridge VLAN table.  If this table is supported, if MUST contain an entry for each VLAN known to the Bridge.
+This table only applies to an 802.1Q {{bibref|802.1Q-2011}} Bridge.</description>
+    </object>
+
+    <object base="Device.Bridging.Bridge.{i}.VLANPort.{i}." access="readWrite" numEntriesParameter="VLANPortNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <description action="replace">Bridge VLAN egress port and untagged port membership table.
+This table only applies to an 802.1Q {{bibref|802.1Q-2011}} Bridge.
+Note: The {{object}} table includes unique key parameters that are strong references. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST disable the offending {{object}} row.</description>
+    </object>
+
+    <object base="Device.Bridging.Filter.{i}." access="readWrite" numEntriesParameter="FilterNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <description action="replace">Filter table containing classification filter entries, each of which expresses a set of classification criterion to classify ingress frames as member of a {{object|#.Bridge}} instance or a {{object|#.Bridge.{i}.VLAN}} instance.
+Bridge VLAN classification only applies for 802.1Q {{bibref|802.1Q-2011}} Bridges.
+For enabled table entries, if {{param|Bridge}} or {{param|Interface}} is {{empty}} then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+Several of this object's parameters specify DHCP option values. Some cases are version neutral (the parameter can apply to both DHCPv4 and DHCPv6), but in other cases the representation of the option is different for DHCPv4 and DHCPv6, so it is necessary to define separate DHCPv4-specific and DHCPv6-specific parameters. Therefore, an instance of this object that uses DHCP option values as filter criteria will be associated with either DHCPv4 or DHCPv6, as indicated by the {{param|DHCPType}} parameter.</description>
+      <parameter base="Bridge" access="readWrite">
+        <description action="replace">{{reference|a {{object|.Bridging.Bridge}} object in case of a 802.1D bridge or a {{object|.Bridging.Bridge.{i}.VLAN}} object in case of a 802.1Q bridge}}  Note: either way, this identifies the bridge (because each bridge has a VLAN table).
+Defines the Bridge or Bridge VLAN to which ingress frames will be classified based upon matches of the classification criteria.</description>
+      </parameter>
+      <parameter base="VLANIDFilter" access="readWrite">
+        <description action="replace">Classification criterion. 
+The 802.1Q {{bibref|802.1Q-2011}} VLAN ID.
+For an 802.1D {{bibref|802.1D-2004}} Bridge, which has no concept of VLANs, the VLAN ID MUST be ''0''.</description>
+      </parameter>
+      <parameter base="EthertypeFilterList" access="readWrite">
+        <description action="replace">Classification criterion.
+{{list}} Each list item represents an Ethertype value.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on  Ethertype.</description>
+      </parameter>
+      <parameter base="EthertypeFilterExclude" access="readWrite">
+        <description action="replace">If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge is defined to admit only those packets that match one of the {{param|EthertypeFilterList}} entries (in either the Ethernet or SNAP Type header).  If the {{param|EthertypeFilterList}} is empty, no packets are admitted.
+If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge is defined to admit all packets except those  packets that match one of the {{param|EthertypeFilterList}} entries (in either the Ethernet or SNAP Type header).  If the  {{param|EthertypeFilterList}} is empty, packets are admitted regardless of Ethertype.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on  Ethertype.</description>
+      </parameter>
+      <parameter base="SourceMACAddressFilterList" access="readWrite">
+        <description action="replace">Classification criterion.
+{{list|each representing a MAC Address}}
+Each list entry MAY optionally specify a bit-mask, where matching of a packet's MAC address is only to be done for bit positions set  to one in the mask.  If no mask is specified, all bits of the MAC Address are to be used for matching.
+For example, the list might be: ''01:02:03:04:05:06, 1:22:33:00:00:00/FF:FF:FF:00:00:00, 88:77:66:55:44:33''
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC  address.</description>
+      </parameter>
+      <parameter base="SourceMACAddressFilterExclude" access="readWrite">
+        <description action="replace">If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets  whose source MAC Address matches one of the {{param|SourceMACAddressFilterList}} entries.  If the  {{param|SourceMACAddressFilterList}} is empty, no packets are admitted.
+If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose  source MAC Address matches one of the {{param|SourceMACAddressFilterList}} entries.  If the {{param|SourceMACAddressFilterList}} is empty, packets are admitted regardless of MAC address.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC  address.</description>
+      </parameter>
+      <parameter base="SourceMACFromVendorClassIDFilter" access="readWrite">
+        <description action="replace">Classification criterion.
+A string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if its DHCPv4 Vendor Class Identifier (Option 60 as defined in {{bibref|RFC2132}}) in the most recent DHCP lease acquisition or renewal matches the specified value according to the match criterion in {{param|SourceMACFromVendorClassIDMode}}. Case sensitive.
+This is a normal string, e.g. "abc" is represented as "abc" and not "616263" hex. However, if the value includes non-printing characters then such characters have to be represented using XML escapes, e.g. #x0a for line-feed.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.
+Note: This parameter is DHCPv4-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv4|DHCPType}}.</description>
+      </parameter>
+      <parameter base="SourceMACFromVendorClassIDFilterExclude" access="readWrite">
+        <description action="replace">If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromVendorClassIDFilter}} (for {{enum|DHCPv4|DHCPType}}) or {{param|SourceMACFromVendorClassIDFilterv6}} (for {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is {{empty}}, no packets are admitted.
+If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromVendorClassIDFilter}} (for {{enum|DHCPv4|DHCPType}}) or {{param|SourceMACFromVendorClassIDFilterv6}} (for {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is {{empty}}, packets are admitted regardless of MAC address.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address</description>
+      </parameter>
+      <parameter base="SourceMACFromVendorClassIDFilterv6" access="readWrite">
+        <description action="replace">Classification criterion.
+A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCPv6 Vendor Class Identifier (Option 16 as defined in {{bibref|RFC3315}}) was equal to the specified value. The option value is binary, so an exact match is REQUIRED.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.
+Note: This parameter is DHCPv6-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv6|DHCPType}}.</description>
+      </parameter>
+      <parameter base="SourceMACFromVendorClassIDMode" access="readWrite">
+        <description action="replace">{{param|SourceMACFromVendorClassIDFilter}} pattern match criterion.  {{enum}}
+For example, if {{param|SourceMACFromVendorClassIDFilter}} is "Example" then an Option 60 value of "Example device" will match with this parameter values of {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or {{enum|Suffix}}.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC  address.</description>
+      </parameter>
+      <parameter base="SourceMACFromClientIDFilter" access="readWrite">
+        <description action="replace">Classification criterion.
+A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCP Client Identifier (via DHCP lease acquisition or renewal for DHCPv4) was equal to the specified value. The DHCP Client Identifier is Option 61 (as defined in {{bibref|RFC2132}}) for {{enum|DHCPv4|DHCPType}}, or is Option 1 (as defined in {{bibref|RFC3315}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.
+Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535.
+Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.
+Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as ''DUID''.</description>
+      </parameter>
+      <parameter base="SourceMACFromClientIDFilterExclude" access="readWrite">
+        <description action="replace">If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets  whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromClientIDFilter}}.   If {{param|SourceMACFromClientIDFilter}} is {{empty}}, no packets are admitted.
+If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose  source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromClientIDFilter}}.  If the  {{param|SourceMACFromClientIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC  address.</description>
+      </parameter>
+      <parameter base="SourceMACFromUserClassIDFilter" access="readWrite">
+        <description action="replace">Classification criterion.
+A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCP User Class Identifier (via DHCP lease acquisition or renewal for DHCPv4) was equal to the specified value. The DHCP User Class Identifier is Option 77 (as defined in {{bibref|RFC3004}}) for {{enum|DHCPv4|DHCPType}}, or is Option 15 (as defined in {{bibref|RFC3315}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.
+Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535.
+Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.</description>
+      </parameter>
+      <parameter base="SourceMACFromUserClassIDFilterExclude" access="readWrite">
+        <description action="replace">If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromUserClassIDFilter}}.  If {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, no packets are admitted.
+If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromUserClassIDFilter}}.  If the {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.
+Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.</description>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.ProviderBridge.{i}." access="readWrite" numEntriesParameter="ProviderBridgeNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <description>
+        Provider Bridge table.
+        A Provider Bridge is described in {{bibref|802.1Q-2011|section 5.10 Provider Bridge conformance}} as an entity that is comprised of one S-VLAN component and zero or more C-VLAN components. S-VLAN and C-VLAN components are modelled as instances of {{object|#.Bridge}} objects.
+        When {{param|Type}} is configured with value of {{enum|PE|Type}} VLAN tags from the S-VLAN component (outer of 2 VLAN tags) are stacked on top of the VLAN tag from the C-VLAN component (inner of 2 VLAN tags).
+        When {{param|Type}} is configured with value of {{enum|S-VLAN|Type}} only VLAN tags from the S-VLAN component are utilized.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"></parameter>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables this {{object}}.</description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+        The status of this {{object}}. {{enum}}
+        The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. For example when the {{param|Type}} is configured with value of {{enum|PE|Type}} but {{param|CVLANComponents}} is {{empty}}.
+        The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+      </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"></enumeration>
+            <enumeration value="Enabled"></enumeration>
+            <enumeration value="Error_Misconfigured"></enumeration>
+            <enumeration value="Error" optional="true"></enumeration>
+          </string>
+          <default type="object" value="Disabled"></default>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>A non-volatile handle used to reference this instance. This parameter provides a mechanism for an ACS to label this instance for future reference. An initial unique value MUST be assigned when the CPE creates an instance of this object.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"></size>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Type" access="readWrite">
+        <description>Selects the standard supported by this {{object}} table entry.</description>
+        <syntax>
+          <string>
+            <enumeration value="S-VLAN">
+              <description>Provider Bridge conforming to {{bibref|802.1Q-2011|5.10.1 S-VLAN Bridge conformance}}</description>
+            </enumeration>
+            <enumeration value="PE">
+              <description>Provider Bridge conforming to {{bibref|802.1Q-2011|5.10.2 Provider Edge Bridge conformance}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SVLANComponent" access="readWrite">
+        <description>{{reference|a {{object|#.Bridge}} instance that specifies the S-VLAN component for the {{object}}}}</description>
+        <syntax>
+          <string>
+            <size maxLength="256"></size>
+            <pathRef refType="strong" targetParent="#.Bridge." targetType="row"></pathRef>
+          </string>
+          <default type="object" value=""></default>
+        </syntax>
+      </parameter>
+      <parameter name="CVLANComponents" access="readWrite">
+        <description>{{list}} {{reference|a {{object|#.Bridge}} instance that specifies a C-VLAN component for the {{object}}}}</description>
+        <syntax>
+          <list></list>
+          <string>
+            <size maxLength="256"></size>
+            <pathRef refType="strong" targetParent="#.Bridge." targetType="row"></pathRef>
+          </string>
+          <default type="object" value=""></default>
+        </syntax>
+      </parameter>
+    </object>
+
+    
+    <!-- Backup/restore using vendor configuration files -->
+    <object base="Device.DeviceInfo.VendorConfigFile.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter name="UseForBackupRestore" access="readOnly">
+        <description>
+          When {{true}}, this parameter indicates that this {{object}} instance is to be used for backup and restoration purposes.
+          Note: The backup and restore operations may require the use of multiple {{object}} instances. In this scenario the mechanism for detemining the order and combination of {{object}} instances used for backup and restoration purposes is implementation specific.
+        </description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <!-- 802.1Q provider bridge support (Ethernet) and Ethernet Bit Rate-->
+    <object base="Device.Ethernet." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">
+        Ethernet object. This object models several Ethernet interface objects, each representing a different stack layer, including: {{object|Interface}}, {{object|Link}}, and {{object|VLANTermination}}. {{object|Interface}} is media-specific and models a port, the PHY layer, and the MAC layer. {{object|Link}} is media-independent and models the Logical Link Control (LLC) layer. An "outer" {{object|VLANTermination}}, when present, is expected to be stacked on top of {{object|Link}} objects to receive and send frames with a configured VLANID.
+      </description>
+    </object>
+    
+    <object base="Device.Ethernet.Interface.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter name="CurrentBitRate" access="readOnly" activeNotify="canDeny" dmr:previousParameter="MaxBitRate">
+        <description>
+          The current upstream and downstream PHY bit rate on this interface (expressed in {{units}}).
+          A value of 0 indicates that the current bit rate is unknown.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Device.Ethernet.Link.{i}." access="readWrite" numEntriesParameter="LinkNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="PriorityTagging" access="readWrite">
+        <description action="replace">Enables or disables priority tagging on this Ethernet Link. 
+When {{true}}, egress frames leaving this interface will be priority tagged with the frame's associated priority value, which will either be derived directly from the ingress frame or else set via {{param|.QoS.Classification.{i}.EthernetPriorityMark}} or {{param|.QoS.Classification.{i}.InnerEthernetPriorityMark}}.
+When {{false}}, egress frames leaving this interface will be untagged.
+The parameter does not affect reception of ingress frames.</description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Device.Ethernet.VLANTermination.{i}." access="readWrite" numEntriesParameter="VLANTerminationNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="VLANID" access="readWrite">
+        <description action="replace">The VLAN ID for this {{object}} entry (as defined in {{bibref|802.1Q-2011}}). Only ingress frames with this VLAN ID will be passed to higher protocol layers; frames sent from higher protocol layers will be tagged with this VLAN ID.</description>
+      </parameter>
+      <parameter name="TPID" access="readWrite">
+        <description>
+          The Tag Protocol Identifier (TPID) assigned to this {{object}}. The TPID is an EtherType value used to identify the frame as a tagged frame.
+          Standard {{bibref|802.1Q-2011|Table 9.1}} TPID values are:
+          *S-TAG 0x88A8 = 34984
+          *C-TAG 0x8100 = 33024
+          Non-Standard TPID values are:
+          *S-TAG 0x9100 = 37120</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+          <default type="object" value="33024"></default>
+        </syntax>
+      </parameter>
+    </object>
+   
+    
+    <!-- Default Active Notification for GatewayInfo Parameters -->
+    <object base="Device.GatewayInfo." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="ManufacturerOUI" access="readOnly" activeNotify="forceDefaultEnabled"></parameter>
+      <parameter base="ProductClass" access="readOnly" activeNotify="forceDefaultEnabled"></parameter>
+      <parameter base="SerialNumber" access="readOnly" activeNotify="forceDefaultEnabled"></parameter>
+    </object>
+
+    <!-- Changing IPPing diagnostics to support microseconds granularity -->
+    <object base="Device.IP.Diagnostics.IPPing." access="readOnly" minEntries="1" maxEntries="1">
+ 	    <parameter name="AverageResponseTimeDetailed" access="readOnly" activeNotify="canDeny">
+        <description>Result parameter indicating the average response time in {{units}} over all repetitions with successful responses of the most recent ping test.  If there were no successful responses, this value MUST be zero.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MinimumResponseTimeDetailed" access="readOnly" activeNotify="canDeny">
+        <description>Result parameter indicating the minimum response time in {{units}} over all repetitions with successful responses of the most recent ping test.  If there were no successful responses, this value MUST be zero.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaximumResponseTimeDetailed" access="readOnly" activeNotify="canDeny">
+        <description>Result parameter indicating the maximum response time in {{units}} over all repetitions with successful responses of the most recent ping test.  If there were no successful responses, this value MUST be zero.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    
+    <!-- Manageable Device Notification Limit -->
+    <object base="Device.ManagementServer." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="ManageableDeviceNotificationLimit" access="readWrite" dmr:previousParameter="ManageableDeviceNumberOfEntries">
+        <description>
+          The minimum time, in seconds, between Active Notifications resulting from changes to the {{param|ManageableDeviceNumberOfEntries}} (if Active Notification is enabled).
+        </description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>      
+    </object>
+
+
+    <!-- Ethernet p-bit references -->
+    <object base="Device.QoS.Flow.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="EthernetPriorityMark" access="readWrite">
+        <description action="replace">
+          Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic with that falls into this flow.
+          A value of -1 indicates no change from the incoming packet.
+          A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2a5|Annex A}}.
+        </description>
+      </parameter>
+      <parameter name="InnerEthernetPriorityMark" access="readWrite">
+        <description>
+          Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark the inner VLAN Tags with for traffic that falls into this flow.
+          A value of -1 indicates no change from the incoming packet.
+          A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-2"></range>
+          </int>
+          <default type="object" value="-1"></default>
+        </syntax>
+      </parameter>
+    </object>
+    
+    
+    <!-- 802.1Q provider bridge support (QoS) -->
+    <object base="Device.QoS." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DefaultEthernetPriorityMark" access="readWrite">
+        <description action="replace">
+          Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic not associated with any specified classifier.
+          A value of -1 indicates no change from the incoming packet.
+          A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2a5|Annex A}}.
+        </description>
+      </parameter>
+      <parameter name="DefaultInnerEthernetPriorityMark" access="readWrite" dmr:previousParameter="DefaultEthernetPriorityMark">
+        <description>Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic of the inner VLAN Tag as defined in 802.1Q, when the PDU is not associated with any specified classifier. This parameter is only applicable when the PDU has 2 VLAN Tags.
+A value of -1 indicates no change from the incoming packet.
+A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.</description>
+        <syntax>
+          <int>
+            <range minInclusive="-2"></range>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Device.QoS.App.{i}." access="readWrite" numEntriesParameter="AppNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="DefaultEthernetPriorityMark" access="readWrite">
+        <description action="replace">
+          Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic associated with this App table entry, but not  associated with any specified flow.
+          A value of -1 indicates no change from the incoming packet.
+          A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2a5|Annex A}}.
+        </description>
+      </parameter>
+      <parameter name="DefaultInnerEthernetPriorityMark" access="readWrite" dmr:previousParameter="DefaultEthernetPriorityMark">
+        <description>Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark the inner VLAN Tags as defined in 802.1Q with this {{object}} table entry where the packet is not associated with any specified flow. This parameter is only applicable when the PDU has 2 VLAN Tags.
+A value of -1 indicates no change from the incoming packet.
+A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.</description>
+        <syntax>
+          <int>
+            <range minInclusive="-2"></range>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Device.QoS.Classification.{i}." access="readWrite" numEntriesParameter="ClassificationNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="EthernetPriorityCheck" access="readWrite">
+        <description action="replace">Classification criterion.
+Current Ethernet priority of a VLAN Tag as defined in {{bibref|802.1Q-2011}} or Ethernet Priority field as defined in 802.1D. If more than 1 VLAN tag is present, then this parameter represents the outer VLAN Tag. A value of -1 indicates this criterion is not used for classification.</description>
+      </parameter>
+      <parameter base="EthernetPriorityMark" access="readWrite">
+        <description action="replace">Classification result.
+Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic with that falls into this classification entry associated with the {{param|EthernetPriorityCheck}}.
+A value of -1 indicates no change from the incoming packet.
+A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.</description>
+        <syntax>
+          <int>
+            <range minInclusive="-2"></range>
+          </int>
+          <default type="object" value="-1"></default>
+        </syntax>
+      </parameter>
+      <parameter name="InnerEthernetPriorityCheck" access="readWrite" dmr:previousParameter="EthernetPriorityMark">
+        <description>Classification criterion.
+Current Ethernet priority of the inner VLAN Tag as defined in 802.1Q. This parameter is only applicable when the PDU has 2 VLAN Tags. A value of -1 indicates this criterion is not used for classification.</description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"></range>
+          </int>
+          <default type="object" value="-1"></default>
+        </syntax>
+      </parameter>
+      <parameter name="InnerEthernetPriorityExclude" access="readWrite" dmr:previousParameter="InnerEthernetPriorityCheck">
+        <description>If {{false}}, the class includes only those packets that match the {{param|InnerEthernetPriorityCheck}} entry, if  specified.
+If {{true}}, the class includes all packets except those that match the {{param|InnerEthernetPriorityCheck}} entry, if  specified.
+        </description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+      <parameter name="InnerEthernetPriorityMark" access="readWrite" dmr:previousParameter="InnerEthernetPriorityExclude">
+        <description>Classification result.
+Ethernet priority code to mark traffic with that falls into this classification entry associated with the {{param|InnerEthernetPriorityCheck}}.
+A value of -1 indicates no change from the incoming packet.
+A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-2"></range>
+          </int>
+          <default type="object" value="-1"></default>
+        </syntax>
+      </parameter>
+      <parameter name="EthernetDEICheck" access="readWrite" dmr:previousParameter="InnerEthernetPriorityMark">
+        <description>Classification criterion.
+Current Ethernet Drop eligible Indication (DEI) of the VLAN tag as defined in 802.1Q. If 2 VLAN Tags are present, then this parameter represents the outer VLAN tag. A value of -1 indicates this criterion is not used for classification.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"></range>
+          </int>
+          <default type="object" value="-1"></default>
+        </syntax>
+      </parameter>
+      <parameter name="EthernetDEIExclude" access="readWrite" dmr:previousParameter="EthernetDEICheck">
+        <description>If {{false}}, the class includes only those packets that match the {{param|EthernetDEICheck}} entry, if  specified.
+If {{true}}, the class includes all packets except those that match the {{param|EthernetDEICheck}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+    </object> 
+    
+    
+    <!-- WiFi Stats clarifications and additional parameters + Neighboring WiFi SSID diagnostic data model -->
+    <object base="Device.WiFi.Radio.{i}." access="readOnly" numEntriesParameter="RadioNumberOfEntries" minEntries="0" maxEntries="unbounded" dmr:fixedObject="true">
+      <parameter base="SupportedStandards" access="readOnly">
+        <description action="replace">
+          {{list}} List items indicate which IEEE 802.11 standards this {{object}} instance can support simultaneously, in the frequency band specified by {{param|OperatingFrequencyBand}}.  {{enum}}
+          Each value indicates support for the indicated standard.
+          If {{param|OperatingFrequencyBand}} is set to {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}}, {{enum|g}}, {{enum|n}} are allowed.
+          If {{param|OperatingFrequencyBand}} is set to {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}}, {{enum|n}}, {{enum|ac}} are allowed.
+        </description>
+        <syntax>
+          <list></list>
+          <string>
+            <enumeration value="a"></enumeration>
+            <enumeration value="b"></enumeration>
+            <enumeration value="g"></enumeration>
+            <enumeration value="n"></enumeration>
+            <enumeration value="ac">
+              <description>{{bibref|802.11ac-2013}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter base="OperatingStandards" access="readWrite">
+        <description action="replace">
+          {{list}} List items indicate which IEEE 802.11 standard this {{object}} instance is configured for.
+          Each value indicates support for the indicated standard.
+          If {{param|OperatingFrequencyBand}} is set to {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}}, {{enum|g}}, {{enum|n}} are allowed.
+          If {{param|OperatingFrequencyBand}} is set to {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}}, {{enum|n}}, {{enum|ac}} are allowed.
+          For example, a value of "g,b" (or "b,g" - order is not important) means that the 802.11g standard {{bibref|802.11g-2003}} is used with a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A value of "g" means that only the 802.11g standard can be used.
+        </description>
+      </parameter>
+      <parameter base="OperatingChannelBandwidth" access="readWrite">
+        <description action="replace">
+          The channel bandwidth (applicable to 802.11n and 802.11ac specifications only).
+        </description>
+          <syntax>
+            <string>
+              <enumeration value="20MHz"></enumeration>
+              <enumeration value="40MHz"></enumeration>
+              <enumeration value="80MHz">
+                <description>802.11ac only</description>
+              </enumeration>
+              <enumeration value="160MHz">
+                <description>802.11ac only</description>
+              </enumeration>
+              <enumeration value="Auto"></enumeration>
+            </string>
+          </syntax>
+        </parameter>
+      <parameter base="GuardInterval" access="readWrite">
+        <description action="replace">
+          The guard interval value between OFDM symbols (applicable to 802.11n and 802.11ac specifications only).
+        </description>
+      </parameter>
+      <parameter base="MCS" access="readWrite">
+        <description action="replace">
+          The Modulation Coding Scheme index (applicable to 802.11n and 802.11ac specifications only). Values from 0 to 15 MUST be supported ({{bibref|802.11n-2009}}). Values from 0 to 9 MUST be supported for {{bibref|802.11ac-2013}}.  A value of -1 indicates automatic selection of the MCS index.
+        </description>
+      </parameter>
+    </object>
+    
+    <object base="Device.WiFi.Radio.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">Throughput statistics for this interface. Packet counters here count 802.11 WiFi frames. See {{bibref|TR-181i2a5|Appendix III}} for further details. The CPE MUST reset the interface's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|#.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|#.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2a5|Section 4.2.2}}.
+      </description>
+      <parameter name="PLCPErrorCount" access="readOnly">
+        <description>The number of packets that were received with a detected Physical Layer Convergence Protocol (PLCP) header error. 
+        </description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="FCSErrorCount" access="readOnly">
+        <description>The number of packets that were received with a detected FCS error. This parameter is based on dot11FCSErrorCount from {{bibref|802.11-2012|Annex C}}.
+        </description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="InvalidMACCount" access="readOnly">
+        <description>The number of packets that were received with a detected invalid MAC header error.
+        </description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsOtherReceived" access="readOnly">
+        <description>The number of packets that were received, but which were destined for a MAC address that is not associated with this interface.
+        </description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.WiFi.NeighboringWiFiDiagnostic." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object defines access to other WiFi SSIDs that this device is able to receive.
+      </description>
+      <parameter name="DiagnosticsState" access="readWrite" activeNotify="canDeny">
+        <description>
+          Indicates availability of WiFi SSID data. {{enum}}
+          If the ACS sets the value of this parameter to {{enum|Requested}}, the CPE MUST initiate the WiFi scan. 
+          When writing, the only allowed value is {{enum|Requested}}.  When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
+          When the test is completed, the value of this parameter MUST be either {{enum|Completed}} (if the test completed successfully), or one of the ''Error'' values listed above.  If the value of this parameter is anything other than {{enum|Completed}}, the values of the results parameters for this test are indeterminate.
+          When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform message.
+          After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to {{enum|None}}.
+          While the test is in progress, setting this parameter to {{enum|Requested}} (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None" access="readOnly"></enumeration>
+            <enumeration value="Requested"></enumeration>
+            <enumeration value="Completed" access="readOnly"></enumeration>
+            <enumeration value="Error" access="readOnly"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ResultNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.NeighboringWiFiDiagnostic.Result.{i}." access="readOnly" numEntriesParameter="ResultNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <description>
+        Neighboring SSID table. This table models the other WiFi SSIDs that this device is able to receive.
+      </description>
+      <uniqueKey>
+        <parameter ref="BSSID"></parameter>
+      </uniqueKey>
+      <parameter name="Radio" access="readOnly">
+        <description>The Radio that detected the neighboring WiFi SSID.</description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row" targetParent="Device.WiFi.Radio."></pathRef>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SSID" access="readOnly">
+        <description>
+          The current service set identifier in use by the neighboring WiFi SSID. The value MAY be empty for hidden SSIDs.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"></size>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="BSSID" access="readOnly">
+        <description>The BSSID used for the neighboring WiFi SSID.</description>
+        <syntax>
+          <dataType ref="MACAddress"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="Mode" access="readOnly">
+        <description>The mode the neighboring WiFi radio is operating in.</description>
+        <syntax>
+          <string>
+            <enumeration value="AdHoc"></enumeration>
+            <enumeration value="Infrastructure"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Channel" access="readOnly">
+        <description>
+          The current radio channel used by the neighboring WiFi radio.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength (RSSI) of the neighboring WiFi radio measured in {{units}}, as an average of the last 100 packets received.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"></range>
+            <units value="dBm"></units>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="SecurityModeEnabled" access="readOnly">
+        <description>
+          The type of encryption the neighboring WiFi SSID advertises.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"></enumeration>
+            <enumeration value="WEP"></enumeration>
+            <enumeration value="WPA"></enumeration>
+            <enumeration value="WPA2"></enumeration>
+            <enumeration value="WPA-WPA2"></enumeration>
+            <enumeration value="WPA-Enterprise"></enumeration>
+            <enumeration value="WPA2-Enterprise"></enumeration>
+            <enumeration value="WPA-WPA2-Enterprise"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="EncryptionMode" access="readOnly">
+        <description>
+          The type of encryption the neighboring WiFi SSID advertises.
+        </description>
+        <syntax>
+          <list></list>
+          <string>
+            <enumeration value="TKIP"></enumeration>
+            <enumeration value="AES"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="OperatingFrequencyBand" access="readOnly">
+        <description>Indicates the frequency band at which the radio this SSID instance is operating.</description>
+        <syntax>
+          <string>
+            <enumeration value="2.4GHz"></enumeration>
+            <enumeration value="5GHz"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedStandards" access="readOnly">
+        <description>
+            {{list}} List items indicate which IEEE 802.11 standards this {{object}} instance can support simultaneously, in the frequency band specified by {{param|OperatingFrequencyBand}}. {{enum}}
+            Each value indicates support for the indicated standard.
+            If {{param|OperatingFrequencyBand}} is set to {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}}, {{enum|g}}, {{enum|n}} are allowed.
+            If {{param|OperatingFrequencyBand}} is set to {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}}, {{enum|n}}, {{enum|ac}} are allowed.
+        </description>
+        <syntax>
+          <list></list>
+          <string>
+            <enumeration value="a">
+              <description>{{bibref|802.11a-1999}}</description>
+            </enumeration>
+            <enumeration value="b">
+              <description>{{bibref|802.11b-1999}}</description>
+            </enumeration>
+            <enumeration value="g">
+              <description>{{bibref|802.11g-2003}}</description>
+            </enumeration>
+            <enumeration value="n">
+              <description>{{bibref|802.11n-2009}}</description>
+            </enumeration>
+            <enumeration value="ac">
+              <description>{{bibref|802.11ac-2013}}</description>
+            </enumeration>
+          </string>
+         </syntax>
+      </parameter>
+      <parameter name="OperatingStandards" access="readOnly">
+        <description>
+            {{list}} List items indicate which IEEE 802.11 standard that is detected for this {{object}}.
+            Each value indicates support for the indicated standard.
+            If {{param|OperatingFrequencyBand}} is set to {{enum|2.4GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values {{enum|b}}, {{enum|g}}, {{enum|n}} are allowed.
+            If {{param|OperatingFrequencyBand}} is set to {{enum|5GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values {{enum|a}}, {{enum|n}}, {{enum|ac}} are allowed.
+            For example, a value of "g,b" (or "b,g" - order is not important) means that the 802.11g standard {{bibref|802.11g-2003}} is used with a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A value of "g" means that only the 802.11g standard can be used.
+        </description>
+        <syntax>
+          <list></list>
+          <string>
+            <enumerationRef targetParam="SupportedStandards"></enumerationRef>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="OperatingChannelBandwidth" access="readOnly">
+        <description>Indicates the bandwidth at which the channel is operating.</description>
+        <syntax>
+          <string>
+            <enumeration value="20MHz"></enumeration>
+            <enumeration value="40MHz"></enumeration>
+            <enumeration value="80MHz"></enumeration>
+            <enumeration value="160MHz"></enumeration>
+            <enumeration value="Auto"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="BeaconPeriod" access="readOnly">
+        <description>Time interval (in {{units}}) between transmitting beacons.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="ms"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Noise" access="readOnly">
+        <description>Indicator of average noise strength (in {{units}}) received from the neighboring WiFi radio.</description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"></range>
+            <units value="dBm"></units>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="BasicDataTransferRates" access="readOnly">
+        <description>
+            {{list}} Basic data transmit rates (in Mbps) for the SSID.  For example, if {{param}} is "1,2", this indicates that the SSID is operating with basic rates of 1 Mbps and 2 Mbps.
+        </description>
+        <syntax>
+          <list><size maxLength="256"></size></list>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedDataTransferRates" access="readOnly">
+        <description>
+            {{list}} Data transmit rates (in Mbps) for unicast frames at which the SSID will permit a station to connect. For example, if {{param}} is "1,2,5.5", this indicates that the SSID will only permit connections at 1 Mbps, 2 Mbps and 5.5 Mbps.
+        </description>
+        <syntax>
+          <list><size maxLength="256"></size></list>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="DTIMPeriod" access="readOnly">
+        <description>
+          The number of beacon intervals that elapse between transmission of Beacon frames containing a TIM element whose DTIM count field is 0. This value is transmitted in the DTIM Period field of beacon frames. {{bibref|802.11-2012}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="ms"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+ 
+    <object base="Device.WiFi.SSID.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+        <description action="replace">Throughput statistics for this interface. Packet counters here count 802.11 WiFi frames. See {{bibref|TR-181i2a5|Appendix III}} for further details. The CPE MUST reset the interface's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|#.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|#.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2a5|Section 4.2.2}}.
+        </description>
+      <parameter base="ErrorsSent" access="readOnly">
+        <description action="replace">The total number of outbound packets that could not be transmitted because of errors. These can be due to the number of retransmissions exceeding the retry limit, or from other causes.
+        </description>
+        <syntax>
+           <unsignedInt></unsignedInt>
+         </syntax>
+      </parameter>
+      <parameter name="RetransCount" access="readOnly">
+        <description>The total number of transmitted packets which were retransmissions. Two retransmissions of the same packet results in this counter incrementing by two.
+        </description>
+        <syntax>
+           <unsignedInt></unsignedInt>
+         </syntax>
+      </parameter>
+      <parameter name="FailedRetransCount" access="readOnly">
+        <description>The number of packets that were not transmitted successfully due to the number of retransmission attempts exceeding an 802.11 retry limit. This parameter is based on dot11FailedCount from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+           <unsignedInt></unsignedInt>
+         </syntax>
+      </parameter>
+      <parameter name="RetryCount" access="readOnly">
+        <description>The number of packets that were successfully transmitted after one or more retransmissions. This parameter is based on dot11RetryCount from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+           <unsignedInt></unsignedInt>
+         </syntax>
+      </parameter>
+      <parameter name="MultipleRetryCount" access="readOnly">
+        <description>The number of packets that were successfully transmitted after more than one retransmission. This parameter is based on dot11MultipleRetryCount from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+           <unsignedInt></unsignedInt>
+         </syntax>
+      </parameter>
+      <parameter name="ACKFailureCount" access="readOnly">
+        <description>The number of expected ACKs that were never received. This parameter is based on dot11ACKFailureCount from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+           <unsignedInt></unsignedInt>
+         </syntax>
+      </parameter>
+      <parameter name="AggregatedPacketCount" access="readOnly">
+        <description>The number of aggregated packets that were transmitted. This applies only to 802.11n and 802.11ac.
+        </description>
+        <syntax>
+           <unsignedInt></unsignedInt>
+         </syntax>
+      </parameter>
+    </object>
+    
+    
+    <!-- ZigBee Data Model -->
+    <object name="Device.ZigBee." access="readOnly" minEntries="1" maxEntries="1" dmr:previousObject="Device.WiFi.">
+      <description>Top level object for ZigBee capabilities based on the {{bibref|ZigBee2007}} specification.</description>
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ZDONumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.Interface.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="InterfaceNumberOfEntries">
+      <description>ZigBee interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). This table models the ZigBee interface of a ZigBee end device, ZigBee router or ZigBee coordinator.
+     </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"></parameter>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"></parameter>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="ZDOReference"></parameter>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). 
+When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason.
+This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.</description>
+        <syntax>
+          <string>
+            <enumeration value="Up"></enumeration>
+            <enumeration value="Down"></enumeration>
+            <enumeration value="Unknown"></enumeration>
+            <enumeration value="Dormant"></enumeration>
+            <enumeration value="NotPresent"></enumeration>
+            <enumeration value="LowerLayerDown"></enumeration>
+            <enumeration value="Error" optional="true"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readOnly">
+        <description>The textual name of the interface as assigned by the CPE.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"></size>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>The accumulated time in {{units}} since the interface entered its current operational state.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LowerLayers" access="readWrite">
+        <description>{{list}} {{reference|an interface object that is stacked immediately below this interface object}}  See {{bibref|TR-181i2|Section 4.2.1}}.</description>
+        <syntax>
+          <list>
+            <size maxLength="1024"></size>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"></pathRef>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="IEEEAddress" access="readOnly" activeNotify="forceDefaultEnabled">
+        <description>
+          The IEEE address assigned to this interface.  A value of "FF:FF:FF:FF:FF:FF:FF:FF"  indicates that this address is unknown.  This parameter has the same value as the {{param|.ZigBee.ZDO.{i}.IEEEAddress}} parameter of the ZDO instance {{param|ZDOReference}} is pointing to.
+         </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="NetworkAddress" access="readOnly">
+        <description>
+          The ZigBee network address assigned to this interface.  This parameter has the same value as the {{param|.ZigBee.ZDO.{i}.NetworkAddress}} parameter of the ZDO instance {{param|ZDOReference}} is pointing to.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ZDOReference" access="readOnly">
+        <description>
+          The ZigBee Device Object assigned to this interface.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO." targetType="row"></pathRef>
+            <size maxLength="256"></size>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="AssociatedDeviceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.Interface.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Throughput statistics for this interface.
+        The CPE MUST reset the interface's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|#.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|#.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2|section 4.2.2}}.
+      </description>
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} transmitted out of the interface, including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}}  received on the interface, including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} sent transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received by the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} discarded by interface due to any error.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received that contained errors preventing them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were not addressed to a multicast or broadcast address at this layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were not addressed to a multicast or broadcast address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were chosen to be discarded even though no errors had been detected to prevent the {{units}} being transmitted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were chosen to be discarded even though no errors had been detected to prevent their being delivered.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were addressed to a multicast address at this layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were addressed to a multicast address at this layer and delivered by this layer to a higher layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were addressed to a broadcast address at this layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were addressed to a broadcast address at this layer and delivered by this layer to a higher layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="UnknownPacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"></units>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.Interface.{i}.AssociatedDevice.{i}." access="readOnly" numEntriesParameter="AssociatedDeviceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <description>This table provides information about other ZigBee devices that are directly accessible via this interface.
+{{keys}}
+It is possible that instances of this object have the same key value when the value of {{param|IEEEAddress}} parameter is "FF:FF:FF:FF:FF:FF:FF:FF" and the ZigBee Coordinators on two or more separate area networks assign the same value for the {{param|NetworkAddress}}. This is because the ZigBee specification describes only intra-area network topologies {{bibref|ZigBee2007|Section 1.1.4 Network Topology}}. As such if two or more {{object}} instances have the same key value the implemenation is undefined.
+      </description>
+      <uniqueKey>
+        <parameter ref="IEEEAddress"></parameter>
+        <parameter ref="NetworkAddress"></parameter>
+      </uniqueKey>
+      <parameter name="IEEEAddress" access="readOnly">
+        <description>
+          The IEEE address assigned to this device. A value of "FF:FF:FF:FF:FF:FF:FF:FF"  indicates that this address is unknown.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="NetworkAddress" access="readOnly">
+        <description>
+          The ZigBee network address assigned to this device.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="Active" access="readOnly">
+        <description>Whether or not this device is currently present in the ZigBee network as defined in {{bibref|ZigBee2007|section 2.4.4.1}}.
+The ability to list inactive devices is OPTIONAL. If the CPE includes inactive devices in this table, {{param}} MUST be set to {{false}}  for each inactive device. The length of time an inactive device remains listed in this table is a local matter to the CPE.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="ZDOReference" access="readOnly">
+        <description>
+          The ZigBee Device Object assigned to this interface.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO." targetType="row"></pathRef>
+            <size maxLength="256"></size>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="ZDONumberOfEntries">
+      <description>ZigBee Device Object (ZDO) provides management capabilities of the ZigBee Application Support  (APS) and Network (NWK) layers of a ZigBee Device as defined in {{bibref|ZigBee2007|section 2.5}}.
+{{keys}}
+It is possible that instances of this object have the same key value when the value of {{param|IEEEAddress}} parameter is "FF:FF:FF:FF:FF:FF:FF:FF" and the ZigBee Coordinators on two or more separate area networks assign the same value for the {{param|NetworkAddress}}. This is because the ZigBee specification describes only intra-area network topologies {{bibref|ZigBee2007|Section 1.1.4 Network Topology}}. As such if two or more {{object}} instances have the same key value the implemenation is undefined
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="IEEEAddress"></parameter>
+        <parameter ref="NetworkAddress"></parameter>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="IEEEAddress" access="readOnly">
+        <description>
+          The IEEE address assigned to this device. A value of "FF:FF:FF:FF:FF:FF:FF:FF"  indicates that this address is unknown.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="NetworkAddress" access="readOnly">
+        <description>
+          The ZigBee network address assigned to this device.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="BindingTableNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="GroupNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ApplicationEndpointNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.NodeDescriptor." access="readOnly" minEntries="1" maxEntries="1">
+      <description>The {{object}} object describes the node capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.3 Node Descriptor}}.</description>
+      <parameter name="LogicalType" access="readOnly">
+        <description>
+          The type of ZigBee device that is extracted from the Logical Type Field as defined in {{bibref|ZigBee2007|Table 2.29}}.
+          {{enum}}
+        </description>
+        <syntax>
+        <string>
+            <enumeration value="ZC"><description>ZigBee Coordinator</description></enumeration>
+            <enumeration value="ZR"><description>ZigBee Router</description></enumeration>
+            <enumeration value="ZED"><description>ZigBee End Device</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ComplexDescriptorSupported" access="readOnly">
+        <description>When {{true}}, specifies that the {{object|#.ComplexDescriptor}} object is supported for this ZigBee device.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="UserDescriptorSupported" access="readOnly">
+        <description>When {{true}}, specifies that the {{object|#.UserDescriptor}} object is supported for this ZigBee device.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="FrequencyBand" access="readOnly">
+        <description>
+          Specifies the frequency bands that are supported by the underlying IEEE 802.15.4 radio utilized by the ZigBee device.
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+        <list></list>
+        <string>
+            <enumeration value="868-868.6"><description>The 868-868.6 MHz Band</description></enumeration>
+            <enumeration value="902-928"><description>The 902-928 MHz Band</description></enumeration>
+            <enumeration value="2400-2483.5"><description>The 2400-2483.5 MHz Band</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="MACCapability" access="readOnly">
+        <description>Specifies  the IEEE 802.15.4-2003 MAC sub-layer capabilities for this ZigBee device.
+{{list}} {{enum}}
+        </description>
+        <syntax>
+        <list></list>
+        <string>
+            <enumeration value="AlternatePANCoordinator"><description>Alternate PAN Coordinator</description></enumeration>
+            <enumeration value="FFD"><description>Full Function Device</description></enumeration>
+            <enumeration value="MainsPowerSource"><description>The current power source is mains power</description></enumeration>
+            <enumeration value="OnWhenIdle"><description>The receiver is on when idle</description></enumeration>
+            <enumeration value="SecureCommunication"><description>Secure communication is enabled</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ManufactureCode" access="readOnly">
+        <description>Specifies a manufacturer code that is allocated by the ZigBee Alliance, relating the manufacturer to the device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"></range>
+            </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaximumBufferSize" access="readOnly">
+        <description>Specifies the maximum buffer size, in {{units}}, of the network sub-layer data unit (NSDU) for this ZigBee device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="128"></range>
+            <units value="octets"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaximumIncomingTransferSize" access="readOnly">
+        <description>Specifies the maximum size, in {{units}}, of the application sub-layer data unit (ASDU) that can be transferred to this ZigBee device in one single message transfer.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="32768"></range>
+            <units value="octets"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaximumOutgoingTransferSize" access="readOnly">
+        <description>Specifies the maximum size, in {{units}}, of the application sub-layer data unit (ASDU) that can be transferred from this ZigBee device in one single message transfer.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="32768"></range>
+            <units value="octets"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ServerMask" access="readOnly">
+        <description>
+          Specifies the system server capabilities of this ZigBee device.
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+        <list></list>
+        <string>
+            <enumeration value="PrimaryTrustCenter"></enumeration>
+            <enumeration value="PrimaryBindingTableCache"></enumeration>
+            <enumeration value="BackupBindingTableCache"></enumeration>
+            <enumeration value="PrimaryDiscoveryCache"></enumeration>
+            <enumeration value="BackupDiscoveryCache"></enumeration>
+            <enumeration value="NetworkManager"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DescriptorCapability" access="readOnly">
+        <description>
+          Specifies the descriptor capabilities of this ZigBee device.
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+        <list></list>
+        <string>
+            <enumeration value="ExtendedActiveEndpointListAvailable"></enumeration>
+            <enumeration value="ExtendedSimpleDescriptorListAvailable"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.PowerDescriptor." access="readOnly" minEntries="1" maxEntries="1">
+      <description>The {{object}} object describes the power capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.4 Node Power Descriptor}}.</description>
+     <parameter name="CurrentPowerMode" access="readOnly">
+        <description>
+          Specifies the current sleep/power-saving mode of the ZigBee device.
+          {{enum}}
+        </description>
+        <syntax>
+        <string>
+            <enumeration value="Synchronized"></enumeration>
+            <enumeration value="Periodic"></enumeration>
+            <enumeration value="Manual"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="AvailablePowerSource" access="readOnly">
+        <description>
+          Specifies the power sources available on this ZigBee device.
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+        <list></list>
+        <string>
+            <enumeration value="Constant"><description>Constant (mains) power</description></enumeration>
+            <enumeration value="Rechargeable"><description>Rechargable battery</description></enumeration>
+            <enumeration value="Disposable"><description>Disposable battery</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CurrentPowerSource" access="readOnly">
+        <description>
+          The current power source field specifies the current power source being utilized by the node.
+          {{enum}}
+        </description>
+        <syntax>
+        <string>
+            <enumeration value="Constant"><description>Constant (mains) power</description></enumeration>
+            <enumeration value="Rechargeable"><description>Rechargable battery</description></enumeration>
+            <enumeration value="Disposable"><description>Disposable battery</description></enumeration>
+        </string>
+        </syntax>
+      </parameter>
+      <parameter name="CurrentPowerSourceLevel" access="readOnly">
+        <description>
+          Specifies the level of charge of the current power source.
+          {{enum}}
+        </description>
+        <syntax>
+        <string>
+            <enumeration value="Critical"><description>Critical battery state</description></enumeration>
+            <enumeration value="33"><description>Battery state is 33 percent</description></enumeration>
+            <enumeration value="66"><description>Battery state is 66 percent</description></enumeration>
+            <enumeration value="100"><description>Battery state is 100 percent</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.UserDescriptor." access="readOnly" minEntries="1" maxEntries="1" dmr:noUniqueKeys="true">
+      <description>The {{object}} object is an optional descriptor that describes user defined capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.7 User Descriptor}}. The {{object}} object contains information that allows the user to identify the device using a user-friendly character string, such as "Bedroom TV" or "Stairs Light".
+      </description>
+      <parameter name="DescriptorAvailable" access="readOnly">
+        <description>When {{true}}, the User Descriptor recorded has been received from the target device.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="Description" access="readOnly">
+        <description>Specifies the information that allows the user to identify the ZigBee device using a user-friendly character string, such as "Bedroom TV" or "Stairs light".</description>
+        <syntax>
+          <string><size maxLength="16"></size></string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.ComplexDescriptor." access="readOnly" minEntries="1" maxEntries="1" dmr:noUniqueKeys="true">
+      <description>The {{object}} object is an optional descriptor that describes extended capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.6 Complex Descriptor}}.</description>
+      <parameter name="DescriptorAvailable" access="readOnly">
+        <description>When {{true}}, the Complex Descriptor recorded has been received from the target device.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="Language" access="readOnly">
+        <description>Specifies the ISO 639-1 language code as defined in {{bibref|ISO639-1}}.
+        </description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="CharacterSet" access="readOnly">
+        <description>Specifies the ISO 646 character set as defined in {{bibref|ISO646-1991}}.
+        </description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="ManufacturerName" access="readOnly">
+        <description>Specifies the name of the manufacturer of the ZigBee device.
+        </description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="ModelName" access="readOnly">
+        <description>Specifies the name of the manufacturer's model of the ZigBee device.
+        </description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="SerialNumber" access="readOnly">
+        <description>Specifies the manufacturer's serial number of the ZigBee device.
+        </description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="DeviceURL" access="readOnly">
+        <description>Specifies the URL through which more information relating to the ZigBee device can be obtained.
+        </description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="Icon" access="readOnly">
+         <description>
+          The icon field contains an octet string which carries the data for an icon that can represent the ZigBee device.  The format of the icon MUST be a 32-by-32-pixel PNG image.
+         </description>
+         <syntax>
+           <hexBinary>
+             <size maxLength="65535"></size>
+           </hexBinary>
+         </syntax>
+        </parameter>
+      <parameter name="IconURL" access="readOnly">
+        <description>Specifies the URL through which the icon for the ZigBee device can be obtained.
+        </description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.Security." access="readOnly" minEntries="1" maxEntries="1">
+      <description>The {{object}} object provides the configuration capabilities needed to perform the Security Management functionality defined in {{bibref|ZigBee2007|section 4 Security Management}}.</description>
+      <parameter name="TrustCenterAddress" access="readOnly">
+        <description>Specifies the IEEE address of a special device trusted by devices within a ZigBee network to distribute keys for the purpose of network and end-to-end application configuration management. 
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="SecurityLevel" access="readOnly">
+        <description>Specifies how an outgoing frame is to be secured, how an incoming frame purportedly has been secured; it also indicates whether or not the payload is encrypted and to what extent data authenticity over the frame is provided, as reflected by the length of the message integrity code (MIC).
+{{enum}}</description>
+        <syntax>
+        <string>
+            <enumeration value="None"></enumeration>
+            <enumeration value="MIC-32"></enumeration>
+            <enumeration value="MIC-64"></enumeration>
+            <enumeration value="MIC-128"></enumeration>
+            <enumeration value="ENC"></enumeration>
+            <enumeration value="ENC-MIC-32"></enumeration>
+            <enumeration value="ENC-MIC-64"></enumeration>
+            <enumeration value="ENC-MIC-128"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TimeOutPeriod" access="readOnly">
+        <description>The period of time, in {{units}}, that this ZigBee device will wait for an expected security protocol frame.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"></range>
+            <units value="milliseconds"></units>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.Network." access="readOnly" minEntries="1" maxEntries="1">
+      <description>The {{object}} object provides the configuration capabilities needed to by a ZigBee Device to operate within a ZigBee Area Network as defined in {{bibref|ZigBee2007|section 2.5.2.4 Network Manager}}.</description>
+      <parameter name="NeighborNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="NeighborNumberOfEntries">
+      <description>The {{object}} object provides the configuration capabilities needed to by a ZigBee Device to operate within a ZigBee Area Network as defined in {{bibref|ZigBee2007|section 2.5.2.4 Network Manager}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="Neighbor"></parameter>
+      </uniqueKey>
+      <parameter name="Neighbor" access="readOnly">
+         <description>Neighbor of this ZigBee device. The value MUST be the path name of a row in the ZigBee.ZDO table. If the referenced row is deleted then this entry MUST be deleted. </description>
+         <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO." targetType="row"></pathRef>
+          </string>
+         </syntax>
+      </parameter>
+      <parameter name="LQI" access="readOnly" activeNotify="canDeny">
+        <description>The LQI field specified link quality identification (LQI) for neighbor ZigBee device.</description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Relationship" access="readOnly">
+        <description>The relationship between the neighbor and this device.{{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="Parent"></enumeration>
+            <enumeration value="Child"></enumeration>
+            <enumeration value="PrevChild"></enumeration>
+            <enumeration value="Sibling"></enumeration>
+            <enumeration value="None"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="PermitJoin" access="readOnly">
+        <description>An indication of whether the neighbor device is accepting join requests.{{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="Accepting"></enumeration>
+            <enumeration value="NotAccepting"></enumeration>
+            <enumeration value="Unknown"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Depth" access="readOnly">
+        <description>The tree depth of the neighbor device. A value of 0x00 indicates that the device is the ZigBee coordinator for the network.</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.NodeManager." access="readOnly" minEntries="1" maxEntries="1">
+      <description>The {{object}} object describes the configuration capabilities related for remote management of the ZigBee Area Network as defined in {{bibref|ZigBee2007|section 2.5.2.6 Node Manager}}.</description>
+      <parameter name="RoutingTableNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.NodeManager.RoutingTable.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="RoutingTableNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>The {{object}} object describes the route table as defined in {{bibref|ZigBee2007|table 3.51 Routing Table Entry}}.</description>
+        <uniqueKey functional="true">
+          <parameter ref="DestinationAddress"></parameter>
+        </uniqueKey>
+        <parameter name="DestinationAddress" access="readOnly">
+          <description>The ZigBee network address of this route.</description>
+          <syntax>
+            <string>
+              <size maxLength="4"></size>
+              <pattern value="([0-9A-Fa-f]){4}"></pattern>
+            </string>
+          </syntax>
+        </parameter>
+        <parameter name="NextHopAddress" access="readOnly" activeNotify="canDeny">
+         <description>
+          Specifies the network address of the next hop ZigBee device on the way to the destination ZigBee device.
+         </description>
+         <syntax>
+            <dataType ref="ZigBeeNetworkAddress"></dataType>
+          </syntax>
+        </parameter>
+        <parameter name="Status" access="readOnly" activeNotify="canDeny">
+         <description>
+          The status of the route entry. {{enum}}
+         </description>
+         <syntax>
+          <string>
+           <enumeration value="Active"></enumeration>
+           <enumeration value="DiscoveryUnderway"></enumeration>
+           <enumeration value="DiscoveryFailed"></enumeration>
+           <enumeration value="Inactive"></enumeration>
+           <enumeration value="ValidationUnderway"></enumeration>
+          </string>
+         </syntax>
+        </parameter>
+        <parameter name="MemoryConstrained" access="readOnly">
+          <description>A flag indicating whether the device is a memory constrained concentrator.</description>
+          <syntax>
+            <boolean></boolean>
+          </syntax>
+        </parameter>
+        <parameter name="ManyToOne" access="readOnly">
+          <description>A flag indicating that the destination is a concentrator that issued a many to-one request.</description>
+          <syntax>
+            <boolean></boolean>
+          </syntax>
+        </parameter>
+        <parameter name="RouteRecordRequired" access="readOnly">
+          <description>A flag indicating that a route record command frame should be sent to the destination prior to the next data packet.</description>
+          <syntax>
+            <boolean></boolean>
+          </syntax>
+        </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.Binding.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="BindingTableNumberOfEntries" enableParameter="Enable">
+      <description>The {{object}} object describes the configuration capabilities related to maintaining a ZigBee Device's Binding Table as defined in {{bibref|ZigBee2007|section 2.2.8.2 Binding}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"></parameter>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables the use of this binding on the device.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="SourceEndpoint" access="readWrite">
+        <description>
+          Specifies the source endpoint used in this binding entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="240"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="SourceAddress" access="readWrite">
+        <description>
+          Specifies the source address used in this binding entry.
+         </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"></dataType>
+        </syntax>
+      </parameter>
+            <parameter name="ClusterId" access="readWrite">
+        <description>
+          Specifies the cluster identifier used in this binding entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DestinationAddressMode" access="readWrite">
+         <description>
+          Specifies the type of destination address used for this binding entry. {{enum}}
+         </description>
+         <syntax>
+          <string>
+           <enumeration value="Group"></enumeration>
+           <enumeration value="Endpoint"></enumeration>
+          </string>
+         </syntax>
+        </parameter>
+      <parameter name="DestinationEndpoint" access="readWrite">
+        <description>
+          Specifies the destination endpoint for the binding entry. The value of this field is valid when the value of the {{param|DestinationAddressMode}} is {{enum|Endpoint|DestinationAddressMode}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="240"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="IEEEDestinationAddress" access="readWrite">
+        <description>
+          Specifies the IEEE destination address for this binding entry. The value of this field is valid when the value of the {{param|DestinationAddressMode}} is {{enum|Endpoint|DestinationAddressMode}}.
+         </description>
+         <syntax>
+           <dataType ref="IEEE_EUI64"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="GroupDestinationAddress" access="readWrite">
+        <description>
+          Specifies the group destination address for this binding entry. The value of this field is valid when the value of the {{param|DestinationAddressMode}} is {{enum|Group|DestinationAddressMode}}.
+        </description>
+		<syntax>
+          <dataType ref="ZigBeeNetworkAddress"></dataType>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.Group.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="GroupNumberOfEntries" enableParameter="Enable">
+      <description>The {{object}} object describes the configuration capabilities related to maintaining a ZigBee Device's Group Table as defined in {{bibref|ZigBee2007|section 2.5.2.7 Group Manager}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="GroupId"></parameter>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"></parameter>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables the use of this group on the device.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="GroupId" access="readWrite">
+        <description>
+          The Group Identifier for this object as defined in {{bibref|ZigBee2007|table 2.25 Group Table Entry Format}}.
+        </description>
+		<syntax>
+          <dataType ref="ZigBeeNetworkAddress"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="EndpointList" access="readWrite">
+        <description>The list of application endpoints assigned as a member of this {{object}} object.</description>
+        <syntax>
+        <list></list>
+        <string>
+          <pathRef refType="strong" targetParent=".ZigBee.ZDO.{i}.ApplicationEndpoint." targetType="row"></pathRef>
+          <size maxLength="256"></size>
+        </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="ApplicationEndpointNumberOfEntries" enableParameter="Enable">
+      <description>The {{object}} object describes the application endpoint as defined in {{bibref|ZigBee2007|section 2.1.2 Application Framework}}.</description>
+      <uniqueKey>
+        <parameter ref="EndpointId"></parameter>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"></parameter>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables the use of this application endpoint on the device.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="EndpointId" access="readWrite">
+        <description>
+          The Endpoint Identifier for this object as defined in {{bibref|ZigBee2007|section 2.1.2 Application Framework}}.
+          An {{object}} with an {{param}} value of 0 is designated as the device application: This is a special application that is responsible for device operation and contains logic to manage the device's networking and general maintenance features.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="240"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor." access="readOnly" minEntries="1" maxEntries="1">
+      <description>The {{object}} object contains the attributes of the Simple Descriptor of an application endpoint, as defined in {{bibref|ZigBee2007|section 2.3.2.5 Simple Descriptor}}.</description>
+      <parameter name="ProfileId" access="readWrite">
+        <description>
+          Specifies the application profile that is supported on this endpoint. Application profiles are agreements for messages, message formats, andprocessing actions that enable developers to create an interoperable, distributed application employing application entities that reside on separate ZigBee devices. These application profiles enable applications to send commands, request data, and process commands and requests as defined in {{bibref|ZigBee2007|section 2.1.2.1 Application Profiles}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DeviceId" access="readOnly">
+        <description>
+          Application device identifier, as defined in {{bibref|ZigBee2007|section 2.3.2.5.3 Application Device Identifier Field}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DeviceVersion" access="readOnly">
+        <description>
+          Application device version, as defined in {{bibref|ZigBee2007|section 2.3.2.5.4 Application Device Version Field}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="15"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="InputClusterList" access="readWrite">
+        <description>
+          {{list}} Specifies the input cluster identifiers to be matched by the ZigBee coordinator by remote Zigbee device's output cluster list for this {{object}} object.
+        </description>
+        <syntax>
+        <list></list>
+          <unsignedInt>
+            <range maxInclusive="65535"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="OutputClusterList" access="readWrite">
+        <description>
+          {{list}} Specifies the output cluster identifiers to be matched by the ZigBee coordinator by remote Zigbee device's input cluster list for this {{object}} object.
+        </description>
+        <syntax>
+          <list></list>
+          <unsignedInt>
+            <range maxInclusive="65535"></range>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.Discovery." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object is used for managing the discovery of ZigBee devices within a ZigBee Area Network. ZigBee Devices are discovered via the {{object|#.ZDO}} instance associated with the ZigBee Coordinator of an Area Network.</description>
+      <parameter name="AreaNetworkNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt></unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ZigBee.Discovery.AreaNetwork.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="AreaNetworkNumberOfEntries" enableParameter="Enable">
+      <description>This object specifies the ZigBee devices that are discovered by the {{param|Coordinator}}.
+As the ZigBee specification does not provide a discovery protocol between the CWMP proxy and the ZigBee coordinator, the {{object}} object is provisioned and not discovered.</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"></parameter>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Coordinator"></parameter>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables discovery of the ZigBee devices in this {{object}}.</description>
+        <syntax>
+          <boolean></boolean>
+        </syntax>
+      </parameter>
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date and time when this {{object}} or its member devices (i.e., the devices with ZDOs listed in {{param|ZDOList}}) were updated due to a discovery operation.
+        </description>
+        <syntax>
+          <dateTime></dateTime>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the current discovery operation.
+          {{enum}}
+        </description>
+        <syntax>
+        <string>
+            <enumeration value="Indeterminate"><description>The discovery operation has not been executed and there are no valid discovery results available)</description></enumeration>
+            <enumeration value="InProgress"></enumeration>
+            <enumeration value="Success"></enumeration>
+            <enumeration value="Error"></enumeration>
+            <enumeration value="Error_Timeout" optional="true"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"></dataType>
+        </syntax>
+      </parameter>
+      <parameter name="Coordinator" access="readWrite">
+        <description>
+          The Fully Qualified Domain Name (FQDN) or IP address of the ZigBee Coordinator.  The coordinator MAY be located within the CPE. In this scenario the ACS or CPE MAY use the value of "localhost".
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"></size>
+          </string>
+        </syntax>
+      </parameter>
+     <parameter name="ZDOReference" access="readOnly">
+        <description>
+          The ZDO object for this device that is used to discover the ZigBee capabilities of attached devices.
+          {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO." targetType="row"></pathRef>
+            <size maxLength="256"></size>
+          </string>
+        </syntax>
+      </parameter>
+     <parameter name="ZDOList" access="readOnly">
+        <description>
+          The list of ZDO objects discovered in this Area Network by the ZigBee Coordinator.
+          {{reference}}
+        </description>
+        <syntax>
+          <list></list>
+          <string>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO." targetType="row"></pathRef>
+            <size maxLength="256"></size>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <!-- PROFILES -->
+    <profile name="EthernetInterface:2" base="EthernetInterface:1">
+      <object ref="Device.Ethernet.Interface.{i}." requirement="present">
+        <parameter ref="CurrentBitRate" requirement="readOnly"></parameter>
+      </object>
+    </profile>
+    <profile name="ProviderBridge:1">
+      <object ref="Device.Bridging." requirement="present">
+        <parameter ref="MaxProviderBridgeEntries" requirement="readOnly"></parameter>
+        <parameter ref="ProviderBridgeNumberOfEntries" requirement="readOnly"></parameter>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}." requirement="createDelete">
+        <parameter ref="ServiceAccessPrioritySelection" requirement="readWrite"></parameter>
+        <parameter ref="ServiceAccessPriorityTranslation" requirement="readWrite"></parameter>
+        <parameter ref="Type" requirement="readWrite"></parameter>
+        <parameter ref="TPID" requirement="readWrite"></parameter>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}.PriorityCodePoint." requirement="present">
+        <parameter ref="PCPSelection" requirement="readWrite"></parameter>
+        <parameter ref="UseDEI" requirement="readWrite"></parameter>
+        <parameter ref="RequireDropEncoding" requirement="readWrite"></parameter>
+        <parameter ref="PCPEncoding" requirement="readWrite"></parameter>
+        <parameter ref="PCPDecoding" requirement="readWrite"></parameter>
+      </object>
+      <object ref="Device.Bridging.ProviderBridge.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"></parameter>
+        <parameter ref="Status" requirement="readOnly"></parameter>
+        <parameter ref="Type" requirement="readWrite"></parameter>
+        <parameter ref="SVLANComponent" requirement="readWrite"></parameter>
+        <parameter ref="CVLANComponents" requirement="readWrite"></parameter>
+      </object>
+      <object ref="Device.Ethernet.VLANTermination.{i}." requirement="createDelete">
+        <parameter ref="TPID" requirement="readWrite"></parameter>
+      </object>
+    </profile>
+    <profile name="ProviderBridgeQoS:1">
+      <object ref="Device.QoS." requirement="present">
+        <parameter ref="DefaultInnerEthernetPriorityMark" requirement="readWrite"></parameter>
+      </object>
+      <object ref="Device.QoS.Classification.{i}." requirement="createDelete">
+        <parameter ref="InnerEthernetPriorityCheck" requirement="readWrite"></parameter>
+        <parameter ref="InnerEthernetPriorityExclude" requirement="readWrite"></parameter>
+        <parameter ref="InnerEthernetPriorityMark" requirement="readWrite"></parameter>
+        <parameter ref="EthernetDEICheck" requirement="readWrite"></parameter>
+        <parameter ref="EthernetDEIExclude" requirement="readWrite"></parameter>
+      </object>
+    </profile>
+    <profile name="IEEE8021xAuthentication:2" base="IEEE8021xAuthentication:1">
+      <object ref="Device.IEEE8021x.Supplicant.{i}." requirement="present">
+        <parameter ref="Interface" requirement="readWrite"></parameter>
+      </object>
+    </profile>
+    <profile name="IPPingDetailed:1">
+      <object ref="Device.IP.Diagnostics.IPPing." requirement="present">
+        <parameter ref="DiagnosticsState" requirement="readWrite"></parameter>
+        <parameter ref="Interface" requirement="readWrite"></parameter>
+        <parameter ref="Host" requirement="readWrite"></parameter>
+        <parameter ref="NumberOfRepetitions" requirement="readWrite"></parameter>
+        <parameter ref="Timeout" requirement="readWrite"></parameter>
+        <parameter ref="DataBlockSize" requirement="readWrite"></parameter>
+        <parameter ref="DSCP" requirement="readWrite"></parameter>
+        <parameter ref="SuccessCount" requirement="readOnly"></parameter>
+        <parameter ref="FailureCount" requirement="readOnly"></parameter>
+        <parameter ref="AverageResponseTimeDetailed" requirement="readOnly"></parameter>
+        <parameter ref="MinimumResponseTimeDetailed" requirement="readOnly"></parameter>
+        <parameter ref="MaximumResponseTimeDetailed" requirement="readOnly"></parameter>
+      </object>
+    </profile>
+
+
+  </model>
+</dm:document>

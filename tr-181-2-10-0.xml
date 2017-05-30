@@ -1,0 +1,2169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 Device:2.10 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:2.10 Root Object definition.
+
+  Editor:
+    * Klaus Wich, Axiros GmbH
+
+  BroadbandHome Working Group Chairs:
+    * Jason Walls, QA Cafe
+    * John Blackford, Pace
+
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    * tr-181-2-0-0.xml: May 2010:
+      - corresponds to TR-181 Issue 2.
+    * tr-181-2-1-0.xml: November 2010:
+      - corresponds to TR-181 Issue 2 Amendment 1.
+    * tr-181-2-2-0.xml: March 2011:
+      - corresponds to TR-181 Issue 2 Amendment 2.
+    * tr-181-2-3-0.xml: September 2011:
+      - corresponds to TR-181 Issue 2 Amendment 3.
+    * tr-181-2-4-0.xml: November 2011:
+      - corresponds to TR-181 Issue 2 Amendment 4.
+    * tr-181-2-5-0.xml: May 2012:
+      - corresponds to TR-181 Issue 2 Amendment 5.
+    * tr-181-2-6-0.xml: November 2012:
+      - corresponds to TR-181 Issue 2 Amendment 6.
+    * tr-181-2-7-0.xml: November 2013: January 17, 2014
+      - corresponds to TR-181 Issue 2 Amendment 7.
+    * tr-181-2-8-0.xml: 8 September 2014: 17 September 2014:
+      - corresponds to TR-181 Issue 2 Amendment 8.
+    * tr-181-2-9-0.xml:  1 December 2014:  4 February 2015:
+      - Added WiFi MAC Address Filtering
+      - Added Traceroute fixes
+      - Added IEEE 1905 data model
+      - Incorporated TR-143a1
+    * tr-181-2-10-0.xml: 9 November 2015: 13 November 2015:
+      - corresponds to TR-181 Issue 2 Amendment 10.
+    
+-->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5"
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-181-2-10-0" file="tr-181-2-10-0.xml">
+
+  <description>
+    {{docname|Device Data Model for TR-069}}
+    {{appdate|November 2015}}
+    {{trname|TR-181i2a10}}
+    * Added MQTT model
+    * Added DNS Server updates
+    * Added new diagnostics state
+    * Incorporated new components from TR-157 Amendment 10
+  </description>
+
+  <import file="tr-069-1-4-biblio.xml" spec="urn:broadband-forum-org:tr-069-1-4"/>
+
+  <import file="tr-106-1-1-types.xml" spec="urn:broadband-forum-org:tr-106-1-1">
+    <dataType name="DiagnosticsState"/>
+    <dataType name="Alias"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="IPv4Prefix"/>
+    <dataType name="IPv6Prefix"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>   
+  </import>
+
+
+  <!-- import previous version of data model -->
+  <import file="tr-181-2-9.xml" spec="urn:broadband-forum-org:tr-181-2-9">
+    <model name="Device:2.9"/>
+  </import>
+
+  <!-- import extension of bulk data model for HTTP transport -->
+  <import file="tr-157-1-10.xml" spec="urn:broadband-forum-org:tr-157-1-10">
+    <component name="BulkDataCollectionDiffs"/>  
+  </import>
+
+
+  <model name="Device:2.10" base="Device:2.9">
+    <!-- Bulk Data Collection for HTTP Transport update -->
+    <component path="Device." ref="BulkDataCollectionDiffs"/>
+
+    <!-- Host table updates -->
+    <object base="Device.Hosts.Host.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <!-- Host-Layer1Interface description update -->
+      <parameter base="Layer1Interface" access="readOnly">
+        <description action="replace">
+          {{noreference}}The value MUST be the path name of a row in a layer 1 interface table.  If the layer 1 device isn’t known, then {{param}} will be {{null}}.
+          For example: ''Device.Ethernet.Interface.2''
+        </description>
+      </parameter>
+      <!-- Host last changed  -->
+      <parameter name="ActiveLastChange" access="readOnly" dmr:previousParameter="Active">
+        <description>
+          The datetime when {{param|Active}} last changed from {{true}} to {{false}} or from {{false}} to {{true}}.  The initial detection of a host SHOULD be treated as a transition from {{false}} to {{true}}, showing the datetime when the host was first detected.
+          The ability to list inactive hosts is OPTIONAL. The length of time an inactive host remains listed in this table is a local matter to the CPE.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- MQTT -->
+    <object name="Device.MQTT." access="readOnly" minEntries="1" maxEntries="1" dmr:fixedObject="true">
+      <description>MQTT Base object describing all MQTT related parameters and objects {{bibref|MQTT31}}, </description>
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="BrokerNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Capabilities." access="readOnly" minEntries="1" maxEntries="1" dmr:fixedObject="true">
+      <description>Indicates the MQTT capabilities of the device.</description>
+      <parameter name="ProtocolVersionsSupported" access="readOnly" >
+        <description>Indicates the supported protocol versions. {{enum}}</description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="3.1">
+              <description>Protocol according to {{bibref|MQTT31}} </description>
+            </enumeration>
+            <enumeration value="3.1.1">
+              <description>Protocol according to {{bibref|MQTT311}} </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TransportProtocolSupported" access="readOnly" >
+        <description>Indicates the supported transport protocols. {{enum}}</description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="TCP/IP"/>
+            <enumeration value="TLS"/>
+            <enumeration value="WebSocket"/>
+          </string>
+        </syntax>
+      </parameter>
+      <!-- Client related -->
+      <parameter name="MaxNumberOfClientSubscriptions" access="readOnly" >
+        <description>Indicates the maximum number of subscriptions per MQTT client, which can be stored in the {{object|#.Client.{i}.Subscription}} table. A value of 0 means no limit.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <!-- Broker related -->
+      <parameter name="MaxNumberOfBrokerBridges" access="readOnly" >
+        <description>Indicates the maximum number of bridges, which can be configured in the {{object|#.Broker.{i}.Bridge}} table. A value of 0 means no limit.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="MaxNumberOfBrokerBridgeSubscriptions" access="readOnly" >
+        <description>Indicates the maximum number of subscriptions, which can be stored per bridge instance in the {{object|#.Broker.{i}.Bridge.{i}.Subscription}} table. A value of 0 means no limit.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!-- MQTT client -->
+    <object name="Device.MQTT.Client.{i}." access="readWrite" enableParameter="Enable" numEntriesParameter="ClientNumberOfEntries" minEntries="0" maxEntries="unbounded" dmr:fixedObject="true">
+      <description>MQTT client table. Contains a list of configured MQTT clients.</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny" >
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readWrite">
+        <description>The textual name of the MQTT client.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>        
+      <parameter name="Enable" access="readWrite" >
+        <description>
+          Allows to enable or disable the MQTT client.
+          If a MQTT client gets enabled then the MQTT client has first to establish a MQTT broker session and then subscribe for all enabled topics in the {{object|Subscription.}} table. In case the {{param|CleanSession}} is set to {{false}} a subscription MUST only be sent for topics which haven't been subscribed before (see {{bibref|MQTT311|3.1.2.4}}).
+          If a connected MQTT client gets disabled ({{param|Status}} is either {{enum|Connecting|Status}} or {{enum|Connected|Status}}) then the MQTT client has to send a MQTT DISCONNECT message to disconnect from the MQTT broker ({{bibref|MQTT31|3.14}} or {{bibref|MQTT311|3.14}}), before setting the {{param|Status}} to {{enum|Disabled|Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly" >
+        <description>
+          Indicates the status of this MQTT client. {{enum}}
+          The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid (e.g. The MQTT client can not use the defined port, because it is blocked)
+          The {{enum|Error_BrokerUnreachable}} value indicates that the connection to the MQTT broker could not be established.
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="Connected"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error_BrokerUnreachable"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ClientID" access="readWrite">
+        <description>
+          The MQTT client identifier used in the CONNECT message (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.3.1}}). This parameter MUST NOT be {{empty}}, the CPE has to provide a default value for the parameter, which can be changed by the ACS.
+          A change of this parameter is only communicated to the MQTT broker with the next MQTT CONNECT message. If the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="1" maxLength="23"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username used to authenticate the CPE when making a connection to the MQTT broker. {{bibref|MQTT31|3.1}} recommends that the username has 12 characters or fewer, but this is not required.
+          If this parameter is {{empty}} no authentication parameters are sent in the MQTT CONNECT message.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate the CPE when making a connection to the MQTT broker (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.3.4}}).
+          This password is only sent in the MQTT CONNECT message if {{param|Username}} is not {{empty}}.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TransportProtocol" access="readWrite">
+        <description>
+          Indicates the transport protocol to be used for the MQTT broker connection.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.Capabilities.TransportProtocolSupported"/>
+          </string>
+          <default type="object" value="TCP/IP"/>
+        </syntax>
+      </parameter>
+      <parameter name="ProtocolVersion" access="readWrite">
+        <description>
+          Specifies the MQTT protocol version used in the communication with the MQTT broker. 
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.Capabilities.ProtocolVersionsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CleanSession" access="readWrite" >
+        <description>
+          The value of the MQTT clean session flag in the MQTT CONNECT message (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.4}}). If this flag is set to {{true}} (default), the MQTT broker will delete all subscription information after a Disconnect.
+          A change of this parameter is only effective after the next MQTT CONNECT message to the MQTT broker. If the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+      <parameter name="MessageRetryTime" access="readWrite">
+        <description>
+          Message retry time in {{units}} defines the wait time before a MQTT message that expects a response (QoS value of message is > 0, or PUBLISH, PUBREL, SUBSCRIBE, UNSUBSCRIBE message) is resent, because the response is not received (see {{bibref|MQTT31|4.2}} and {{bibref|MQTT311|4.4}}). 
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+      <parameter name="ConnectRetryTime" access="readWrite">
+        <description>
+          Connect retry time in {{units}} defines the wait time before a failed MQTT broker connection is retried. 
+          A failure can either be on the connection level (the TCP/IP or TLS can not be established) or on the Protocol level, the MQTT client does not receive a MQTT CONNACK message on a MQTT CONNECT message sent. 
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="30"/>
+        </syntax>
+      </parameter>
+      <parameter name="KeepAliveTime" access="readWrite">
+        <description>
+          Keep Alive Time in {{units}} defines the maximum wait time after which a message has to be sent to the MQTT broker (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.10}}). If no regular messages can be sent a MQTT PINGREQ is sent.
+          A value of zero (0) means no keep alive message are sent and the MQTT client is not disconnected by the server.
+          A change of this parameter is only effective after the next MQTT CONNECT message to the MQTT broker. If the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+      <parameter name="ForceReconnect" access="readWrite">
+        <description>
+          Disconnects the MQTT client from the MQTT broker and reconnects it again (toggle connection). It is only effective if the MQTT client is currently connected to the MQTT broker (Parameter {{param|Status|}} is {{enum|Connected|Status}}).
+          If the MQTT client is in a different state, the parameter has no effect.
+          This action parameter may be used to immediately apply changes in the MQTT connection settings.
+        </description>
+        <syntax hidden="true">
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="BrokerAddress" access="readWrite">
+        <description>
+          Host name or IP address of the MQTT Broker.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="BrokerPort" access="readWrite">
+        <description>Port number of the MQTT broker.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="1883"/>
+        </syntax>
+      </parameter>
+      <parameter name="WillEnable" access="readWrite" >
+        <description>
+          Enables or disables the will handling (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.5}}).. Changing this parameter while the MQTT client is connected will cause the client to disconnect and reconnect.
+          If the connection gets enabled and this parameter is set to {{true}} and either the parameter {{param|WillTopic}} or {{param|WillValue}} are {{empty}}, the CPE MUST set the {{param|Status}} to {{enum|Error_Misconfigured|Status}} (see {{bibref|MQTT311|3.1.2.5}}).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="WillTopic" access="readWrite">
+        <description>
+          The Topic sent in the Will Message (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.5}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}. 
+          A change of this parameter is only communicated to the MQTT broker with the next MQTT CONNECT message. 
+          If the will handling is enabled (Paramter {{param|WillEnable}} is set to {{true}}) and the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <string>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="WillValue" access="readWrite">
+        <description>
+          The value sent in the Will Message (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.5}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}.
+          A change of this parameter is only communicated to the MQTT broker with the next MQTT CONNECT message. 
+          If the will handling is enabled (Paramter {{param|WillEnable}} is set to {{true}}) and the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <string>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="WillQoS" access="readWrite">
+        <description>
+          The MQTT QoS level assigned with the will message (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.6}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}.
+          A change of this parameter is only communicated to the MQTT broker with the next MQTT CONNECT message. 
+          If the will handling is enabled (Paramter {{param|WillEnable}} is set to {{true}}) and the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="WillRetain" access="readWrite" >
+        <description>
+          Indicate to the MQTT broker to retain the Will over a Disconnect (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.7}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}.
+          A change of this parameter is only communicated to the MQTT broker with the next MQTT CONNECT message.
+          If the will handling is enabled (Paramter {{param|WillEnable}} is set to {{true}}) and the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="SubscriptionNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Client.{i}.Subscription.{i}." access="readWrite" enableParameter="Enable" numEntriesParameter="SubscriptionNumberOfEntries" minEntries="0" maxEntries="unbounded"  dmr:fixedObject="true">
+      <description>
+        List of MQTT subscriptions handled by the MQTT client.
+        The MQTT client MUST subscribe with the MQTT broker for all subscription instances, whose parameter {{param|Enable}} is set to {{true}}, when it establishes a new connection to the MQTT broker. Disabled subscription instances with {{param|Enable}} set to {{false}} will be ignored during connection establishment.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Topic"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny" >
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Enable" access="readWrite" >
+        <description>
+          Setting Enable to {{true}} means the topic is subscribed at the MQTT broker with a MQTT SUBSCRIBE message, setting it to {{false}} will unsubscribe the topic from the MQTT broker with a MQTT UNSUBSCRIBE message. If the MQTT client is already connected with the Broker ({{param|#.Status}} is {{enum|Connected|#.Status}}), the MQTT SUBSCRIBE or UNSUBSCRIBE message is sent directly, otherwise it is sent after the next successful connect.
+          The actual status of the subscription is indicated with {{param|Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+       <parameter name="Status" access="readOnly" >
+        <description>
+          Indicates the status of this subscription. {{enum}}
+          The {{enum|Subscribed}} value indicates that the topic was successfully subscribed with the MQTT broker, the MQTT client received the SUBACK message for this topic from the server.
+          The {{enum|Subscribing}} value MAY be used by the CPE to indicate that the a SUBSCRIBE message for this topic was sent, and the CPE is waiting for a SUBACK message.
+          The {{enum|Unsubscribed}} value indicates that the topic is not reqistered with the MQTT broker.
+          The {{enum|Unsubscribing}} value MAY be used by the CPE to indicate that the an UNSUBSCRIBE message for this topic was sent, and the CPE is waiting for an UNSUBACK message.
+          If the {{param|Enable}} is set to {{false}} the status MUST be either {{enum|Unsubscribed}} or if the unsubscription failed {{enum|Error}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unsubscribed"/>
+            <enumeration value="Subscribed"/>
+            <enumeration value="Subscribing" optional="true"/>
+            <enumeration value="Unsubscribing" optional="true"/>
+            <enumeration value="Error"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Topic" access="readWrite">
+        <description>Name of the subscribed topic. Topic names may contain wildcards according to the rules specified in {{bibref|MQTT31|Appendix A}} and {{bibref|MQTT311|4.7}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="QoS" access="readWrite">
+        <description>The MQTT QoS level assigned with the subscription (see {{bibref|MQTT31|4.1}} and {{bibref|MQTT311|4.3}}).</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Client.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1" dmr:fixedObject="true">
+      <description>
+        Contains the MQTT client statistics and usage information.
+        The CPE MUST reset the Stats parameters after the MQTT client gets (re-)enabled or if the MQTT client connects with a new MQTT broker (e.g. {{param|#.BrokerAddress}} has changed). The CPE MAY retain the values across a reboot if it reconnects with the same MQTT broker.
+      </description>
+      <parameter name="BrokerConnectionEstablished" access="readOnly" activeNotify="canDeny">
+        <description>Time when the MQTT broker connection was established.</description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="LastPublishMessageSent" access="readOnly" activeNotify="canDeny">
+        <description>Time when the last publish message was sent to the MQTT broker.</description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="LastPublishMessageReceived" access="readOnly" activeNotify="canDeny">
+        <description>Time when the last publish message was received from the MQTT broker.</description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="PublishSent" access="readOnly" activeNotify="canDeny">
+        <description>Number of publish messages sent to the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PublishReceived" access="readOnly" activeNotify="canDeny">
+        <description>Number of publish messages received from to the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="SubscribeSent" access="readOnly" activeNotify="canDeny">
+        <description>Number of subscribe messages sent to the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnSubscribeSent" access="readOnly" activeNotify="canDeny">
+        <description>Number of unsubscribe messages sent to the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MQTTMessagesSent" access="readOnly" activeNotify="canDeny">
+        <description>Total number of MQTT messages sent to the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MQTTMessagesReceived" access="readOnly" activeNotify="canDeny">
+        <description>Total number of MQTT messages received from the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ConnectionErrors" access="readOnly" activeNotify="canDeny">
+        <description>Number of connection errors.</description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="PublishErrors" access="readOnly">
+        <description>Number of errors which prevented sending publish messages.</description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <!--MQTT Broker -->
+    <object name="Device.MQTT.Broker.{i}." access="readWrite" enableParameter="Enable" numEntriesParameter="BrokerNumberOfEntries" minEntries="0" maxEntries="unbounded"  dmr:fixedObject="true">
+      <description>MQTT broker table. Contains a list of configured MQTT brokers.</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny" >
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readWrite">
+        <description>The textual name of the MQTT broker.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Enable" access="readWrite" >
+        <description>Allows to enable or disable the MQTT broker.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly" >
+        <description>
+          Indicates the status of the MQTT broker.  {{enum}}
+          The "{{enum|Error_Misconfigured}}" value indicates that a necessary configuration value is undefined or invalid.
+          The "{{enum|Error}}" value MAY be used by the CPE to indicate a locally defined error condition.</description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Port" access="readWrite">
+        <description>Port used by the MQTT Broker.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="1883"/>
+        </syntax>
+      </parameter>
+      <parameter name="Interface" access="readWrite">
+        <description>
+          If {{empty}} is specified, the CPE MUST bind the MQTT broker to all available interfaces.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username used to authenticate the MQTT clients, which connect to the MQTT broker.
+          If this parameter is {{empty}} no authentication is used.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used used to authenticate the MQTT clients, which connect to the MQTT broker.
+          This password is only used if {{param|Username}} is not {{empty}}.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="BridgeNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Bridge.{i}." access="readWrite" enableParameter="Enable" numEntriesParameter="BridgeNumberOfEntries" minEntries="0" maxEntries="unbounded" dmr:fixedObject="true">
+      <description>Configures MQTT bridges, which are used to communicate with other MQTT brokers.</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny" >
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readWrite">
+        <description>The textual name of the MQTT bridge used for identification.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Enable" access="readWrite" >
+        <description>Allows to enable or disable the MQTT Bridge.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly" >
+        <description>
+          Indicates the status of this MQTT Bridge. {{enum}}
+          The {{enum|Disabled}} value indicates that the MQTT bridge is not in service; parameter {{param|Enable}} is set to {{false}}.
+          The {{enum|Connecting}} value indicates that the MQTT bridge is currently established.
+          The {{enum|Connected}} value indicates that the MQTT bridge is currently active.
+          The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid (e.g. No active Server entry, the MQTT broker can not use the defined bridge port, because it is blocked)
+          The {{enum|Error_BrokerUnreachable}} value indicates that the MQTT bridge connection to the remote MQTT broker could not be established.
+          The {{enum|Error}} value MAY be used to indicate a locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="Connected"/>
+            <enumeration value="Enabled" status="deleted"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error_BrokerUnreachable"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ClientID" access="readWrite">
+        <description>
+          The MQTT client identifier used in the CONNECT message (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.3.1}}). This parameter MUST NOT be {{empty}}, the CPE has to provide a default value for the parameter, which may be changed by the ACS.
+          A change of this parameter is only communicated to the remote MQTT broker with the next MQTT CONNECT message. If the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="1" maxLength="23"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username used to authenticate the MQTT broker when making a connection over the MQTT bridge (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.3.4}}). {{bibref|MQTT31|3.1}} recommends that the username has 12 characters or fewer, but this is not required.
+          If this parameter is {{empty}} no authentication parameters are sent in the MQTT CONNECT message.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate the MQTT broker when making a connection over the MQTT bridge (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.3.4}}).
+          The password is only sent if {{param|Username}} is not {{empty}}.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TransportProtocol" access="readWrite">
+        <description>
+          Indicates the transport protocol to be used for the MQTT bridge connection.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.Capabilities.TransportProtocolSupported"/>
+          </string>
+          <default type="object" value="TCP/IP"/>
+        </syntax>
+      </parameter>
+      <parameter name="ProtocolVersion" access="readWrite">
+        <description>
+          Specifies the MQTT protocol version used in the MQTT bridge connection. 
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.Capabilities.ProtocolVersionsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CleanSession" access="readWrite" >
+        <description>
+          The value of the MQTT clean session flag in the MQTT bridge connection (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.4}}). If this flag is set to {{true}} (default), the remote MQTT broker will delete all subscription information after a Disconnect.
+          A change of this parameter is only effective after the next MQTT CONNECT message to the remote MQTT broker. If the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+      <parameter name="MessageRetryTime" access="readWrite">
+        <description>
+          Message retry time in {{units}} defines the wait time before a MQTT message that expects a response (QoS value of message is > 0, or PUBLISH, PUBREL, SUBSCRIBE, UNSUBSCRIBE message) is resent, because the response is not received (see {{bibref|MQTT31|4.2}} and {{bibref|MQTT311|4.4}}). 
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+      <parameter name="ConnectRetryTime" access="readWrite">
+        <description>
+          Connect retry time in {{units}} defines the wait time before a failed bridge connection is retried. 
+          A failure can either be on the connection level (e.g. the TCP/IP or TLS conection can not be established) or on the Protocol level, the MQTT client does not receive a MQTT CONNACK message on a MQTT CONNECT message sent. 
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="30"/>
+        </syntax>
+      </parameter>
+      <parameter name="KeepAliveTime" access="readWrite">
+        <description>
+          Keep Alive Time in {{units}} defines the maximum wait time after which a message has to be sent to the remote MQTT broker (see {{bibref|MQTT31|3.1}} and {{bibref|MQTT311|3.1.2.10}}). If no regular messages can be sent a MQTT PINGREQ is sent.
+          A value of zero (0) means no keep alive message are sent and the bridge is not disconnected by the server.
+          A change of this parameter is only effective after the next MQTT CONNECT message to the remote MQTT broker. If the change needs to be applied immediately, the parameter {{param|ForceReconnect}} has to be set as well.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+      <parameter name="ForceReconnect" access="readWrite">
+        <description>
+          Disconnects the MQTT bridge to the remote MQTT broker and reconnects it again (toggle connection). It is only effective if the MQTT bridge is currently connected to the remote MQTT broker (Parameter {{param|Status|}} is {{enum|Connected|Status}}).
+          If the MQTT bridge is in a different state, the parameter has no effect.
+          This action parameter may be used to immediately apply changes in the MQTT connection settings.
+        </description>
+        <syntax hidden="true">
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerSelectionAlgorithm" access="readWrite">
+        <description>The algorithm used to select a server entry from the {{object|Server}} table</description>
+        <syntax>
+          <string>
+            <enumeration value="Priority">
+              <description>Select the server from the {{object|Server.}} table according to the sequence defined with the {{param|Server.{i}.Priority}} and {{param|Server.{i}.Weight}} values.</description>
+            </enumeration>
+            <enumeration value="RoundRobin">
+              <description>Select the servers round robin.</description>
+            </enumeration>
+            <enumeration value="Random">
+              <description>Select the servers randomly.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ServerConnection" access="readOnly">
+        <description>{{reference|the {{object|Server.}} instance that is used for this {{object}}, while the {{param|Status}} is {{enum|Connecting|Status}} or {{enum|Connected|Status}}. If the MQTT bridge is not connected the value MUST be an empty string}} </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.Bridge.{i}.Server." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SubscriptionNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}." access="readWrite" enableParameter="Enable" numEntriesParameter="ServerNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <description>
+        Each {{object}} instance represents a MQTT bridge server to be used for a {{object|##.Bridge}}. A remote MQTT broker, which is connected by a MQTT bridge can be reachable via several host addresses each represented by its own {{object}} table entry. For an active MQTT bridge at least one enabled entry has to exist.
+        If a MQTT bridge gets enabled by setting the parameter {{param|##.Bridge.{i}.Enable}} to {{true}}, which either has an empty {{object}} table or the {{object}} table only contains instances whose {{param|Enable}} is set to {{false}}, the {{param|##.Bridge.{i}.Status}} has to be set to {{enum|Error_Misconfigured|##.Bridge.{i}.Status}}.
+        Any attempt to delete an instance, which is currently in use ({{param|##.Bridge.{i}.ServerConnection}} refers to the instance to be deleted), has to be rejected. 
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Address"/>
+        <parameter ref="Port"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Priority" access="readWrite">
+        <description>
+          The priority of this {{object}} that is used by the {{object|##.Bridge}} when determining the {{object}} to connect to. The {{object|##.Bridge}} MUST contact the {{object}} with the lowest-numbered priority that the {{object|##.Bridge}} can reach as defined in {{bibref|RFC2782}}. The selection of {{object}}s with the same {{param}} value utilizes the {{param|Weight}} parameter to determine which {{object}} is selected by the {{object|##.Bridge}}.
+          This value is only used if {{param|##.Bridge.{i}.ServerSelectionAlgorithm}} is set to {{enum|Priority|##.Bridge.{i}.ServerSelectionAlgorithm}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Weight" access="readWrite">
+        <description>
+          This parameter specifies a relative weight for entries with the same {{param|Priority}}. The mechanism is defined in {{bibref|RFC2782}}. A value of -1 indicates that the implementation of this parameter is specific to the Vendor.
+          This value is only used if {{param|##.Bridge.{i}.ServerSelectionAlgorithm}} is set to {{enum|Priority|##.Bridge.{i}.ServerSelectionAlgorithm}}.
+        </description>
+        <syntax>
+          <long>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </long>
+        </syntax>
+      </parameter>
+      <parameter name="Address" access="readWrite">
+        <description>
+          Fully Qualified Domain Name (FQDN) or IP address of the MQTT broker server this {{object|##.Bridge}} connects to.
+          If the value of this parameter is a FQDN that resolves to multiple addresses then each address SHOULD be attempted (in an implementation-specific order) until a connection can be made or all addresses are exhausted, in which case the next {{object}} instance (based on rules defined over the selected {{param|##.Bridge.{i}.ServerSelectionAlgorithm}}) SHOULD be used.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Port" access="readWrite">
+        <description>Port number of the MQTT broker server this {{object|##.Bridge}} connects to.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="1883"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}." access="readWrite" numEntriesParameter="SubscriptionNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <description>
+        List of MQTT subscriptions handled over the bridge.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Topic"/>
+        <parameter ref="Direction"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny" >
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Enable" access="readWrite" >
+        <description>
+          Setting Enable to {{true}} activates the handling of this subscription instance. In case of incoming directions ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}) the topic is subscribed over the bridge at the remote MQTT broker with a MQTT SUBSCRIBE message if {{param}} is set to {{true}} or unsubscribed from the remote MQTT broker with a MQTT UNSUBSCRIBE message if the value is set to {{false}}.
+          The actual status of the subscription is indicated with {{param|Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+       <parameter name="Status" access="readOnly" >
+        <description>
+          Indicates the status of this subscription. {{enum}}
+          The {{enum|Enabled}} value indicates that the this subscription is active. In case of incoming directions ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}) the topic was successfully subscribed with the remote MQTT broker.
+          The {{enum|Disabled}} value indicates that this subscription is not used.
+          The {{enum|Error}} value indicates that an error occured (e.g. an subscription could not be made with the remote MQTT broker) and the subscription is not in use.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Error"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Topic" access="readWrite">
+        <description>Name of the subscribed topic. Topic names may contain wildcards according to the rules specified in {{bibref|MQTT31|Appendix A}} and {{bibref|MQTT311|4.7}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Direction" access="readWrite">
+        <description>
+          The direction of the subscription. {{enum}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="out">
+              <description>Indicates that all matching topics will be sent over the bridge to the next MQTT broker.</description>
+            </enumeration>
+            <enumeration value="in">
+              <description>Indicates that all matching topics will be received over the bridge from the next MQTT broker.</description>
+            </enumeration>
+            <enumeration value="both">
+              <description>Indicates that all matching topics will be sent and received over the bridge.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="QoS" access="readWrite">
+        <description>The MQTT QoS level assigned with the subscription (see {{bibref|MQTT31|4.1}} and {{bibref|MQTT311|4.3}}).</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LocalPrefix" access="readWrite">
+        <description>
+          The local prefix is used for remapping received topics to the local topics of the MQTT broker and to select the topics to be sent over bridge to the remote MQTT broker.
+          * In incoming direction ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}):
+          : For remote topics received over the bridge the MQTT broker adds the LocalPrefix in front of the received topic, before processing it.
+          :: '' ''
+          : ''Example:'' 
+          :: Topic is "/bus/+", LocalPrefix is "/local", Direction is "in"
+          :: MQTT broker receives message with topic "/bus/tr181" over bridge => MQTT broker uses topic "/local/bus/tr181" for internal processing
+          
+          * In outgoing direction ({{param|Direction}} is either {{enum|out|Direction}} or {{enum|both|Direction}}):
+          : For selection of the topics to be sent over the bridge the MQTT broker uses the combination of {{param}} and {{param|Topic}} to match the topics to be sent over bridge, and removes the {{param}} from the selected topic before sending it over the bridge.
+          :: '' ''
+          : ''Example:''
+          :: Topic is "/bus/+", LocalPrefix is "/local", Direction is "out"
+          :: MQTT broker receives message with topic "/local/bus/tr181" from a MQTT client => MQTT broker sends topic "/bus/tr181" to remote MQTT broker
+        </description>
+        <syntax>
+          <string>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="RemotePrefix" access="readWrite">
+        <description>
+          The remote prefix is used for remapping topics to the remote MQTT broker topic lists.
+          * In incoming direction ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}):
+          : For remote topics received over the bridge the MQTT broker removes the remote prefix topic from the received topic (before handling the {{param|LocalPrefix}}), before processing it.
+          :: '' ''
+          : ''Example:'' 
+          :: Topic is "/bus/+", LocalPrefix is "/local", RemotePrefix is "/remote", Direction is "in"
+          :: MQTT broker receives message with topic "/remote/bus/tr181" over bridge => MQTT broker uses topic "/local/bus/tr181" for internal processing
+          : During activation of the bridge, the MQTT broker prepends the {{param|Topic}} with {{param}} topic and subscribes to the remote MQTT broker with it, in order to receive all applicable remote topics.
+          :: '' ''
+          : ''Example:'' 
+          :: Topic is "/bus/+", RemotePrefix is "/remote", Direction is "in"
+          :: MQTT broker sends a subscription to the remote MQTT broker with the topic "/remote/bus/+".
+         
+          * In outgoing direction ({{param|Direction}} is either {{enum|out|Direction}} or {{enum|both|Direction}}):
+          : For all topics to be sent over the bridge ({{param|Direction}} is either {{enum|out|Direction}} or {{enum|both|Direction}}), the RemotePrefix will be prepended to the topic after the {{param|LocalPrefix}} has been processed and before sending the message over the bridge.
+          :: '' ''
+          : ''Example:''
+          :: Topic is "/bus/+", LocalPrefix is "/local", RemotePrefix is "/remote" Direction is "out"
+          :: MQTT broker receives message with topic "/local/bus/tr181" from a MQTT client => MQTT broker sends topic "/remote/bus/tr181" to remote MQTT broker
+        </description>
+        <syntax>
+          <string>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1" dmr:fixedObject="true">
+      <description>The MQTT broker statistics values. These will reset with each MQTT broker start, either after reboot or if the MQTT broker gets (re-)enabled.</description>
+      <parameter name="TotalNumberOfClients" access="readOnly">
+        <description>Total number of MQTT clients registered with the MQTT broker.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="NumberOfActiveClients" access="readOnly">
+        <description>Number of MQTT clients, which have a connection with the MQTT broker established.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="NumberOfInactiveClients" access="readOnly">
+        <description>Number of MQTT clients, which have no connection with the MQTT broker established.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="Subscriptions" access="readOnly" activeNotify="canDeny">
+        <description>Number of subscriptions held by the MQTT broker.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="PublishSent" access="readOnly" activeNotify="canDeny">
+        <description>Number of publish messages sent by the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PublishReceived" access="readOnly" activeNotify="canDeny">
+        <description>Number of publish messages received by the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MQTTMessagesSent" access="readOnly" activeNotify="canDeny">
+        <description>Total number of MQTT messages sent by the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MQTTMessagesReceived" access="readOnly" activeNotify="canDeny">
+        <description>Total number of MQTT messages received by the MQTT broker.</description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ConnectionErrors" access="readOnly" activeNotify="canDeny">
+        <description>Number of connection errors.</description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="PublishErrors" access="readOnly">
+        <description>Number of errors which prevented sending publish messages</description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <!-- New DiagnosticsState -->
+    <object base="Device.DSL.Diagnostics.ADSLLineTest." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.ATM.Diagnostics.F5Loopback." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.HPNA.Diagnostics.PHYThroughput." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Error_FailToEnableCert" access="readOnly"/>
+            <enumeration value="Error_CertCmdTimeout" access="readOnly"/>
+            <enumeration value="Error_UnknownErr" access="readOnly"/>
+            <enumeration value="Error_UnsupportedOpcode" access="readOnly"/>
+            <enumeration value="Error_InvalidParam" access="readOnly"/>
+            <enumeration value="Error_UnsupportedCmdSegment" access="readOnly"/>
+            <enumeration value="Error_UnsupportedDataGen" access="readOnly"/>
+            <enumeration value="Error_InvalidSequence" access="readOnly"/>
+            <enumeration value="Error_InvalidFrame" access="readOnly"/>
+            <enumeration value="Eror_InvalidOpcode" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.HPNA.Diagnostics.PerformanceMonitoring." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Error_SampleIntervalTooSmall" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Ghn.Diagnostics.PHYThroughput." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Ghn.Diagnostics.PerformanceMonitoring." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.UPA.Diagnostics.InterfaceMeasurement." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Error_InvalidPort" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.NeighboringWiFiDiagnostic." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Completed" access="readOnly" status="deprecated"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Diagnostics.IPPing." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Error_CannotResolveHostName" access="readOnly"/>
+            <enumeration value="Error_NoRouteToHost" access="readOnly"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Diagnostics.TraceRoute." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="replace">{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <!-- specific: -->
+            <enumeration value="Error_CannotResolveHostName" access="readOnly"/>
+            <enumeration value="Error_NoRouteToHost" access="readOnly"/>
+            <enumeration value="Error_MaxHopCountExceeded" access="readOnly"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <!-- WiFi Operating Standard  -->
+    <object base="Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}." access="readOnly" numEntriesParameter="AssociatedDeviceNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter name="OperatingStandard" access="readOnly" dmr:previousParameter="MACAddress">
+        <description>The operating standard that this associated device is connected with.</description>
+        <syntax>
+          <string>
+            <enumeration value="a">
+              <description>{{bibref|802.11a-1999}}</description>
+            </enumeration>
+            <enumeration value="b">
+              <description>{{bibref|802.11b-1999}}</description>
+            </enumeration>
+            <enumeration value="g">
+              <description>{{bibref|802.11g-2003}}</description>
+            </enumeration>
+            <enumeration value="n">
+              <description>{{bibref|802.11n-2009}}</description>
+            </enumeration>
+            <enumeration value="ac">
+              <description>{{bibref|802.11ac-2013}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <!-- MAP fixes -->
+    <object base="Device.MAP." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace"> 
+        The Mapping of Address and Port (MAP) object {{bibref|RFC7597}} {{bibref|RFC7599}} {{bibref|RFC7598}}. This object applies only to gateway devices that support IPv4 on the LAN side, include a {{object|#.NAT}}, and typically have only IPv6 connectivity on the WAN side.
+        See the MAP Theory of Operation {{bibref|TR-181i2a8|Appendix XV}} for a description of the working of this MAP data model.      
+      </description>
+    </object>
+    <object base="Device.MAP.Domain.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <description action="replace">
+        MAP domain settings {{bibref|RFC7597}} {{bibref|RFC7599}}.  Each instance models a MAP domain.
+        MAP supports two transport modes, both of which use NAPT44 (modified to use a restricted port range):
+        * MAP-E ({{param|TransportMode}} = {{enum|Encapsulation|TransportMode}}) uses an IPv4-in-IPv6 tunnel.
+        * MAP-T ({{param|TransportMode}} = {{enum|Translation|TransportMode}}) uses stateless NAT64.
+        Note: There is an n:1 relationship between a MAP domain and the associated {{param|WANInterface}}, i.e. in theory multiple MAP domains can be associated with a single WAN IP interface (each domain would have its own ''End-user IPv6 prefix'' and ''MAP IPv6 address'').
+        Note: The {{object}} table includes unique key parameters that are strong references. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.
+      </description>
+      <parameter base="TransportMode" access="readWrite">
+        <description action="replace">
+          The transport mode to use.
+          Corresponds to the {{bibref|RFC7598}} ''S46_CONT_MAPE'' and ''S46_CONT_MAPT'' container options.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Encapsulation">
+              <description action="replace">MAP-E {{bibref|RFC7597}}</description>
+            </enumeration>
+            <enumeration value="Translation">
+              <description action="replace">MAP-T {{bibref|RFC7599}}</description>
+            </enumeration>
+          </string>
+          <default type="object" value="Translation"/>
+        </syntax>
+      </parameter>
+      <parameter base="BRIPv6Prefix" access="readWrite">
+        <description action="replace">
+          The MAP Border Relay (BR) address or prefix.
+          * For MAP-E this is the BR address and therefore MUST be a /128 {{bibref|RFC7597}}. Note this address can be an IPv6 anycast address. This address corresponds to the {{bibref|RFC7598}} ''OPTION_S46_BR'' (Border Relay) option.
+          * For MAP-T this is the BR prefix {{bibref|RFC7599}}. This address prefix corresponds to the {{bibref|RFC7598}} ''OPTION_S46_DMR'' (Default Mapping Rule) option.
+          Note: There will be a corresponding {{object|.Routing.Router.{i}.IPv4Forwarding}} default rule.
+        </description>
+      </parameter>
+      <parameter base="PSIDOffset" access="readWrite">
+        <description action="replace">
+          ''Port-set ID'' (PSID) offset in {{units}}.  The number of Port-sets is 2^{{param}}.
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''offset'' field.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="15"/>
+            <units value="bits"/>
+          </unsignedInt>
+          <default type="object" value="6"/>
+        </syntax>
+      </parameter>
+      <parameter base="PSIDLength" access="readWrite">
+        <description action="replace">
+          The length in {{units}} of the ''Port-set id'' (PSID) configured in the {{param|PSID}} parameter.
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''PSID-len'' field.
+        </description>
+      </parameter>
+      <parameter base="PSID" access="readWrite">
+        <description action="replace">
+          ''Port-set ID'' (PSID) to use in preference to the value extracted from the ''Embedded Address'' (EA) bits.
+          Only the high order {{param|PSIDLength}} bits of the {{param}} value are used, so the parameter is ignored when {{param|PSIDLength}} is zero.
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''PSID'' field.
+        </description>
+      </parameter>
+      <parameter base="IncludeSystemPorts" access="readWrite">
+        <description action="replace">
+          Whether to include low-numbered (system) ports in the Port-sets. Normally ports in the range [0:2^(16-{{param|PSIDOffset}})-1] are excluded, e.g. for the default {{param|PSIDOffset}} value of 4, ports [0:4095] are not included in the Port-sets.
+          This parameter is related to {{bibref|RFC7597}}'s ''N'', which is defined as ''the number of ports (e.g., 1024) excluded from the lower end of the range''.  The parameter is relevant only when {{param|PSIDOffset}} is 0; {{false}} corresponds to ''N=1024'' and {{true}} corresponds to ''N=0''.
+        </description>
+      </parameter>
+    </object>
+    <object base="Device.MAP.Domain.{i}.Rule.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <description action="replace">
+        The MAP domain's Mapping Rules {{bibref|RFC7597}}. The rule with the longest match between its {{param|IPv6Prefix}} and the end-user {{param|#.IPv6Prefix}} is the Basic Mapping Rule (BMR). Any of the rules (including the BMR) can be a Forwarding Mapping Rule.
+      </description>
+      <parameter base="Origin" access="readOnly">
+        <syntax>
+          <string>
+            <enumeration value="DHCPv6">
+              <description action="replace">Created via a {{bibref|RFC7598}} ''S46_RULE'' option.</description>
+            </enumeration>
+            <enumeration value="Static">
+              <description action="replace">Present in the factory default configuration, created by the ACS, or created by some other management entity (e.g. via a GUI)</description>
+            </enumeration>
+          </string>
+          <default type="object" value="Static"/>
+        </syntax>
+      </parameter>
+      <parameter base="IPv6Prefix" access="readWrite">
+        <description action="replace">
+          The ''Rule IPv6 prefix''.
+          The Rule IPv6 prefix is a leading part of the end-user {{param|#.IPv6Prefix}}, i.e. its length MUST be less than or equal to the length of the end-user ''IPv6Prefix'', and it MUST match the end-user ''IPv6Prefix''.
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''ipv6-prefix'' field.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+          <default type="object" value="/0"/>
+        </syntax>
+      </parameter>
+      <parameter base="IPv4Prefix" access="readWrite">
+        <description action="replace">
+          The ''Rule IPv4 prefix''.
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''ipv4-prefix'' field.
+        </description>
+      </parameter>
+      <parameter base="EABitsLength" access="readWrite">
+        <description action="replace">
+          The length in {{units}} of the ''Embedded Address (EA) bits'' in the end-user {{param|#.IPv6Prefix}}.
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''ea-len'' field.
+        </description>
+      </parameter>
+      <parameter base="IsFMR" access="readWrite">
+        <description action="replace">
+          Indicates whether this rule is a ''Forwarding Mapping Rule'' (FMR), i.e. can be used for forwarding.
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''flags'' field's ''F-Flag''.
+        </description>
+      </parameter>
+    </object>
+    <object base="Device.NAT.InterfaceSetting.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="Status" access="readOnly">
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Enabled_NATForcedDisabled">
+              <description action="replace">
+                NAT enabled but forced by a third party to be operationally disabled, e.g. because a {{object|##.MAP.Domain}} is enabled but there is no Basic Mapping Rule {{bibref|RFC7597}}.
+              </description>
+            </enumeration>
+            <enumeration value="Enabled_PortMappingDisabled">
+              <description action="replace">
+                NAT enabled but port mapping has been operationally disabled by a third party, e.g. because this is REQUIRED by the current {{object|##.Firewall}} level.
+              </description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object base="Device.IP.Interface.{i}.IPv6Address.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="Origin" access="readOnly">
+        <syntax>
+          <string>
+            <enumeration value="AutoConfigured"/>
+            <enumeration value="DHCPv6"/>
+            <enumeration value="IKEv2"/>
+            <enumeration value="MAP">
+              <description action="replace">
+                Assigned by MAP {{bibref|RFC7597}}, i.e. is this interface's ''MAP IPv6 address''
+              </description>
+            </enumeration>
+            <enumeration value="WellKnown"/>
+            <enumeration value="Static"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>   
+    
+    
+    <!-- Scheduled Reboots -->
+    <object base="Device.ManagementServer." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="ScheduleReboot" access="readWrite" dmr:previousParameter="Password">
+        <description>
+          An absolute date and time in UTC at which time the CPE will perform a reboot.
+          If a CWMP session is in progress at the specified time, the CPE MUST wait until the session has ended before performing the reboot.
+          If the value specifies a date and time that has already passed (i.e., a past date and time), no reboot will be performed.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="DelayReboot" access="readWrite">
+        <description>
+          The number of seconds from the time the CWMP session in which this parameter value is set is ended until the CPE performs a reboot.
+          Whenever the CPE reboots, this value MUST be reset by the CPE to -1.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <!-- Dynamic DNS -->
+    <object name="Device.DynamicDNS." access="readOnly" minEntries="1" maxEntries="1">
+      <description>Properties for Dynamic DNS. </description>
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedServices" access="readOnly">
+        <description>List of Dynamic DNS service names that are supported by the CPE.</description>             
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DynamicDNS.Client.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable">
+      <description>
+        Client properties for Dynamic DNS. 
+        A dynamic DNS client is responsible for verifying IP address changes and updating information from a subscribed account on a Dynamic DNS Server.
+        For enabled table entries, if {{param|Server}} is not a valid reference then the table entry is inoperable and the CPE MUST set the {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Server"/>
+        <parameter ref="Username"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>            
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables this Dynamic DNS Client.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>Status of this Dynamic DNS Client. </description>
+        <syntax>
+          <string>
+            <enumeration value="Connecting">
+              <description>The Dynamic DNS Client is trying to connect to the Server.</description>
+            </enumeration>
+            <enumeration value="Authenticating">
+              <description>The Dynamic DNS Client is in the authentication phase.</description>
+            </enumeration>                      
+            <enumeration value="Updated">
+              <description>The Dynamic DNS Client has performed an update request since the last IP address change.</description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured">
+              <description>Error due to configuration.</description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>An error has occurred during the communication with the Server. The {{param|LastError}} parameter is updated with the detail of this error.</description>
+            </enumeration>                      
+            <enumeration value="Disabled">
+              <description>The Client is disabled.</description>
+            </enumeration>                      
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="LastError" access="readOnly">
+        <description>
+          The last error this Dynamic DNS Client has encountered.
+          The parameter MAY instead indicate a vendor-specific cause, which MUST use the format defined in {{bibref|TR-106}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NO_ERROR"/>
+            <enumeration value="MISCONFIGURATION_ERROR"/>
+            <enumeration value="DNS_ERROR"/>
+            <enumeration value="CONNECTION_ERROR"/>
+            <enumeration value="AUTHENTICATION_ERROR"/>
+            <enumeration value="TIMEOUT_ERROR"/>
+            <enumeration value="PROTOCOL_ERROR"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Server" access="readWrite">
+        <description>
+          The DynamicDNS server associated with this Dynamic DNS Client.
+          {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="Device.DynamicDNS.Server." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Interface" access="readWrite">
+        <description>
+          The IP interface over which update queries to the server are sent.
+          {{reference}}
+          If an empty string is specified, the CPE MUST use its routing policy (Forwarding table entries), to determine the appropriate interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="Device.IP.Interface." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>      
+      <parameter name="Username" access="readWrite">
+        <description>Username used by this Dynamic DNS Client to authenticate with the Server.</description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Password" access="readWrite">
+        <description>Password used by this Dynamic DNS Client to authenticate with the Server.</description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="HostnameNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DynamicDNS.Client.{i}.Hostname.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="HostnameNumberOfEntries" enableParameter="Enable">
+      <description>Each table entry represents a fully qualified domain name updated by this Dynamic DNS Client.</description>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables this Hostname.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>            
+      <parameter name="Status" access="readOnly">
+        <description>Status of this Hostname.</description>
+        <syntax>
+          <string>
+            <enumeration value="Registered">
+              <description>The Hostname has been updated with the current IP address.</description>
+            </enumeration>
+            <enumeration value="UpdateNeeded">
+              <description>The IP address has changed since last update.</description>
+            </enumeration>
+            <enumeration value="Updating">
+              <description>The Client is trying to update this Hostname.</description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>The Hostname doesn't exist for this Dynamic DNS account.</description>
+            </enumeration>
+            <enumeration value="Disabled">
+              <description>The Hostname is disabled.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readWrite">
+        <description>
+          Fully qualified domain name that has to be updated with the IP address.
+          If the name is set to another value, the Client MUST immediately send an update request to the Server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>            
+      <parameter name="LastUpdate" access="readOnly">
+        <description>The date time of the last successful update of this name to the Dynamic DNS Server.</description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DynamicDNS.Server.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable">
+      <description>Table of Dynamic DNS servers available for this CPE.</description>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables Dynamic DNS Server.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readWrite">
+        <description>The textual name of the Dynamic DNS Server.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="ServiceName" access="readWrite">
+        <description>
+          Dynamic DNS service used to contact this server.
+          {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <enumerationRef targetParam="Device.DynamicDNS.SupportedServices"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ServerAddress" access="readWrite">
+        <description>Host name or IP address of the Dynamic DNS server.</description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ServerPort" access="readWrite">
+        <description>Port number of the Dynamic DNS server.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedProtocols" access="readOnly">
+        <description>Indicates the protocols that are supported by the CPE for sending requests to the Dynamic DNS server. {{list}} This list depends on the Dynamic DNS service defined by the {{param|ServiceName}} parameter.</description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HTTP">
+              <description>As defined in {{bibref|RFC2616}}</description>
+            </enumeration>
+            <enumeration value="HTTPS">
+              <description>As defined in {{bibref|RFC2818}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          Indicates the protocol used to send requests to the Dynamic DNS server.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedProtocols"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CheckInterval" access="readWrite">
+        <description>
+          Interval (in {{units}}) between two checks for IP change.
+          A value of zero indicates that the CPE knows when IP changes and doesn’t need to check it periodically.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="RetryInterval" access="readWrite">
+        <description>Initial retry interval (in {{units}}) after a failed request. This parameter can be used as a fixed value or as part of a retry interval calculation.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MaxRetries" access="readWrite">
+        <description>
+        Maximum number of retries after a failed request. When the maximum number is reached, no further requests are sent until the context changes.
+        A value of 0 means that there are no retries after a failed request.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>    
+    </object>
+
+
+    <!--
+************************
+*                      *
+*   P R O F I L E S    *
+*                      *
+************************
+-->
+
+    <!-- MQTT client profiles -->
+    <profile name="MQTTClientBase:1">
+      <description>Provides basic MQTT client control and statistics</description>
+      <object ref="Device.MQTT." requirement="present">
+        <parameter ref="ClientNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Client.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="BrokerAddress" requirement="readWrite"/>
+        <parameter ref="BrokerPort" requirement="readWrite"/>
+        <parameter ref="CleanSession" requirement="readWrite"/>
+        <parameter ref="KeepAliveTime" requirement="readWrite"/>
+        <parameter ref="SubscriptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Client.{i}.Stats." requirement="present">
+        <parameter ref="BrokerConnectionEstablished" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesSent" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesReceived" requirement="readOnly"/>
+        <parameter ref="ConnectionErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTClientExtended:1" base="MQTTClientBase:1">
+      <description>Adds client authentication, will handling and extends statistics</description>
+      <object ref="Device.MQTT.Client.{i}." requirement="present">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="ClientID" requirement="readWrite"/>
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+        <parameter ref="TransportProtocol" requirement="readWrite"/>
+        <parameter ref="MessageRetryTime" requirement="readWrite"/>
+        <parameter ref="ConnectRetryTime" requirement="readWrite"/>
+        <parameter ref="KeepAliveTime" requirement="readWrite"/>
+        <parameter ref="ForceReconnect" requirement="readWrite"/>
+        <parameter ref="WillEnable" requirement="readWrite"/>
+        <parameter ref="WillTopic" requirement="readWrite"/>
+        <parameter ref="WillValue" requirement="readWrite"/>
+        <parameter ref="WillQoS" requirement="readWrite"/>
+        <parameter ref="WillRetain" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Client.{i}.Stats." requirement="present">
+        <parameter ref="LastPublishMessageSent" requirement="readOnly"/>
+        <parameter ref="LastPublishMessageReceived" requirement="readOnly"/>
+        <parameter ref="PublishSent" requirement="readOnly"/>
+        <parameter ref="PublishReceived" requirement="readOnly"/>
+        <parameter ref="SubscribeSent" requirement="readOnly"/>
+        <parameter ref="UnSubscribeSent" requirement="readOnly"/>
+        <parameter ref="PublishErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTClientSubscribe:1" base="MQTTClientBase:1">
+      <description>Adds client subscription control and access to received topics</description>
+      <object ref="Device.MQTT.Client.{i}.Subscription.{i}." requirement="present">
+        <parameter ref="Topic" requirement="readWrite"/>
+        <parameter ref="QoS" requirement="readOnly"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <!-- MQTT broker profiles -->
+    <profile name="MQTTBrokerBase:1">
+      <description>Provides basic MQTT broker control and statistics</description>
+      <object ref="Device.MQTT." requirement="present">
+        <parameter ref="BrokerNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}." requirement="present">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Stats." requirement="present">
+        <parameter ref="TotalNumberOfClients" requirement="readOnly"/>
+        <parameter ref="NumberOfActiveClients" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesSent" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesReceived" requirement="readOnly"/>
+        <parameter ref="ConnectionErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTBrokerExtended:1" base="MQTTBrokerBase:1">
+      <description>Adds client authentication and extends statistics</description>
+      <object ref="Device.MQTT.Broker.{i}." requirement="present">
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Stats." requirement="present">
+        <parameter ref="NumberOfInactiveClients" requirement="readOnly"/>
+        <parameter ref="PublishSent" requirement="readOnly"/>
+        <parameter ref="PublishReceived" requirement="readOnly"/>
+        <parameter ref="PublishErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTBrokerBridgeBase:1" base="MQTTBrokerBase:1">
+      <description>Adds parameters for MQTT network interconnection with Bridges</description>
+      <object ref="Device.MQTT.Broker.{i}." requirement="present">
+        <parameter ref="BridgeNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Bridge.{i}." requirement="present">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ServerConnection" requirement="readOnly"/>
+        <parameter ref="ServerNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="SubscriptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Priority" requirement="readWrite"/>
+        <parameter ref="Address" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}." requirement="present">
+        <parameter ref="Topic" requirement="readWrite"/>
+        <parameter ref="Direction" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="QoS" requirement="readWrite"/>
+      </object>
+    </profile>
+
+
+    <!-- ZigBee profiles -->
+    <profile name="ZigBeeInterface:1">
+      <object ref="Device.ZigBee." requirement="present">
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.Interface.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="LowerLayers" requirement="readWrite"/>
+        <parameter ref="IEEEAddress" requirement="readOnly"/>
+        <parameter ref="NetworkAddress" requirement="readOnly"/>
+        <parameter ref="ZDOReference" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZigBeeStats:1" extends="ZigBeeInterface:1">
+      <object ref="Device.ZigBee.Interface.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsSent" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsSent" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsReceived" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsSent" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsSent" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="UnknownPacketsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZigBeeAssociatedDevices:1" extends="ZigBeeInterface:1">
+      <object ref="Device.ZigBee.Interface.{i}." requirement="present">
+        <parameter ref="AssociatedDeviceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.Interface.{i}.AssociatedDevice.{i}." requirement="present">
+        <parameter ref="IEEEAddress" requirement="readOnly"/>
+        <parameter ref="NetworkAddress" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+        <parameter ref="ZDOReference" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZigBeeDisc:1">
+      <object ref="Device.ZigBee.Discovery." requirement="present">
+        <parameter ref="AreaNetworkNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.Discovery.AreaNetwork.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Coordinator" requirement="readWrite"/>
+        <parameter ref="ZDOReference" requirement="readOnly"/>
+        <parameter ref="ZDOList" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZDOBasic:1">
+      <object ref="Device.ZigBee." requirement="present">
+        <parameter ref="ZDONumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}." requirement="present">
+        <parameter ref="IEEEAddress" requirement="readOnly"/>
+        <parameter ref="NetworkAddress" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.NodeDescriptor." requirement="present">
+        <parameter ref="LogicalType" requirement="readOnly"/>
+        <parameter ref="ComplexDescriptorSupported" requirement="readOnly"/>
+        <parameter ref="UserDescriptorSupported" requirement="readOnly"/>
+        <parameter ref="FrequencyBand" requirement="readOnly"/>
+        <parameter ref="MACCapability" requirement="readOnly"/>
+        <parameter ref="ManufactureCode" requirement="readOnly"/>
+        <parameter ref="MaximumBufferSize" requirement="readOnly"/>
+        <parameter ref="MaximumIncomingTransferSize" requirement="readOnly"/>
+        <parameter ref="MaximumOutgoingTransferSize" requirement="readOnly"/>
+        <parameter ref="ServerMask" requirement="readOnly"/>
+        <parameter ref="DescriptorCapability" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.PowerDescriptor." requirement="present">
+        <parameter ref="CurrentPowerMode" requirement="readOnly"/>
+        <parameter ref="AvailablePowerSource" requirement="readOnly"/>
+        <parameter ref="CurrentPowerSource" requirement="readOnly"/>
+        <parameter ref="CurrentPowerSourceLevel" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZDOAdv:1" extends="ZDOBasic:1">
+      <object ref="Device.ZigBee.ZDO.{i}." requirement="present">
+        <parameter ref="BindingTableNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="GroupNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ApplicationEndpointNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.UserDescriptor." requirement="present">
+        <parameter ref="DescriptorAvailable" requirement="readOnly"/>
+        <parameter ref="Description" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.ComplexDescriptor." requirement="present">
+        <parameter ref="DescriptorAvailable" requirement="readOnly"/>
+        <parameter ref="Language" requirement="readOnly"/>
+        <parameter ref="CharacterSet" requirement="readOnly"/>
+        <parameter ref="ManufacturerName" requirement="readOnly"/>
+        <parameter ref="ModelName" requirement="readOnly"/>
+        <parameter ref="SerialNumber" requirement="readOnly"/>
+        <parameter ref="DeviceURL" requirement="readOnly"/>
+        <parameter ref="Icon" requirement="readOnly"/>
+        <parameter ref="IconURL" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Security." requirement="present">
+        <parameter ref="TrustCenterAddress" requirement="readOnly"/>
+        <parameter ref="SecurityLevel" requirement="readOnly"/>
+        <parameter ref="TimeOutPeriod" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Network." requirement="present">
+        <parameter ref="NeighborNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}." requirement="present">
+        <parameter ref="Neighbor" requirement="readOnly"/>
+        <parameter ref="LQI" requirement="readOnly"/>
+        <parameter ref="Relationship" requirement="readOnly"/>
+        <parameter ref="PermitJoin" requirement="readOnly"/>
+        <parameter ref="Depth" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.NodeManager." requirement="present">
+        <parameter ref="RoutingTableNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.NodeManager.RoutingTable.{i}." requirement="present">
+        <parameter ref="DestinationAddress" requirement="readOnly"/>
+        <parameter ref="NextHopAddress" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="MemoryConstrained" requirement="readOnly"/>
+        <parameter ref="ManyToOne" requirement="readOnly"/>
+        <parameter ref="RouteRecordRequired" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Binding.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="SourceEndpoint" requirement="readWrite"/>
+        <parameter ref="SourceAddress" requirement="readWrite"/>
+        <parameter ref="ClusterId" requirement="readWrite"/>
+        <parameter ref="DestinationAddressMode" requirement="readWrite"/>
+        <parameter ref="DestinationEndpoint" requirement="readWrite"/>
+        <parameter ref="IEEEDestinationAddress" requirement="readWrite"/>
+        <parameter ref="GroupDestinationAddress" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Group.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="GroupId" requirement="readWrite"/>
+        <parameter ref="EndpointList" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="EndpointId" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor." requirement="present">
+        <parameter ref="ProfileId" requirement="readWrite"/>
+        <parameter ref="DeviceId" requirement="readOnly"/>
+        <parameter ref="DeviceVersion" requirement="readOnly"/>
+        <parameter ref="InputClusterList" requirement="readWrite"/>
+        <parameter ref="OutputClusterList" requirement="readWrite"/>
+      </object>
+    </profile>
+
+  </model>
+</dm:document>

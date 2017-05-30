@@ -1,0 +1,1079 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  TR-069 Device:2.6 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:2.6 Root Object definition.
+
+  Version History:
+    * May 2010: tr-181-2-0-0.xml:
+        corresponds to TR-181 Issue 2.
+    * November 2010: tr-181-2-1-0.xml: 
+        corresponds to TR-181 Issue 2 Amendment 1.
+    * March 2011: tr-181-2-2-0:
+        corresponds to TR-181 Issue 2 Amendment 2.
+    * September 2011: tr-181-2-3-0:
+        corresponds to TR-181 Issue 2 Amendment 3.
+    * November 2011: tr-181-2-4-0:
+        corresponds to TR-181 Issue 2 Amendment 4.
+    * May 2012: tr-181-2-5-0:
+        corresponds to TR-181 Issue 2 Amendment 5.
+    * November 2012: tr-181-2-6-0:
+        corresponds to TR-181 Issue 2 Amendment 6.
+        Components from TR-157a7
+        Firewall stateless/stateful clarification
+        Firewall SourceMask/DestMask correction
+        WPA passphrase minimum length
+        ETSI M2M SCL Administration
+        VLAN Tagging support for Layer-3/-4 aware switches
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-4"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-4
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-4.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-6-0" file="tr-181-2-6-0.xml">
+
+  <description>
+    TR-069 Device:2.6 Root Object definition
+    November 2012
+    TR-181 Issue 2 Amendment 6
+  </description>
+
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPPrefix"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+  
+  <import file="tr-157-1-7.xml" spec="urn:broadband-forum-org:tr-157-1-7">
+    <component name="DI_SupportedDataModelDiffs"/>
+    <component name="UPnPDiffs"/>
+    <component name="DNS_SD"/>
+    <component name="MS_VirtualDeviceDiffs"/>
+    <component name="MS_EmbeddedDeviceDiffs"/>
+    <component name="DI_ProxierInfoDiffs"/>
+    <component name="BulkDataCollectionDiffs"/>
+    <component name="DI_VendorLogFilesDiffs"/>
+    <component name="UI_RemoteAccessDiffs"/>
+    <component name="PeriodicStatisticsDiffs"/>
+  </import>
+
+  <!-- imports Device:2.5 data model from tr-181-2-5 -->
+  <import file="tr-181-2-5.xml" spec="urn:broadband-forum-org:tr-181-2-5">
+    <model name="Device:2.5"/>
+  </import>
+  
+  <model name="Device:2.6" base="Device:2.5">
+    <component path="Device." ref="DI_SupportedDataModelDiffs"/>
+    <component path="Device." ref="UPnPDiffs"/>
+    <component path="Device." ref="DNS_SD"/>
+    <component path="Device." ref="MS_VirtualDeviceDiffs"/>
+    <component path="Device." ref="MS_EmbeddedDeviceDiffs"/>
+    <component path="Device." ref="DI_ProxierInfoDiffs"/>
+    <component path="Device." ref="BulkDataCollectionDiffs"/>
+    <component path="Device." ref="DI_VendorLogFilesDiffs"/>
+    <component path="Device."  ref="UI_RemoteAccessDiffs"/>
+    <component path="Device."  ref="PeriodicStatisticsDiffs"/>
+
+  <!--VLAN Layer 3/4 Filters-->
+    <object base="Device.Bridging.Filter.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter name="DestIP" access="readWrite">
+        <description>Classification criterion.
+Destination IP address.  {{empty}} indicates this criterion is not used for classification.
+</description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="DestMask" access="readWrite">
+        <description>Destination IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).</description>
+        <syntax>
+          <dataType ref="IPPrefix"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="DestIPExclude" access="readWrite">
+        <description>If {{false}}, the class includes only those packets that match the (masked) DestIP entry, if specified.
+If {{true}}, the class includes all packets except those that match the (masked) DestIP entry, if specified.
+</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourceIP" access="readWrite">
+        <description>Classification criterion.
+Source IP address. {{empty}} indicates this criterion is not used for classification.
+</description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="SourceMask" access="readWrite">
+        <description>Source IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be an empty string (and, if specified, MUST be ignored).</description>
+        <syntax>
+          <dataType ref="IPPrefix"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="SourceIPExclude" access="readWrite">
+        <description>If {{false}}, the class includes only those packets that match the (masked) {{param|SourceIP}} entry, if  specified.
+If {{true}}, the class includes all packets except those that match the (masked) {{param|SourceIP}} entry, if specified.
+</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Protocol" access="readWrite">
+        <description>Classification criterion.
+Protocol number.  A value of -1 indicates this criterion is not used for classification.
+</description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="255"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="ProtocolExclude" access="readWrite">
+        <description>If {{false}}, the class includes only those packets that match the {{param|Protocol}} entry, if specified.
+If {{true}}, the class includes all packets except those that match the {{param|Protocol}} entry, if specified.
+</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="DestPort" access="readWrite">
+        <description>Classification criterion.
+Destination port number.  A value of -1 indicates this criterion is not used for classification.
+</description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+     <parameter name="DestPortRangeMax" access="readWrite">
+        <description>Classification criterion.
+If specified, indicates the classification criterion is to include the port range from {{param|DestPort}} through {{param}} (inclusive).  If specified, {{param}} MUST be greater than or equal to {{param|DestPort}}.
+A value of -1 indicates that no port range is specified.
+</description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="DestPortExclude" access="readWrite">
+        <description>If {{false}}, the class includes only those packets that match the {{param|DestPort}} entry (or port range), if  specified.
+If {{true}}, the class includes all packets except those that match the {{param|DestPort}} entry (or port range), if  specified.
+</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourcePort" access="readWrite">
+        <description>Classification criterion.
+Source port number.  A value of -1 indicates this criterion is not used for classification.
+</description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourcePortRangeMax" access="readWrite">
+        <description>Classification criterion.
+If specified, indicates the classification criterion is to include the port range from {{param|SourcePort}} through {{param}} (inclusive).  If specified, {{param}} MUST be greater than or equal to SourcePort.
+A value of -1 indicates that no port range is specified.
+</description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourcePortExclude" access="readWrite">
+        <description>If {{false}}, the class includes only those packets that match the {{param|SourcePort}} entry (or port range), if  specified.
+If {{true}}, the class includes all packets except those that match the {{param|SourcePort}} entry (or port range), if  specified.
+</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+  <!--WPA Pass Phrase-->
+    <object base="Device.WiFi.AccessPoint.{i}.Security." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="KeyPassphrase" access="readWrite">
+       <syntax hidden="true">
+          <string>
+            <size minLength="8" maxLength="63"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object base="Device.WiFi.EndPoint.{i}.Profile.{i}.Security." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="KeyPassphrase" access="readWrite">
+       <syntax hidden="true">
+          <string>
+            <size minLength="8" maxLength="63"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  
+  <!--ETSI M2M SCL Administration-->
+     <object name="Device.ETSIM2M." access="readOnly" minEntries="1" maxEntries="1" dmr:previousObject="Device.UPnP.">
+      <description>The {{object}} object represents the management object for the Remote Entity Functions (REM) functions defined in the M2M Functional Architecture {{bibref|ETSIM2MFA}}. </description>
+      <parameter name="SCLNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="SCLNumberOfEntries" enableParameter="Enable">
+      <description>This object represents an instance of a Service Capability Layer (SCL) for a M2M device or gateway.
+The {{object}} MAY be maintained by the ACS or by the CPE.
+When the {{object}} provides the administration of an SCL that is represented as a {{object|.SoftwareModules.ExecutionUnit}} the {{object}} is maintained in the {{param|.SoftwareModules.ExecutionUnit.{i}.References}} parameter.
+Section 5.1.2 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes the high level event flows for SCL registration.
+Section 9.3.2.6.2 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes the creation/registration of SCLs.
+Section 9.3.2.6.4 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes the update/re-registration of SCLs.
+Section 9.3.2.6.5 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes the deletion/deregistration of SCLs.
+{{keys}}
+    </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="AnnouncedToSCLList" access="readWrite">
+        <description>{{list}} The list represents an unordered set of URIs {{bibref|RFC3986}}. 
+A list item is a URI string that represents a SCL to which the this {{object}} will announce original (local) resources. 
+The AnnouncedToSCL has an interest in the discovery of the local resource. Section 9.2.1.14 Announced Resource of the M2M Functional Architecture {{bibref|ETSIM2MFA}} provides a description of this behavior of an Announced Resource.
+Section 9.3.2.28 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} and Section 10.3.2.7 of the M2M mIa, dIa and mId Interfaces {{bibref|ETSIM2MInterfaces}} describes the process of announcing and deannouncing of resources within a SCL.</description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SAFPolicySetNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="AreaNwkInstanceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="AreaNwkDeviceInfoInstanceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.Discovery." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object is represents the administration properties used when a NSCL requests discovery of resources within this {{object|##.SCL}} instance.
+Section 9.3.2.27 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes the process of discovery of resources within a SCL.</description>
+      <parameter name="MaxNumberOfDiscovRecords" access="readWrite">
+        <description>The maximum number of URIs {{bibref|RFC3986}} for discovered resources contained in a discovery result.
+This parameter and the {{param|MaxSizeOfDiscovAnswer}} parameter are mutually exclusive in that a result can be limited due to the bounds of either parameter.
+A value of 0 indicates that the SCL does not have a limit for this parameter.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="MaxSizeOfDiscovAnswer" access="readWrite">
+        <description>The maximum size in bytes of the Discovery Answer.
+This parameter and the {{param|MaxNumberOfDiscovRecords}} parameter are mutually exclusive in that a result can be limited due to the bounds of either parameter.
+A value of 0 indicates that the SCL does not have a limit for this parameter.</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.Reregistration." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the properties and status necessary for a SCL to reregister with one or more NSCLs.</description>
+      <parameter name="RegTargetNSCLList" access="readWrite">
+        <description>{{list}} The list represents a priority ordered set of URIs {{bibref|RFC3986}}. The item that is first in the list has the highest priority.
+A list item is a URI {{bibref|RFC3986}} string that represents a NSCL that this {{object|##.SCL}} instance can use in order to attempt registration.
+When modified the contents of this parameter replace the {{param}} received during the bootstrap procedure.</description>
+        <syntax>
+          <list>
+</list>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="RegSearchStrings" access="readWrite">
+        <description>{{list}} The list represents the string tokens used as keys when searching for this {{object|##.SCL}} instance.
+Sections 9.2.3.6.2 and 9.2.3.6.4 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describe the usage for this parameter.</description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="RegAccessRightID" access="readWrite">
+        <description>URI {{bibref|RFC3986}} that represents the identifier of the access right resource. The value of this parameter is maintained by the NSCL and used by the SCL as a default access right identifier for re-registration to NSCLs.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="RegExpirationDuration" access="readWrite">
+        <description>The duration, in {{units}}, that the SCL will use in its next re-registration attempt. Any negative value represents an infinite duration.</description>
+        <syntax>
+          <int>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="Reregistration" access="readWrite">
+        <description>{{command}} When set to {{true}}, triggers an immediate re-registration action where the SCL re-registers with the SCLs in the {{param|RegTargetNSCLList}} .</description>
+        <syntax command="true">
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.Reregistration.ActionStatus." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the status of the Reregistration action.</description>
+      <parameter name="Progress" access="readOnly" activeNotify="canDeny">
+        <description>The progress, in {{units}}, of the Reregistration action. The progress is measured from 0-100%. A value of 0 indicates that the action has not started. A value of 100 indicates that the action has completed.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="percent"/>
+            <range minInclusive="0" maxInclusive="100"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="FinalStatus" access="readOnly">
+        <description>The completion status of the Reregistration operation. Enumeration of: 
+{{enum}}
+</description>
+        <syntax>
+          <string>
+            <enumeration value="SUCCESS"/>
+            <enumeration value="FAILURE"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="SAFPolicySetNumberOfEntries" enableParameter="Enable">
+      <description>This object describes the parameters necessary to administer the store-and-forward (SAF) handling policies applied to requests to access remotely hosted resources.
+Policies are described by instances of {{object}}. Which instances of {{object}} are used by the SCL is determined by the {{param|PolicyScope}} parameter.
+Section 9.3.1.5 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} and Section 10.3.1.2.2 of the M2M mIa, dIa and mId Interfaces {{bibref|ETSIM2MInterfaces}} describe the behavior for SAF processing.
+There is at most one {{object}} instance with the {{param|PolicyScope}} containing a specific application id (APP-ID) URI value within the list.
+There is exactly one {{object}} instance with a {{param|PolicyScope}} value of "default". 
+    </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="PolicyScope" access="readWrite">
+        <description>The parameter defines the scope of the policies contained in this instance of a {{object|#.SAFPolicySet}}.
+The parameter value is:
+*a list of unordered set of URIs {{bibref|RFC3986}} that represents an M2M application id (APP-ID)
+*the value of  "default"
+*{{empty}}
+When this parameter is set to a list of application id (APP-ID) URIs {{bibref|RFC3986}}, the scope indicates that the policies are applicable to requests coming from any specific application on that list. 
+When this parameter is set to a string with the value "default", the scope indicates that the policies are the default policies for this {{object|##.SCL}} instance.
+When this parameter is set to {{empty}}, the value represents an unknown {{object|#.SAFPolicySet}} and the {{object|#.SAFPolicySet}} is not to be used.
+</description>
+        <syntax>
+          <list/>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="ANPPolicyNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="ANPPolicyNumberOfEntries" enableParameter="Enable">
+      <description>This table contains the SAF-handling policies which are controlled by the Access Network Provider(s).
+{{keys}}
+     </description>
+      <uniqueKey functional="true">
+        <parameter ref="ANName"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="ANName" access="readWrite">
+        <description>This parameter is the name of the access network provider and used to determine for which access network the policies defined in the {{object|#.ANPPolicy}} table will apply.</description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="BlockPeriodNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+            <parameter name="RequestCategoryNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.BlockPeriod.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="BlockPeriodNumberOfEntries" enableParameter="Enable" dmr:noUniqueKeys="true">
+      <description>This table contains a list of block periods for a {{object|##.ANPPolicy}}.
+A block period defines how long the device will wait before re-trying to establish connectivity via the access network after the previous attempt has failed.</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="FailedAttempts"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="FailedAttempts" access="readWrite">
+        <description>Number of consecutively failed access attempts for which the {{param|BlockDuration}} will be used to block the next access attempt.
+The SCL will apply the {{object}} entry with the largest number of consecutive failed attempts that is smaller or equal to the actual number of consecutive failed attempts.</description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="BlockDuration" access="readWrite">
+        <description>The duration, in {{units}}, to which to block further access attempts.</description>
+        <syntax>
+          <int>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.RequestCategory.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="RequestCategoryNumberOfEntries" enableParameter="Enable">
+      <description>This table contains the Request Category (RCAT) policy items for defining when it is appropriate to use the access network for processing requests.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="RCAT"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="RCAT" access="readWrite" >
+        <description>An RCAT is a string that represents a request category used for policy enforcement.</description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="ScheduleNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.RequestCategory.{i}.Schedule.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="ScheduleNumberOfEntries" enableParameter="Enable">
+      <description>This table contains the schedules that define when it is appropriate to use the access network for processing requests for the specified value of the {{param|#.RCAT}}.
+The combination of all instances of the {{object|AbsTimeSpan}} along with the {{param|Schedules}} parameter makes up the complete schedule for this instance of a {{object}}.
+The {{param|Schedules}} parameter defines a recurrence of the schedule. If instances of {{object|AbsTimeSpan}} exist, these instances places constraints on the schedule recurrence.
+If the value of the {{param|Schedules}} parameter is {{empty}}, at least one enabled instance of {{object|AbsTimeSpan}} MUST exist.
+Processing behavior for the use of RCAT Schedules is defined in section 10.3.1.2.2 of the M2M mIa, dIa and mId Interfaces {{bibref|ETSIM2MInterfaces}} document.</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Schedules" access="readWrite">
+        <description>The list is a set of schedule strings. 
+A schedule string is formatted according to the date and time fields defined CRONTAB input file definition in {{bibref|POSIXBase}}.
+The {{param}} parameter is used to set the recurrence of the schedule.
+The timezone used for this parameter is dependent upon the existence of instances of {{object|AbsTimeSpan}} for this {{object}}. If instances of {{object|AbsTimeSpan}} exist, then the timezone of the {{object|AbsTimeSpan}} is used otherwise the UTC timezone is used for this {{param}} parameter.
+Note the command field is not used in this definition and any whitespace or comma characters within a Schedule string MUST be escaped using percent as defined in {{bibref|TR-106a5|section 3.2.3}}
+Example of CRONTAB string:
+*"* 0-6 * * 1-5" would mean every minute for the period from 0:00h to 6:00h (inclusive) on any week day (Monday through Friday) and would be represented as "*%200-6%20*%20*%201-5"
+*"*/15 22-23,0-4 * * 1-5" would mean every 15 minutes for the period from 22:00h to 04:00h on any week day (Monday through Friday) and would be represented as "*/15%2022-23%2C0-4%20*%20*%201-5"</description>
+        <syntax>
+          <list/>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="AbsTimeSpanNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.RequestCategory.{i}.Schedule.{i}.AbsTimeSpan.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="AbsTimeSpanNumberOfEntries" enableParameter="Enable" dmr:noUniqueKeys="true">
+      <description>This object defines an instance of a time span used for determining an RCAT schedule.
+An instance of the {{object}} represents the time span in which the schedule recurrence defined in {{param|#.Schedules}} is constrained.
+{{object}} instances with unknown values for the {{param|StartTime}} or {{param|EndTime}} are ignored.
+All instances of the {{object}} within this {{object|##.Schedule}} MUST utilize the same time zone.
+</description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="StartTime" access="readWrite">
+        <description>Date and time that represents the start of the time span. 
+The value 0001-01-01T00:00:00Z represents an unknown value.
+The device MUST reject requests to set the {{param}} value greater than the {{param|EndTime}} value.</description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value="0001-01-01T00:00:00Z"/>
+        </syntax>
+      </parameter>
+      <parameter name="EndTime" access="readWrite">
+        <description>Date and time that represents the end of the time span. 
+The value 9999-12-31T23:59:59Z represents an infinite time span from the start time. 
+The value 0001-01-01T00:00:00Z represents an unknown value.
+The device MUST reject requests to set the {{param}} value less than or equal the {{param|StartTime}} value.</description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value="0001-01-01T00:00:00Z"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.M2MSPPolicy." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object maintains the SAF handling policies' properties that are controlled by the M2M service provider for a request.</description>
+      <parameter name="DefaultRCATValue" access="readWrite">
+        <description>The default RCAT value to use for requests to remotely hosted resources during SAF-handling when no RCAT value was specified in the request.</description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="RequestCategoryNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.M2MSPPolicy.RequestCategory.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="RequestCategoryNumberOfEntries" enableParameter="Enable">
+      <description>This object maintains a list of properties to be used for forwarding requests with a specified {{param|RCAT}}.
+Processing behavior for the use of M2M Service Provider policies is defined in section 10.3.1.2.2.1 of the M2M mIa, dIa and mId Interfaces {{bibref|ETSIM2MInterfaces}} document.</description>
+      <uniqueKey functional="true">
+        <parameter ref="RCAT"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Administratively enables or disables this instance.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="RCAT" access="readWrite" >
+        <description>An RCAT is a string that represents a request category used for policy enforcement.</description>
+        <syntax>
+          <string></string>
+        </syntax>
+      </parameter>
+      <parameter name="TolerableDelay" access="readWrite">
+        <description>The tolerable duration, in {{units}}, that a request of the given RCAT category can be pending in SAF handling when a request from an M2M Application does not specify a tolerable delay.
+A value of -1 represents an infinite duration.</description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="Thresh" access="readWrite">
+        <description>The threshold of maximum number of pending requests permitted to be held for a specified RCAT. 
+A value of 0 indicates that the request should be transmitted immediately.</description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="Mem" access="readWrite">
+        <description>This parameter defines the maximum size of the request queue for pending requests permitted to be held for a specified RCAT. 
+The format of the string is an integer with an appended memory unit (B - Bytes, K - 1024 Bytes, M - 1048576 Bytes, G -1073741824, T - 1099511627776 Bytes).
+When the value is {{empty}}  the memory threshold criteria for the associated RCATList will be ignored in SAF handling.
+
+{{pattern}}
+</description>
+        <syntax>
+          <string>
+            <pattern value="([0-9]{1,15}?[BKMGT])"/>
+            <pattern value=""><description>{{empty}}</description></pattern>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="RankedANList" access="readWrite">
+        <description>
+The list is a prioritized set of Access Networks where the preference of using an Access Network is based on order of the list items with the lowest order list item as the most preferred Access Network.</description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="##.ANPPolicy." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.AreaNwkInstance.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="AreaNwkInstanceNumberOfEntries" dmr:fixedObject="true">
+      <description>The M2M Area Network information provides administration capabilities for remote management (REM) of M2M Devices (D', d) that are attached to this {{object|##.SCL}} instance.
+This object provides the administration of the properties needed by the SCL to remotely manage M2M Devices within a specific type of M2M Area network as defined by {{param|AreaNwkType}}.
+Multiple instances of {{object}} with the same {{param|AreaNwkType}} is permitted.
+Section 5.3.5 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes the REM functionality expected of a SCL for an M2M Device.
+</description>
+      <uniqueKey functional="true">
+        <parameter ref="ID"/>
+      </uniqueKey>
+      <parameter name="ID" access="readOnly">
+        <description>URI {{bibref|RFC3986}} that represents the identifier of the instance.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="AreaNwkType" access="readOnly">
+        <description>Devices (D' and d) that connect to an SCL are said to be "attached devices" and are organized by M2M Area Networks within the {{object|##.SCL}} instance. The {{param}} is an implementation-chosen string that indicates the type of M2M Area Network.
+</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ListOfDevices" access="readOnly">
+        <description>{{list}} {{reference}}
+The list represents the M2M Devices (D', d) that are attached to this {{object|##.SCL}} instance that are within this {{object}} instance. The list does not contain an instance for this CPE.</description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.AreaNwkDeviceInfoInstance." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="PropertyNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.AreaNwkInstance.{i}.Property.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="PropertyNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object contains an instance of a property extension (name value pair) for this {{object|##.AreaNwkInstance}} instance.
+For example, if the {{param|#.AreaNwkType}} is ZigBee the {{object|##.AreaNwkInstance}} will contain ZigBee specific parameters that have not been modeled for the M2M Area network. 
+At a minimum, a property instance MUST exist that defines  an attribute that describes the IP layer address type (e.g., IPv4, IPv6, non-IP) of this M2M Area Network.</description>
+      <parameter name="Name" access="readOnly">
+        <description>The name of the property</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="Value" access="readOnly">
+        <description>The value of the property.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.AreaNwkDeviceInfoInstance.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="AreaNwkDeviceInfoInstanceNumberOfEntries" dmr:noUniqueKeys="true" dmr:fixedObject="true">
+      <description>The M2M Area Network Device Information provides the administration capability to the SCL for maintenance of M2M Devices (D', d) that are attached to this {{object|##.SCL}} instance.
+While discovery and identification of devices by the M2M Gateway or Device (CPE) is implementation specific, each device is represented by an instance of the {{object|.Hosts.Host}} table.
+When the M2M Device is managed by the CWMP endpoint of the CPE, the {{object}} is expected to be referenced by an instance of one of the following tables: 
+*{{object|.ManagementServer.EmbeddedDevice}}
+*{{object|.ManagementServer.VirtualDevice}}
+Section 5.3.5 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes the REM functionality expected of a SCL to a M2M Device.
+This object instance provides the administration properties required by a SCL to remotely manage an instance of a M2M Device within a M2M area network. 
+A M2M Device is associated with an instance of a {{object|#.AreaNwkInstance}}. 
+This table contains parameters and information of the M2M Device related to each {{object|#.AreaNwkInstance}} instance.
+Instances of this table are created and deleted by the CPE. The ACS MAY modify the writeable parameters of this object instance but  it is possible that the value set by the ACS is not retained between reboots of the M2M Device.</description>
+      <parameter name="AreaNwkInstance" access="readOnly">
+        <description>{{reference}}</description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.AreaNwkInstance." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Host" access="readOnly">
+        <description>{{list}} {{reference|the {{object|.Hosts.Host}} table entry that represents an active or inactive M2M Device}}</description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent=".Hosts.Host." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ListOfDeviceNeighbors" access="readOnly">
+        <description>{{list}} {{reference}} References all the {{object|.Hosts.Host}} table entries, whether active or inactive, that represent the reachable neighbors of this M2M Device (D' or d).</description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent=".Hosts.Host." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ListOfDeviceApplications" access="readOnly">
+        <description>The list is an unordered set of URIs {{bibref|RFC3986}}. 
+A list item is an URI string that represents an application id (APP-ID) for the M2M D'A applications residing on the M2M Device for the associated {{object|#.AreaNwkInstance}}. 
+Table B.58 of the M2M Functional Architecture {{bibref|ETSIM2MFA}} describes this parameter.</description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SleepInterval" access="readWrite">
+        <description>The interval, in {{units}}, between sleep periods for the device.
+A value of 0 represents a device that does not sleep.
+Note: When this value is modified, the CPE could modify the {{param}} for this M2M Device in other Area Networks.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="SleepDuration" access="readWrite">
+        <description>The duration, in {{units}}, of a sleep period. 
+The value 0 represents an unknown value.
+Note: When this value is modified, the CPE could modify the {{param}} for this M2M Device in other Area Networks.</description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>The sleep status of the device.
+Enumeration of: 
+{{enum}}
+</description>
+        <syntax>
+          <string>
+            <enumeration value="ASLEEP"/>
+            <enumeration value="AWAKE"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Active" access="readOnly">
+        <description>Whether or not this M2M Device is currently attached to this {{object|##.SCL}} instance.
+The ability to list inactive M2M Devices is OPTIONAL.  If the CPE includes inactive M2MDevices in this table, {{param}} is set to {{false}}  for each inactive M2M Device.  The length of time an inactive M2M Device remains listed in this table is a local matter to the CPE.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="PropertyNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.ETSIM2M.SCL.{i}.AreaNwkDeviceInfoInstance.{i}.Property.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="PropertyNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object contains an instance of a property extension (name value pair) for this {{object|##.AreaNwkDeviceInfoInstance}} instance.
+For example, if the {{param|##.AreaNwkInstance.{i}.AreaNwkType}} value is ZigBee, this {{object|##.AreaNwkDeviceInfoInstance}} contains ZigBee-specific parameters that are not formally modeled for this {{object|##.AreaNwkDeviceInfoInstance}} instance.</description>
+      <parameter name="Name" access="readOnly">
+        <description>The name of the property</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="Value" access="readOnly">
+        <description>The value of the property.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+   <!--Firewall Modifications-->
+    <object base="Device.Firewall." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="Type" access="readOnly">
+        <syntax>
+          <string>
+            <enumeration value="Stateless"/> <!-- description unchanged -->
+            <enumeration value="Stateful"> <!-- "both stateless and" removed from description -->
+              <description action="replace">The Firewall implements stateful packet inspection.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object base="Device.Firewall.Chain.{i}.Rule.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="DestMask" access="readWrite">
+        <description action="replace">
+          Destination IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).
+        </description>
+      </parameter>
+      <parameter base="SourceMask" access="readWrite">
+        <description action="replace">
+          Source IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).
+        </description>
+      </parameter>
+    </object>
+    <object base="Device.QoS.Classification.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="DestMask" access="readWrite">
+        <description action="replace">
+          Destination IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).
+        </description>
+      </parameter>
+      <parameter base="SourceMask" access="readWrite">
+        <description action="replace">
+          Source IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).
+        </description>
+      </parameter>
+    </object>
+    <object base="Device.DNS." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">Properties for Domain Name Service (DNS).</description>
+    </object>
+    
+    <!-- PROFILES -->
+    <profile name="ETSIM2MSCLBaseline:1">
+      <object ref="Device.ETSIM2M.SCL.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="AnnouncedToSCLList" requirement="readWrite"/>
+        <parameter ref="SAFPolicySetNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="AreaNwkInstanceNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="AreaNwkDeviceInfoInstanceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.Discovery." requirement="present">
+        <parameter ref="MaxNumberOfDiscovRecords" requirement="readWrite"/>
+        <parameter ref="MaxSizeOfDiscovAnswer" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.Reregistration." requirement="present">
+        <parameter ref="RegTargetNSCLList" requirement="readWrite"/>
+        <parameter ref="RegSearchStrings" requirement="readWrite"/>
+        <parameter ref="RegAccessRightID" requirement="readWrite"/>
+        <parameter ref="RegExpirationDuration" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.Reregistration.ActionStatus." requirement="present">
+        <parameter ref="Progress" requirement="readOnly"/>
+        <parameter ref="FinalStatus" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="PolicyScope" requirement="readWrite"/>
+        <parameter ref="ANPPolicyNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ANName" requirement="readWrite"/>
+        <parameter ref="BlockPeriodNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="RequestCategoryNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.BlockPeriod.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="FailedAttempts" requirement="readWrite"/>
+        <parameter ref="BlockDuration" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.RequestCategory.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="RCAT" requirement="readWrite"/>
+        <parameter ref="ScheduleNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.RequestCategory.{i}.Schedule.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Schedules" requirement="readWrite"/>
+        <parameter ref="AbsTimeSpanNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.ANPPolicy.{i}.RequestCategory.{i}.Schedule.{i}.AbsTimeSpan.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="StartTime" requirement="readWrite"/>
+        <parameter ref="EndTime" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.M2MSPPolicy." requirement="present">
+        <parameter ref="DefaultRCATValue" requirement="readWrite"/>
+        <parameter ref="RequestCategoryNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.SAFPolicySet.{i}.M2MSPPolicy.RequestCategory.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="RCAT" requirement="readWrite"/>
+        <parameter ref="TolerableDelay" requirement="readWrite"/>
+        <parameter ref="Thresh" requirement="readWrite"/>
+        <parameter ref="Mem" requirement="readWrite"/>
+        <parameter ref="RankedANList" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.AreaNwkInstance.{i}." requirement="present">
+        <parameter ref="ID" requirement="readOnly"/>
+        <parameter ref="AreaNwkType" requirement="readOnly"/>
+        <parameter ref="ListOfDevices" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ETSIM2M.SCL.{i}.AreaNwkDeviceInfoInstance.{i}." requirement="present">
+        <parameter ref="AreaNwkInstance" requirement="readOnly"/>
+        <parameter ref="Host" requirement="readOnly"/>
+        <parameter ref="ListOfDeviceNeighbors" requirement="readOnly"/>
+        <parameter ref="ListOfDeviceApplications" requirement="readOnly"/>
+        <parameter ref="SleepInterval" requirement="readWrite"/>
+        <parameter ref="SleepDuration" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="BridgeL3L4Filter:1" extends="BridgeFilter:2">
+      <object ref="Device.Bridging.Filter.{i}." requirement="createDelete">
+        <parameter ref="DestIP" requirement="readWrite"/>
+        <parameter ref="DestMask" requirement="readWrite"/>
+        <parameter ref="DestIPExclude" requirement="readWrite"/>
+        <parameter ref="SourceIP" requirement="readWrite"/>
+        <parameter ref="SourceMask" requirement="readWrite"/>
+        <parameter ref="SourceIPExclude" requirement="readWrite"/>
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="ProtocolExclude" requirement="readWrite"/>
+        <parameter ref="DestPort" requirement="readWrite"/>
+        <parameter ref="DestPortExclude" requirement="readWrite"/>
+        <parameter ref="DestIPExclude" requirement="readWrite"/>
+        <parameter ref="SourcePort" requirement="readWrite"/>
+        <parameter ref="SourcePortRangeMax" requirement="readWrite"/>
+        <parameter ref="SourceIPExclude" requirement="readWrite"/>
+        <parameter ref="SourcePortExclude" requirement="readWrite"/>
+      </object>
+    </profile>
+   </model>
+</dm:document>

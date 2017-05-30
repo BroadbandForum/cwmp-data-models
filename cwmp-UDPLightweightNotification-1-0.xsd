@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  UDP Lightweight Notification XML Schema namespace Version 1.0
+
+  Copyright (c) 2013-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    XML Schema for UDP Lightweight Notifications as defined in TR-069 
+    Annex M.
+
+  Editors:
+    John Blackford, Pace
+    Mike Digdon, Aptean
+
+  BroadbandHome™ Working Group Chairs:
+    John Blackford, Pace
+    Jason Walls, QACafe
+
+  Issue History:
+    * November 2013: cwmp-UDPLightweightNotification-1-0.xsd
+        - initial version
+
+  Publication Date:
+    * January 8, 2014 
+
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+           xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+           xmlns:cwmp="urn:dslforum-org:cwmp-1-2"
+           xmlns:lwn="urn:broadband-forum-org:cwmp:lwnotif-1-0" 
+           targetNamespace="urn:broadband-forum-org:cwmp:lwnotif-1-0" 
+           elementFormDefault="unqualified" 
+           attributeFormDefault="unqualified">
+  <xs:import namespace="http://schemas.xmlsoap.org/soap/envelope/" 
+             schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
+  <xs:import namespace="http://schemas.xmlsoap.org/soap/encoding/" 
+             schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
+  
+  <xs:element name="TS" type="xs:int">
+    <xs:annotation>
+      <xs:documentation>
+        Timestamp: The number of seconds since the Unix epoch until the time
+        the message is created (the standard Unix timestamp).
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="UN">
+    <xs:annotation>
+      <xs:documentation>
+        Username.  The value of the parameter ManagementServer.Username
+        as read from the CPE. 
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="256"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="CN" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Cnonce.  A random string chosen by the CPE.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="OUI">
+    <xs:annotation>
+      <xs:appinfo>
+        The value MUST be a valid OUI as defined in: 
+        Organizationally Unique Identifiers (OUIs)
+        http://standards.ieee.org/faqs/OUI.html 
+      </xs:appinfo>
+      <xs:documentation>
+        Organizationally unique identifier of the device manufacturer.  
+        Represented as a six hexadecimal-digit value using all upper-case 
+        letters and including any leading zeros.  The value MUST be the 
+        same as the value of the DeviceInfo.ManufacturerOUI Parameter.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:length value="6"/>
+        <xs:pattern value="[0-9A-F]{6}"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="ProductClass">
+    <xs:annotation>
+      <xs:documentation>
+        Identifier of the class of product for which the serial number 
+        applies.  That is, for a given manufacturer, this Parameter is 
+        used to identify the product or class of product over which the 
+        SerialNumber Parameter is unique.  The value MUST be the same as 
+        the value of the DeviceInfo.ProductClass Parameter.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="64"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="SerialNumber">
+    <xs:annotation>
+      <xs:documentation>
+        Identifier of the particular device that is unique for the indicated 
+        class of product and manufacturer.  The value MUST be the same as the 
+        value of the DeviceInfo.SerialNumber Parameter.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="64"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  
+  <xs:element name="Name">
+    <xs:annotation>
+      <xs:documentation>
+        This is the name of a Parameter. The CPE MUST treat the 
+        Parameter name as case sensitive.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="256"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Value" type="xs:anySimpleType">
+    <xs:annotation>
+      <xs:documentation>
+        This is the value of the Parameter. The CPE MUST treat 
+        string-valued Parameter values as case-sensitive.  The
+        rules regarding the anySimpleType data type, contained 
+        in Table 12 (Section A.2.1/TR-069 Amendment 5), MUST 
+        be applied.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="Param">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lwn:Name"/>
+        <xs:element ref="lwn:Value"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  
+  <xs:element name="Notification">
+    <xs:annotation>
+      <xs:documentation>
+        UDPLightweightNotification message - Annex M/TR-069 Amendment 5
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lwn:TS" minOccurs="1"/>
+        <xs:element ref="lwn:UN" minOccurs="1"/>
+        <xs:element ref="lwn:CN" minOccurs="1"/>
+        <xs:element ref="lwn:OUI" minOccurs="1"/>
+        <xs:element ref="lwn:ProductClass" minOccurs="1"/>
+        <xs:element ref="lwn:SerialNumber" minOccurs="1"/>
+        <xs:element ref="lwn:Param" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+    
+</xs:schema>
