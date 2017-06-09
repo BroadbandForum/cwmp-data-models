@@ -158,11 +158,14 @@ unlink:
 
 CLEAN += $(LINKS)
 
+ZIP = zip
 # XXX or to include the time, use 'date +%Y%m%d-%H%M%S'
 ZIPFILE = cwmp-$(shell date +%Y%m%d).zip
+# XXX can do 'make ZIPFLAGS= zip' to suppress symbolic link creation
+ZIPFLAGS = --symlinks
 
 # XXX it would be better to use the make product variables to define the ZIP
 #     file contents?
 zip:
 	$(RM) $(ZIPFILE)
-	zip --symlinks $(ZIPFILE) index.html catalog.xml cwmp-*.xsd tr-*.*
+	$(ZIP) $(ZIPFLAGS) $(ZIPFILE) index.html catalog.xml cwmp-*.xsd tr-*.*
