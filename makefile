@@ -14,7 +14,10 @@ REPORTFLAGS += --quiet
 
 REPORTINDEXFLAGS += --report=htmlbbf
 REPORTINDEXFLAGS += --configfile=OD-148.txt
-REPORTINDEXFLAGS += --cwmppath=''
+# XXX --cwmppath defaults to 'cwmp', which is appropriate for the BBF CWMP
+#     page; a soft link from . to cwmp prevents warnings of non-existent files
+#     when generating the index file
+#REPORTINDEXFLAGS += --cwmppath=''
 
 # disable default CWMP stuff
 # XXX shouldn't be using reportincludes (it's lower case so internal)
@@ -47,12 +50,13 @@ compxml = tr-143-1-1-0.xml \
 COMPXML = $(filter $(dualxml) $(compxml), $(SRCXML))
 
 # latest model XML
+# XXX if this is wrong, it won't be detected... could easily warn?
 latestxml = tr-098-1-8-0.xml \
 	    tr-104-1-1-0.xml tr-104-2-0-0.xml \
 	    tr-135-1-4-0.xml \
-	    tr-140-1-3-0.xml \
+	    tr-140-1-2-0.xml \
 	    tr-181-1-7-0.xml \
-	    tr-181-2-12-0.xml \
+	    tr-181-2-11-0.xml \
 	    tr-196-1-1-1.xml tr-196-2-1-0.xml
 LATESTXML = $(filter $(latestxml), $(SRCXML))
 
@@ -134,7 +138,7 @@ TARGETDIR =
 include $(TOPDIR)/../../install/etc/rules.mk
 
 $(SRCXSD) $(SRCXML): %: $(CWMPDIR)%
-	$(INSTALL) $< $@
+	$(INSTALLCMD) $< $@
 
 # XXX these dependencies are incomplete (need proper dependencies)
 $(INDEXHTML): $(SRCXSD) $(LATESTXML)
