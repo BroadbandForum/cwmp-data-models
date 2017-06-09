@@ -54,7 +54,7 @@ COMPXML = $(filter $(dualxml) $(compxml), $(SRCXML))
 latestxml = tr-098-1-8-0.xml \
 	    tr-104-1-1-0.xml tr-104-2-0-0.xml \
 	    tr-135-1-4-0.xml \
-	    tr-140-1-2-0.xml \
+	    tr-140-1-3-0.xml \
 	    tr-181-1-7-0.xml \
 	    tr-181-2-11-0.xml \
 	    tr-196-1-1-1.xml tr-196-2-1-0.xml
@@ -157,3 +157,12 @@ unlink:
 	$(RM) $(LINKS)
 
 CLEAN += $(LINKS)
+
+# XXX or to include the time, use 'date +%Y%m%d-%H%M%S'
+ZIPFILE = cwmp-$(shell date +%Y%m%d).zip
+
+# XXX it would be better to use the make product variables to define the ZIP
+#     file contents?
+zip:
+	$(RM) $(ZIPFILE)
+	zip --symlinks $(ZIPFILE) index.html catalog.xml cwmp-*.xsd tr-*.*
