@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  TR-069 Device:1.9 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:1.9 Root Object definition.
+
+  Editors:
+    Klaus Wich, Nokia Siemens Networks
+
+  BroadbandHome™ Working Group Chairs:
+    Greg Bathrick, PMC-Sierra
+    Jason Walls, UNH
+
+  Version History:
+    * February 2010: tr-181-1-0-0.xml; corresponds to TR-181 Issue 1.
+                   * DeviceInfo: clarified DeviceID and added VendorConfig-
+                     File.{i}
+                   * ManagementServer: added EnableCWMP, DefaultActive-
+                     NotificationThrottle, CWMPRetryMinimumWaitInterval
+                     and CWMPRetryIntervalMultiplier
+                   * Time: added Enable and Status (and Time:2 profile)
+    * July 2011    : tr-181-1-1-0.xml
+                   * Alias extensions
+    * November 2011: tr181-1-2-0.xml
+                   * inport new optional components for Femto FAP from TR-262:
+                        - GPS
+                        - Tunnel
+                        - Performance Manamgemen
+                        - Application Platform    
+                   * import of new/updated optional components from TR-157a5
+                        - Software modules
+                        - Fault Management
+                        - Location
+                        - Security
+
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-4"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-4
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-4.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-181-1-2-0" file="tr-181-1-2-0.xml">
+    
+    <description>
+    Device:1.9 data model 
+    * New Components are imported from TR-157a5 and TR-262
+    * The Word document has not been modified  
+    </description>
+    
+    <!-- imports modified/new common objects from tr-157-1-5 -->
+    <import file="tr-157-1-5.xml" spec="urn:broadband-forum-org:tr-157-1-5">
+        <component name="SoftwareModulesDiffs"/>
+        <component name="DI_Location"/>
+        <component name="FaultManagement"/>
+        <component name="Security"/>       
+    </import>
+    
+    <!-- imports new common Femto objects from tr-262-1-0 -->
+    <import file="tr-262-1-0.xml" spec="urn:broadband-forum-org:tr-262-1-0">
+        <component name="FAP"/>
+        <component name="FAP_GPS"/>
+        <component name="FAP_Tunnel"/>
+        <component name="FAP_PerformanceMgmt"/>
+        <component name="FAP_ApplicationPlatform"/>
+    </import>
+        
+    <!-- import Device:1.8 datamodel and components from tr-181-1-1 -->  
+    <import file="tr-181-1-1.xml" spec="urn:broadband-forum-org:tr-181-1-1">
+        <model name="Device:1.8"/>
+        <component name="ManagementServer"/>
+        <component name="GatewayInfo"/>
+        <component name="Config"/>
+        <component name="Time"/>
+        <component name="UserInterface"/>
+        <component name="LAN"/>
+        <component name="DeviceInfo"/>
+    </import>
+    
+    <model name="Device:1.9" base="Device:1.8">
+        <!-- add new objects from tr-157-1-5 -->
+        <component path="Device." ref="SoftwareModulesDiffs"/>
+        <component path="Device." ref="Security"/>
+        <component path="Device." ref="FaultManagement"/> 
+        <component path="Device." ref="DI_Location"/>
+
+        <!-- add new objects from tr-262-1-0 -->
+        <component path="Device." ref="FAP"/>
+        <component path="Device." ref="FAP_GPS"/>
+        <component path="Device." ref="FAP_Tunnel"/>
+        <component path="Device." ref="FAP_PerformanceMgmt"/>
+        <component path="Device." ref="FAP_ApplicationPlatform"/>
+      
+        <!-- avoid report tool warnings -->
+        <object base="Device.LAN.TraceRouteDiagnostics.RouteHops.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true"/>
+
+    </model>
+</dm:document>

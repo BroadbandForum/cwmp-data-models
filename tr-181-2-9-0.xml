@@ -1,0 +1,1632 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 Device:2.9 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:2.9 Root Object definition.
+
+Editor:
+    * Douglas Knisely, Qualcomm, Inc.
+
+  BroadbandHome Working Group Chairs:
+    * Jason Walls, QA Cafe
+    * John Blackford, Pace
+
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    * tr-181-2-0-0.xml: May 2010:
+      - corresponds to TR-181 Issue 2.
+    * tr-181-2-1-0.xml: November 2010:
+      - corresponds to TR-181 Issue 2 Amendment 1.
+    * tr-181-2-2-0.xml: March 2011:
+      - corresponds to TR-181 Issue 2 Amendment 2.
+    * tr-181-2-3-0.xml: September 2011:
+      - corresponds to TR-181 Issue 2 Amendment 3.
+    * tr-181-2-4-0.xml: November 2011:
+      - corresponds to TR-181 Issue 2 Amendment 4.
+    * tr-181-2-5-0.xml: May 2012:
+      - corresponds to TR-181 Issue 2 Amendment 5.
+    * tr-181-2-6-0.xml: November 2012:
+      - corresponds to TR-181 Issue 2 Amendment 6.
+    * tr-181-2-7-0.xml: November 2013: January 17, 2014
+      - corresponds to TR-181 Issue 2 Amendment 7.
+    * tr-181-2-8-0.xml: 8 September 2014: 17 September 2014:
+      - corresponds to TR-181 Issue 2 Amendment 8.
+    * tr-181-2-9-0.xml:  1 December 2014: 11 February 2015:
+      - Added WiFi MAC Address Filtering
+      - Added Traceroute fixes
+      - Added IEEE 1905 data model
+      - Incorporated new components from TR-143 Amendment 1
+-->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5"
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-181-2-9-0" file="tr-181-2-9-0.xml">
+
+  <description>
+    {{docname|Device Data Model for TR-069}}
+    {{appdate|1 December 2014}}
+    {{trname|TR-181i2a8}}
+    * Added WiFi MAC Address Filtering
+    * Added Traceroute fixes
+    * Added IEEE 1905 data model
+    * Incorporated new components from TR-143 Amendment 1
+  </description>
+
+  <import file="tr-069-1-2-biblio.xml" spec="urn:broadband-forum-org:tr-069-1-2"/>
+
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="IPv4Prefix"/>
+    <dataType name="IPv6Prefix"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-8.xml" spec="urn:broadband-forum-org:tr-181-2-8">
+    <model name="Device:2.8"/>
+  </import>
+
+  <import file="tr-143-1-1.xml" spec="urn:broadband-forum-org:tr-143-1-1">
+    <component name="DownloadDiagnosticsDiffs"/>
+    <component name="DownloadDiagnostics_Device2Diffs"/>
+    <component name="UploadDiagnosticsDiffs"/>
+    <component name="UploadDiagnostics_Device2Diffs"/>
+    <component name="UDPEchoDiagnostics_Device2"/>
+    <component name="ServerSelectionDiagnostics_Device2"/>
+  </import>
+  
+  
+  <model name="Device:2.9" base="Device:2.8">
+
+    <component path="Device.IP.Diagnostics." ref="DownloadDiagnosticsDiffs"/>
+    <component path="Device.IP.Diagnostics." ref="DownloadDiagnostics_Device2Diffs"/>
+    <component path="Device.IP.Diagnostics." ref="UploadDiagnosticsDiffs"/>
+    <component path="Device.IP.Diagnostics." ref="UploadDiagnostics_Device2Diffs"/>
+    <component path="Device.IP.Diagnostics." ref="UDPEchoDiagnostics_Device2" dmr:previousObject="UploadDiagnostics."  dmr:previousProfile="UploadTCP:1"/>
+    <component path="Device.IP.Diagnostics." ref="ServerSelectionDiagnostics_Device2"/>
+    
+    
+    <!-- WiFi MAC Address Filtering components -->
+    <object base="Device.WiFi.AccessPoint.{i}." access="readWrite" numEntriesParameter="AccessPointNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded" dmr:version="2.0">
+      <parameter name="MACAddressControlEnabled" access="readWrite">
+        <description>
+          Indicates whether or not MAC Address Control is enabled on this {{object|#}}.  MAC Address Control limits client devices to those whose hardware addresses match the {{param|AllowedMACAddress}} list.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="AllowedMACAddress" access="readWrite">
+        <description>
+          Hardware addresses of client devices that are allowed to associate with this {{object|#}} if {{param|MACAddressControlEnabled}} is {{true}}.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <!-- Traceroute Fixes components -->
+    <object base="Device.IP.Diagnostics.TraceRoute." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="DiagnosticsState" access="readWrite">
+        <description action="append">
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error_CannotResolveHostName" access="readOnly"/>
+            <enumeration value="Error_NoRouteToHost" access="readOnly"/>
+            <enumeration value="Error_MaxHopCountExceeded" access="readOnly"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.IP.Diagnostics.TraceRoute.RouteHops.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter base="RTTimes" access="readOnly">
+        <description action="append">A list item of 0 indicates that the corresponding response was not received.  Round trip times of less than 1 {{units}} MUST be rounded up to 1.
+The number of list entries is determined by the {{param|#.RouteHopsNumberOfEntries}} parameter.
+        </description>
+        <syntax>
+          <list minItems="1" maxItems="3">
+            <size maxLength="16" status="deleted"/>
+          </list>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <!-- IEEE P1905 components -->
+    <object name="Device.IEEE1905." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the management functions for the 1905 capabilities as defined in {{bibref|IEEE1905.1a}}.</description>
+      <parameter name="Version" access="readOnly">
+         <description>1905 profile version number of the AL as would be sent in a Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-37: 1905 profile version TLV}}.</description>
+          <syntax>
+            <string>
+              <enumeration value="1905.1"></enumeration>
+              <enumeration value="1905.1a"></enumeration>
+            </string>
+          </syntax>
+        </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the management functions for the 1905 Abstraction Layer as defined in {{bibref|IEEE1905.1a|Section 4.4 Abstraction Layer}}.</description>
+      <parameter name="IEEE1905Id" access="readOnly">
+          <description>1905 AL MAC Address.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>The current operational state of the 1905 Abstraction Layer. {{enum}}
+The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. 
+
+The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+</description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Up">
+               <description>NOT RECOMMENDED for use; if used it  means {{enum|Enabled}}</description>
+            </enumeration>
+            <enumeration value="Down">
+               <description>NOT RECOMMENDED for use; if used it  means {{enum|Disabled}}</description>
+            </enumeration>
+            <enumeration value="Unknown">
+               <description>NOT RECOMMENDED for use; if used it  means {{enum|Error}}</description>
+            </enumeration>
+            <enumeration value="Dormant">
+               <description>NOT RECOMMENDED for use; if used it  means {{enum|Error}}</description>
+            </enumeration>
+            <enumeration value="NotPresent">
+               <description>NOT RECOMMENDED for use; if used it  means {{enum|Error}}</description>
+            </enumeration>
+            <enumeration value="LowerLayerDown">
+               <description>NOT RECOMMENDED for use; if used it  means {{enum|Error}}</description>
+            </enumeration>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+         <description>This parameter is NOT RECOMMENDED to be used because IEEE1905 is not an interface.  The accumulated time in {{units}} since the 1905 Abstraction Layer entered its current operational state.
+         </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LowerLayers" access="readOnly">
+         <description>This parameter is NOT RECOMMENDED to be used because IEEE1905 is not an interface.  {{list}} {{reference}} See {{bibref|TR-181i2|Section 4.2.1}}.
+         </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row" targetParent="#.AL.Interface."/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="RegistrarFreqBand" access="readOnly">
+         <description>{{list}} See {{bibref|IEEE1905.1a|Table 6-25: SupportedFreqBand TLV}}. {{enum}}</description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <enumeration value="802.11 2.4 GHz"></enumeration>
+            <enumeration value="802.11 5 GHz"></enumeration>
+            <enumeration value="802.11 60 GHz"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+          <description>{{numentries}}</description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+        </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.Interface.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="InterfaceNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>The 1905 interface table (described in {{bibref|IEEE1905.1a|sub-clause 5 Abstraction Layer Management}}).</description>
+      <uniqueKey functional="true">
+        <parameter ref="InterfaceId"/>
+      </uniqueKey>
+      <parameter name="InterfaceId" access="readOnly">
+          <description>MAC Address of this interface.  This is the value of the intfAddress parameter defined in {{bibref|IEEE1905.1a|Table 5-2: intfDescriptor elements}}</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+      <parameter name="Status" access="readOnly">
+         <description>This parameter is NOT RECOMMENDED to be used because it is not a parameter defined in a 1905 ALME primitive or protocol TLV.  The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+It SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD normally be {{enum|Down}} when the interface cannot transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason.
+This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+         <description>This parameter is NOT RECOMMENDED to be used because it is not a parameter defined in a 1905 ALME primitive or protocol TLV.  The accumulated time in {{units}} since the interface entered its current operational state.
+         </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LowerLayers" access="readOnly">
+         <description>This parameter is NOT RECOMMENDED to be used because it is not a parameter defined in a 1905 ALME primitive or protocol TLV.  {{list}} {{reference|an interface object that is stacked immediately below this interface object}}  See {{bibref|TR-181i2|Section 4.2.1}}.
+         </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceStackReference" access="readOnly" activeNotify="canDeny">
+         <description>Path name of an interface object described by this 1905 {{object}}. Referenced interface object MUST have a MACAddress and the InterfaceId MUST be the same as the interface object MACAddress.</description>
+        <syntax>
+          <string>
+            <size  maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="MediaType" access="readOnly">
+         <description>Media type of this {{object}}. This is derived from the value of the intfType parameter defined in {{bibref|IEEE1905.1a|Tables 5.2: intfDescriptor elements}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="IEEE 802.3u"><description>IEEE 802.3u Fast Ethernet</description></enumeration>
+            <enumeration value="IEEE 802.3ab"><description>IEEE 802.3ab Gigabit Ethernet</description></enumeration>
+            <enumeration value="IEEE 802.11b"><description>IEEE 802.11b (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11g"><description>IEEE 802.11g (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11a"><description>IEEE 802.11a (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11n 2.4"><description>IEEE 802.11n (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11n 5.0"><description>IEEE 802.11n (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11ac"><description>IEEE 802.11ac (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11ad"><description>IEEE 802.11ad (60GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11af"><description>IEEE 802.11af</description></enumeration>
+            <enumeration value="IEEE 1901 Wavelet"><description>IEEE 1901 Wavelet</description></enumeration>
+            <enumeration value="IEEE 1901 FFT"><description>IEEE 1901 FFT</description></enumeration>
+            <enumeration value="MoCAv1.1"><description>MoCAv1.1</description></enumeration>
+            <enumeration value="Generic PHY"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyOUI" access="readOnly">
+        <description>
+OUI of the Generic Phy networking technology of the local interface that would be included in a Generic Phy Device Information Type TLV defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyVariant" access="readOnly">
+         <description>Variant Index of the Generic Phy networking technology of the local interface that would be included in a Generic Phy Device Information Type TLV defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.</description>
+        <syntax>
+          <hexBinary>
+            <size minLength = "1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyURL" access="readOnly">
+        <description>URL to Generic Phy XML Description of the Generic Phy networking technology of the local interface that would be included in a Generic Phy Device Information Type TLV defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SetIntfPowerStateEnabled" access="readWrite">
+        <description>
+           Enables or disables the Abstraction Layer's ability to set the power state for the interface. Boolean can be {{true}} for "enabled" and {{false}} for "disabled".
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PowerState" access="readWrite">
+         <description>The Power State of this {{object}}. This is derived from the value of the powerState parameter as defined in {{bibref|IEEE1905.1a|Tables 5.3: ALME-SET-INTF-PWR-STATE.request parameters and Table 5.7: ALME-GET-INTF-PWR-STATE.response parameters}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="On"></enumeration>
+            <enumeration value="Power_Save">
+              <description>not used when written</description>
+            </enumeration>
+            <enumeration value="Off"></enumeration>
+            <enumeration value="Unsupported">
+              <description>not used when written</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="VendorPropertiesNumberOfEntries" access="readOnly">
+         <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="LinkNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="VendorPropertiesNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object defines the vendor specific properties (vendorSpecificInfo field) of this {{object|##.Interface}} as defined in {{bibref|IEEE1905.1a|Table 5-2: intfDescriptor elements}}.</description>
+      <parameter name="OUI" access="readOnly">
+        <description>Organizationally unique identifier of a manufacturer of this {{object|##.Interface}}.  Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros according to {{bibref|IEEE1905.1a|Table 5-20: VendorSpecificInfo information element}}.  {{pattern}}
+</description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Information" access="readOnly">
+        <description>A hexbinary string used to to provide vendor specific information about this {{object|##.Interface}}. This is the value of the vendorSpecificInfo parameter defined in {{bibref|IEEE1905.1a|Table 5-20: VendorSpecificInfo information element}}.</description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.Interface.{i}.Link.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="LinkNumberOfEntries">
+      <description>This object defines the 1905 neighbors and link properties.</description>
+      <uniqueKey functional="true">
+        <parameter ref="InterfaceId"/>
+        <parameter ref="IEEE1905Id"/>
+      </uniqueKey>
+      <parameter name="InterfaceId" access="readOnly">
+          <description>MAC Address of the interface of the Neighbor for this {{object}}. This value comes from the neighbor’s Topology discovery message as defined in {{bibref|IEEE1905.1a|Table 6-9: MAC address typeTLV}}.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+      <parameter name="IEEE1905Id" access="readOnly">
+          <description>MAC Address of the 1905 AL entity of the Neighbor device on this {{object}}. This value comes from the neighbor’s Topology discovery message as defined in {{bibref|IEEE1905.1a|Table 6-8: AL MAC address type TLV}}.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+      <parameter name="MediaType" access="readOnly">
+        <description>Media type of this {{object}}. This value is derived from the neighbor’s Topology response message 1905 device information type TLV Media Type field as defined in {{bibref|IEEE1905.1a|Table 6-12: Media type}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="IEEE 802.3u"><description>IEEE 802.3u Fast Ethernet</description></enumeration>
+            <enumeration value="IEEE 802.3ab"><description>IEEE 802.3ab Gigabit Ethernet</description></enumeration>
+            <enumeration value="IEEE 802.11b"><description>IEEE 802.11b (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11g"><description>IEEE 802.11g (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11a"><description>IEEE 802.11a (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11n 2.4"><description>IEEE 802.11n (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11n 5.0"><description>IEEE 802.11n (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11ac"><description>IEEE 802.11ac (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11ad"><description>IEEE 802.11ad (60GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11af"><description>IEEE 802.11af</description></enumeration>
+            <enumeration value="IEEE 1901 Wavelet"><description>IEEE 1901 Wavelet</description></enumeration>
+            <enumeration value="IEEE 1901 FFT"><description>IEEE 1901 FFT</description></enumeration>
+            <enumeration value="MoCAv1.1"><description>MoCAv1.1</description></enumeration>
+            <enumeration value="Generic PHY"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyOUI" access="readOnly">
+        <description>
+OUI of the Generic Phy networking technology of the interface of the Neighbor for this {{object|#.Link}}. This value is from a Generic Phy response message field as defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyVariant" access="readOnly">
+         <description>Variant Index of the Generic Phy networking technology of the interface of the Neighbor for this {{object|#.Link}}. This value is from a Generic Phy response message variant index field as defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.</description>
+        <syntax>
+          <hexBinary>
+            <size minLength = "1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyURL" access="readOnly">
+         <description>URL to Generic Phy XML Description of the Generic Phy networking technology of the interface of the Neighbor for this {{object|#.Link}}. This value is from a Generic Phy response message URL to Generic Phy field as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.Interface.{i}.Link.{i}.Metric." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the metrics for this {{object|##.Link}} as defined in {{bibref|IEEE1905.1a|Tables 6-18: 1905 transmitter link metrics and Table 6-20: 1905 receiver link metrics}}.</description>
+      <parameter name="IEEE802dot1Bridge" access="readOnly">
+        <description>
+          Indicates whether or not the 1905 link includes one or more IEEE 802.1 bridges. If {{false}}, the 1905 link does not include an IEEE 802.1 bridge. If {{true}}, the 1905 link does include one or more IEEE 802.1 bridges.
+        </description>
+        <syntax>
+          <boolean/>
+       </syntax>
+      </parameter>
+      <parameter name="PacketErrors" access="readOnly" activeNotify="canDeny">
+        <description>
+           Estimated number of lost {{units}} on the transmit side of the link {{bibref|IEEE1905.1a|Table 6-18: 1905 transmitter link metrics}} during a measurement period.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketErrorsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+           Estimated number of lost {{units}} on the receive side of the link {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}} during a measurement period.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="TransmittedPackets" access="readOnly" activeNotify="canDeny">
+        <description>
+          Estimated number of {{units}} sent to the Neighbor on this {{object|##.Link}}, in the same measurement period used to estimate {{param|PacketErrors}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          Estimated number of {{units}} received from this Neighbor on this {{object|##.Link}} {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}}, in the same measurement period used to estimate {{param|PacketErrors}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="MACThroughputCapacity" access="readOnly" activeNotify="canDeny">
+        <description>
+          The maximum MAC throughput in {{units}} between this {{object|###.Interface}} and the Neighbor on this {{object|##.Link}} that is estimated at this {{object|###.Interface}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mb/s"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LinkAvailability" access="readOnly" activeNotify="canDeny">
+        <description>
+          The estimated average {{units}} of time that the {{object|##.Link}} is available for data transmissions.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="percent"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PHYRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          The Physical Layer (PHY) rate in {{units}} between this {{object|###.Interface}} and the Neighbor on this {{object|##.Link}} that is estimated at this {{object|###.Interface}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mb/s"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="RSSI" access="readOnly" activeNotify="canDeny">
+        <description>
+          The estimated Received Signal Strength Indicator (RSSI) ratio in {{units}} between this {{object|###.Interface}} and the Neighbor on this {{object|##.Link}} that is estimated at the receive side of this {{object|###.Interface}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.ForwardingTable." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the rules to forward PDUs between interfaces within the 1905 Abstraction Layer.</description>
+        <parameter name="SetForwardingEnabled" access="readWrite">
+          <description>Abstraction Layer ability to set, modify, and remove {{object|ForwardingRule}} entries for interfaces. Boolean can be {{true}} for "enabled" and {{false}} for "disabled".</description>
+          <syntax>
+            <boolean/>
+         </syntax>
+        </parameter>
+        <parameter name="ForwardingRuleNumberOfEntries" access="readOnly">
+          <description>{{numentries}}</description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+        </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.ForwardingTable.ForwardingRule.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="ForwardingRuleNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>The 1905 fowarding rule for the ALME-SET-FWD-RULE.request and ALME-GET-FWD-RULES.response with classification criteria as defined in {{bibref|IEEE1905.1a|Table 5-9: ClassificationSet elements}}.</description>
+      <parameter name="InterfaceList" access="readWrite">
+        <description>The list of interfaces to which a frame satisfying the following classification criteria should be forwarded (intfAddressList parameter as defined in {{bibref|IEEE1905.1a|Table 5-8: ALME-SET-FWD-RULE.request parameters and Table 5-12: fwdRuleList elements}}). {{list}} Each list item MUST be the path name of an object, which MUST be a row of an {{object|##.Interface}} object. If the referenced item is deleted, the corresponding item MUST be removed from the list. {{noreference}} </description>
+        <syntax>
+          <list>
+          </list>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row" targetParent="##.Interface."/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="MACDestinationAddress" access="readWrite">
+        <description>Classification criterion.
+The destination MAC address.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+      </parameter>
+      <parameter name="MACDestinationAddressFlag" access="readWrite">
+         <description>If {{false}}, the classification criterion {{param|MACDestinationAddress}} is ignored.  If {{true}}, the classification criterion {{param|MACDestinationAddress}} is used.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="MACSourceAddress" access="readWrite">
+        <description>Classification criterion.
+The source MAC address.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+      </parameter>
+      <parameter name="MACSourceAddressFlag" access="readWrite">
+         <description>If {{false}}, the classification criterion {{param|MACSourceAddress}} is ignored.  If {{true}}, the classification criterion {{param|MACSourceAddress}} is used.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="EtherType" access="readWrite">
+        <description>Classification criterion.
+Ether Type Field in a frame.</description>
+        <syntax>
+          <unsignedInt>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="EtherTypeFlag" access="readWrite">
+        <description>If {{false}}, the classification criterion {{param|EtherType}} is ignored.  If {{true}}, the classification {{param|EtherType}} is used.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+            <parameter name="Vid" access="readWrite">
+        <description>Classification criterion.
+IEEE 802.1Q VLAN ID in a frame.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="4095"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="VidFlag" access="readWrite">
+        <description>If {{false}}, the classification criterion {{param|Vid}} is ignored.  If {{true}}, the classification {{param|Vid}} is used.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="PCP" access="readWrite">
+        <description>Classification criterion.
+IEEE 802.1Q Priority Code Point field.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PCPFlag" access="readWrite">
+        <description>If {{false}}, the classification criterion {{param|PCP}} is ignored.  If {{true}}, the classification {{param|PCP}} is used.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the 1905 Network Topology capabilities of this device.</description>
+        <parameter name="Enable" access="readWrite">
+          <description>Enables or disables the 1905 Network Topology reporting (via TR-069). When {{true}}, the device clears and (re)populates the {{object|IEEE1905Device}} and {{object|ChangeLog}} tables. When {{false}}, the contents of the {{object|IEEE1905Device}} and {{object|ChangeLog}} tables have no meaning.</description>
+          <syntax>
+            <boolean/>
+          </syntax>
+        </parameter>
+        <parameter name="Status" access="readOnly">
+          <description>When {{param|Enable}} is set to {{true}}, this parameter indicates the transient phase of the discovery of the {{object}}. 
+{{enum}}</description>
+          <syntax>
+            <string>
+              <enumeration value="Incomplete"><description>Indicates that the device is populating the topology object during the transient phase.</description></enumeration>
+              <enumeration value="Available"><description>Indicates that the transient phase is over and the device is maintaining and updating the topology object as changes occur.</description></enumeration>
+              <enumeration value="Error_Misconfigured"><description>NOT RECOMMENDED for use; if used, indicates that a necessary configuration value is undefined or invalid.</description></enumeration>
+            </string>
+          </syntax>
+        </parameter>
+        <parameter name="MaxChangeLogEntries" access="readWrite">
+        <description>The maximum number of entries allowed in the {{object|ChangeLog}} table.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+        <parameter name="LastChange" access="readOnly">
+        <description>{{reference}} If the {{object|ChangeLog}} is modified the parameter is modified to reflect the last entry added to the {{object|ChangeLog}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row" targetParent="ChangeLog."/>
+          </string>
+        </syntax>
+      </parameter>
+        <parameter name="IEEE1905DeviceNumberOfEntries" access="readOnly">
+          <description>{{numentries}}</description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+        </parameter>
+        <parameter name="ChangeLogNumberOfEntries" access="readOnly">
+          <description>{{numentries}}</description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.ChangeLog.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="ChangeLogNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object represents log entries for changes in the 1905 Network Topology. The Change Log is a First In First Out queue where the oldest entries (defined by values of the {{param|TimeStamp}} parameter) are deleted once the log is full.</description>
+      <parameter name="TimeStamp" access="readOnly">
+        <description>Date and Time at which the entry was added to the {{object}} table.</description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="EventType" access="readOnly">
+        <description>Type of event for this entry. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="NewNeighbor"><description>Entry represents a discovery of a Neighbor.</description></enumeration>
+            <enumeration value="LostNeighbor"><description>Entry represents the loss of a Neighbor.</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ReporterDeviceId" access="readOnly">
+        <description>1905 AL MAC Address of device which reported the change.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+      <parameter name="ReporterInterfaceId" access="readOnly">
+        <description>MAC Address of the interface of the reporting device on which the change has been detected.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+      <parameter name="NeighborType" access="readOnly">
+        <description>Type of Neighbor for this event. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="IEEE1905"></enumeration>
+            <enumeration value="Non-IEEE1905"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NeighborId" access="readOnly">
+        <description>MAC Address of the Neighbor of this event. If the value of the {{param|EventType}} parameter is {{enum|NewNeighbor|EventType}}, then the value of this parameter represents the MAC Address of the new Neighbor that joined the network; if the value of the {{param|EventType}} parameter is {{enum|LostNeighbor|EventType}}, then the value of this parameter represents the MAC Address of the Neighbor that left the network.
+If value of the {{param|NeighborType}} parameter is {{enum|IEEE1905|NeighborType}}, then the value of this parameter is the 1905 AL MAC Address of the Neighbor.
+</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="IEEE1905DeviceNumberOfEntries">
+      <description>This object represents an instance of discovered 1905 Devices in the network (received Topology discovery message as defined in {{bibref|IEEE1905.1a|Clause 6.3.1}}).</description>
+      <uniqueKey functional="true">
+        <parameter ref="IEEE1905Id"/>
+      </uniqueKey>
+      <parameter name="IEEE1905Id" access="readOnly">
+          <description>1905 AL MAC Address.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+      </parameter>
+      <parameter name="Version" access="readOnly">
+         <description>1905 profile version number in Higher Layer Response message as defined in {{bibref|IEEE1905.1a|Table 6-37: 1905 profile version TLV}}.</description>
+          <syntax>
+            <string>
+              <enumeration value="1905.1"></enumeration>
+              <enumeration value="1905.1a"></enumeration>
+            </string>
+          </syntax>
+      </parameter>
+      <parameter name="RegistrarFreqBand" access="readOnly">
+        <description>{{list}} of frequency bands identified as supported for a registrar role in an AP-autoconfiguration response message as defined in {{bibref|IEEE1905.1a|Table 6-25: SupportedFreqBand TLV}} {{enum}}.</description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <enumeration value="802.11 2.4 GHz"></enumeration>
+            <enumeration value="802.11 5 GHz"></enumeration>
+            <enumeration value="802.11 60 GHz"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="FriendlyName" access="readOnly">
+        <description>Friendly Name String received in Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-30: Device Identification Type TLV}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ManufacturerName" access="readOnly">
+        <description>Manufacturer Name String received in Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-30: Device Identification Type TLV}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ManufacturerModel" access="readOnly">
+        <description>Manufacturer Model String received in Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-30: Device Identification Type TLV}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ControlURL" access="readOnly">
+        <description>Control URL received in Higher Layer response message as defined in defined in {{bibref|IEEE1905.1a|Table 6-31: Control URL Type TLV}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="VendorPropertiesNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="IPv4AddressNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="IPv6AddressNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="NonIEEE1905NeighborNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="IEEE1905NeighborNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+      </parameter>
+      <parameter name="L2NeighborNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+      </parameter>
+      <parameter name="BridgingTupleNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv4Address.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="IPv4AddressNumberOfEntries">
+      <description>This object represents represents all IPv4 addresses reported for a MAC address (AL or interface) in a Higher Layer response message for the IEEE1905Device as defined in {{bibref|IEEE1905.1a|Table 6-32: IPv4 type TLV}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="MACAddress"/>
+        <parameter ref="IPv4Address"/>
+      </uniqueKey>
+      <parameter name="MACAddress" access="readOnly">
+        <description>MAC Address.</description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="IPv4Address" access="readOnly">
+        <description>IPv4 Address.</description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+      <parameter name="IPv4AddressType" access="readOnly">
+        <description>The IPv4 Address Type of this {{param|IPv4Address}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown"></enumeration>
+            <enumeration value="DHCP"></enumeration>
+            <enumeration value="Static"></enumeration>
+            <enumeration value="Auto-IP"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DHCPServer" access="readOnly">
+        <description>Either IPv4 address of DHCPv4 server or IPv6 address of DHCPv6 server.</description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv6Address.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="IPv6AddressNumberOfEntries">
+      <description>This object represents represents all IPv6 addresses reported for a MAC address (AL or interface) in a Higher Layer response message for the IEEE1905Device as defined in {{bibref|IEEE1905.1a|Table 6-34: IPv6 type TLV}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="MACAddress"/>
+        <parameter ref="IPv6Address"/>
+      </uniqueKey>
+      <parameter name="MACAddress" access="readOnly">
+        <description>MAC Address.</description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="IPv6Address" access="readOnly">
+        <description>IPv6 Address.</description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+      <parameter name="IPv6AddressType" access="readOnly">
+        <description>The IPv6 Address Type of this {{param|IPv6Address}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown"></enumeration>
+            <enumeration value="LinkLocal"></enumeration>
+            <enumeration value="DHCP"></enumeration>
+            <enumeration value="Static"></enumeration>
+            <enumeration value="SLAAC"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="IPv6AddressOrigin" access="readOnly">
+        <description>"::" or the IPv6 address of the origin of this IPv6 address.</description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.VendorProperties.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="VendorPropertiesNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object represents vendor specific information received in a message with a Vendor specific TLV (as defined in in {{bibref|IEEE1905.1a|Table 6-7: Vendor specific TLV}}).</description>
+      <parameter name="MessageType" access="readOnly">
+        <description>The Message type of a message received from this IEEE1905Device that contained a Vendor specific TLV, as defined in {{bibref|IEEE1905.1a|Table 6-4: Message type}}.</description>
+        <syntax>
+          <hexBinary>
+            <size minLength="1" maxLength="1" />
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="OUI" access="readOnly">
+        <description>This is the value of the Vendor specific OUI defined in {{bibref|IEEE1905.1a|Table 6-7: Vendor specific TLV}}.  {{pattern}}</description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Information" access="readOnly">
+        <description>A hexbinary string used to provide vendor specific information. This is the value of the Vendor specific information parameter defined in {{bibref|IEEE1905.1a|Table 6-7: Vendor specific TLV}}.</description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="65535" />
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.Interface.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="InterfaceNumberOfEntries">
+      <description>This object represents an instance of an interface for the {{object|##.IEEE1905Device}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="InterfaceId"/>
+      </uniqueKey>
+    
+      <parameter name="InterfaceId" access="readOnly">
+          <description>MAC Address of the interface. This comes from the Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-10: 1905 device information type TLV}}.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+      <parameter name="MediaType" access="readOnly">
+        <description>Media type of this {{object}}. This comes from the Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-10: 1905 device information type TLV}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="IEEE 802.3u"><description>IEEE 802.3u Fast Ethernet</description></enumeration>
+            <enumeration value="IEEE 802.3ab"><description>IEEE 802.3ab Gigabit Ethernet</description></enumeration>
+            <enumeration value="IEEE 802.11b"><description>IEEE 802.11b (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11g"><description>IEEE 802.11g (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11a"><description>IEEE 802.11a (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11n 2.4"><description>IEEE 802.11n (2.4GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11n 5.0"><description>IEEE 802.11n (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11ac"><description>IEEE 802.11ac (5GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11ad"><description>IEEE 802.11ad (60GHz)</description></enumeration>
+            <enumeration value="IEEE 802.11af"><description>IEEE 802.11af</description></enumeration>
+            <enumeration value="IEEE 1901 Wavelet"><description>IEEE 1901 Wavelet</description></enumeration>
+            <enumeration value="IEEE 1901 FFT"><description>IEEE 1901 FFT</description></enumeration>
+            <enumeration value="MoCAv1.1"><description>MoCAv1.1</description></enumeration>
+            <enumeration value="Generic PHY"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="PowerState" access="readOnly">
+         <description>The Power State of this {{object}}. "{{enum|Off}}" is used for interfaces identified in a Power Off Interface TLV as defined in {{bibref|IEEE1905.1a|Table 6-38}}. "{{enum|On}}" is used for all other interfaces. "{{enum|Power_Save}}" and "{{enum|Unsupported}}" are not used at this time. Updated as a result of a received Interface Power Change response with “request completed” or “alternate change made” Interface Power Change status as defined in {{bibref|IEEE1905.1a|Table 6-40: Interface Power Change status TLV}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="On"></enumeration>
+            <enumeration value="Power_Save"></enumeration>
+            <enumeration value="Off"></enumeration>
+            <enumeration value="Unsupported"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyOUI" access="readOnly">
+        <description>{{param}} of this {{object|#.Interface}}. {{pattern}}</description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyVariant" access="readOnly">
+        <description>Variant Index of the Generic Phy networking technology of this {{object|#.Interface}}. This value is from a Generic Phy response message variant index field as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.</description>
+        <syntax>
+          <hexBinary>
+            <size minLength = "1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="GenericPhyURL" access="readOnly">
+        <description>URL to Generic Phy XML Description of the Generic Phy networking technology of this {{object|#.Interface}}. This value is from a Generic Phy response message URL to generic phy field as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NetworkMembership" access="readOnly">
+        <description>MACAddress Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}.</description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="Role" access="readOnly">
+        <description>Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="AP"></enumeration>
+            <enumeration value="non-AP/non-PCP STA"></enumeration>
+            <enumeration value="Wi-Fi P2P Client"></enumeration>
+            <enumeration value="Wi-Fi P2P Group Owner"></enumeration>
+            <enumeration value="802.11adPCP"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="APChannelBand" access="readOnly">
+        <description>Hexadecimal digit. Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}</description>
+        <syntax>
+          <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="FrequencyIndex1" access="readOnly">
+        <description>Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}</description>
+        <syntax>
+          <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+      <parameter name="FrequencyIndex2" access="readOnly">
+        <description>Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}</description>
+        <syntax>
+          <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.NonIEEE1905Neighbor.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="NonIEEE1905NeighborNumberOfEntries">
+      <description>This object represents an instance of a Non-IEEE1905 Neighbor for the {{object|##.IEEE1905Device}}. These fields come from a Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-14: Non-1905 neighbor device TLV}}.</description>
+      <uniqueKey functional="true">
+         <parameter ref="LocalInterface"/>
+        <parameter ref="NeighborInterfaceId"/>
+      </uniqueKey>
+      <parameter name="LocalInterface" access="readOnly">
+        <description> {{reference}}</description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row" targetParent="##.IEEE1905Device.{i}.Interface."/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NeighborInterfaceId" access="readOnly">
+          <description>MAC Address of the interface for the {{object}}.</description>
+          <syntax>
+            <dataType ref="MACAddress"/>
+          </syntax>
+        </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.L2Neighbor.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="L2NeighborNumberOfEntries">
+      <description>This object represents an instance of an L2 Neighbor for the {{object|##.IEEE1905Device}}. These fields come from a Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-41: L2 neighbor device TLV}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="LocalInterface"/>
+        <parameter ref="NeighborInterfaceId"/>
+      </uniqueKey>
+      <parameter name="LocalInterface" access="readOnly">
+        <description> {{reference}}</description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row" targetParent="##.IEEE1905Device.{i}.Interface."/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NeighborInterfaceId" access="readOnly">
+        <description>MAC Address of the {{object}}.</description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="BehindInterfaceIds" access="readOnly">
+        <description>{{list}} Behind MAC Addresses of the {{object}}.</description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="IEEE1905NeighborNumberOfEntries">
+      <description>This object represents an instance of an {{object}} for the {{object|##.IEEE1905Device}}. These values are from the Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-15: 1905 neighbor device TLV}}.</description>
+      <uniqueKey functional="true">
+         <parameter ref="LocalInterface"/>
+        <parameter ref="NeighborDeviceId"/>
+      </uniqueKey>
+      <parameter name="LocalInterface" access="readOnly">
+        <description> {{reference}}</description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row" targetParent="##.IEEE1905Device.{i}.Interface."/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NeighborDeviceId" access="readOnly">
+        <description>1905 AL MAC Address of the Neighbor.</description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="MetricNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.Metric.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="MetricNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object represents the metrics included in a Link metric response from the IEEE1905Device where {{param|#.LocalInterface}} is the MAC address of an interface in the receiving 1905 AL as defined in {{bibref|IEEE1905.1a|Table 6-17: 1905 transmitter link metric TLV}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="NeighborMACAddress"/>
+      </uniqueKey>
+      <parameter name="NeighborMACAddress" access="readOnly">
+        <description>The MAC address of an interface in a neighbor 1905 device as defined in {{bibref|IEEE1905.1a|Table 6-17: 1905 transmitter link metric TLV or Table 6-19: 1905 receiver link metric TLV}}.</description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="IEEE802dot1Bridge" access="readOnly">
+        <description>Indicates whether or not the 1905 link includes one or more IEEE 802.1 bridges. If {{false}}, the 1905 link does not include an IEEE 802.1 bridge. If {{true}}, the 1905 link does include one or more IEEE 802.1 bridges.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketErrors" access="readOnly">
+        <description>
+           Estimated number of lost {{units}} on the transmit side of the link {{bibref|IEEE1905.1a|Table 6-18: 1905 transmitter link metrics}} during a measurement period.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketErrorsReceived" access="readOnly">
+        <description>
+           Estimated number of lost {{units}} on the receive side of the link {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}} during a measurement period.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="TransmittedPackets" access="readOnly">
+        <description>
+          Estimated number of {{units}} sent to the Neighbor on this link, in the same measurement period used to estimate {{param|PacketErrors}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          Estimated number of {{units}} received from this Neighbor {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}} on this link, in the same measurement period used to estimate {{param|PacketErrors}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="Packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="MACThroughputCapacity" access="readOnly">
+        <description>
+          The maximum MAC throughput in {{units}} between this Interface and the Neighbor on this link that is estimated at this Interface.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mb/s"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LinkAvailability" access="readOnly">
+        <description>
+          The estimated average {{units}} of time that this link is idle.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="percent"/>
+            <range minInclusive="0" maxInclusive="100" />
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PHYRate" access="readOnly">
+        <description>
+          The Physical Layer (PHY) rate in {{units}} between this Interface and the Neighbor on this link that is estimated at this Interface.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mb/s"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="RSSI" access="readOnly">
+        <description>
+          The estimated Received Signal Strength Indicator (RSSI) ratio in {{units}} between this Interface and the Neighbor on this link that is estimated at the receive side of this Interface.  Note: This parameter is valid only for IEEE 802.11 Neighbors.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="dB"/>
+            <range minInclusive="0" maxInclusive="255" />
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+          
+    <object name="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.BridgingTuple.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="BridgingTupleNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object represents an instance of an {{object}} for the {{object|##.IEEE1905Device}}. These values come from the 1905 Device’s Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-11: Device bridging capability TLV}}.</description>
+      <parameter name="InterfaceList" access="readOnly">
+          <description>{{list}} {{reference}}</description>
+          <syntax>
+            <list>
+            </list>
+            <string>
+              <size maxLength="256"/>
+              <pathRef refType="strong" targetType="row" targetParent="##.IEEE1905Device.{i}.Interface."/>
+            </string>
+          </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.Security." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the Security configuration for the 1905 device as defined in {{bibref|IEEE1905.1a|Section 9.2 Security Setup Methods}}.</description>
+      <parameter name="SetupMethod" access="readWrite">
+        <description>{{list}} Supported security setup method(s) for the network. {{enum}}</description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <enumeration value="UCPK"><description>User Configured Passphrase or Key</description></enumeration>
+            <enumeration value="PBC"><description>Push Button Configuration</description></enumeration>
+            <enumeration value="NFCNK"><description>Near-field Communication Network Key</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Password" access="readWrite">
+        <description>1905 network passphrase for generating security keys.</description>
+        <syntax hidden="true">
+          <string>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.IEEE1905.AL.NetworkingRegistrar." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the detected Network Registrars detection function for the IEEE 1905 network. They are determined by received AP-autoconfiguration response messages with Registrar role, with supported band as defined in {{bibref|IEEE1905.1a|Table 6-25: SupportedFreqBand TLV}}</description>
+      <parameter name="Registrar2dot4" access="readOnly">
+        <description>
+          {{list}} 1905 AL MAC addresses as determined by source MAC address in received AP-autoconfiguration response messages with supported frequency band of 802.11 2.4 GHz.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="Registrar5" access="readOnly">
+        <description>
+          {{list}} 1905 AL MAC addresses as determined by source MAC address in received AP-autoconfiguration response messages with supported frequency band of 802.11 5 GHz.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="Registrar60" access="readOnly">
+        <description>
+          {{list}} 1905 AL MAC addresses as determined by source MAC address in received AP-autoconfiguration response messages with supported frequency band of 802.11 60 GHz.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <!-- IEEE P1905 profiles -->
+    <profile name="IEEE1905Device:1">
+       <object ref="Device.IEEE1905." requirement="present">
+        <parameter ref="Version" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL." requirement="present">
+        <parameter ref="IEEE1905Id" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.Interface.{i}." requirement="present">
+        <parameter ref="InterfaceId" requirement="readOnly"/>
+        <parameter ref="MediaType" requirement="readOnly"/>
+        <parameter ref="GenericPhyOUI" requirement="readOnly"/>
+        <parameter ref="GenericPhyVariant" requirement="readOnly"/>
+        <parameter ref="GenericPhyURL" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.Security." requirement="present">
+        <parameter ref="SetupMethod" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+      </object>
+    </profile>
+    <profile name="IEEE1905NetworkTopology:1" extends="IEEE1905Device:1">
+      <object ref="Device.IEEE1905.AL.NetworkTopology." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="MaxChangeLogEntries" requirement="readWrite"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="IEEE1905DeviceNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ChangeLogNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.ChangeLog.{i}." requirement="present">
+        <parameter ref="TimeStamp" requirement="readOnly"/>
+        <parameter ref="EventType" requirement="readOnly"/>
+        <parameter ref="ReporterDeviceId" requirement="readOnly"/>
+        <parameter ref="ReporterInterfaceId" requirement="readOnly"/>
+        <parameter ref="NeighborType" requirement="readOnly"/>
+        <parameter ref="NeighborId" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}." requirement="present">
+        <parameter ref="IEEE1905Id" requirement="readOnly"/>
+        <parameter ref="Version" requirement="readOnly"/>
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="NonIEEE1905NeighborNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="IEEE1905NeighborNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="BridgingTupleNumberOfEntries" requirement="readOnly"/>
+        </object>
+        <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.BridgingTuple.{i}." requirement="present">
+        <parameter ref="InterfaceList" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}." requirement="present">
+        <parameter ref="LocalInterface" requirement="readOnly"/>
+        <parameter ref="NeighborDeviceId" requirement="readOnly"/>
+        </object>
+        <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.Interface.{i}." requirement="present">
+        <parameter ref="InterfaceId" requirement="readOnly"/>
+        <parameter ref="MediaType" requirement="readOnly"/>
+        <parameter ref="PowerState" requirement="readOnly"/>
+        </object>
+        <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.NonIEEE1905Neighbor.{i}." requirement="present">
+        <parameter ref="LocalInterface" requirement="readOnly"/>
+        <parameter ref="NeighborInterfaceId" requirement="readOnly"/>
+        </object>
+    </profile>
+    <profile name="IEEE1905LinkMetric:1" extends="IEEE1905Device:1">
+      <object ref="Device.IEEE1905.AL.Interface.{i}." requirement="present">
+        <parameter ref="SetIntfPowerStateEnabled" requirement="readWrite"/>
+        <parameter ref="PowerState" requirement="readWrite"/>
+        <parameter ref="LinkNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="VendorPropertiesNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}." requirement="present">
+        <parameter ref="OUI" requirement="readOnly"/>
+        <parameter ref="Information" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.Interface.{i}.Link.{i}." requirement="present">
+        <parameter ref="InterfaceId" requirement="readOnly"/>
+        <parameter ref="IEEE1905Id" requirement="readOnly"/>
+        <parameter ref="MediaType" requirement="readOnly"/>
+        </object>
+        <object ref="Device.IEEE1905.AL.Interface.{i}.Link.{i}.Metric." requirement="present">
+        <parameter ref="PacketErrors" requirement="readOnly"/>
+        <parameter ref="PacketErrorsReceived" requirement="readOnly"/>
+        <parameter ref="TransmittedPackets" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="MACThroughputCapacity" requirement="readOnly"/>
+        <parameter ref="LinkAvailability" requirement="readOnly"/>
+        <parameter ref="PHYRate" requirement="readOnly"/>
+        <parameter ref="RSSI" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="IEEE1905InterfaceSelection:1" extends="IEEE1905Device:1">
+      <object ref="Device.IEEE1905.AL.Interface.{i}." requirement="present">
+        <parameter ref="SetIntfPowerStateEnabled" requirement="readWrite"/>
+        <parameter ref="PowerState" requirement="readWrite"/>
+        <parameter ref="VendorPropertiesNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}." requirement="present">
+        <parameter ref="OUI" requirement="readOnly"/>
+        <parameter ref="Information" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.ForwardingTable." requirement="present">
+        <parameter ref="SetForwardingEnabled" requirement="readOnly"/>
+        <parameter ref="ForwardingRuleNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.ForwardingTable.ForwardingRule.{i}." requirement="createDelete">
+        <parameter ref="InterfaceList" requirement="readWrite"/>
+        <parameter ref="MACDestinationAddress" requirement="readWrite"/>
+        <parameter ref="MACDestinationAddressFlag" requirement="readWrite"/>
+        <parameter ref="MACSourceAddress" requirement="readWrite"/>
+        <parameter ref="MACSourceAddressFlag" requirement="readWrite"/>
+        <parameter ref="EtherType" requirement="readWrite"/>
+        <parameter ref="EtherTypeFlag" requirement="readWrite"/>
+        <parameter ref="Vid" requirement="readWrite"/>
+        <parameter ref="VidFlag" requirement="readWrite"/>
+        <parameter ref="PCP" requirement="readWrite"/>
+        <parameter ref="PCPFlag" requirement="readWrite"/>
+      </object>
+    </profile>
+    <profile name="IEEE1905Power:1" extends="IEEE1905Device:1">
+      <object ref="Device.IEEE1905.AL.Interface.{i}." requirement="present">
+        <parameter ref="SetIntfPowerStateEnabled" requirement="readWrite"/>
+        <parameter ref="PowerState" requirement="readWrite"/>
+        <parameter ref="VendorPropertiesNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}." requirement="present">
+        <parameter ref="OUI" requirement="readOnly"/>
+        <parameter ref="Information" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="IEEE1905TopologyHigherLayer:1" extends="IEEE1905Device:1">
+      <object ref="Device.IEEE1905.AL.NetworkTopology." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="IEEE1905DeviceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}." requirement="present">
+        <parameter ref="IEEE1905Id" requirement="readOnly"/>
+        <parameter ref="Version" requirement="readOnly"/>
+        <parameter ref="FriendlyName" requirement="readOnly"/>
+        <parameter ref="ManufacturerName" requirement="readOnly"/>
+        <parameter ref="ManufacturerModel" requirement="readOnly"/>
+        <parameter ref="ControlURL" requirement="readOnly"/>
+        <parameter ref="IPv4AddressNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="IPv6AddressNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv4Address.{i}." requirement="present">
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="IPv4Address" requirement="readOnly"/>
+        <parameter ref="IPv4AddressType" requirement="readOnly"/>
+        <parameter ref="DHCPServer" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv6Address.{i}." requirement="present">
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="IPv6Address" requirement="readOnly"/>
+        <parameter ref="IPv6AddressType" requirement="readOnly"/>
+        <parameter ref="IPv6AddressOrigin" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="IEEE1905TopologyNeighbor:1" extends="IEEE1905Device:1">
+      <object ref="Device.IEEE1905.AL.NetworkTopology." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="IEEE1905DeviceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}." requirement="present">
+        <parameter ref="IEEE1905Id" requirement="readOnly"/>
+        <parameter ref="Version" requirement="readOnly"/>
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="NonIEEE1905NeighborNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="IEEE1905NeighborNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="L2NeighborNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}." requirement="present">
+        <parameter ref="LocalInterface" requirement="readOnly"/>
+        <parameter ref="NeighborDeviceId" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.Interface.{i}." requirement="present">
+        <parameter ref="InterfaceId" requirement="readOnly"/>
+        <parameter ref="MediaType" requirement="readOnly"/>
+        <parameter ref="PowerState" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.NonIEEE1905Neighbor.{i}." requirement="present">
+        <parameter ref="LocalInterface" requirement="readOnly"/>
+        <parameter ref="NeighborInterfaceId" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.L2Neighbor.{i}." requirement="present">
+        <parameter ref="LocalInterface" requirement="readOnly"/>
+        <parameter ref="NeighborInterfaceId" requirement="readOnly"/>
+        <parameter ref="BehindInterfaceIds" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="IEEE1905TopologyMetric:1" extends="IEEE1905Device:1">
+      <object ref="Device.IEEE1905.AL.NetworkTopology." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="IEEE1905DeviceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}." requirement="present">
+        <parameter ref="IEEE1905Id" requirement="readOnly"/>
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="IEEE1905NeighborNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}." requirement="present">
+        <parameter ref="LocalInterface" requirement="readOnly"/>
+        <parameter ref="NeighborDeviceId" requirement="readOnly"/>
+        <parameter ref="MetricNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.Metric.{i}." requirement="present">
+        <parameter ref="NeighborMACAddress" requirement="readOnly"/>
+        <parameter ref="IEEE802dot1Bridge" requirement="readOnly"/>
+        <parameter ref="PacketErrors" requirement="readOnly"/>
+        <parameter ref="PacketErrorsReceived" requirement="readOnly"/>
+        <parameter ref="TransmittedPackets" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="MACThroughputCapacity" requirement="readOnly"/>
+        <parameter ref="LinkAvailability" requirement="readOnly"/>
+        <parameter ref="PHYRate" requirement="readOnly"/>
+        <parameter ref="RSSI" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <!-- WiFi MAC Address Filtering profiles -->
+    <profile name="WiFiAccessPoint:2" base="WiFiAccessPoint:1">
+      <description>
+      </description>
+      <object ref="Device.WiFi.AccessPoint.{i}." requirement="present">
+        <parameter ref="MACAddressControlEnabled" requirement="readWrite"/>
+        <parameter ref="AllowedMACAddress" requirement="readWrite"/>
+      </object>
+    </profile>
+    
+  </model>
+</dm:document>

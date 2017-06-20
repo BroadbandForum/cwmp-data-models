@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 Data Model Report Schema (DMR Schema)
+
+  Copyright (c) 2008-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+  TR-069 Data Model Report Schema (DMR Schema).  Non-normative definitions that
+  can be used in DM Instances to provide additional information to reporting
+  tools.
+
+  Version History:
+  November  2008: cwmp-datamodel-report.xsd, corresponds to TR-106 Amendment 2
+  September 2009: cwmp-datamodel-report.xsd, corresponds to TR-106 Amendment 3
+                  - removed dependence on the DM Schema; added header comments
+                  - added noUniqueKeys to indicate that an object has no unique
+                    keys (so report tools shouldn't issue a warning)
+-->
+<!-- Entity and type definitions duplicated from DM Schema to avoid
+     dependence on a particular version of DM Schema. -->
+<!DOCTYPE cwmp-datamodel-report [
+  <!ENTITY colon ":">
+  <!ENTITY dot "\.">
+  <!ENTITY inst "(\{i\})">
+  <!ENTITY name "([\i-[:]][\c-[:\.]]*)">
+  <!ENTITY Name "([\i-[a-z:]][\c-[:\.]]*)">
+  <!ENTITY num "(\d+)">
+]>
+<!-- Don't want the "0-1" because this schema is unversioned, but have to
+     keep it for backwards compatibility -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:broadband-forum-org:cwmp:datamodel-report-0-1" targetNamespace="urn:broadband-forum-org:cwmp:datamodel-report-0-1" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+  <xs:simpleType name="ObjectReferencePattern">
+    <xs:annotation>
+      <xs:documentation>Object path that can contain "{i}" placeholders and that can therefore references multiple objects.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="&dot;?(&name;&dot;(&inst;&dot;)?)*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ParameterReference">
+    <xs:annotation>
+      <xs:documentation>Parameter path that cannot contain "{i}" placeholders and that therefore references a single parameter.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="&dot;?(&name;&dot;)*&name;?"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ProfileName">
+    <xs:annotation>
+      <xs:documentation>Profile name, including version.  The name part is the same as xs:NCName except that dots are not permitted.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="&name;&colon;&num;"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="VersionNumber">
+    <xs:annotation>
+      <xs:documentation>Version number, consisting of major and minor versions.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="&num;&dot;&num;"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:attribute name="fixedObject" type="xs:boolean">
+    <xs:annotation>
+      <xs:documentation>Indicates that object is fixed, so shouldn't (for example) warn about any writable parameters that it might contain.</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="hideDeleted" type="xs:boolean">
+    <xs:annotation>
+      <xs:documentation>Indicates that if item has been deleted, it should always be hidden in the report, e.g. not even shown in strikeout.</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="noUniqueKeys" type="xs:boolean">
+    <xs:annotation>
+      <xs:documentation>Indicates that object has no unique keys, so shouldn't (for example) warn about the lack of unique keys.</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="previousParameter" type="tns:ParameterReference">
+    <xs:annotation>
+      <xs:documentation>Previous parameter hint.</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="previousObject" type="tns:ObjectReferencePattern">
+    <xs:annotation>
+      <xs:documentation>Previous object hint.</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="previousProfile" type="tns:ProfileName">
+    <xs:annotation>
+      <xs:documentation>Previous profile hint.</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="version" type="tns:VersionNumber">
+    <xs:annotation>
+      <xs:documentation>Version number.</xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+</xs:schema>

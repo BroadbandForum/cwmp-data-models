@@ -1,0 +1,2520 @@
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <title>Broadband Forum - CWMP</title>
+    <style type="text/css">
+      p, li, body { font-family: helvetica,arial,sans-serif; font-size: 8pt; }
+      h1 { font-family: helvetica,arial,sans-serif; font-size: 14pt; }
+      h2 { font-family: helvetica,arial,sans-serif; font-size: 12pt; }
+      h3 { font-family: helvetica,arial,sans-serif; font-size: 10pt; }
+      sup { vertical-align: super; }
+      table { text-align: left; }
+      th { vertical-align: middle; font-family: helvetica,arial,sans-serif; font-size: 8pt; }
+      th.g { vertical-align: middle; font-family: helvetica,arial,sans-serif; font-size: 8pt; background-color: rgb(153, 153, 153); }
+      td, td.p { vertical-align: middle; font-family: helvetica,arial,sans-serif; font-size: 8pt; }
+      td.pc { vertical-align: middle; font-family: helvetica,arial,sans-serif; font-size: 8pt; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <h1>CPE WAN Management Protocol (CWMP)</h1>
+    <p>The Broadband Forum defines several data models for use with the CPE WAN Management Protocol (<a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">TR-069 Amendment 5</a>).  These data models contain objects and parameters that describe the many different functions and capabilities available to devices and services that are manageable via CWMP.<p>
+CWMP data models are divided into two types: <i>Root</i> and <i>Service</i>.  The root data model, <i>Device</i><sup>1</sup>, is used to describe the major functions of a network aware device, including interfaces, software/firmware, diagnostics, components common to CWMP and other services, and the basic device information necessary to CWMP.<p>
+Service data models describe modular functionality that allow the extension of the root data model on a device (under <i>Device.Services.</i>) to provide particular services, such as a voice service, set top box service, network attached storage, etc.<p>
+Each data model is defined by a <i>Name:Version</i> syntax. A device defines its data model by defining a <a href="#TR-069%20Device%20Type%20Schema%20%28DT%20Schema%29">device type</a>, an XML document that maps to (imports) BBF official data model objects and/or vendor specific objects. A full explanation of how to develop compliant CWMP data models can be found in <a href="http://www.broadband-forum.org/technical/download/TR-154.pdf">TR-154</a>.<p>
+<sup>1</sup> Early versions of the CWMP data model defined two root data models, <i>InternetGatewayDevice</i> and <i>Device</i>.  Version 2 of the <i>Device</i> root data model (<i>Device:2</i>) deprecates <i>InternetGatewayDevice</i> and <i>Device:1</i> in favor of a single root data model.<p>
+Note: All the files below are directly reachable via: <i><a href="http://www.broadband-forum.org/cwmp/">http://www.broadband-forum.org/cwmp/</a></i>&lt;<i>filename</i>&gt;.
+
+    <ul>
+      <b><a href="#Latest Data Models">Latest Data Models</a></b>
+      <ul>
+      </ul>
+      <b><a href="#Root Data Models">Root Data Models</a></b>
+      <ul>
+        <a href="#Device:2">Device:2</a><br>
+        <a href="#Device:1">Device:1</a><br>
+        <a href="#InternetGatewayDevice:1">InternetGatewayDevice:1</a><br>
+      </ul>
+      <b><a href="#Service Data Models">Service Data Models</a></b>
+      <ul>
+        <a href="#FAPService:2">FAPService:2</a><br>
+        <a href="#FAPService:1">FAPService:1</a><br>
+        <a href="#StorageService:1">StorageService:1</a><br>
+        <a href="#STBService:1">STBService:1</a><br>
+        <a href="#VoiceService:2">VoiceService:2</a><br>
+        <a href="#VoiceService:1">VoiceService:1</a><br>
+      </ul>
+      <b><a href="#Component Definitions">Component Definitions</a></b>
+      <ul>
+        <a href="#Femto Components">Femto Components</a><br>
+        <a href="#Component Objects for CWMP">Component Objects for CWMP</a><br>
+        <a href="#Network Performance Tests">Network Performance Tests</a><br>
+      </ul>
+      <b><a href="#Schema Files">Schema Files</a></b>
+      <ul>
+        <a href="#TR-069 RPCs">TR-069 RPCs</a><br>
+        <a href="#IPDR Service Specification for Bulk Data Collection">IPDR Service Specification for Bulk Data Collection</a><br>
+        <a href="#XMPP Connection Request">XMPP Connection Request</a><br>
+        <a href="#UDP Lightweight Notification">UDP Lightweight Notification</a><br>
+        <a href="#TR-069 Data Model Definition Schema (DM Schema)">TR-069 Data Model Definition Schema (DM Schema)</a><br>
+        <a href="#TR-069 Data Model Report Schema (DMR Schema)">TR-069 Data Model Report Schema (DMR Schema)</a><br>
+        <a href="#TR-069 Device Type Schema (DT Schema)">TR-069 Device Type Schema (DT Schema)</a><br>
+        <a href="#TR-069 DT (Device Type) Features Schema (DTF Schema)">TR-069 DT (Device Type) Features Schema (DTF Schema)</a><br>
+      </ul>
+      <b><a href="#Support Files">Support Files</a></b>
+      <ul>
+        <a href="#TR-069 Data Model Data Types">TR-069 Data Model Data Types</a><br>
+        <a href="#TR-069 Data Model Bibliographic References">TR-069 Data Model Bibliographic References</a><br>
+      </ul>
+      <b><a href="#Outdated Corrigenda">Outdated Corrigenda</a></b>
+      <ul>
+      </ul>
+    </ul>
+
+    <a name="Latest Data Models"><h1>Latest Data Models</h1></a>
+    <table class="stdtable" width="100%" bordercolor="#005c27" border="1" cellpadding="2" cellspacing="0">
+      <thead>
+        <tr>
+          <!-- <th width="15.15%">Document</th> -->
+          <th width="15.15%">Data Model</th>
+          <th width="4.04%">Version</th>
+          <th width="12.12%">XML</th>
+          <th width="3.03%">HTML</th>
+          <th width="40.40%">Description</th>
+          <th width="10.10%">Approval Date</th>
+          <th width="15.15%">PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- <td rowspan="2">Device Data Model for TR-069</td> -->
+          <td rowspan="2"><a href="#Device:2">Device:2</a></td>
+          <td rowspan="2">2.11</td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-11-0.xml">tr-181-2-11-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-11-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+Added LED status model<p>
+Added layer 2 tunnel support to IP diagnostics model<p>
+Added DSL G.fast model<p>
+Added Management Frame Protection support to WiFi model<p>
+Added WPS 2.0 support to WiFi model<p>
+Added user interface toggle<p>
+Added user interface messaging model<p>
+Added ConnectionRequest HTTP service toggle<p>
+Resolved lack of DNS fallback support for XMPP connections</td>
+          <td rowspan="2">July 2016</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-11.pdf">TR-181 Issue 2 Amendment 11</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="2"><a href="#Device:2">Device:2</a></td> -->
+          <!-- <td rowspan="2">2.11</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-11-0-full.xml">tr-181-2-11-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-11-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+Added LED status model<p>
+Added layer 2 tunnel support to IP diagnostics model<p>
+Added DSL G.fast model<p>
+Added Management Frame Protection support to WiFi model<p>
+Added WPS 2.0 support to WiFi model<p>
+Added user interface toggle<p>
+Added user interface messaging model<p>
+Added ConnectionRequest HTTP service toggle<p>
+Resolved lack of DNS fallback support for XMPP connections</td> -->
+          <!-- <td rowspan="2">July 2016</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-11.pdf">TR-181 Issue 2 Amendment 11</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device:1 Data Model for TR-069</td> -->
+          <td rowspan="2"><a href="#Device:1">Device:1</a></td>
+          <td rowspan="2">1.14</td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-7-0.xml">tr-181-1-7-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-7-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+Updated Bulk Data Collection for HTTP Transport</td>
+          <td rowspan="2">November 2015</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device:1 Data Model for TR-069</td> -->
+          <!-- <td rowspan="2"><a href="#Device:1">Device:1</a></td> -->
+          <!-- <td rowspan="2">1.14</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-7-0-full.xml">tr-181-1-7-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-7-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+Updated Bulk Data Collection for HTTP Transport</td> -->
+          <!-- <td rowspan="2">November 2015</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Internet Gateway Device Data Model for TR-069</td> -->
+          <td rowspan="2"><a href="#InternetGatewayDevice:1">InternetGatewayDevice:1</a></td>
+          <td rowspan="2">1.14</td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-8-0.xml">tr-098-1-8-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-8-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 9</td>
+          <td rowspan="2">September 2014</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="2"><a href="#InternetGatewayDevice:1">InternetGatewayDevice:1</a></td> -->
+          <!-- <td rowspan="2">1.14</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-8-0-full.xml">tr-098-1-8-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-8-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 9</td> -->
+          <!-- <td rowspan="2">September 2014</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">TR-196 FAPService:2.1 Femto Access Point Service Data Model</td> -->
+          <td rowspan="2"><a href="#FAPService:2">FAPService:2</a></td>
+          <td rowspan="2">2.1</td>
+          <td rowspan="1"><a href="cwmp/tr-196-2-1-0.xml">tr-196-2-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-196-2-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+Added parameters for 3GPP SA5 Rel 11 and 12 (TS 32.452, TS 32.453)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-145293)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-146268)</td>
+          <td rowspan="2">August 2015</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">TR-196 FAPService:2.1 Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="2"><a href="#FAPService:2">FAPService:2</a></td> -->
+          <!-- <td rowspan="2">2.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-196-2-1-0-full.xml">tr-196-2-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-196-2-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+Added parameters for 3GPP SA5 Rel 11 and 12 (TS 32.452, TS 32.453)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-145293)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-146268)</td> -->
+          <!-- <td rowspan="2">August 2015</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Femto Access Point Service Data Model</td> -->
+          <td rowspan="2"><a href="#FAPService:1">FAPService:1</a></td>
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a href="cwmp/tr-196-1-1-1.xml">tr-196-1-1-1.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-196-1-1-1-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Supported 3GPP releases 9 and 10<p>
+Added <i>Alias</i> parameters</td>
+          <td rowspan="2">November 2012</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-196_Amendment-1.pdf">TR-196 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="2"><a href="#FAPService:1">FAPService:1</a></td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-196-1-1-1-full.xml">tr-196-1-1-1-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-196-1-1-1.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Supported 3GPP releases 9 and 10<p>
+Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">November 2012</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-196_Amendment-1.pdf">TR-196 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">StorageService:1.3 Service Object Definition</td> -->
+          <td rowspan="2"><a href="#StorageService:1">StorageService:1</a></td>
+          <td rowspan="2">1.3</td>
+          <td rowspan="1"><a href="cwmp/tr-140-1-3-0.xml">tr-140-1-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-140-1-3-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+Update file system and connection enumerations<p>
+Added <i>SMART</i> data model</td>
+          <td rowspan="2">May 2017</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-3.pdf">TR-140 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">StorageService:1.3 Service Object Definition</td> -->
+          <!-- <td rowspan="2"><a href="#StorageService:1">StorageService:1</a></td> -->
+          <!-- <td rowspan="2">1.3</td> -->
+          <td rowspan="1"><a href="cwmp/tr-140-1-3-0-full.xml">tr-140-1-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-140-1-3-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+Update file system and connection enumerations<p>
+Added <i>SMART</i> data model</td> -->
+          <!-- <td rowspan="2">May 2017</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-3.pdf">TR-140 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">STBService:1.4 Service Object</td> -->
+          <td rowspan="2"><a href="#STBService:1">STBService:1</a></td>
+          <td rowspan="2">1.4</td>
+          <td rowspan="1"><a href="cwmp/tr-135-1-4-0.xml">tr-135-1-4-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-135-1-4-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+Added objects for Service Monitoring of Events</td>
+          <td rowspan="2">August 2015</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-3.pdf">TR-135 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">STBService:1.4 Service Object</td> -->
+          <!-- <td rowspan="2"><a href="#STBService:1">STBService:1</a></td> -->
+          <!-- <td rowspan="2">1.4</td> -->
+          <td rowspan="1"><a href="cwmp/tr-135-1-4-0-full.xml">tr-135-1-4-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-135-1-4-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+Added objects for Service Monitoring of Events</td> -->
+          <!-- <td rowspan="2">August 2015</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-3.pdf">TR-135 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Provisioning Parameters for VoIP CPE</td> -->
+          <td rowspan="2"><a href="#VoiceService:2">VoiceService:2</a></td>
+          <td rowspan="2">2.0</td>
+          <td rowspan="1"><a href="cwmp/tr-104-2-0-0.xml">tr-104-2-0-0.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-104-2-0-0.html">Full</a></b></td>
+          <td rowspan="2">Original</td>
+          <td rowspan="2">March 2014</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-104_Issue-2.pdf">TR-104 Issue 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Provisioning Parameters for VoIP CPE</td> -->
+          <!-- <td rowspan="2"><a href="#VoiceService:2">VoiceService:2</a></td> -->
+          <!-- <td rowspan="2">2.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-104-2-0-0-full.xml">tr-104-2-0-0-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-104-2-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Original</td> -->
+          <!-- <td rowspan="2">March 2014</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-104_Issue-2.pdf">TR-104 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Provisioning Parameters for VoIP CPE</td> -->
+          <td rowspan="2"><a href="#VoiceService:1">VoiceService:1</a></td>
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a href="cwmp/tr-104-1-1-0.xml">tr-104-1-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-104-1-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Added <i>Alias</i> parameters</td>
+          <td rowspan="2">July 2011</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-104.pdf">TR-104</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Provisioning Parameters for VoIP CPE</td> -->
+          <!-- <td rowspan="2"><a href="#VoiceService:1">VoiceService:1</a></td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-104-1-1-0-full.xml">tr-104-1-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-104-1-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">July 2011</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-104.pdf">TR-104</a></td> -->
+        </tr>
+      </tbody>
+    </table>
+
+    <a name="Root Data Models"><h1>Root Data Models</h1></a>
+    <table class="stdtable" width="100%" bordercolor="#005c27" border="1" cellpadding="2" cellspacing="0">
+      <thead>
+        <tr>
+          <!-- <th width="15.15%">Document</th> -->
+          <th width="15.15%">Data Model</th>
+          <th width="4.04%">Version</th>
+          <th width="12.12%">XML</th>
+          <th width="3.03%">HTML</th>
+          <th width="40.40%">Description</th>
+          <th width="10.10%">Approval Date</th>
+          <th width="15.15%">PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <td rowspan="24">Device:2</td>
+          <td rowspan="2">2.11</td>
+          <td rowspan="1"><a name="Device:2.11"></a><a name="Device:2"></a><a name="tr-181-2-11.xml"></a><a name="tr-181-2-11-0.xml"></a><a href="cwmp/tr-181-2-11-0.xml">tr-181-2-11-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-11-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+Added LED status model<p>
+Added layer 2 tunnel support to IP diagnostics model<p>
+Added DSL G.fast model<p>
+Added Management Frame Protection support to WiFi model<p>
+Added WPS 2.0 support to WiFi model<p>
+Added user interface toggle<p>
+Added user interface messaging model<p>
+Added ConnectionRequest HTTP service toggle<p>
+Resolved lack of DNS fallback support for XMPP connections</td>
+          <td rowspan="2">July 2016</td>
+          <td rowspan="2"><a name="TR-181i2a11"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-11.pdf">TR-181 Issue 2 Amendment 11</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.11</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-11-0-full.xml">tr-181-2-11-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-11-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+Added LED status model<p>
+Added layer 2 tunnel support to IP diagnostics model<p>
+Added DSL G.fast model<p>
+Added Management Frame Protection support to WiFi model<p>
+Added WPS 2.0 support to WiFi model<p>
+Added user interface toggle<p>
+Added user interface messaging model<p>
+Added ConnectionRequest HTTP service toggle<p>
+Resolved lack of DNS fallback support for XMPP connections</td> -->
+          <!-- <td rowspan="2">July 2016</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-11.pdf">TR-181 Issue 2 Amendment 11</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.10</td>
+          <td rowspan="1"><a name="Device:2.10"></a><a name="tr-181-2-10.xml"></a><a name="tr-181-2-10-0.xml"></a><a href="cwmp/tr-181-2-10-0.xml">tr-181-2-10-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-10-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+Added MQTT model<p>
+Added DNS Server updates<p>
+Added new diagnostics state<p>
+Incorporated new components from TR-157 Amendment 10</td>
+          <td rowspan="2">November 2015</td>
+          <td rowspan="2"><a name="TR-181i2a10"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-10.pdf">TR-181 Issue 2 Amendment 10</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.10</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-10-0-full.xml">tr-181-2-10-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-10-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+Added MQTT model<p>
+Added DNS Server updates<p>
+Added new diagnostics state<p>
+Incorporated new components from TR-157 Amendment 10</td> -->
+          <!-- <td rowspan="2">November 2015</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-10.pdf">TR-181 Issue 2 Amendment 10</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.9</td>
+          <td rowspan="1"><a name="Device:2.9"></a><a name="tr-181-2-9.xml"></a><a name="tr-181-2-9-0.xml"></a><a href="cwmp/tr-181-2-9-0.xml">tr-181-2-9-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-9-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+Added WiFi MAC Address Filtering<p>
+Added Traceroute fixes<p>
+Added IEEE 1905 data model<p>
+Incorporated new components from TR-143 Amendment 1</td>
+          <td rowspan="2">1 December 2014</td>
+          <td rowspan="4"><a name="TR-181i2a8"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-8.pdf">TR-181 Issue 2 Amendment 8</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.9</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-9-0-full.xml">tr-181-2-9-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-9-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+Added WiFi MAC Address Filtering<p>
+Added Traceroute fixes<p>
+Added IEEE 1905 data model<p>
+Incorporated new components from TR-143 Amendment 1</td> -->
+          <!-- <td rowspan="2">1 December 2014</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-8.pdf">TR-181 Issue 2 Amendment 8</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.8</td>
+          <td rowspan="1"><a name="Device:2.8"></a><a name="tr-181-2-8.xml"></a><a name="tr-181-2-8-0.xml"></a><a href="cwmp/tr-181-2-8-0.xml">tr-181-2-8-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-8-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+Added LLDP and HTIP home network topology discovery parameters, G.997.1-2012 DSL parameters, various WiFi parameters (associated device statistics, retry limits, reports, QoS), and other minor changes<p>
+Updated G.hn data model to align with G.9962<p>
+Updated Annex B on tunneling, and added GRE and MAP data models<p>
+Added PCP data model</td>
+          <td rowspan="2">September 2014</td>
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-8.pdf">TR-181 Issue 2 Amendment 8</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.8</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-8-0-full.xml">tr-181-2-8-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-8-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+Added LLDP and HTIP home network topology discovery parameters, G.997.1-2012 DSL parameters, various WiFi parameters (associated device statistics, retry limits, reports, QoS), and other minor changes<p>
+Updated G.hn data model to align with G.9962<p>
+Updated Annex B on tunneling, and added GRE and MAP data models<p>
+Added PCP data model</td> -->
+          <!-- <td rowspan="2">September 2014</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-8.pdf">TR-181 Issue 2 Amendment 8</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.7</td>
+          <td rowspan="1"><a name="Device:2.7"></a><a name="tr-181-2-7.xml"></a><a name="tr-181-2-7-0.xml"></a><a href="cwmp/tr-181-2-7-0.xml">tr-181-2-7-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-7-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Added ZigBee data model, Provider Bridge data model, and various other items<p>
+Incorporated new components from TR-157 Amendment 8</td>
+          <td rowspan="2">November 2013</td>
+          <td rowspan="2"><a name="TR-181i2a7"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-7.pdf">TR-181 Issue 2 Amendment 7</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.7</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-7-0-full.xml">tr-181-2-7-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-7-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Added ZigBee data model, Provider Bridge data model, and various other items<p>
+Incorporated new components from TR-157 Amendment 8</td> -->
+          <!-- <td rowspan="2">November 2013</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-7.pdf">TR-181 Issue 2 Amendment 7</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.6</td>
+          <td rowspan="1"><a name="Device:2.6"></a><a name="tr-181-2-6.xml"></a><a name="tr-181-2-6-0.xml"></a><a href="cwmp/tr-181-2-6-0.xml">tr-181-2-6-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-6-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated <i>DNS_SD</i> component from TR-157 Amendment 7</td>
+          <td rowspan="2">November 2012</td>
+          <td rowspan="2"><a name="TR-181i2a6"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-6.pdf">TR-181 Issue 2 Amendment 6</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.6</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-6-0-full.xml">tr-181-2-6-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-6-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated <i>DNS_SD</i> component from TR-157 Amendment 7</td> -->
+          <!-- <td rowspan="2">November 2012</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-6.pdf">TR-181 Issue 2 Amendment 6</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.5</td>
+          <td rowspan="1"><a name="Device:2.5"></a><a name="tr-181-2-5.xml"></a><a name="tr-181-2-5-0.xml"></a><a href="cwmp/tr-181-2-5-0.xml">tr-181-2-5-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-5-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Added <i>IPsec</i> data model<p>
+Incorporated <i>BulkDataCollection</i> component from TR-157 Amendment 6</td>
+          <td rowspan="2">May 2012</td>
+          <td rowspan="2"><a name="TR-181i2a5"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-5.pdf">TR-181 Issue 2 Amendment 5</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.5</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-5-0-full.xml">tr-181-2-5-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-5-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Added <i>IPsec</i> data model<p>
+Incorporated <i>BulkDataCollection</i> component from TR-157 Amendment 6</td> -->
+          <!-- <td rowspan="2">May 2012</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-5.pdf">TR-181 Issue 2 Amendment 5</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.4</td>
+          <td rowspan="1"><a name="Device:2.4"></a><a name="tr-181-2-4.xml"></a><a name="tr-181-2-4-0.xml"></a><a href="cwmp/tr-181-2-4-0.xml">tr-181-2-4-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-4-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Added <i>G.hn</i> and <i>Optical</i> interfaces, and additional <i>WiFi</i> parameters<p>
+Incorporated new components from TR-157 Amendment 5<p>
+Incorporated Femto components from TR-262</td>
+          <td rowspan="2">November 2011</td>
+          <td rowspan="6"><a name="TR-181i2a2"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-2.pdf">TR-181 Issue 2 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.4</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-4-0-full.xml">tr-181-2-4-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-4-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Added <i>G.hn</i> and <i>Optical</i> interfaces, and additional <i>WiFi</i> parameters<p>
+Incorporated new components from TR-157 Amendment 5<p>
+Incorporated Femto components from TR-262</td> -->
+          <!-- <td rowspan="2">November 2011</td> -->
+          <!-- <td rowspan="6"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-2.pdf">TR-181 Issue 2 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.3</td>
+          <td rowspan="1"><a name="Device:2.3"></a><a name="tr-181-2-3.xml"></a><a name="tr-181-2-3-0.xml"></a><a href="cwmp/tr-181-2-3-0.xml">tr-181-2-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-3-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 4<p>
+Added <i>Alias</i> parameters</td>
+          <td rowspan="2">July 2011</td>
+          <!-- <td rowspan="6"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-2.pdf">TR-181 Issue 2 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.3</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-3-0-full.xml">tr-181-2-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-3-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 4<p>
+Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">July 2011</td> -->
+          <!-- <td rowspan="6"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-2.pdf">TR-181 Issue 2 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.2</td>
+          <td rowspan="1"><a name="Device:2.2"></a><a name="tr-181-2-2.xml"></a><a name="tr-181-2-2-0.xml"></a><a href="cwmp/tr-181-2-2-0.xml">tr-181-2-2-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-2-0-diffs.html">Diff</a></td>
+          <td rowspan="2">IPv6 and Firewall additions</td>
+          <td rowspan="2">February 2011</td>
+          <!-- <td rowspan="6"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-2.pdf">TR-181 Issue 2 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.2</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-2-0-full.xml">tr-181-2-2-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-2-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">IPv6 and Firewall additions</td> -->
+          <!-- <td rowspan="2">February 2011</td> -->
+          <!-- <td rowspan="6"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2_Amendment-2.pdf">TR-181 Issue 2 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.1</td>
+          <td rowspan="1"><a name="Device:2.1"></a><a name="tr-181-2-1.xml"></a><a name="tr-181-2-1-0.xml"></a><a href="cwmp/tr-181-2-1-0.xml">tr-181-2-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-2-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 3</td>
+          <td rowspan="2">November 2010</td>
+          <td rowspan="4"><a name="TR-181i2"></a><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2.pdf">TR-181 Issue 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-1-0-full.xml">tr-181-2-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-2-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 3</td> -->
+          <!-- <td rowspan="2">November 2010</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2.pdf">TR-181 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <td rowspan="2">2.0</td>
+          <td rowspan="1"><a name="Device:2.0"></a><a name="tr-181-2-0.xml"></a><a name="tr-181-2-0-2.xml"></a><a href="cwmp/tr-181-2-0-2.xml">tr-181-2-0-2.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-181-2-0-2.html">Full</a></b></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+May 2010: <a href="#tr-181-2-0-0.xml">Original</a><p>
+Nov 2010: <a href="#tr-181-2-0-1.xml">Corrigendum 1</a><p>
+<ul>
+  <li>Fixed various ranges and defaults
+  <li>Removed non interface object <i>Alias</i> parameters from profiles
+</ul><p>
+July 2016: Corrigendum 2<p>
+<ul>
+  <li>Removed <i>SSID</i> unique key from <i>WiFi.SSID</i> object
+</ul></td>
+          <td rowspan="2">July 2016</td>
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2.pdf">TR-181 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="24">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="24">Device:2</td> -->
+          <!-- <td rowspan="2">2.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-2-0-2-full.xml">tr-181-2-0-2-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-181-2-0-2.html">Full</a></b></td> -->
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+May 2010: <a href="#tr-181-2-0-0.xml">Original</a><p>
+Nov 2010: <a href="#tr-181-2-0-1.xml">Corrigendum 1</a><p>
+<ul>
+  <li>Fixed various ranges and defaults
+  <li>Removed non interface object <i>Alias</i> parameters from profiles
+</ul><p>
+July 2016: Corrigendum 2<p>
+<ul>
+  <li>Removed <i>SSID</i> unique key from <i>WiFi.SSID</i> object
+</ul></td> -->
+          <!-- <td rowspan="2">July 2016</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2.pdf">TR-181 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device:1 Data Model for TR-069</td> -->
+          <td rowspan="32">Device:1</td>
+          <td rowspan="2">1.14</td>
+          <td rowspan="1"><a name="Device:1.14"></a><a name="Device:1"></a><a name="tr-181-1-7.xml"></a><a name="tr-181-1-7-0.xml"></a><a href="cwmp/tr-181-1-7-0.xml">tr-181-1-7-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-7-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+Updated Bulk Data Collection for HTTP Transport</td>
+          <td rowspan="2">November 2015</td>
+          <td rowspan="14"><a name="TR-181"></a><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device:1 Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.14</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-7-0-full.xml">tr-181-1-7-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-7-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+Updated Bulk Data Collection for HTTP Transport</td> -->
+          <!-- <td rowspan="2">November 2015</td> -->
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.13</td>
+          <td rowspan="1"><a name="Device:1.13"></a><a name="tr-181-1-6.xml"></a><a name="tr-181-1-6-0.xml"></a><a href="cwmp/tr-181-1-6-0.xml">tr-181-1-6-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-6-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 9</td>
+          <td rowspan="2">September 2014</td>
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.13</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-6-0-full.xml">tr-181-1-6-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-6-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 9</td> -->
+          <!-- <td rowspan="2">September 2014</td> -->
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.12</td>
+          <td rowspan="1"><a name="Device:1.12"></a><a name="tr-181-1-5.xml"></a><a name="tr-181-1-5-0.xml"></a><a href="cwmp/tr-181-1-5-0.xml">tr-181-1-5-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-5-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 8</td>
+          <td rowspan="2">November 2013</td>
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.12</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-5-0-full.xml">tr-181-1-5-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-5-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 8</td> -->
+          <!-- <td rowspan="2">November 2013</td> -->
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.11</td>
+          <td rowspan="1"><a name="Device:1.11"></a><a name="tr-181-1-4.xml"></a><a name="tr-181-1-4-0.xml"></a><a href="cwmp/tr-181-1-4-0.xml">tr-181-1-4-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-4-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated <i>DNS_SD</i> component from TR-157 Amendment 7</td>
+          <td rowspan="2">November 2012</td>
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.11</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-4-0-full.xml">tr-181-1-4-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-4-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated <i>DNS_SD</i> component from TR-157 Amendment 7</td> -->
+          <!-- <td rowspan="2">November 2012</td> -->
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.10</td>
+          <td rowspan="1"><a name="Device:1.10"></a><a name="tr-181-1-3.xml"></a><a name="tr-181-1-3-0.xml"></a><a href="cwmp/tr-181-1-3-0.xml">tr-181-1-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-3-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 6</td>
+          <td rowspan="2">May 2012</td>
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.10</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-3-0-full.xml">tr-181-1-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-3-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 6</td> -->
+          <!-- <td rowspan="2">May 2012</td> -->
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.9</td>
+          <td rowspan="1"><a name="Device:1.9"></a><a name="tr-181-1-2.xml"></a><a name="tr-181-1-2-0.xml"></a><a href="cwmp/tr-181-1-2-0.xml">tr-181-1-2-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-2-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 5<p>
+Incorporated Femto components from TR-262</td>
+          <td rowspan="2">November 2011</td>
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.9</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-2-0-full.xml">tr-181-1-2-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-2-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 5<p>
+Incorporated Femto components from TR-262</td> -->
+          <!-- <td rowspan="2">November 2011</td> -->
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.8</td>
+          <td rowspan="1"><a name="Device:1.8"></a><a name="tr-181-1-1.xml"></a><a name="tr-181-1-1-0.xml"></a><a href="cwmp/tr-181-1-1-0.xml">tr-181-1-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 4<p>
+Added <i>Alias</i> parameters</td>
+          <td rowspan="2">July 2011</td>
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.8</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-1-0-full.xml">tr-181-1-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 4<p>
+Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">July 2011</td> -->
+          <!-- <td rowspan="14"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.7</td>
+          <td rowspan="1"><a name="Device:1.7"></a><a name="tr-157-1-3.xml"></a><a name="tr-157-1-3-0.xml"></a><a href="cwmp/tr-157-1-3-0.xml">tr-157-1-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-3-0-dev-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 3</td>
+          <td rowspan="2">November 2010</td>
+          <td rowspan="2"><a name="TR-157a3"></a><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-3.pdf">TR-157 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.7</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-3-0-full.xml">tr-157-1-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-3-0-dev.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 3</td> -->
+          <!-- <td rowspan="2">November 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-3.pdf">TR-157 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.6</td>
+          <td rowspan="1"><a name="Device:1.6"></a><a name="tr-157-1-2.xml"></a><a name="tr-157-1-2-0.xml"></a><a href="cwmp/tr-157-1-2-0.xml">tr-157-1-2-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-2-0-dev-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 2</td>
+          <td rowspan="2">May 2010</td>
+          <td rowspan="2"><a name="TR-157a2"></a><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-2.pdf">TR-157 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.6</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-2-0-full.xml">tr-157-1-2-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-2-0-dev.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 2</td> -->
+          <!-- <td rowspan="2">May 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-2.pdf">TR-157 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.5</td>
+          <td rowspan="1"><a name="Device:1.5"></a><a name="tr-181-1-0.xml"></a><a name="tr-181-1-0-0.xml"></a><a href="cwmp/tr-181-1-0-0.xml">tr-181-1-0-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-181-1-0-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Minor clarifications and additions</td>
+          <td rowspan="2">February 2010</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.5</td> -->
+          <td rowspan="1"><a href="cwmp/tr-181-1-0-0-full.xml">tr-181-1-0-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-181-1-0-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Minor clarifications and additions</td> -->
+          <!-- <td rowspan="2">February 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181.pdf">TR-181</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.4</td>
+          <td rowspan="1"><a name="Device:1.4"></a><a name="tr-157-1-1.xml"></a><a name="tr-157-1-1-0.xml"></a><a href="cwmp/tr-157-1-1-0.xml">tr-157-1-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-1-0-dev-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 1</td>
+          <td rowspan="6">September 2009</td>
+          <td rowspan="2"><a name="TR-157a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-1.pdf">TR-157 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.4</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-1-0-full.xml">tr-157-1-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-1-0-dev.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 1</td> -->
+          <!-- <td rowspan="6">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-1.pdf">TR-157 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.3</td>
+          <td rowspan="1"><a name="Device:1.3"></a><a name="tr-157-1-0.xml"></a><a name="tr-157-1-0-0.xml"></a><a href="cwmp/tr-157-1-0-0.xml">tr-157-1-0-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-0-0-dev-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157</td>
+          <!-- <td rowspan="6">September 2009</td> -->
+          <td rowspan="2"><a name="TR-157"></a><a href="http://www.broadband-forum.org/technical/download/TR-157.pdf">TR-157</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.3</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-0-0-full.xml">tr-157-1-0-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-0-0-dev.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157</td> -->
+          <!-- <td rowspan="6">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157.pdf">TR-157</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Data Model Template for TR-069-Enabled Devices</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="4">1.2</td>
+          <td rowspan="1"><a name="Device:1.2"></a><a name="tr-106-1-2.xml"></a><a name="tr-106-1-2-0.xml"></a><a href="cwmp/tr-106-1-2-0.xml">tr-106-1-2-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-106-1-2-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Minor clarifications</td>
+          <!-- <td rowspan="6">September 2009</td> -->
+          <td rowspan="2"><a name="TR-106a2"></a><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-2.pdf">TR-106 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Data Model Template for TR-069-Enabled Devices</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="4">1.2</td> -->
+          <td rowspan="1"><a href="cwmp/tr-106-1-2-0-full.xml">tr-106-1-2-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-106-1-2-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Minor clarifications</td> -->
+          <!-- <td rowspan="6">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-2.pdf">TR-106 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Network Performance Tests</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="4">1.2</td> -->
+          <td rowspan="1"><a name="tr-143-1-0.xml"></a><a name="tr-143-1-0-2.xml"></a><a href="cwmp/tr-143-1-0-2.xml">tr-143-1-0-2.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-143-1-0-2-dev-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-143</td>
+          <td rowspan="2">May 2010</td>
+          <td rowspan="2"><a name="TR-143"></a><a href="http://www.broadband-forum.org/technical/download/TR-143_Corrigendum-1.pdf">TR-143 Corrigendum 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Network Performance Tests</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="4">1.2</td> -->
+          <td rowspan="1"><a href="cwmp/tr-143-1-0-2-full.xml">tr-143-1-0-2-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-143-1-0-2-dev.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-143</td> -->
+          <!-- <td rowspan="2">May 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-143_Corrigendum-1.pdf">TR-143 Corrigendum 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Data Model Template for TR-069-Enabled Devices</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a name="Device:1.1"></a><a name="tr-106-1-1.xml"></a><a name="tr-106-1-1-0.xml"></a><a href="cwmp/tr-106-1-1-0.xml">tr-106-1-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-106-1-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Added TR-069 Annex F and G ("TR-111") objects<p>
+Many clarifications to parameter descriptions</td>
+          <td rowspan="4">September 2009</td>
+          <td rowspan="2"><a name="TR-106a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-1.pdf">TR-106 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Data Model Template for TR-069-Enabled Devices</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-106-1-1-0-full.xml">tr-106-1-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-106-1-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Added TR-069 Annex F and G ("TR-111") objects<p>
+Many clarifications to parameter descriptions</td> -->
+          <!-- <td rowspan="4">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-1.pdf">TR-106 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Data Model Template for TR-069-Enabled Devices</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <td rowspan="2">1.0</td>
+          <td rowspan="1"><a name="Device:1.0"></a><a name="tr-106-1-0.xml"></a><a name="tr-106-1-0-0.xml"></a><a href="cwmp/tr-106-1-0-0.xml">tr-106-1-0-0.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-106-1-0-0.html">Full</a></b></td>
+          <td rowspan="2">Original</td>
+          <!-- <td rowspan="4">September 2009</td> -->
+          <td rowspan="2"><a name="TR-106"></a><a href="http://www.broadband-forum.org/technical/download/TR-106.pdf">TR-106</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Data Model Template for TR-069-Enabled Devices</td> -->
+          <!-- <td rowspan="32">Device:1</td> -->
+          <!-- <td rowspan="2">1.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-106-1-0-0-full.xml">tr-106-1-0-0-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-106-1-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Original</td> -->
+          <!-- <td rowspan="4">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-106.pdf">TR-106</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <td rowspan="30">InternetGatewayDevice:1</td>
+          <td rowspan="2">1.14</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.14"></a><a name="InternetGatewayDevice:1"></a><a name="tr-098-1-8.xml"></a><a name="tr-098-1-8-0.xml"></a><a href="cwmp/tr-098-1-8-0.xml">tr-098-1-8-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-8-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 9</td>
+          <td rowspan="2">September 2014</td>
+          <td rowspan="12"><a name="TR-098a2"></a><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.14</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-8-0-full.xml">tr-098-1-8-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-8-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 9</td> -->
+          <!-- <td rowspan="2">September 2014</td> -->
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.13</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.13"></a><a name="tr-098-1-7.xml"></a><a name="tr-098-1-7-0.xml"></a><a href="cwmp/tr-098-1-7-0.xml">tr-098-1-7-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-7-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 8</td>
+          <td rowspan="2">November 2013</td>
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.13</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-7-0-full.xml">tr-098-1-7-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-7-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 8</td> -->
+          <!-- <td rowspan="2">November 2013</td> -->
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.12</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.12"></a><a name="tr-098-1-6.xml"></a><a name="tr-098-1-6-0.xml"></a><a href="cwmp/tr-098-1-6-0.xml">tr-098-1-6-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-6-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated <i>DNS_SD</i> component from TR-157 Amendment 7</td>
+          <td rowspan="2">November 2012</td>
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.12</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-6-0-full.xml">tr-098-1-6-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-6-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated <i>DNS_SD</i> component from TR-157 Amendment 7</td> -->
+          <!-- <td rowspan="2">November 2012</td> -->
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.11</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.11"></a><a name="tr-098-1-5.xml"></a><a name="tr-098-1-5-0.xml"></a><a href="cwmp/tr-098-1-5-0.xml">tr-098-1-5-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-5-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 6</td>
+          <td rowspan="2">May 2012</td>
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.11</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-5-0-full.xml">tr-098-1-5-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-5-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 6</td> -->
+          <!-- <td rowspan="2">May 2012</td> -->
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.10</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.10"></a><a name="tr-098-1-4.xml"></a><a name="tr-098-1-4-0.xml"></a><a href="cwmp/tr-098-1-4-0.xml">tr-098-1-4-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-4-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 5<p>
+Incorporated Femto components from TR-262</td>
+          <td rowspan="2">November 2011</td>
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.10</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-4-0-full.xml">tr-098-1-4-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-4-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 5<p>
+Incorporated Femto components from TR-262</td> -->
+          <!-- <td rowspan="2">November 2011</td> -->
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.9</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.9"></a><a name="tr-098-1-3.xml"></a><a name="tr-098-1-3-0.xml"></a><a href="cwmp/tr-098-1-3-0.xml">tr-098-1-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-3-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 4<p>
+Added <i>Alias</i> parameters</td>
+          <td rowspan="2">December 2011</td>
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="12">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.9</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-3-0-full.xml">tr-098-1-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-3-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Incorporated new components from TR-157 Amendment 4<p>
+Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">December 2011</td> -->
+          <!-- <td rowspan="12"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.8</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.8"></a><a href="cwmp/tr-157-1-3-0.xml">tr-157-1-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-3-0-igd-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 3</td>
+          <td rowspan="2">November 2010</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-3.pdf">TR-157 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.8</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-3-0-full.xml">tr-157-1-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-3-0-igd.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 3</td> -->
+          <!-- <td rowspan="2">November 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-3.pdf">TR-157 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.7</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.7"></a><a href="cwmp/tr-157-1-2-0.xml">tr-157-1-2-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-2-0-igd-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 2</td>
+          <td rowspan="2">May 2010</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-2.pdf">TR-157 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.7</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-2-0-full.xml">tr-157-1-2-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-2-0-igd.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 2</td> -->
+          <!-- <td rowspan="2">May 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-2.pdf">TR-157 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.6</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.6"></a><a href="cwmp/tr-157-1-1-0.xml">tr-157-1-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-1-0-igd-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157 Amendment 1</td>
+          <td rowspan="4">September 2009</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-1.pdf">TR-157 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.6</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-1-0-full.xml">tr-157-1-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-1-0-igd.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157 Amendment 1</td> -->
+          <!-- <td rowspan="4">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-1.pdf">TR-157 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.5</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.5"></a><a href="cwmp/tr-157-1-0-0.xml">tr-157-1-0-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-157-1-0-0-igd-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-157</td>
+          <!-- <td rowspan="4">September 2009</td> -->
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157.pdf">TR-157</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.5</td> -->
+          <td rowspan="1"><a href="cwmp/tr-157-1-0-0-full.xml">tr-157-1-0-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-0-0-igd.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-157</td> -->
+          <!-- <td rowspan="4">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157.pdf">TR-157</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.4</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.4"></a><a name="tr-098-1-2.xml"></a><a name="tr-098-1-2-1.xml"></a><a href="cwmp/tr-098-1-2-1.xml">tr-098-1-2-1.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-2-1-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Sep 2009: <a href="#tr-098-1-2-0.xml">Original</a><p>
+<ul>
+  <li>Enhanced management of LAN hosts, and addition of DHCP conditional serving capabilities
+  <li>Improvements to management of QoS, routing, and bridging
+  <li>Significant WiFi improvements, including configuration of WMM and U-APSD, and various fixes to the existing WiFi data model
+  <li>PPPoE and NAT management enhancements
+  <li>Enhancements to DSL and Ethernet statistics, including support for VDSL2
+</ul><p>
+Dec 2011: Corrigendum 1<p>
+<ul>
+  <li>Fixed data type for QoS QueueStats Interface
+  <li>Various other minor changes
+</ul></td>
+          <td rowspan="2">December 2011</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.4</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-2-1-full.xml">tr-098-1-2-1-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-2-1.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Sep 2009: <a href="#tr-098-1-2-0.xml">Original</a><p>
+<ul>
+  <li>Enhanced management of LAN hosts, and addition of DHCP conditional serving capabilities
+  <li>Improvements to management of QoS, routing, and bridging
+  <li>Significant WiFi improvements, including configuration of WMM and U-APSD, and various fixes to the existing WiFi data model
+  <li>PPPoE and NAT management enhancements
+  <li>Enhancements to DSL and Ethernet statistics, including support for VDSL2
+</ul><p>
+Dec 2011: Corrigendum 1<p>
+<ul>
+  <li>Fixed data type for QoS QueueStats Interface
+  <li>Various other minor changes
+</ul></td> -->
+          <!-- <td rowspan="2">December 2011</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Network Performance Tests</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.3</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.3"></a><a href="cwmp/tr-143-1-0-2.xml">tr-143-1-0-2.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-143-1-0-2-igd-diffs.html">Diff</a></td>
+          <td rowspan="2">Incorporated new components from TR-143</td>
+          <td rowspan="2">May 2010</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-143_Corrigendum-1.pdf">TR-143 Corrigendum 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Network Performance Tests</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.3</td> -->
+          <td rowspan="1"><a href="cwmp/tr-143-1-0-2-full.xml">tr-143-1-0-2-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-143-1-0-2-igd.html">Full</a></b></td>
+          <!-- <td rowspan="2">Incorporated new components from TR-143</td> -->
+          <!-- <td rowspan="2">May 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-143_Corrigendum-1.pdf">TR-143 Corrigendum 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.2</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.2"></a><a name="tr-098-1-1.xml"></a><a name="tr-098-1-1-0.xml"></a><a href="cwmp/tr-098-1-1-0.xml">tr-098-1-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Added TR-069 Annex F and G ("TR-111") objects<p>
+Many clarifications to parameter descriptions</td>
+          <td rowspan="6">September 2009</td>
+          <td rowspan="2"><a name="TR-098a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-1.pdf">TR-098 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.2</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-1-0-full.xml">tr-098-1-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Added TR-069 Annex F and G ("TR-111") objects<p>
+Many clarifications to parameter descriptions</td> -->
+          <!-- <td rowspan="6">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-1.pdf">TR-098 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.1"></a><a name="tr-098-1-0.xml"></a><a name="tr-098-1-0-0.xml"></a><a href="cwmp/tr-098-1-0-0.xml">tr-098-1-0-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-098-1-0-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Added <i>QoS</i> and <i>Layer2Bridging</i> objects</td>
+          <!-- <td rowspan="6">September 2009</td> -->
+          <td rowspan="2"><a name="TR-098"></a><a href="http://www.broadband-forum.org/technical/download/TR-098.pdf">TR-098</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Internet Gateway Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-098-1-0-0-full.xml">tr-098-1-0-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-098-1-0-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Added <i>QoS</i> and <i>Layer2Bridging</i> objects</td> -->
+          <!-- <td rowspan="6">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-098.pdf">TR-098</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">CPE WAN Management Protocol</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <td rowspan="2">1.0</td>
+          <td rowspan="1"><a name="InternetGatewayDevice:1.0"></a><a name="tr-069-1-0.xml"></a><a name="tr-069-1-0-0.xml"></a><a href="cwmp/tr-069-1-0-0.xml">tr-069-1-0-0.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-069-1-0-0.html">Full</a></b></td>
+          <td rowspan="2">Original</td>
+          <!-- <td rowspan="6">September 2009</td> -->
+          <td rowspan="2"><a name="TR-069"></a><a href="http://www.broadband-forum.org/technical/download/TR-069.pdf">TR-069</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">CPE WAN Management Protocol</td> -->
+          <!-- <td rowspan="30">InternetGatewayDevice:1</td> -->
+          <!-- <td rowspan="2">1.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-069-1-0-0-full.xml">tr-069-1-0-0-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-069-1-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Original</td> -->
+          <!-- <td rowspan="6">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-069.pdf">TR-069</a></td> -->
+        </tr>
+      </tbody>
+    </table>
+
+    <a name="Service Data Models"><h1>Service Data Models</h1></a>
+    <table class="stdtable" width="100%" bordercolor="#005c27" border="1" cellpadding="2" cellspacing="0">
+      <thead>
+        <tr>
+          <!-- <th width="15.15%">Document</th> -->
+          <th width="15.15%">Data Model</th>
+          <th width="4.04%">Version</th>
+          <th width="12.12%">XML</th>
+          <th width="3.03%">HTML</th>
+          <th width="40.40%">Description</th>
+          <th width="10.10%">Approval Date</th>
+          <th width="15.15%">PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <!-- <td rowspan="2">TR-196 FAPService:2.1 Femto Access Point Service Data Model</td> -->
+          <td rowspan="4">FAPService:2</td>
+          <td rowspan="2">2.1</td>
+          <td rowspan="1"><a name="FAPService:2.1"></a><a name="FAPService:2"></a><a name="tr-196-2-1.xml"></a><a name="tr-196-2-1-0.xml"></a><a href="cwmp/tr-196-2-1-0.xml">tr-196-2-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-196-2-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+Added parameters for 3GPP SA5 Rel 11 and 12 (TS 32.452, TS 32.453)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-145293)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-146268)</td>
+          <td rowspan="2">August 2015</td>
+          <td rowspan="4"><a name="TR-196i2"></a><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">TR-196 FAPService:2.1 Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="4">FAPService:2</td> -->
+          <!-- <td rowspan="2">2.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-196-2-1-0-full.xml">tr-196-2-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-196-2-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+Added parameters for 3GPP SA5 Rel 11 and 12 (TS 32.452, TS 32.453)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-145293)<p>
+Added parameters for 3GPP SA5 Rel 13 (CR S5-146268)</td> -->
+          <!-- <td rowspan="2">August 2015</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="4">FAPService:2</td> -->
+          <td rowspan="2">2.0</td>
+          <td rowspan="1"><a name="FAPService:2.0"></a><a name="tr-196-2-0.xml"></a><a name="tr-196-2-0-3.xml"></a><a href="cwmp/tr-196-2-0-3.xml">tr-196-2-0-3.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-196-2-0-3.html">Full</a></b></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+November 2011:  <a href="#tr-196-2-0-0.xml">Original</a><p>
+November 2012:  <a href="#tr-196-2-0-1.xml">Corrigendum 1</a><p>
+<ul>
+  <li>Corrected errors in TR-196i2 per direction of 3GPP TS 32.592.
+  <li>Corrected range of FAPService.{i}.REM.UMTS.GSM.Cell.{i}.CI
+</ul><p>
+February 2015:  <a href="#tr-196-2-0-2.xml">Corrigendum 2</a><p>
+<ul>
+  <li>Corrected errors in QHyst1s and QHyst2s parameter descriptions
+</ul><p>
+October 2016:  Corrigendum 3<p>
+<ul>
+  <li>Corrected errors in CID and LAC parameter ranges
+</ul></td>
+          <td rowspan="2">October 2016</td>
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="4">FAPService:2</td> -->
+          <!-- <td rowspan="2">2.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-196-2-0-3-full.xml">tr-196-2-0-3-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-196-2-0-3.html">Full</a></b></td> -->
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+November 2011:  <a href="#tr-196-2-0-0.xml">Original</a><p>
+November 2012:  <a href="#tr-196-2-0-1.xml">Corrigendum 1</a><p>
+<ul>
+  <li>Corrected errors in TR-196i2 per direction of 3GPP TS 32.592.
+  <li>Corrected range of FAPService.{i}.REM.UMTS.GSM.Cell.{i}.CI
+</ul><p>
+February 2015:  <a href="#tr-196-2-0-2.xml">Corrigendum 2</a><p>
+<ul>
+  <li>Corrected errors in QHyst1s and QHyst2s parameter descriptions
+</ul><p>
+October 2016:  Corrigendum 3<p>
+<ul>
+  <li>Corrected errors in CID and LAC parameter ranges
+</ul></td> -->
+          <!-- <td rowspan="2">October 2016</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Femto Access Point Service Data Model</td> -->
+          <td rowspan="4">FAPService:1</td>
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a name="FAPService:1.1"></a><a name="FAPService:1"></a><a name="tr-196-1-1.xml"></a><a name="tr-196-1-1-1.xml"></a><a href="cwmp/tr-196-1-1-1.xml">tr-196-1-1-1.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-196-1-1-1-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Supported 3GPP releases 9 and 10<p>
+Added <i>Alias</i> parameters</td>
+          <td rowspan="2">November 2012</td>
+          <td rowspan="2"><a name="TR-196a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-196_Amendment-1.pdf">TR-196 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="4">FAPService:1</td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-196-1-1-1-full.xml">tr-196-1-1-1-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-196-1-1-1.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Supported 3GPP releases 9 and 10<p>
+Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">November 2012</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-196_Amendment-1.pdf">TR-196 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="4">FAPService:1</td> -->
+          <td rowspan="2">1.0</td>
+          <td rowspan="1"><a name="FAPService:1.0"></a><a name="tr-196-1-0.xml"></a><a name="tr-196-1-0-0.xml"></a><a href="cwmp/tr-196-1-0-0.xml">tr-196-1-0-0.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-196-1-0-0.html">Full</a></b></td>
+          <td rowspan="2">Original</td>
+          <td rowspan="2">September 2009</td>
+          <td rowspan="2"><a name="TR-196"></a><a href="http://www.broadband-forum.org/technical/download/TR-196.pdf">TR-196</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="4">FAPService:1</td> -->
+          <!-- <td rowspan="2">1.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-196-1-0-0-full.xml">tr-196-1-0-0-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-196-1-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Original</td> -->
+          <!-- <td rowspan="2">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-196.pdf">TR-196</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">StorageService:1.3 Service Object Definition</td> -->
+          <td rowspan="8">StorageService:1</td>
+          <td rowspan="2">1.3</td>
+          <td rowspan="1"><a name="StorageService:1.3"></a><a name="StorageService:1"></a><a name="tr-140-1-3.xml"></a><a name="tr-140-1-3-0.xml"></a><a href="cwmp/tr-140-1-3-0.xml">tr-140-1-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-140-1-3-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+<p>
+Update file system and connection enumerations<p>
+Added <i>SMART</i> data model</td>
+          <td rowspan="2">May 2017</td>
+          <td rowspan="2"><a name="TR-140a3"></a><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-3.pdf">TR-140 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">StorageService:1.3 Service Object Definition</td> -->
+          <!-- <td rowspan="8">StorageService:1</td> -->
+          <!-- <td rowspan="2">1.3</td> -->
+          <td rowspan="1"><a href="cwmp/tr-140-1-3-0-full.xml">tr-140-1-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-140-1-3-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+Update file system and connection enumerations<p>
+Added <i>SMART</i> data model</td> -->
+          <!-- <td rowspan="2">May 2017</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-3.pdf">TR-140 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model for Storage Service Enabled Devices</td> -->
+          <!-- <td rowspan="8">StorageService:1</td> -->
+          <td rowspan="2">1.2</td>
+          <td rowspan="1"><a name="StorageService:1.2"></a><a name="tr-140-1-2.xml"></a><a name="tr-140-1-2-0.xml"></a><a href="cwmp/tr-140-1-2-0.xml">tr-140-1-2-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-140-1-2-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Added <i>Alias</i> parameters</td>
+          <td rowspan="2">July 2011</td>
+          <td rowspan="4"><a name="TR-140a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-1.pdf">TR-140 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model for Storage Service Enabled Devices</td> -->
+          <!-- <td rowspan="8">StorageService:1</td> -->
+          <!-- <td rowspan="2">1.2</td> -->
+          <td rowspan="1"><a href="cwmp/tr-140-1-2-0-full.xml">tr-140-1-2-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-140-1-2-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">July 2011</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-1.pdf">TR-140 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model for Storage Service Enabled Devices</td> -->
+          <!-- <td rowspan="8">StorageService:1</td> -->
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a name="StorageService:1.1"></a><a name="tr-140-1-1.xml"></a><a name="tr-140-1-1-1.xml"></a><a href="cwmp/tr-140-1-1-1.xml">tr-140-1-1-1.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-140-1-1-1-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>Apr 2010: <a href="#tr-140-1-1-0.xml">Original</a><p>
+<ul>
+  <li>Added missing <i>NumberOfEntries</i> and <i>Enable</i> parameters
+</ul><p>
+Dec 2011: Corrigendum 1<p>
+<ul>
+  <li>Corrected import of tr-140-1-0.xml
+</ul></td>
+          <td rowspan="2">December 2011</td>
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-1.pdf">TR-140 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model for Storage Service Enabled Devices</td> -->
+          <!-- <td rowspan="8">StorageService:1</td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-140-1-1-1-full.xml">tr-140-1-1-1-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-140-1-1-1.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>Apr 2010: <a href="#tr-140-1-1-0.xml">Original</a><p>
+<ul>
+  <li>Added missing <i>NumberOfEntries</i> and <i>Enable</i> parameters
+</ul><p>
+Dec 2011: Corrigendum 1<p>
+<ul>
+  <li>Corrected import of tr-140-1-0.xml
+</ul></td> -->
+          <!-- <td rowspan="2">December 2011</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-1.pdf">TR-140 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model for Storage Service Enabled Devices</td> -->
+          <!-- <td rowspan="8">StorageService:1</td> -->
+          <td rowspan="2">1.0</td>
+          <td rowspan="1"><a name="StorageService:1.0"></a><a name="tr-140-1-0.xml"></a><a name="tr-140-1-0-2.xml"></a><a href="cwmp/tr-140-1-0-2.xml">tr-140-1-0-2.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-140-1-0-2.html">Full</a></b></td>
+          <td rowspan="2">Apr 2010: Corrigendum 2</td>
+          <td rowspan="2">April 2010</td>
+          <td rowspan="2"><a name="TR-140"></a><a href="http://www.broadband-forum.org/technical/download/TR-140.pdf">TR-140</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model for Storage Service Enabled Devices</td> -->
+          <!-- <td rowspan="8">StorageService:1</td> -->
+          <!-- <td rowspan="2">1.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-140-1-0-2-full.xml">tr-140-1-0-2-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-140-1-0-2.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Apr 2010: Corrigendum 2</td> -->
+          <!-- <td rowspan="2">April 2010</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-140.pdf">TR-140</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">STBService:1.4 Service Object</td> -->
+          <td rowspan="10">STBService:1</td>
+          <td rowspan="2">1.4</td>
+          <td rowspan="1"><a name="STBService:1.4"></a><a name="STBService:1"></a><a name="tr-135-1-4.xml"></a><a name="tr-135-1-4-0.xml"></a><a href="cwmp/tr-135-1-4-0.xml">tr-135-1-4-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-135-1-4-0-diffs.html">Diff</a></td>
+          <td rowspan="2"><p>
+<p>
+Added objects for Service Monitoring of Events</td>
+          <td rowspan="2">August 2015</td>
+          <td rowspan="4"><a name="TR-135a3"></a><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-3.pdf">TR-135 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">STBService:1.4 Service Object</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <!-- <td rowspan="2">1.4</td> -->
+          <td rowspan="1"><a href="cwmp/tr-135-1-4-0-full.xml">tr-135-1-4-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-135-1-4-0.html">Full</a></b></td>
+          <!-- <td rowspan="2"><p>
+<p>
+Added objects for Service Monitoring of Events</td> -->
+          <!-- <td rowspan="2">August 2015</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-3.pdf">TR-135 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <td rowspan="2">1.3</td>
+          <td rowspan="1"><a name="STBService:1.3"></a><a name="tr-135-1-3.xml"></a><a name="tr-135-1-3-0.xml"></a><a href="cwmp/tr-135-1-3-0.xml">tr-135-1-3-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-135-1-3-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Added loss event histograms</td>
+          <td rowspan="2">November 2012</td>
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-3.pdf">TR-135 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <!-- <td rowspan="2">1.3</td> -->
+          <td rowspan="1"><a href="cwmp/tr-135-1-3-0-full.xml">tr-135-1-3-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-135-1-3-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Added loss event histograms</td> -->
+          <!-- <td rowspan="2">November 2012</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-3.pdf">TR-135 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <td rowspan="2">1.2</td>
+          <td rowspan="1"><a name="STBService:1.2"></a><a name="tr-135-1-2.xml"></a><a name="tr-135-1-2-0.xml"></a><a href="cwmp/tr-135-1-2-0.xml">tr-135-1-2-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-135-1-2-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Added <i>Alias</i> parameters</td>
+          <td rowspan="2">July 2011</td>
+          <td rowspan="4"><a name="TR-135a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-1.pdf">TR-135 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <!-- <td rowspan="2">1.2</td> -->
+          <td rowspan="1"><a href="cwmp/tr-135-1-2-0-full.xml">tr-135-1-2-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-135-1-2-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">July 2011</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-1.pdf">TR-135 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a name="STBService:1.1"></a><a name="tr-135-1-1.xml"></a><a name="tr-135-1-1-1.xml"></a><a href="cwmp/tr-135-1-1-1.xml">tr-135-1-1-1.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-135-1-1-1-diffs.html">Diff</a></td>
+          <td rowspan="2">Added CDS, HDMI and S/PDIF objects</td>
+          <td rowspan="2">February 2013</td>
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-1.pdf">TR-135 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-135-1-1-1-full.xml">tr-135-1-1-1-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-135-1-1-1.html">Full</a></b></td>
+          <!-- <td rowspan="2">Added CDS, HDMI and S/PDIF objects</td> -->
+          <!-- <td rowspan="2">February 2013</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-135_Amendment-1.pdf">TR-135 Amendment 1</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <td rowspan="2">1.0</td>
+          <td rowspan="1"><a name="STBService:1.0"></a><a name="tr-135-1-0.xml"></a><a name="tr-135-1-0-0.xml"></a><a href="cwmp/tr-135-1-0-0.xml">tr-135-1-0-0.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-135-1-0-0.html">Full</a></b></td>
+          <td rowspan="2">Original</td>
+          <td rowspan="2">September 2009</td>
+          <td rowspan="2"><a name="TR-135"></a><a href="http://www.broadband-forum.org/technical/download/TR-135.pdf">TR-135</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="8">Data Model for a TR-069 Enabled STB</td> -->
+          <!-- <td rowspan="10">STBService:1</td> -->
+          <!-- <td rowspan="2">1.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-135-1-0-0-full.xml">tr-135-1-0-0-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-135-1-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Original</td> -->
+          <!-- <td rowspan="2">September 2009</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-135.pdf">TR-135</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Provisioning Parameters for VoIP CPE</td> -->
+          <td rowspan="2">VoiceService:2</td>
+          <td rowspan="2">2.0</td>
+          <td rowspan="1"><a name="VoiceService:2.0"></a><a name="VoiceService:2"></a><a name="tr-104-2-0.xml"></a><a name="tr-104-2-0-0.xml"></a><a href="cwmp/tr-104-2-0-0.xml">tr-104-2-0-0.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-104-2-0-0.html">Full</a></b></td>
+          <td rowspan="2">Original</td>
+          <td rowspan="2">March 2014</td>
+          <td rowspan="2"><a name="TR-104i2"></a><a href="http://www.broadband-forum.org/technical/download/TR-104_Issue-2.pdf">TR-104 Issue 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Provisioning Parameters for VoIP CPE</td> -->
+          <!-- <td rowspan="2">VoiceService:2</td> -->
+          <!-- <td rowspan="2">2.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-104-2-0-0-full.xml">tr-104-2-0-0-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-104-2-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Original</td> -->
+          <!-- <td rowspan="2">March 2014</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-104_Issue-2.pdf">TR-104 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Provisioning Parameters for VoIP CPE</td> -->
+          <td rowspan="4">VoiceService:1</td>
+          <td rowspan="2">1.1</td>
+          <td rowspan="1"><a name="VoiceService:1.1"></a><a name="VoiceService:1"></a><a name="tr-104-1-1.xml"></a><a name="tr-104-1-1-0.xml"></a><a href="cwmp/tr-104-1-1-0.xml">tr-104-1-1-0.xml</a></td>
+          <td rowspan="1"><a href="cwmp/tr-104-1-1-0-diffs.html">Diff</a></td>
+          <td rowspan="2">Added <i>Alias</i> parameters</td>
+          <td rowspan="2">July 2011</td>
+          <td rowspan="4"><a name="TR-104"></a><a href="http://www.broadband-forum.org/technical/download/TR-104.pdf">TR-104</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Provisioning Parameters for VoIP CPE</td> -->
+          <!-- <td rowspan="4">VoiceService:1</td> -->
+          <!-- <td rowspan="2">1.1</td> -->
+          <td rowspan="1"><a href="cwmp/tr-104-1-1-0-full.xml">tr-104-1-1-0-full.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-104-1-1-0.html">Full</a></b></td>
+          <!-- <td rowspan="2">Added <i>Alias</i> parameters</td> -->
+          <!-- <td rowspan="2">July 2011</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-104.pdf">TR-104</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Provisioning Parameters for VoIP CPE</td> -->
+          <!-- <td rowspan="4">VoiceService:1</td> -->
+          <td rowspan="2">1.0</td>
+          <td rowspan="1"><a name="VoiceService:1.0"></a><a name="tr-104-1-0.xml"></a><a name="tr-104-1-0-0.xml"></a><a href="cwmp/tr-104-1-0-0.xml">tr-104-1-0-0.xml</a></td>
+          <td rowspan="2"><b><a href="cwmp/tr-104-1-0-0.html">Full</a></b></td>
+          <td rowspan="2">Original</td>
+          <td rowspan="2">September 2009</td>
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-104.pdf">TR-104</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">Provisioning Parameters for VoIP CPE</td> -->
+          <!-- <td rowspan="4">VoiceService:1</td> -->
+          <!-- <td rowspan="2">1.0</td> -->
+          <td rowspan="1"><a href="cwmp/tr-104-1-0-0-full.xml">tr-104-1-0-0-full.xml</a></td>
+          <!-- <td rowspan="2"><b><a href="cwmp/tr-104-1-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2">Original</td> -->
+          <!-- <td rowspan="2">September 2009</td> -->
+          <!-- <td rowspan="4"><a href="http://www.broadband-forum.org/technical/download/TR-104.pdf">TR-104</a></td> -->
+        </tr>
+      </tbody>
+    </table>
+
+    <a name="Component Definitions"><h1>Component Definitions</h1></a>
+    <table class="stdtable" width="100%" bordercolor="#005c27" border="1" cellpadding="2" cellspacing="0">
+      <thead>
+        <tr>
+          <th width="15.79%">Document</th>
+          <!-- <th width="15.79%">Data Model</th> -->
+          <!-- <th width="4.21%">Version</th> -->
+          <th width="12.63%">XML</th>
+          <th width="3.16%">HTML</th>
+          <th width="42.11%">Description</th>
+          <th width="10.53%">Approval Date</th>
+          <th width="15.79%">PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="1"><a name="Femto Components"></a>Femto Components</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="TR-262:1.0"></a><a name="TR-262:1"></a><a name="tr-262-1-0.xml"></a><a name="tr-262-1-0-0.xml"></a><a href="cwmp/tr-262-1-0-0.xml">tr-262-1-0-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-262-1-0-0.html">Full</a></b></td>
+          <td rowspan="1">Original</td>
+          <td rowspan="1">November 2011</td>
+          <td rowspan="1"><a name="TR-262"></a><a href="http://www.broadband-forum.org/technical/download/TR-262.pdf">TR-262</a></td>
+        </tr>
+        <tr>
+          <td colspan="6"></td>
+        </tr>
+        <tr>
+          <td rowspan="11"><a name="Component Objects for CWMP"></a>Component Objects for CWMP</td>
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.10"></a><a name="TR-157:1"></a><a name="tr-157-1-10.xml"></a><a name="tr-157-1-10-0.xml"></a><a href="cwmp/tr-157-1-10-0.xml">tr-157-1-10-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-10-0.html">Full</a></b></td>
+          <td rowspan="1"><p>
+<p>
+<p>
+Update Bulk Data Collection for HTTP Transport</td>
+          <td rowspan="1">November 2015</td>
+          <td rowspan="1"><a name="TR-157a10"></a><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-10.pdf">TR-157 Amendment 10</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.9"></a><a name="tr-157-1-9.xml"></a><a name="tr-157-1-9-0.xml"></a><a href="cwmp/tr-157-1-9-0.xml">tr-157-1-9-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-9-0.html">Full</a></b></td>
+          <td rowspan="1"><p>
+<p>
+<p>
+Added Inform Parameters table to ManagementServer <p>
+Added HTIP Component to DeviceInfo containing HTIP related parameters<p>
+Updated the UPnP component for HTIP parameters</td>
+          <td rowspan="1">September 2014</td>
+          <td rowspan="5"><a name="TR-157a5"></a><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-5.pdf">TR-157 Amendment 5</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.8"></a><a name="tr-157-1-8.xml"></a><a name="tr-157-1-8-0.xml"></a><a href="cwmp/tr-157-1-8-0.xml">tr-157-1-8-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-8-0.html">Full</a></b></td>
+          <td rowspan="1">Addition of <i>MS_StandbyPolicy</i>, <i>XMPP</i> and <i>XMPPConnReq</i>               components; other minor updates</td>
+          <td rowspan="1">November 2013</td>
+          <!-- <td rowspan="5"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-5.pdf">TR-157 Amendment 5</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.7"></a><a name="tr-157-1-7.xml"></a><a name="tr-157-1-7-0.xml"></a><a href="cwmp/tr-157-1-7-0.xml">tr-157-1-7-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-7-0.html">Full</a></b></td>
+          <td rowspan="1">Addition of <i>DNS_SD</i> component; other minor updates</td>
+          <td rowspan="1">November 2012</td>
+          <!-- <td rowspan="5"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-5.pdf">TR-157 Amendment 5</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.6"></a><a name="tr-157-1-6.xml"></a><a name="tr-157-1-6-0.xml"></a><a href="cwmp/tr-157-1-6-0.xml">tr-157-1-6-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-6-0.html">Full</a></b></td>
+          <td rowspan="1">Addition of <i>BulkDataCollection</i> component</td>
+          <td rowspan="1">May 2012</td>
+          <!-- <td rowspan="5"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-5.pdf">TR-157 Amendment 5</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.5"></a><a name="tr-157-1-5.xml"></a><a name="tr-157-1-5-0.xml"></a><a href="cwmp/tr-157-1-5-0.xml">tr-157-1-5-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-5-0.html">Full</a></b></td>
+          <td rowspan="1">Addition of <i>Location</i>, <i>FaultManagement</i> and <i>Security</i>               components</td>
+          <td rowspan="1">November 2011</td>
+          <!-- <td rowspan="5"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-5.pdf">TR-157 Amendment 5</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.4"></a><a name="tr-157-1-4.xml"></a><a name="tr-157-1-4-0.xml"></a><a href="cwmp/tr-157-1-4-0.xml">tr-157-1-4-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-4-0.html">Full</a></b></td>
+          <td rowspan="1">Support for CWMP Proxy Management and Alias-Based Addressing</td>
+          <td rowspan="1">July 2011</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-3.pdf">TR-157 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.3"></a><a href="cwmp/tr-157-1-3-0.xml">tr-157-1-3-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-3-0.html">Full</a></b></td>
+          <td rowspan="1">Support for Software Module Management</td>
+          <td rowspan="1">November 2010</td>
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-3.pdf">TR-157 Amendment 3</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.2"></a><a href="cwmp/tr-157-1-2-0.xml">tr-157-1-2-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-2-0.html">Full</a></b></td>
+          <td rowspan="1">Support for TR-181 Issue 2</td>
+          <td rowspan="1">May 2010</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-2.pdf">TR-157 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.1"></a><a href="cwmp/tr-157-1-1-0.xml">tr-157-1-1-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-1-0.html">Full</a></b></td>
+          <td rowspan="1">Addition of <i>SupportedDataModel</i> component</td>
+          <td rowspan="2">September 2009</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-157_Amendment-1.pdf">TR-157 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="11">Component Objects for CWMP</td> -->
+          <!-- <td rowspan="11">:</td> -->
+          <!-- <td rowspan="11">.</td> -->
+          <td rowspan="1"><a name="TR-157:1.0"></a><a href="cwmp/tr-157-1-0-0.xml">tr-157-1-0-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-157-1-0-0.html">Full</a></b></td>
+          <td rowspan="1">Original</td>
+          <!-- <td rowspan="2">September 2009</td> -->
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-157.pdf">TR-157</a></td>
+        </tr>
+        <tr>
+          <td colspan="6"></td>
+        </tr>
+        <tr>
+          <td rowspan="2"><a name="Network Performance Tests"></a>Network Performance Tests</td>
+          <!-- <td rowspan="2">:</td> -->
+          <!-- <td rowspan="2">.</td> -->
+          <td rowspan="1"><a name="TR-143:1.1"></a><a name="TR-143:1"></a><a name="tr-143-1-1.xml"></a><a name="tr-143-1-1-0.xml"></a><a href="cwmp/tr-143-1-1-0.xml">tr-143-1-1-0.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-143-1-1-0.html">Full</a></b></td>
+          <td rowspan="1"><p>
+<p>
+<p>
+Added multiple connections to DownloadDiagnostics and UploadDiagnostics<p>
+Added time based testing to DownloadDiagnostics and UploadDiagnostics<p>
+Added UDPEchoDiagnostics<p>
+Added ServerSelectionDiagnostics<p>
+Added IPv4 vs IPv6 selection to all tests.</td>
+          <td rowspan="1">1 December 2014</td>
+          <td rowspan="1"><a name="TR-143a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-143_Amendment-1.pdf">TR-143 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Network Performance Tests</td> -->
+          <!-- <td rowspan="2">:</td> -->
+          <!-- <td rowspan="2">.</td> -->
+          <td rowspan="1"><a name="TR-143:1.0"></a><a href="cwmp/tr-143-1-0-2.xml">tr-143-1-0-2.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-143-1-0-2.html">Full</a></b></td>
+          <td rowspan="1"><p>Nov 2008: Original<p>
+Mar 2009: <a href="#tr-143-1-0-1.xml">Corrigendum 1</a><p>
+<ul>
+  <li>Changed to use new global bibliography, plus a few editorial changes
+</ul><p>
+May 2010: Corrigendum 2<p>
+<ul>
+  <li>Incorporated editorial changes from <a href="#tr-106-1-2-0.xml">tr-106-1-2-0.xml</a>
+</ul></td>
+          <td rowspan="1">May 2010</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-143_Corrigendum-1.pdf">TR-143 Corrigendum 1</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <a name="Schema Files"><h1>Schema Files</h1></a>
+    <table class="stdtable" width="100%" bordercolor="#005c27" border="1" cellpadding="2" cellspacing="0">
+      <thead>
+        <tr>
+          <th width="16.30%">Document</th>
+          <!-- <th width="16.30%">Data Model</th> -->
+          <!-- <th width="4.35%">Version</th> -->
+          <th width="13.04%">Filename</th>
+          <!-- <th width="3.26%">HTML</th> -->
+          <th width="43.48%">Description</th>
+          <th width="10.87%">Approval Date</th>
+          <th width="16.30%">PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="5"><a name="TR-069 RPCs"></a>TR-069 RPCs</td>
+          <!-- <td rowspan="5">:</td> -->
+          <!-- <td rowspan="5">.</td> -->
+          <td rowspan="1"><a name="cwmp-1-4.xsd"></a><a href="cwmp/cwmp-1-4.xsd">cwmp-1-4.xsd</a></td>
+          <!-- <td rowspan="5">&nbsp;</td> -->
+          <td rowspan="1">v1.2 (CWMP v1.4): Added <i>13 WAKEUP</i> event code, CWMP version               negotiation SOAP headers, and lightweight notification               attribute values</td>
+          <td rowspan="1">November 2013</td>
+          <td rowspan="1"><a name="TR-069a5"></a><a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">TR-069 Amendment 5</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="5">TR-069 RPCs</td> -->
+          <!-- <td rowspan="5">:</td> -->
+          <!-- <td rowspan="5">.</td> -->
+          <td rowspan="1"><a name="cwmp-1-3.xsd"></a><a href="cwmp/cwmp-1-3.xsd">cwmp-1-3.xsd</a></td>
+          <!-- <td rowspan="5">&nbsp;</td> -->
+          <td rowspan="1">v1.2 (CWMP v1.3): Added <i>SessionTimeout</i> SOAP header parameter</td>
+          <td rowspan="1">July 2011</td>
+          <td rowspan="1"><a name="TR-069a4"></a><a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-4.pdf">TR-069 Amendment 4</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="5">TR-069 RPCs</td> -->
+          <!-- <td rowspan="5">:</td> -->
+          <!-- <td rowspan="5">.</td> -->
+          <td rowspan="1"><a name="cwmp-1-2.xsd"></a><a href="cwmp/cwmp-1-2.xsd">cwmp-1-2.xsd</a></td>
+          <!-- <td rowspan="5">&nbsp;</td> -->
+          <td rowspan="1">v1.2 (CWMP v1.2): Added software management RPCs</td>
+          <td rowspan="1">November 2010</td>
+          <td rowspan="1"><a name="TR-069a3"></a><a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-3.pdf">TR-069 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="5">TR-069 RPCs</td> -->
+          <!-- <td rowspan="5">:</td> -->
+          <!-- <td rowspan="5">.</td> -->
+          <td rowspan="1"><a name="cwmp-1-1.xsd"></a><a href="cwmp/cwmp-1-1.xsd">cwmp-1-1.xsd</a></td>
+          <!-- <td rowspan="5">&nbsp;</td> -->
+          <td rowspan="1">v1.1 (CWMP v1.1): Added autonomous transfer RPCs</td>
+          <td rowspan="1">November 2007</td>
+          <td rowspan="1"><a name="TR-069a2"></a><a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-2.pdf">TR-069 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="5">TR-069 RPCs</td> -->
+          <!-- <td rowspan="5">:</td> -->
+          <!-- <td rowspan="5">.</td> -->
+          <td rowspan="1"><a name="cwmp-1-0.xsd"></a><a href="cwmp/cwmp-1-0.xsd">cwmp-1-0.xsd</a></td>
+          <!-- <td rowspan="5">&nbsp;</td> -->
+          <td rowspan="1"><p>v1.0 (CWMP v1.0): Original<p>
+<i>Note that the first version of TR-069 did not include a formal XML Schema.</i></td>
+          <td rowspan="1">November 2006</td>
+          <td rowspan="1"><a name="TR-069a1"></a><a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-1.pdf">TR-069 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1"><a name="IPDR Service Specification for Bulk Data Collection"></a>IPDR Service Specification for Bulk Data Collection</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="tr-232-1-0-serviceSpec.xsd"></a><a name="tr-232-1-0-0-serviceSpec.xsd"></a><a href="cwmp/tr-232-1-0-0-serviceSpec.xsd">tr-232-1-0-0-serviceSpec.xsd</a></td>
+          <!-- <td rowspan="1">&nbsp;</td> -->
+          <td rowspan="1">Original</td>
+          <td rowspan="1">May 2012</td>
+          <td rowspan="1"><a name="TR-232"></a><a href="http://www.broadband-forum.org/technical/download/TR-232.pdf">TR-232</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1"><a name="XMPP Connection Request"></a>XMPP Connection Request</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="cwmp-xmppConnReq-1-0.xsd"></a><a href="cwmp/cwmp-xmppConnReq-1-0.xsd">cwmp-xmppConnReq-1-0.xsd</a></td>
+          <!-- <td rowspan="1">&nbsp;</td> -->
+          <td rowspan="1">Original</td>
+          <td rowspan="1">November 2013</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">TR-069 Amendment 5</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1"><a name="UDP Lightweight Notification"></a>UDP Lightweight Notification</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="cwmp-UDPLightweightNotification-1-0.xsd"></a><a href="cwmp/cwmp-UDPLightweightNotification-1-0.xsd">cwmp-UDPLightweightNotification-1-0.xsd</a></td>
+          <!-- <td rowspan="1">&nbsp;</td> -->
+          <td rowspan="1">Original</td>
+          <td rowspan="1">November 2013</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-069_Amendment-5.pdf">TR-069 Amendment 5</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="6"><a name="TR-069 Data Model Definition Schema (DM Schema)"></a>TR-069 Data Model Definition Schema (DM Schema)</td>
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="cwmp-datamodel-1-5.xsd"></a><a href="cwmp/cwmp-datamodel-1-5.xsd">cwmp-datamodel-1-5.xsd</a></td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+          <td rowspan="1"><p>Added <i>profile/@minVersion</i> attribute<p>
+Allowed <i>uniqueKey</i> parameters to be in sub-objects<p>
+Added <i>UUID</i> data type<p>
+Added <i>nestedBrackets</i> attribute, and allowed use of the <i>list</i> facet in named data type definitions<p>
+Several other minor updates and clarifications</td>
+          <td rowspan="1">September 2013</td>
+          <td rowspan="1"><a name="TR-106a7"></a><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-7.pdf">TR-106 Amendment 7</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Definition Schema (DM Schema)</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="cwmp-datamodel-1-4.xsd"></a><a href="cwmp/cwmp-datamodel-1-4.xsd">cwmp-datamodel-1-4.xsd</a></td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+          <td rowspan="1">Added top-level <i>file</i> attribute</td>
+          <td rowspan="1">July 2011</td>
+          <td rowspan="1"><a name="TR-106a6"></a><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-6.pdf">TR-106 Amendment 6</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Definition Schema (DM Schema)</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="cwmp-datamodel-1-3.xsd"></a><a href="cwmp/cwmp-datamodel-1-3.xsd">cwmp-datamodel-1-3.xsd</a></td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+          <td rowspan="1"><p>Relaxed some referential constraints (in the light of experience)<p>
+Added <i>description/@action</i> <i>prefix</i> option<p>
+Added <i>syntax/@command</i></td>
+          <td rowspan="1">November 2010</td>
+          <td rowspan="1"><a name="TR-106a5"></a><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-5.pdf">TR-106 Amendment 5</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Definition Schema (DM Schema)</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="cwmp-datamodel-1-2.xsd"></a><a href="cwmp/cwmp-datamodel-1-2.xsd">cwmp-datamodel-1-2.xsd</a></td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+          <td rowspan="1">Distinguished functional and non-functional keys;               supported <i>#.A</i> relative path syntax</td>
+          <td rowspan="1">March 2010</td>
+          <td rowspan="1"><a name="TR-106a4"></a><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-4.pdf">TR-106 Amendment 4</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Definition Schema (DM Schema)</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="cwmp-datamodel-1-1.xsd"></a><a href="cwmp/cwmp-datamodel-1-1.xsd">cwmp-datamodel-1-1.xsd</a></td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+          <td rowspan="1">Made <i>import/@file</i> optional; supported <i>range/@step</i></td>
+          <td rowspan="1">September 2009</td>
+          <td rowspan="1"><a name="TR-106a3"></a><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-3.pdf">TR-106 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Definition Schema (DM Schema)</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="cwmp-datamodel-1-0.xsd"></a><a href="cwmp/cwmp-datamodel-1-0.xsd">cwmp-datamodel-1-0.xsd</a></td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+          <td rowspan="1">Original</td>
+          <td rowspan="1">November 2008</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-2.pdf">TR-106 Amendment 2</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1"><a name="TR-069 Data Model Report Schema (DMR Schema)"></a>TR-069 Data Model Report Schema (DMR Schema)</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="cwmp-datamodel-report.xsd"></a><a href="cwmp/cwmp-datamodel-report.xsd">cwmp-datamodel-report.xsd</a></td>
+          <!-- <td rowspan="1">&nbsp;</td> -->
+          <td rowspan="1"><p>Nov 2008: Original<p>
+Sep 2009: Added <i>noUniqueKeys</i></td>
+          <td rowspan="1">September 2009</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-3.pdf">TR-106 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="4"><a name="TR-069 Device Type Schema (DT Schema)"></a>TR-069 Device Type Schema (DT Schema)</td>
+          <!-- <td rowspan="4">:</td> -->
+          <!-- <td rowspan="4">.</td> -->
+          <td rowspan="1"><a name="cwmp-devicetype-1-3.xsd"></a><a href="cwmp/cwmp-devicetype-1-3.xsd">cwmp-devicetype-1-3.xsd</a></td>
+          <!-- <td rowspan="4">&nbsp;</td> -->
+          <td rowspan="1">Many minor updates and clarifications</td>
+          <td rowspan="1">September 2013</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-7.pdf">TR-106 Amendment 7</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">TR-069 Device Type Schema (DT Schema)</td> -->
+          <!-- <td rowspan="4">:</td> -->
+          <!-- <td rowspan="4">.</td> -->
+          <td rowspan="1"><a name="cwmp-devicetype-1-2.xsd"></a><a href="cwmp/cwmp-devicetype-1-2.xsd">cwmp-devicetype-1-2.xsd</a></td>
+          <!-- <td rowspan="4">&nbsp;</td> -->
+          <td rowspan="1">Added top-level UUID data type and attribute</td>
+          <td rowspan="1">November 2012</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-6.pdf">TR-106 Amendment 6</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">TR-069 Device Type Schema (DT Schema)</td> -->
+          <!-- <td rowspan="4">:</td> -->
+          <!-- <td rowspan="4">.</td> -->
+          <td rowspan="1"><a name="cwmp-devicetype-1-1.xsd"></a><a href="cwmp/cwmp-devicetype-1-1.xsd">cwmp-devicetype-1-1.xsd</a></td>
+          <!-- <td rowspan="4">&nbsp;</td> -->
+          <td rowspan="1">Minor changes tracking DM Schema v1.3 changes</td>
+          <td rowspan="1">November 2010</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-5.pdf">TR-106 Amendment 5</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="4">TR-069 Device Type Schema (DT Schema)</td> -->
+          <!-- <td rowspan="4">:</td> -->
+          <!-- <td rowspan="4">.</td> -->
+          <td rowspan="1"><a name="cwmp-devicetype-1-0.xsd"></a><a href="cwmp/cwmp-devicetype-1-0.xsd">cwmp-devicetype-1-0.xsd</a></td>
+          <!-- <td rowspan="4">&nbsp;</td> -->
+          <td rowspan="1">Original</td>
+          <td rowspan="1">September 2009</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-3.pdf">TR-106 Amendment 3</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1"><a name="TR-069 DT (Device Type) Features Schema (DTF Schema)"></a>TR-069 DT (Device Type) Features Schema (DTF Schema)</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="cwmp-devicetype-features.xsd"></a><a href="cwmp/cwmp-devicetype-features.xsd">cwmp-devicetype-features.xsd</a></td>
+          <!-- <td rowspan="1">&nbsp;</td> -->
+          <td rowspan="1">Original</td>
+          <td rowspan="1">September 2009</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-106_Amendment-3.pdf">TR-106 Amendment 3</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <a name="Support Files"><h1>Support Files</h1></a>
+    <table class="stdtable" width="100%" bordercolor="#005c27" border="1" cellpadding="2" cellspacing="0">
+      <thead>
+        <tr>
+          <th width="15.79%">Document</th>
+          <!-- <th width="15.79%">Data Model</th> -->
+          <!-- <th width="4.21%">Version</th> -->
+          <th width="12.63%">XML</th>
+          <th width="3.16%">HTML</th>
+          <th width="42.11%">Description</th>
+          <th width="10.53%">Approval Date</th>
+          <th width="15.79%">PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="2"><a name="TR-069 Data Model Data Types"></a>TR-069 Data Model Data Types</td>
+          <!-- <td rowspan="2">:</td> -->
+          <!-- <td rowspan="2">.</td> -->
+          <td rowspan="1"><a name="tr-106-1-1-types.xml"></a><a name="tr-106-1-1-0-types.xml"></a><a href="cwmp/tr-106-1-1-0-types.xml">tr-106-1-1-0-types.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-106-1-1-0-types.html">Full</a></b></td>
+          <td rowspan="1">Added <i>DiagnosticsState</i></td>
+          <td rowspan="1">November 2015</td>
+          <td rowspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">TR-069 Data Model Data Types</td> -->
+          <!-- <td rowspan="2">:</td> -->
+          <!-- <td rowspan="2">.</td> -->
+          <td rowspan="1"><a name="tr-106-1-0-types.xml"></a><a name="tr-106-1-0-0-types.xml"></a><a href="cwmp/tr-106-1-0-0-types.xml">tr-106-1-0-0-types.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-106-1-0-0-types.html">Full</a></b></td>
+          <td rowspan="1"><p>Nov 2013: Added <i>IEEE_EUI64</i> and <i>ZigBeeNetworkAddress</i><p>
+Sep 2013: Clarified use of the <i>Alias</i> <i>cpe-</i> prefix<p>
+Nov 2012: Added <i>UUID</i> and updated <i>IPPrefix</i> and <i>IPv4Prefix</i><p>
+Nov 2011: Added <i>Dbm1000</i> and updated statistics counter types<p>
+Jul 2011: Added <i>Alias</i><p>
+Nov 2010: Added IPv6 and statistics counter types<p>
+May 2010: Added <i>IPPrefix</i> and <i>IPAddress</i><p>
+Sep 2009: Minor changes, e.g. imported <i>tr-069-biblio.xml</i><p>
+Nov 2008: Original</td>
+          <td rowspan="1">November 2013</td>
+          <!-- <td rowspan="2">&nbsp;</td> -->
+        </tr>
+        <tr>
+          <td colspan="6"></td>
+        </tr>
+        <tr>
+          <td rowspan="6"><a name="TR-069 Data Model Bibliographic References"></a>TR-069 Data Model Bibliographic References</td>
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="tr-069-1-5-biblio.xml"></a><a name="tr-069-1-5-0-biblio.xml"></a><a href="cwmp/tr-069-1-5-0-biblio.xml">tr-069-1-5-0-biblio.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-069-1-5-0-biblio.html">Full</a></b></td>
+          <td rowspan="1">Added <i>Device:2.11</i> references</td>
+          <td rowspan="1">July 2016</td>
+          <td rowspan="6">&nbsp;</td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Bibliographic References</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="tr-069-1-4-biblio.xml"></a><a name="tr-069-1-4-0-biblio.xml"></a><a href="cwmp/tr-069-1-4-0-biblio.xml">tr-069-1-4-0-biblio.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-069-1-4-0-biblio.html">Full</a></b></td>
+          <td rowspan="1">Added <i>Device:2.10</i> references</td>
+          <td rowspan="1">November 2015</td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Bibliographic References</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="tr-069-1-3-biblio.xml"></a><a name="tr-069-1-3-0-biblio.xml"></a><a href="cwmp/tr-069-1-3-0-biblio.xml">tr-069-1-3-0-biblio.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-069-1-3-0-biblio.html">Full</a></b></td>
+          <td rowspan="1">Added TR-196i2a1 references</td>
+          <td rowspan="1">August 2015</td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Bibliographic References</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="tr-069-1-2-biblio.xml"></a><a name="tr-069-1-2-0-biblio.xml"></a><a href="cwmp/tr-069-1-2-0-biblio.xml">tr-069-1-2-0-biblio.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-069-1-2-0-biblio.html">Full</a></b></td>
+          <td rowspan="1">Added <i>Device:2.9</i> references</td>
+          <td rowspan="1">December 2014</td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Bibliographic References</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="tr-069-1-1-biblio.xml"></a><a name="tr-069-1-1-0-biblio.xml"></a><a href="cwmp/tr-069-1-1-0-biblio.xml">tr-069-1-1-0-biblio.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-069-1-1-0-biblio.html">Full</a></b></td>
+          <td rowspan="1">Added <i>Device:2.8</i>, TR-143a1 and TR-157a9 references</td>
+          <td rowspan="1">September 2014</td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="6">TR-069 Data Model Bibliographic References</td> -->
+          <!-- <td rowspan="6">:</td> -->
+          <!-- <td rowspan="6">.</td> -->
+          <td rowspan="1"><a name="tr-069-biblio.xml"></a><a href="cwmp/tr-069-biblio.xml">tr-069-biblio.xml</a></td>
+          <td rowspan="1"><b><a href="cwmp/tr-069-biblio.html">Full</a></b></td>
+          <td rowspan="1"><p>Mar 2014: Added TR-104i2 references<p>
+Nov 2013: Added <i>Device:2.7</i> and TR-157a8 references<p>
+Nov 2012: Added TR-157a7 references<p>
+May 2012: Added <i>Device:2.5</i> references<p>
+Dec 2011: Added <i>Device:2.4</i>, <i>FAPService:2.0</i> and TR-262 references<p>
+Jul 2011: Added Alias-based addressing and proxy management references<p>
+May 2011: Added <i>FAPService:1.1</i> references<p>
+Mar 2011: Added <i>Device:2.2</i> references<p>
+Nov 2010: Added <i>Device:2.1</i> references<p>
+May 2010: Added <i>Device:2.0</i> references<p>
+Sep 2009: Minor changes, e.g. added missing dates<p>
+Mar 2009: Original</td>
+          <td rowspan="1">March 2014</td>
+          <!-- <td rowspan="6">&nbsp;</td> -->
+        </tr>
+      </tbody>
+    </table>
+
+    <a name="Outdated Corrigenda"><h1>Outdated Corrigenda</h1></a>
+    <table class="stdtable" width="100%" bordercolor="#005c27" border="1" cellpadding="2" cellspacing="0">
+      <thead>
+        <tr>
+          <th width="16.30%">Document</th>
+          <!-- <th width="16.30%">Data Model</th> -->
+          <!-- <th width="4.35%">Version</th> -->
+          <th width="13.04%">XML</th>
+          <!-- <th width="3.26%">HTML</th> -->
+          <th width="43.48%">Description</th>
+          <th width="10.87%">Approval Date</th>
+          <th width="16.30%">PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3"><a name="Femto Access Point Service Data Model"></a>Femto Access Point Service Data Model</td>
+          <!-- <td rowspan="3">:</td> -->
+          <!-- <td rowspan="3">.</td> -->
+          <td rowspan="1"><a name="tr-196-2-0-2.xml"></a><a href="cwmp/tr-196-2-0-2.xml">tr-196-2-0-2.xml</a></td>
+          <!-- <td rowspan="1"><b><a href="cwmp/tr-196-2-0-2.html">Full</a></b></td> -->
+          <td rowspan="3"><p>
+<p>
+<p>
+November 2011:  Original<p>
+November 2012:  Corrigendum 1<p>
+<ul>
+  <li>Corrected errors in TR-196i2 per direction of 3GPP TS 32.592.
+  <li>Corrected range of FAPService.{i}.REM.UMTS.GSM.Cell.{i}.CI
+</ul><p>
+February 2015:  Corrigendum 2<p>
+<ul>
+  <li>Corrected errors in QHyst1s and QHyst2s parameter descriptions
+</ul><p>
+October 2016:  <a href="#tr-196-2-0-3.xml">Corrigendum 3</a><p>
+<ul>
+  <li>Corrected errors in CID and LAC parameter ranges
+</ul></td>
+          <td rowspan="3">October 2016</td>
+          <td rowspan="3"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="3">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="3">:</td> -->
+          <!-- <td rowspan="3">.</td> -->
+          <td rowspan="1"><a name="tr-196-2-0-1.xml"></a><a href="cwmp/tr-196-2-0-1.xml">tr-196-2-0-1.xml</a></td>
+          <!-- <td rowspan="1"><b><a href="cwmp/tr-196-2-0-1.html">Full</a></b></td> -->
+          <!-- <td rowspan="3"><p>
+<p>
+<p>
+November 2011:  Original<p>
+November 2012:  Corrigendum 1<p>
+<ul>
+  <li>Corrected errors in TR-196i2 per direction of 3GPP TS 32.592.
+  <li>Corrected range of FAPService.{i}.REM.UMTS.GSM.Cell.{i}.CI
+</ul><p>
+February 2015:  Corrigendum 2<p>
+<ul>
+  <li>Corrected errors in QHyst1s and QHyst2s parameter descriptions
+</ul><p>
+October 2016:  <a href="#tr-196-2-0-3.xml">Corrigendum 3</a><p>
+<ul>
+  <li>Corrected errors in CID and LAC parameter ranges
+</ul></td> -->
+          <!-- <td rowspan="3">October 2016</td> -->
+          <!-- <td rowspan="3"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <!-- <td rowspan="3">Femto Access Point Service Data Model</td> -->
+          <!-- <td rowspan="3">:</td> -->
+          <!-- <td rowspan="3">.</td> -->
+          <td rowspan="1"><a name="tr-196-2-0-0.xml"></a><a href="cwmp/tr-196-2-0-0.xml">tr-196-2-0-0.xml</a></td>
+          <!-- <td rowspan="1"><b><a href="cwmp/tr-196-2-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="3"><p>
+<p>
+<p>
+November 2011:  Original<p>
+November 2012:  Corrigendum 1<p>
+<ul>
+  <li>Corrected errors in TR-196i2 per direction of 3GPP TS 32.592.
+  <li>Corrected range of FAPService.{i}.REM.UMTS.GSM.Cell.{i}.CI
+</ul><p>
+February 2015:  Corrigendum 2<p>
+<ul>
+  <li>Corrected errors in QHyst1s and QHyst2s parameter descriptions
+</ul><p>
+October 2016:  <a href="#tr-196-2-0-3.xml">Corrigendum 3</a><p>
+<ul>
+  <li>Corrected errors in CID and LAC parameter ranges
+</ul></td> -->
+          <!-- <td rowspan="3">October 2016</td> -->
+          <!-- <td rowspan="3"><a href="http://www.broadband-forum.org/technical/download/TR-196_Issue-2.pdf">TR-196 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="2"><a name="Device Data Model for TR-069"></a>Device Data Model for TR-069</td>
+          <!-- <td rowspan="2">:</td> -->
+          <!-- <td rowspan="2">.</td> -->
+          <td rowspan="1"><a name="tr-181-2-0-1.xml"></a><a href="cwmp/tr-181-2-0-1.xml">tr-181-2-0-1.xml</a></td>
+          <!-- <td rowspan="1"><b><a href="cwmp/tr-181-2-0-1.html">Full</a></b></td> -->
+          <td rowspan="2"><p>
+<p>
+<p>
+May 2010: Original<p>
+Nov 2010: Corrigendum 1<p>
+<ul>
+  <li>Fixed various ranges and defaults
+  <li>Removed non interface object <i>Alias</i> parameters from profiles
+</ul><p>
+July 2016: <a href="#tr-181-2-0-2.xml">Corrigendum 2</a><p>
+<ul>
+  <li>Removed <i>SSID</i> unique key from <i>WiFi.SSID</i> object
+</ul></td>
+          <td rowspan="2">July 2016</td>
+          <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2.pdf">TR-181 Issue 2</a></td>
+        </tr>
+        <tr>
+          <!-- <td rowspan="2">Device Data Model for TR-069</td> -->
+          <!-- <td rowspan="2">:</td> -->
+          <!-- <td rowspan="2">.</td> -->
+          <td rowspan="1"><a name="tr-181-2-0-0.xml"></a><a href="cwmp/tr-181-2-0-0.xml">tr-181-2-0-0.xml</a></td>
+          <!-- <td rowspan="1"><b><a href="cwmp/tr-181-2-0-0.html">Full</a></b></td> -->
+          <!-- <td rowspan="2"><p>
+<p>
+<p>
+May 2010: Original<p>
+Nov 2010: Corrigendum 1<p>
+<ul>
+  <li>Fixed various ranges and defaults
+  <li>Removed non interface object <i>Alias</i> parameters from profiles
+</ul><p>
+July 2016: <a href="#tr-181-2-0-2.xml">Corrigendum 2</a><p>
+<ul>
+  <li>Removed <i>SSID</i> unique key from <i>WiFi.SSID</i> object
+</ul></td> -->
+          <!-- <td rowspan="2">July 2016</td> -->
+          <!-- <td rowspan="2"><a href="http://www.broadband-forum.org/technical/download/TR-181_Issue-2.pdf">TR-181 Issue 2</a></td> -->
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1">Network Performance Tests</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="tr-143-1-0-1.xml"></a><a href="cwmp/tr-143-1-0-1.xml">tr-143-1-0-1.xml</a></td>
+          <!-- <td rowspan="1">&nbsp;</td> -->
+          <td rowspan="1"><p>Nov 2008: Original<p>
+Mar 2009: Corrigendum 1<p>
+<ul>
+  <li>Changed to use new global bibliography, plus a few editorial changes
+</ul><p>
+May 2010: <a href="#tr-143-1-0-2.xml">Corrigendum 2</a><p>
+<ul>
+  <li>Incorporated editorial changes from <a href="#tr-106-1-2-0.xml">tr-106-1-2-0.xml</a>
+</ul></td>
+          <td rowspan="1">May 2010</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-143_Corrigendum-1.pdf">TR-143 Corrigendum 1</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1"><a name="TR-069 Data Model for Storage Service Enabled Devices"></a>TR-069 Data Model for Storage Service Enabled Devices</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="tr-140-1-1-0.xml"></a><a href="cwmp/tr-140-1-1-0.xml">tr-140-1-1-0.xml</a></td>
+          <!-- <td rowspan="1"><b><a href="cwmp/tr-140-1-1-0.html">Full</a></b></td> -->
+          <td rowspan="1"><p>Apr 2010: Original<p>
+<ul>
+  <li>Added missing <i>NumberOfEntries</i> and <i>Enable</i> parameters
+</ul><p>
+Dec 2011: <a href="#tr-140-1-1-1.xml">Corrigendum 1</a><p>
+<ul>
+  <li>Corrected import of tr-140-1-0.xml
+</ul></td>
+          <td rowspan="1">December 2011</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-140_Amendment-1.pdf">TR-140 Amendment 1</a></td>
+        </tr>
+        <tr>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td rowspan="1"><a name="Internet Gateway Device Data Model for TR-069"></a>Internet Gateway Device Data Model for TR-069</td>
+          <!-- <td rowspan="1">:</td> -->
+          <!-- <td rowspan="1">.</td> -->
+          <td rowspan="1"><a name="tr-098-1-2-0.xml"></a><a href="cwmp/tr-098-1-2-0.xml">tr-098-1-2-0.xml</a></td>
+          <!-- <td rowspan="1"><b><a href="cwmp/tr-098-1-2-0.html">Full</a></b></td> -->
+          <td rowspan="1"><p>Sep 2009: Original<p>
+<ul>
+  <li>Enhanced management of LAN hosts, and addition of DHCP conditional serving capabilities
+  <li>Improvements to management of QoS, routing, and bridging
+  <li>Significant WiFi improvements, including configuration of WMM and U-APSD, and various fixes to the existing WiFi data model
+  <li>PPPoE and NAT management enhancements
+  <li>Enhancements to DSL and Ethernet statistics, including support for VDSL2
+</ul><p>
+Dec 2011: <a href="#tr-098-1-2-1.xml">Corrigendum 1</a><p>
+<ul>
+  <li>Fixed data type for QoS QueueStats Interface
+  <li>Various other minor changes
+</ul></td>
+          <td rowspan="1">December 2011</td>
+          <td rowspan="1"><a href="http://www.broadband-forum.org/technical/download/TR-098_Amendment-2.pdf">TR-098 Amendment 2</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </body>
+</html>

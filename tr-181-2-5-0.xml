@@ -1,0 +1,1926 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  TR-069 Device:2.5 Root Object definition
+
+  Copyright (c) 2010-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Device:2.4 Root Object definition.
+  
+  Version History:
+    * May 2010: tr-181-2-0-0.xml, corresponds to TR-181 Issue 2.
+    * November 2010: tr-181-2-1-0.xml, 
+        corresponds to TR-181 Issue 2 Amendment 1.
+    * March 2011: tr-181-2-2-0,
+        corresponds to TR-181 Issue 2 Amendment 2.
+    * September 2011: tr-181-2-3-0,
+        corresponds to TR-181 Issue 2 Amendment 3.
+    * November 2011: tr-181-2-4-0,
+        corresponds to TR-181 Issue 2 Amendment 4.
+    * May 2012: tr-181-2-5-0,
+        corresponds to TR-181 Issue 2 Amendment 5.
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-4"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-4
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-4.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-5-0" file="tr-181-2-5-0.xml">
+
+  <description>
+    Device:2.5 data model: added IPsec data model and BulkDataCollection component
+  </description>
+
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-157-1-6.xml" spec="urn:broadband-forum-org:tr-157-1-6">
+    <component name="BulkDataCollection"/>
+  </import>
+
+  <!-- imports Device:2.4 data model from tr-181-2-4 -->
+  <import file="tr-181-2-4.xml" spec="urn:broadband-forum-org:tr-181-2-4">
+    <model name="Device:2.4"/>
+  </import>
+
+  <model name="Device:2.5" base="Device:2.4">
+
+    <component path="Device." ref="BulkDataCollection"/>
+
+    <object base="Device.WiFi.AccessPoint.{i}.Security." access="readOnly" minEntries="1" maxEntries="1">
+       <parameter name="SecondaryRadiusServerIPAddr " access="readWrite" dmr:previousParameter="RadiusServerIPAddr">
+        <description>
+          The IP Address of a secondary RADIUS server used for WLAN security. {{param}} is only applicable when {{param|ModeEnabled}} is an Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}} or {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).
+          The client can forward requests to the secondary server in the event that the primary server is down or unreachable, or after a number of tries to the primary server fail, or in a round-robin fashion {{bibref|RFC2865}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="SecondaryRadiusServerPort" access="readWrite" dmr:previousParameter="RadiusServerPort">
+        <description>
+          The port number of the secondary RADIUS server used for WLAN security. {{param}} is only applicable when {{param|ModeEnabled}} is an Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}} or {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).
+          If this parameter is not implemented, the secondary RADIUS server will use the same port number as the primary RADIUS server.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1812"/>
+        </syntax>
+      </parameter>
+      <parameter name="SecondaryRadiusSecret" access="readWrite" dmr:previousParameter="RadiusSecret">
+        <description>
+          The secret used for handshaking with the secondary RADIUS server {{bibref|RFC2865}}.
+          If this parameter is not implemented, the secondary RADIUS server will use the same secret as the primary RADIUS server.
+        </description>
+        <syntax hidden="true">
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.Accounting." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object contains the parameters related to RADIUS accounting functionality for the access point.</description>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables accounting functionality for the access point.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>      
+       <parameter name="ServerIPAddr" access="readWrite">
+        <description>
+          The IP Address of the RADIUS accounting server.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+       <parameter name="SecondaryServerIPAddr" access="readWrite">
+        <description>
+          The IP Address of a secondary RADIUS accounting server.
+          The client can forward requests to the secondary server in the event that the primary server is down or unreachable, or after a number of tries to the primary server fail, or in a round-robin fashion. {{bibref|RFC2866}}
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerPort" access="readWrite">
+        <description>
+          The port number of the RADIUS server used for accounting. The default port is 1813 as defined in {{bibref|RFC2866}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1813"/>
+        </syntax>
+      </parameter>
+       <parameter name="SecondaryServerPort" access="readWrite">
+        <description>
+          The port number of the secondary RADIUS server used for accounting. The default port is 1813 as defined in {{bibref|RFC2866}}.
+          If this parameter is not implemented, the secondary RADIUS server will use the same port number as the primary RADIUS server.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1813"/>
+        </syntax>
+      </parameter>
+      <parameter name="Secret" access="readWrite">
+        <description>
+          The secret used for handshaking with the RADIUS accounting server {{bibref|RFC2865}}.
+        </description>
+        <syntax hidden="true">
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SecondarySecret" access="readWrite">
+        <description>
+          The secret used for handshaking with the secondary RADIUS accounting server {{bibref|RFC2865}}.
+          If this parameter is not implemented, the secondary RADIUS server will use the same secret as the primary RADIUS server.
+        </description>
+        <syntax hidden="true">
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="InterimInterval" access="readWrite">
+        <description>
+          Specifies the default interim accounting interval in {{units}}, which is used for service accounting when the ''Acct-Interim-Interval'' attribute is not configured. {{bibref|RFC2869|Section 2.1}}
+          The value MUST NOT be smaller than 60.  The value SHOULD NOT be smaller than  600, and careful consideration should be given to its impact on network traffic {{bibref|RFC2869|Section 5.16}}.
+          A value of 0 means no interim accounting messages are sent.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="0"/>
+            <range minInclusive="60"/>
+            <units value="seconds"/> 
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter> 
+    </object>
+
+
+    <object base="Device.IP.Interface.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <description action="append">
+        Any {{enum|Tunneled|Type}} IP interface instances instantiated by the CPE MUST NOT have any statistics, writable parameters, IP addresses or IPv6 prefixes.  Any read-only parameters, e.g. {{param|Status}}, MUST return the same information as for the corresponding {{enum|Tunnel|Type}} interface.  The reason for these rules is that {{enum|Tunneled|Type}} IP interfaces exist only in order to be the targets of references (within the data model) and do not model any concepts over and above those already modeled by the {{enum|Tunnel|Type}} IP interfaces.
+      </description>
+    </object>
+
+    <object base="Device.IP.Interface.{i}.IPv4Address.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="AddressingType" access="readOnly">
+        <syntax>
+          <string>
+            <enumeration value="DHCP"/>
+            <enumeration value="IKEv2">
+              <description>
+                Assigned by IKEv2 {{bibref|RFC5996}}.
+              </description>
+            </enumeration>
+            <enumeration value="AutoIP"/>
+            <enumeration value="IPCP"/>
+            <enumeration value="Static"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Device.IP.Interface.{i}.IPv6Address.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="Origin" access="readOnly">
+        <syntax>
+          <string>
+            <enumeration value="AutoConfigured"/>
+            <enumeration value="DHCPv6"/>
+            <enumeration value="IKEv2">
+              <description>
+                Assigned by IKEv2 {{bibref|RFC5996}}.
+              </description>
+            </enumeration>
+            <enumeration value="WellKnown"/>
+            <enumeration value="Static"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <object name="Device.IPsec." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        IPsec {{bibref|RFC4301}} object that supports the configuration of Encapsulating Security Payload (ESP) {{bibref|RFC4303}} and Authentication Header (AH) {{bibref|RFC4302}} in tunnel mode {{bibref|RFC4301|Section 3.2}}.
+        Use of IKEv2 {{bibref|RFC5996}} is assumed.  The IPsec object does not currently support static configuration of tunnels and child Security Associations (SAs).
+        See the IPsec Theory of Operation {{bibref|TR-181i2a5|Appendix IX}} for a description of the working of this IPsec data model.
+      </description>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables IPsec.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          IPsec status.  {{enum}}
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="AHSupported" access="readOnly">
+        <description>
+          Indicates whether or not Authentication Header (AH) {{bibref|RFC4302}} is supported.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2SupportedEncryptionAlgorithms" access="readOnly">
+        <description>
+          Supported IKEv2 encryption algorithms {{bibref|IKEv2-params|Transform Type 1}}.  {{enum}}
+          Note that these are the names from the above reference, transformed as follows:
+          * Leading ''ENCR_'' (when present) discarded because they are all encryption algorithms so it's not needed.
+          * Underscores changed to hyphens to preserve names used in existing data models (and because of inconsistent conventions).
+          * Phrases collapsed where unambiguous, e.g. "with a(n) NN octet ICV" -> "-NN".
+          As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="DES"/>
+            <enumeration value="3DES"/>
+            <enumeration value="RC5"/>
+            <enumeration value="IDEA"/>
+            <enumeration value="CAST"/>
+            <enumeration value="BLOWFISH"/>
+            <enumeration value="3IDEA"/>
+            <enumeration value="AES-CBC"/>
+            <enumeration value="AES-CTR"/>
+            <enumeration value="AES-CCM-8"/>
+            <enumeration value="AES-CCM-12"/>
+            <enumeration value="AES-CCM-16"/>
+            <enumeration value="AES-GCM-8"/>
+            <enumeration value="AES-GCM-12"/>
+            <enumeration value="AES-GCM-16"/>
+            <enumeration value="CAMELLIA-CBC"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ESPSupportedEncryptionAlgorithms" access="readOnly">
+        <description>
+          Supported ESP encryption algorithms {{bibref|IKEv2-params|Transform Type 1}} {{bibref|RFC4835|Section 3.1.1}}.  {{enum}}
+          Note that these are the names from the above reference, transformed as follows:
+          * Leading ''ENCR_'' (when present) discarded because they are all encryption algorithms so it's not needed.
+          * Underscores changed to hyphens to preserve names used in existing data models (and because of inconsistent conventions).
+          * Phrases collapsed where unambiguous, e.g. "with a(n) NN octet ICV" -> "-NN".
+          * Some algorithms with apparently rather specialised application are omitted, e.g. ''ENCR_NULL_AUTH_AES_GMAC''.
+          As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="NULL"/>
+            <enumeration value="DES-IV64"/>
+            <enumeration value="DES"/>
+            <enumeration value="3DES"/>
+            <enumeration value="RC5"/>
+            <enumeration value="IDEA"/>
+            <enumeration value="CAST"/>
+            <enumeration value="BLOWFISH"/>
+            <enumeration value="3IDEA"/>
+            <enumeration value="DES-IV32"/>
+            <enumeration value="AES-CBC"/>
+            <enumeration value="AES-CTR"/>
+            <enumeration value="AES-CCM-8"/>
+            <enumeration value="AES-CCM-12"/>
+            <enumeration value="AES-CCM-16"/>
+            <enumeration value="AES-GCM-8"/>
+            <enumeration value="AES-GCM-12"/>
+            <enumeration value="AES-GCM-16"/>
+            <enumeration value="NULL-AUTH-AES-GMAC"/>
+            <enumeration value="CAMELLIA-CBC"/>
+            <enumeration value="CAMELLIA-CTR"/>
+            <enumeration value="CAMELLIA-CCM-8"/>
+            <enumeration value="CAMELLIA-CCM-12"/>
+            <enumeration value="CAMELLIA-CCM-16"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2SupportedPseudoRandomFunctions" access="readOnly">
+        <description>
+          Supported IKEv2 pseudo-random functions {{bibref|IKEv2-params|Transform Type 2}}.  {{enum}}
+          Note that these are the names from the above reference, transformed as follows:
+          * Leading ''PRF_'' (when present) discarded because they all pseudo-random functions so it's not needed.
+          * Underscores changed to hyphens to preserve names used in existing data models.
+          * Hyphen inserted after ''AES'' (or other acronym) when immediately followed by a key length.
+          As additional functions are added to the above reference, this data model will be extended according to the above conventions.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HMAC-MD5"/>
+            <enumeration value="HMAC-SHA1"/>
+            <enumeration value="HMAC-TIGER"/>
+            <enumeration value="AES-128-XCBC"/>
+            <enumeration value="HMAC-SHA2-256"/>
+            <enumeration value="HMAC-SHA2-384"/>
+            <enumeration value="HMAC-SHA2-512"/>
+            <enumeration value="AES-128-CMAC"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedIntegrityAlgorithms" access="readOnly">
+        <description>
+          Supported integrity algorithms {{bibref|IKEv2-params|Transform Type 3}}.  {{enum}}
+          Note that these are the names from the above reference, transformed as follows:
+          * Leading ''AUTH_'' (when present) discarded because they all authentication (integrity) algorithms so it's not needed.
+          * Underscores changed to hyphens to preserve names used in existing data models.
+          As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="NONE"/>
+            <enumeration value="HMAC-MD5-96"/>
+            <enumeration value="HMAC-SHA1-96"/>
+            <enumeration value="DES-MAC"/>
+            <enumeration value="KPDK-MD5"/>
+            <enumeration value="AES-XCBC-96"/>
+            <enumeration value="HMAC-MD5-128"/>
+            <enumeration value="HMAC-SHA1-160"/>
+            <enumeration value="AES-CMAC-96"/>
+            <enumeration value="AES-128-GMAC"/>
+            <enumeration value="AES-192-GMAC"/>
+            <enumeration value="AES-256-GMAC"/>
+            <enumeration value="HMAC-SHA2-256-128"/>
+            <enumeration value="HMAC-SHA2-256-192"/>
+            <enumeration value="HMAC-SHA2-256-256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedDiffieHellmanGroupTransforms" access="readOnly">
+        <description>
+          Supported Diffie-Hellman group transforms {{bibref|IKEv2-params|Transform Type 4}}.  {{enum}}
+          Note that these are the names from the above reference, transformed as follows:
+          * Name (other than ''NONE'') always starts with the type of group, currently ''MODP'' or ''ECP'' (implies ECP random).
+          * This is followed by ''-NN'', where ''NN'' is the group length in bits.
+          * this is followed by ''-PRIME-NN'' for groups with prime order subgroups, where ''NN'' is the subgroup length in bits.
+          As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="NONE"/>
+            <enumeration value="MODP-768"/>
+            <enumeration value="MODP-1024"/>
+            <enumeration value="MODP-1536"/>
+            <enumeration value="MODP-2048"/>
+            <enumeration value="MODP-3072"/>
+            <enumeration value="MODP-4096"/>
+            <enumeration value="MODP-6144"/>
+            <enumeration value="MODP-8192"/>
+            <enumeration value="ECP-256"/>
+            <enumeration value="ECP-384"/>
+            <enumeration value="ECP-521"/>
+            <enumeration value="MODP-1024-PRIME-160"/>
+            <enumeration value="MODP-2048-PRIME-224"/>
+            <enumeration value="MODP-2048-PRIME-256"/>
+            <enumeration value="ECP-192"/>
+            <enumeration value="ECP-224"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="MaxFilterEntries" access="readOnly">
+        <description>
+          The maximum number of entries in the {{object|Filter}} table.
+          A value of 0 means no specific limit.
+        </description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="MaxProfileEntries" access="readOnly">
+        <description>
+          The maximum number of entries in the {{object|Profile}} table.
+          A value of 0 means no specific limit.
+        </description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="FilterNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="ProfileNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="TunnelNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="IKEv2SANumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.IPsec.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Global IPsec statistics.  These statistics include all IPsec traffic, i.e. all IKEv2 negotiation, IKEv2 SAs and child SAs.
+        The CPE MUST reset global IPsec Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when IPsec is disabled ({{param|.IPsec.Enable}} is set to {{false}}) or when IPsec is enabled ({{param|.IPsec.Enable}} is set to {{true}}).
+      </description>
+      <parameter name="NegotiationFailures" access="readOnly">
+        <description>
+          The total number of times an IPsec negotiation failure has occurred.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by IPsec.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by IPsec.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by IPsec.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by IPsec.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by IPsec due to any error.  This can include packets dropped due to a lack of transmit buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="UnknownSPIErrors" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by IPsec due to an unknown SPI (Security Parameter Index).
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="DecryptionErrors" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by IPsec due to ESP decryption errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="IntegrityErrors" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by IPsec due to integrity errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ReplayErrors" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by IPsec due to replay errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PolicyErrors" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by IPsec due to policy errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="OtherReceiveErrors" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by IPsec due to errors other than unknown SPI, decryption, integrity, replay or policy errors. This can include packets dropped due to a lack of receive buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.IPsec.Filter.{i}." access="readWrite" minEntries="0" maxEntries="unbounded"
+            numEntriesParameter="FilterNumberOfEntries" enableParameter="Enable">
+      <description>
+        Filter table that represents the IPsec Security Policy Database (SPD) {{bibref|RFC4301|Section 4.4.1}} selection criteria.  Each (ordered) entry defines a set of selection criteria and references a {{object|#.Profile}} table entry that specifies how matching packets will be processed.
+        SPD filtering is performed for all packets that might need to cross the IPsec boundary {{bibref|RFC4301|Section 3.1}}.  Given that IPsec operates at the IP level, this means that SPD filtering conceptually occurs after bridging and before routing.
+        For enabled table entries, if {{param|Interface}} is not a valid reference and {{param|AllInterfaces}} is {{false}}, then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>Enables or disables this IPsec Filter table entry.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this IPsec Filter table entry.  {{enum}}
+          The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid.
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the {{object}} entry in the order of precedence.  A value of ''1'' indicates the first entry considered (highest precedence).  For each packet, the highest ordered entry that matches the filter criteria is applied.  All lower order entries are ignored.
+          When this value is modified, if the value matches that of an existing entry, the {{param}} value for the existing entry and all lower {{param}} entries is incremented (lowered in precedence) to ensure uniqueness of this value. A deletion causes {{param}} values to be compacted. When a value is changed, incrementing occurs before compaction.
+          The value of {{param}} on creation of a {{object}} table entry MUST be one greater than the largest current value (initially assigned the lowest precedence).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Interface" access="readWrite">
+        <description>
+          SPD selection criterion. {{reference}}
+          This specifies the ingress interface associated with the entry.  It MAY be a layer 1, 2 or 3 interface.  However, the types of interfaces for which filters can be instantiated is a local matter to the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="AllInterfaces" access="readWrite">
+        <description>
+          SPD selection criterion.
+          This specifies that all ingress interfaces are associated with the entry.  If {{true}}, the value of {{param|Interface}} is ignored since all ingress interfaces are indicated.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="DestIP" access="readWrite">
+        <description>
+          SPD selection criterion.
+          Destination IP address.  {{empty}} indicates this criterion is not used, i.e. is ''ANY''.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="DestMask" access="readWrite">
+        <description>
+          SPD selection criterion.
+          Destination IP address mask.  If not {{empty}}, only the indicated network portion of the {{param|DestIP}} address is to be used for selection.  {{empty}} indicates that the full {{param|DestIP}} address is to be used for selection.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="DestIPExclude" access="readWrite">
+        <description>
+          If {{false}}, the rule matches only those packets that match the (masked) {{param|DestIP}} entry, if specified.
+          If {{true}}, the rule matches all packets except those that match the (masked) {{param|DestIP}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourceIP" access="readWrite">
+        <description>
+          SPD selection criterion.
+          Source IP address.  {{empty}} indicates this criterion is not used, i.e. is ''ANY''.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="SourceMask" access="readWrite">
+        <description>
+          SPD selection criterion.
+          Source IP address mask.  If not {{empty}}, only the indicated network portion of the {{param|SourceIP}} address is to be used for selection.  {{empty}} indicates that the full {{param|SourceIP}} address is to be used for selection.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="SourceIPExclude" access="readWrite">
+        <description>
+          If {{false}}, the rule matches only those packets that match the (masked) {{param|SourceIP}} entry, if specified.
+          If {{true}}, the rule matches all packets except those that match the (masked) {{param|SourceIP}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          SPD selection criterion.
+          Protocol number.  A value of -1 indicates this criterion is not used, i.e. is ''ANY''.
+          Note that {{bibref|RFC4301}} refers to this as the ''Next Layer Protocol''.  It is obtained from the IPv4 ''Protocol'' or the IPv6 ''Next Header'' fields.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="255"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="ProtocolExclude" access="readWrite">
+        <description>
+          If {{false}}, the rule matches only those packets that match {{param|Protocol}}, if specified.
+          If {{true}}, the rule matches all packets except those that match {{param|Protocol}}, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="DestPort" access="readWrite">
+        <description>
+          SPD selection criterion.
+          Destination port number.  A value of -1 indicates this criterion is not used, i.e. is ''ANY''.
+          The value of this parameter is ignored for protocols that do not use ports, e.g. ICMP (1).
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="DestPortRangeMax" access="readWrite">
+        <description>
+          SPD selection criterion.
+          If specified, indicates a destination port address range from {{param|DestPort}} through {{param}} (inclusive), in which case {{param}} MUST be greater than or equal to {{param|DestPort}}.
+          A value of -1 indicates that no destination port range is specified.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="DestPortExclude" access="readWrite">
+        <description>
+          If {{false}}, the rule matches only those packets that match {{param|DestPort}} (or port range), if specified.
+          If {{true}}, the rule matches all packets except those that match {{param|DestPort}} (or port range), if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourcePort" access="readWrite">
+        <description>
+          SPD selection criterion.
+          Source port number.  A value of -1 indicates this criterion is not used, i.e. is ''ANY''.
+          The value of this parameter is ignored for protocols that do not use ports, e.g. ICMP (1).
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourcePortRangeMax" access="readWrite">
+        <description>
+          SPD selection criterion.
+          If specified, indicates a source port address range from {{param|SourcePort}} through {{param}} (inclusive), in which case {{param}} MUST be greater than or equal to {{param|SourcePort}}.
+          A value of -1 indicates that no source port range is specified.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourcePortExclude" access="readWrite">
+        <description>
+          If {{false}}, the rule matches only those packets that match {{param|SourcePort}} (or port range), if specified.
+          If {{true}}, the rule matches all packets except those that match {{param|SourcePort}} (or port range), if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="ProcessingChoice" access="readWrite">
+        <description>
+          Indicates how packets that match this rule will be processed {{bibref|RFC4301|Section 4.4.1}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Discard">
+              <description>
+                Packet is not allowed to traverse the IPsec boundary; packet will be discarded
+              </description>
+            </enumeration>
+            <enumeration value="Bypass">
+              <description>
+                Packet is allowed to bypass traverse the IPsec boundary without protection
+              </description>
+            </enumeration>
+            <enumeration value="Protect">
+              <description>
+                Packet is afforded protection as specified by {{param|Profile}}
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Bypass"/>
+        </syntax>
+      </parameter>
+      <parameter name="Profile" access="readWrite">
+        <description>
+          The profile that defines the IPsec treatment for matching packets.  {{reference}}
+          If {{param|ProcessingChoice}} is {{enum|Protect|ProcessingChoice}}, {{param}} MUST NOT be {{empty}}.  In this case, if it ever becomes {{empty}}, e.g. because the referenced profile is deleted, this IPsec Filter table entry is invalid and {{param|Status}} MUST be set to {{enum|Error_Misconfigured|Status}}.
+          If {{param|ProcessingChoice}} is not {{enum|Protect|ProcessingChoice}}, {{param}} is ignored.
+          Any changes to the referenced profile will have an immediate effect on any established IPsec tunnels.  Such changes will often force IKEv2 sessions and child SAs to be re-established.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.Profile." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.Profile.{i}." access="readWrite" minEntries="0" maxEntries="unbounded"
+            numEntriesParameter="ProfileNumberOfEntries">
+      <description>
+        Profile table that represents the IPsec Security Policy Database (SPD) {{bibref|RFC4301|Section 4.4.1}} processing info.  Each entry defines the IPsec treatment for packets that match the {{object|#.Filter}} entries that reference the entry.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="MaxChildSAs" access="readWrite">
+        <description>
+          Controls the maximum number of child Security Association (SA) pairs that can be negotiated by a single IKEv2 session.
+          If a new child SA pair is needed, but the current IKEv2 session already has {{param}} child SA pairs, an additional IKEv2 session (and therefore an additional IPsec tunnel) will be established.
+          A value of 0 means no specific limit.
+          Note that support for more than one child SA pair per IKEv2 session is OPTIONAL {{bibref|RFC5996|Section 1.3}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="RemoteEndpoints" access="readWrite">
+        <description>
+          The host name or IP address of the remote IPsec tunnel endpoint.  If more than one name/address is supplied, they will be tried in turn, i.e. they are in decreasing order of precedence.
+        </description>
+        <syntax>
+          <list maxItems="4"/>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ForwardingPolicy" access="readWrite">
+        <description>
+          Identifier of the forwarding policy associated with traffic that is associated with this profile.
+          The forwarding policy can be referenced by entries in the {{object|##.Routing.Router.{i}.IPv4Forwarding}} and {{object|##.Routing.Router.{i}.IPv6Forwarding}} tables, and therefore allows SPD selection criteria to influence the forwarding decision.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          The "child" security protocol.
+          This is not to be confused with {{object|#.Filter}}.{{param|#.Filter.{i}.Protocol}}, which is an SPD selector that can select packets that already have AH or ESP headers.  {{object}}.{{param}} selects whether AH or ESP will be used when encapsulating a packet.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="AH">
+              <description>
+                Authentication Header {{bibref|RFC4302}}; can only be selected if {{param|#.AHSupported}} is {{true}}
+              </description>
+            </enumeration>
+            <enumeration value="ESP">
+              <description>
+                Encapsulating Security Payload {{bibref|RFC4303}}
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="ESP"/>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2AuthenticationMethod" access="readWrite">
+        <description>
+          IKEv2 CPE authentication method {{bibref|RFC5996|Section 2.15}}. {{reference|an enabled row in the {{object|.Security.Certificate}} table or in another table that contains appropriate CPE credentials}}
+          If {{empty}}, or the referenced row is disabled or deleted, the CPE chooses the authentication method based on local policy.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2AllowedEncryptionAlgorithms" access="readWrite">
+        <description>
+          Allowed IKEv2 encryption algorithms.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam=".IPsec.IKEv2SupportedEncryptionAlgorithms"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ESPAllowedEncryptionAlgorithms" access="readWrite">
+        <description>
+          Allowed ESP encryption algorithms.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam=".IPsec.ESPSupportedEncryptionAlgorithms"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2AllowedPseudoRandomFunctions" access="readWrite">
+        <description>
+          Allowed IKEv2 pseudo-random functions.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam=".IPsec.IKEv2SupportedPseudoRandomFunctions"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2AllowedIntegrityAlgorithms" access="readWrite">
+        <description>
+          Allowed IKEv2 integrity algorithms.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam=".IPsec.SupportedIntegrityAlgorithms"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="AHAllowedIntegrityAlgorithms" access="readWrite">
+        <description>
+          Allowed AH integrity algorithms {{bibref|IKEv2-params|Transform Type 3}} {{bibref|RFC4835|Section 3.2}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam=".IPsec.SupportedIntegrityAlgorithms"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="ESPAllowedIntegrityAlgorithms" access="readWrite">
+        <description>
+          Allowed ESP integrity algorithms {{bibref|IKEv2-params|Transform Type 3}} {{bibref|RFC4835|Section 3.1.1}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam=".IPsec.SupportedIntegrityAlgorithms"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2AllowedDiffieHellmanGroupTransforms" access="readWrite">
+        <description>
+          Allowed IKEv2 Diffie-Hellman group transforms.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam=".IPsec.SupportedDiffieHellmanGroupTransforms"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2DeadPeerDetectionTimeout" access="readWrite">
+        <description>
+          IKEv2 Dead Peer Detection (DPD) timeout in {{units}}.  {{bibref|RFC5996|section 2.4}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2NATTKeepaliveTimeout" access="readWrite">
+        <description>
+          IKEv2 NAT traversal (NAT-T) keepalive timeout in {{units}}.  {{bibref|RFC3948|Section 4}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="AntiReplayWindowSize" access="readWrite">
+        <description>
+          The size of the AH or ESP Anti-Replay Window.  {{bibref|RFC4302|Section B.2}} {{bibref|RFC4303|Section A2}}
+          A value of 0 means that Sequence Number Verification is disabled.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="DoNotFragment" access="readWrite">
+        <description>
+          Controls the value of the ''Do Not Fragment'' (DF) bit.  {{bibref|RFC4301|Section 8.1}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Set"/>
+            <enumeration value="Clear"/>
+            <enumeration value="Copy">
+              <description>Copy from inner header; applies only when both inner and outer headers are IPv4</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DSCPMarkPolicy" access="readWrite">
+        <description>
+          DSCP with which to mark the outer IP header for traffic that is associated with this IPsec channel.
+          A value of -1 indicates copy from the incoming packet.
+          A value of -2 indicates automatic marking of DSCP.
+          De-tunneled packets are never re-marked.
+          Automatic DSCP marking behavior is a local matter to the CPE, possibly influenced by other Broadband Forum standards that it supports.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-2" maxInclusive="63"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2SATrafficLimit" access="readWrite">
+        <description>
+          IKEv2 SA lifetime in {{units}}, or zero if there is no traffic constraint on its expiration.
+          If both {{param}} and {{param|IKEv2SATimeLimit}} are non-zero, the IKEv2 SA is deleted when the first limit is reached.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bytes"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2SATimeLimit" access="readWrite">
+        <description>
+          IKEv2 SA lifetime in {{units}}, or zero if there is no time constraint on its expiration.
+          If both {{param}} and {{param|IKEv2SATrafficLimit}} are non-zero, the IKEv2 SA is deleted when the first limit is reached.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="IKEv2SAExpiryAction" access="readWrite">
+        <description>
+          Action to take when an IKEv2 SA expires, whether as a result of hitting a traffic limit or a time limit.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Renegotiate"/>
+            <enumeration value="Delete"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ChildSATrafficLimit" access="readWrite">
+        <description>
+          Child SA lifetime in {{units}}, or zero if there is no traffic constraint on its expiration.
+          If both {{param}} and {{param|ChildSATimeLimit}} are non-zero, the child SA is deleted when the first limit is reached.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bytes"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+      <parameter name="ChildSATimeLimit" access="readWrite">
+        <description>
+          Child SA lifetime in {{units}}, or zero if there is no time constraint on its expiration.
+          If both {{param}} and {{param|ChildSATrafficLimit}} are non-zero, the child SA is deleted when the first limit is reached.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ChildSAExpiryAction" access="readWrite">
+        <description>
+          Action to take when a Child SA expires, whether as a result of hitting a traffic limit or a time limit.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Renegotiate"/>
+            <enumeration value="Delete"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SentCPAttrNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.Profile.{i}.SentCPAttr.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" enableParameter="Enable" numEntriesParameter="SentCPAttrNumberOfEntries">
+      <description>
+        Each instance of this object represents an IKEv2 Configuration Payload (CP) {{bibref|RFC5996|Section 3.15}} Attribute that MUST, if enabled, be sent in IKEv2 CP CFG_REQUEST messages.  All such Attributes MUST be listed.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Type"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Type" access="readWrite">
+        <description>
+          CP Attribute Type as described in {{bibref|RFC5996|Section 3.15.1}} and defined in {{bibref|IKEv2-params|IKEv2 Configuration Payload Attribute Types}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="32767"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Value" access="readWrite">
+        <description>
+          A hexbinary encoded CP Attribute Value as described in {{bibref|RFC5996|Section 3.15.1}} and defined in {{bibref|IKEv2-params|IKEv2 Configuration Payload Attribute Types}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.Tunnel.{i}." access="readOnly" minEntries="0" maxEntries="unbounded"
+            numEntriesParameter="TunnelNumberOfEntries">
+      <description>
+        Represents an IPsec tunnel, i.e. a virtual IP interface that models an IPsec tunnel entry point and exit point.  A {{object}} instance always references (and has the same lifetime as) a ({{enum|Tunnel|.IP.Interface.{i}.Type}},{{enum|Tunneled|.IP.Interface.{i}.Type}}) {{object|.IP.Interface}} pair.  The {{object}} instance models the IPsec-specific concepts, the {{enum|Tunnel|.IP.Interface.{i}.Type}} {{object|.IP.Interface}} instance models the generic concepts, and the {{enum|Tunneled|.IP.Interface.{i}.Type}} {{object|.IP.Interface}} instance exists only so it can be referenced by forwarding or filter rules.
+        {{object}} instances are automatically created (as needed) when {{object|#.Filter}} instances are enabled and disabled.
+        Each instance's {{param|Filters}} parameter references the {{object|#.Filter}} instances that require the {{object}} instance to exist.  If this list ever becomes {{empty}}, e.g. because all the referenced {{object|#.Filter}} instances have been disabled or deleted, the CPE MAY choose not to delete the {{object}} instance (and its associated ({{enum|Tunnel|.IP.Interface.{i}.Type}},{{enum|Tunneled|.IP.Interface.{i}.Type}}) {{object|.IP.Interface}} pair).  This can be desirable, because {{object|.QoS.Classification}}, {{object|.Routing.Router.{i}.IPv4Forwarding}}, {{object|.Routing.Router.{i}.IPv6Forwarding}} etc instances might be referencing the {{object|.IP.Interface}} instances.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="TunnelInterface"/>
+        <parameter ref="TunneledInterface"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="TunnelInterface" access="readOnly">
+        <description>
+          The corresponding auto-created {{enum|Tunnel|Device.IP.Interface.{i}.Type}} {{object|.IP.Interface}} instance.  {{reference||delete}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".IP.Interface." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TunneledInterface" access="readOnly">
+        <description>
+          The corresponding auto-created {{enum|Tunneled|Device.IP.Interface.{i}.Type}} {{object|.IP.Interface}} instance.  {{reference||delete}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".IP.Interface." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Filters" access="readOnly">
+        <description>
+          The {{object|#.Filter}} instances that require this {{object}} instance to exist.  {{reference}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row" targetParent=".IPsec.Filter."/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.Tunnel.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Statistics for this IPsec tunnel, i.e. all traffic that has passed through the tunnel, including IKEv2 negotiation, IKEv2 SA and ChildSA traffic.
+        The CPE MUST reset the tunnel's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the tunnel becomes operationally down due to a previous administrative down (i.e. its associated {{param|.IP.Interface.{i}.Status}} parameter transitions to a down state after the tunnel has been disabled) or when the tunnel becomes administratively up (i.e. its associated {{param|.IP.Interface.{i}.Enable}} parameter transition from {{false}} to {{true}}).
+        Note that this object does not include generic statistics that are available in the associated {{object|.IP.Interface.{i}.Stats}} object.
+      </description>
+      <parameter name="DecryptionErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} discarded due to ESP decryption errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="IntegrityErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} discarded due to integrity errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ReplayErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} discarded due to replay errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PolicyErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} discarded due to policy errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="OtherReceiveErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} discarded due to errors other than decryption, integrity, replay or policy errors. This can include packets dropped due to a lack of receive buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.IKEv2SA.{i}." access="readOnly" minEntries="0" maxEntries="unbounded"
+            numEntriesParameter="IKEv2SANumberOfEntries" dmr:noUniqueKeys="true">
+      <description>
+        Represents an IKEv2 Security Association (SA), corresponding to an IKEv2 session.  Instances are automatically created and deleted as IKEv2 SAs are created and deleted.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Tunnel"/>
+      </uniqueKey>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the IKEv2 SA.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Tunnel" access="readOnly">
+        <description>
+          The associated {{object|#.Tunnel}} instance.  {{reference}}
+          Note that {{param}} is a unique key, i.e only one {{object}} instance is associated with a given {{object|#.Tunnel}} instance.  During rekeying {{bibref|RFC5996|Section 2.8}}, a new IKEv2 SA is created and inherits the existing IKEv2 SA's child SAs, then the old IKEv2 SA is deleted.  From the management point of view the new and old IKEv2 SAs are the same SA and MUST be modeled using the same {{object}} instance.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.Tunnel." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LocalAddress" access="readOnly">
+        <description>
+          The local IP address that this IKEv2 SA was negotiated with.  This is assigned via IKEv2 and will also be available via the associated {{object|#.Tunnel}}'s {{param|#.Tunnel.{i}.TunnelInterface}} {{object|##.IP.Interface.{i}.IPv4Address}} or {{object|##.IP.Interface.{i}.IPv6Address}} table (as appropriate).  
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="RemoteAddress" access="readOnly">
+        <description>
+          The IP address of the peer that this IKEv2 SA was negotiated with.  This will be the IP address of one of the security gateways configured via {{param|#.Profile.{i}.RemoteEndpoints}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="EncryptionAlgorithm" access="readOnly">
+        <description>
+          The encryption algorithm applied to traffic carried by this IKEv2 SA.
+          This will be one of the {{param|#.Profile.{i}.IKEv2AllowedEncryptionAlgorithms}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="EncryptionKeyLength" access="readOnly">
+        <description>
+          The length of the encryption key in {{units}} used for the algorithm specified in the {{param|EncryptionAlgorithm}} parameter. 
+          The value is 0 if the key length is implicit in the specified algorithm or there is no encryption applied.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bits"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PseudoRandomFunction" access="readOnly">
+        <description>
+          The pseudo-random function used by this IKEv2 SA.
+          This will be one of the {{param|#.Profile.{i}.IKEv2AllowedPseudoRandomFunctions}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="IntegrityAlgorithm" access="readOnly">
+        <description>
+          The integrity algorithm applied to the traffic carried by this IKEv2 SA.
+          This will be one of the {{param|#.Profile.{i}.IKEv2AllowedIntegrityAlgorithms}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DiffieHellmanGroupTransform" access="readOnly">
+        <description>
+          The Diffie-Hellman Group used by this IKEv2 SA.
+          This will be one of the {{param|#.Profile.{i}.IKEv2AllowedDiffieHellmanGroupTransforms}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CreationTime" access="readOnly">
+        <description>
+          When this IKEv2 SA was set up.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="NATDetected" access="readOnly">
+        <description>
+          Whether NAT traversal is supported by the device and, if so, whether a NAT was detected.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="Local"/>
+            <enumeration value="Remote"/>
+            <enumeration value="Unsupported"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ReceivedCPAttrNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="ChildSANumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.IKEv2SA.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Statistics for this IKEv2 Security Association (SA).
+        The CPE MUST reset the IKEv2 SA's Stats parameters (unless otherwise stated in individual object or parameter descriptions) whenever the associated {{param|#.Tunnel}} instance's Stats parameters are reset.
+      </description>
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of {{units}} handled in the outbound direction by the IKEv2 SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} handled in the inbound direction by the IKEv2 SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of {{units}} handled in the outbound direction by the IKEv2 SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} handled in the inbound direction by the IKEv2 SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound {{units}} from this IKEv2 SA discarded for any reason. This can include {{units}} dropped due to a lack of transmit buffer space.
+          Note that this refers to IKE protocol {{units}}, and not to {{units}} carried by other SAs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="DecryptionErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} to this IKEv2 SA discarded due to decryption errors.
+          Note that this refers to IKEv2 protocol {{units}}, and not to {units}} carried by other SAs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="IntegrityErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} to this IKEv2 SA discarded due to integrity errors.
+          Note that this refers to IKEv2 protocol {{units}}, and not to {{units}} carried by other SAs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="OtherReceiveErrors" access="readOnly">
+        <description>
+          The total number of inbound {{units}} to this IKEv2 SA discarded for reasons other than decryption or integrity errors. This can include {{units}} dropped due to a lack of receive buffer space.
+          Note that this refers to IKEv2 protocol {{units}}, and not to {{units}} carried by other SAs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.IKEv2SA.{i}.ReceivedCPAttr.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" numEntriesParameter="ReceivedCPAttrNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>
+        This is a transitory table that lists all the IKEv2 Configuration Payload (CP) {{bibref|RFC5996|Section 3.15}} Attributes that have been received via CFG_REPLY messages.  Table entries are automatically created to correspond with received Attributes. However, it is a local matter to the CPE when to delete old table entries.
+        If the same Attribute is received multiple times, it is up to the CPE to decide which entries to include (i.e. whether the same Attribute will be present multiple times). In order to allow for the same Attribute to be present multiple times within the table, this table has no unique key defined.
+      </description>
+
+      <parameter name="Type" access="readOnly">
+        <description>
+          CP Attribute Type as described in {{bibref|RFC5996|Section 3.15.1}} and defined in {{bibref|IKEv2-params|IKEv2 Configuration Payload Attribute Types}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="32767"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Value" access="readOnly">
+        <description>
+          A hexbinary encoded CP Attribute Value as described in {{bibref|RFC5996|Section 3.15.1}} and defined in {{bibref|IKEv2-params|IKEv2 Configuration Payload Attribute Types}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.IKEv2SA.{i}.ChildSA.{i}." access="readOnly" minEntries="0" maxEntries="unbounded"
+            numEntriesParameter="ChildSANumberOfEntries">
+      <description>
+        Represents a child Security Association (SA) pair, i.e. an inbound child SA and an outbound child SA.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="InboundSPI"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="OutboundSPI"/>
+      </uniqueKey>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the child SA pair.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="InboundSPI" access="readOnly">
+        <description>
+          The inbound child SA's Security Parameter Index (SPI).
+        </description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="OutboundSPI" access="readOnly">
+        <description>
+          The outbound child SA's Security Parameter Index (SPI).
+        </description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="CreationTime" access="readOnly">
+        <description>
+          The date and time when the child SA was created.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Statistics for this child Security Association (SA).
+        The CPE MUST reset the child SA's Stats parameters (unless otherwise stated in individual object or parameter descriptions) whenever the parent {{object|#}} instance's Stats parameters are reset.
+      </description>
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The number of {{units}} handled by the outbound child SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The number of {{units}} handled by the inbound child SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The number of {{units}} handled by the outbound child SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The number of {{units}} handled by the inbound child SA.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The number of {{units}} discarded by the outbound child SA due to any error. This can include compression errors or errors due to a lack of transmit buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="DecryptionErrors" access="readOnly">
+        <description>
+          The number of {{units}} discarded by the inbound child SA due to decryption errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/> 
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="IntegrityErrors" access="readOnly">
+        <description>
+          The number of {{units}} discarded by the inbound child SA due to integrity errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/> 
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="ReplayErrors" access="readOnly">
+        <description>
+          The number of {{units}} discarded by the inbound child SA due to replay errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="PolicyErrors" access="readOnly">
+        <description>
+          The number of {{units}} discarded by the inbound child SA due to policy errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="OtherReceiveErrors" access="readOnly">
+        <description>
+          The number of {{units}} discarded by the inbound child SA due to errors other than decryption, integrity, replay or policy errors. This can include decompression errors or errors due to a lack of receive buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <object base="Device.DSLite.InterfaceSetting.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter base="EndpointAssignmentPrecedence" access="readWrite">
+        <description action="replace">
+          Indicates the preferred method to be used in assigning values to {{param|EndpointName}} when both static and dynamic values are available.  See {{param|EndpointName}} for further clarification.
+        </description>
+        <syntax>
+          <string/>
+          <default type="factory" value="DHCPv6"/>
+        </syntax>
+      </parameter>
+      <parameter name="EndpointAddressTypePrecedence" access="readWrite">
+        <description>
+          Indicates the preferred method to be used to assign the address of the DS-Lite Endpoint when both {{param|EndpointName}} and {{param|EndpointAddress}} values are available and the {{enum|Static|EndpointAssignmentPrecedence}} method is used.  See {{param|EndpointName}} and {{param|EndpointAddress}} for further clarification.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="FQDN">
+              <description>
+                Derive from {{param|EndpointName}} via a DNS lookup.
+              </description>
+            </enumeration>
+            <enumeration value="IPv6Address">
+              <description>
+                Use {{param|EndpointAddress}} directly.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="EndpointAddressInUse" access="readOnly">
+        <description>
+          Indicates the address currently in use for the tunnel concentrator (remote endpoint).  It is derived from the values of the {{param|EndpointAssignmentPrecedence}}, {{param|EndpointAddressTypePrecedence}}, {{param|EndpointName}} and {{param|EndpointAddress}} parameters.
+          It is {{empty}} if no endpoint address is currently known.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+      <parameter base="EndpointName" access="readWrite">
+        <description action="append">
+          Note: {{param}} is only writable when {{param|EndpointAssignmentPrecedence}} is {{enum|Static|EndpointAssignmentPrecedence}}; otherwise, {{param}} is automatically configured via the DHCPv6 received option.
+        </description>
+      </parameter>
+      <parameter base="EndpointAddress" access="readWrite">
+        <description action="replace">
+          The address of the tunnel concentrator (remote endpoint).
+          This parameter can only be assigned statically (e.g. present in the factory default configuration or set by the ACS).
+        </description>
+      </parameter>
+      <parameter base="Origin" access="readOnly">
+        <description action="replace">
+          Method used to assign {{param|EndpointAddressInUse}}.
+        </description>
+      </parameter>
+    </object>
+
+
+    <!-- DHCPv6 option 1 clarification was inadvertently omitted from tr-181-2-4-0.xml. -->
+    <object base="Device.QoS.Classification.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="SourceClientID" access="readWrite">
+        <description action="append">Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as ''DUID''.</description>
+      </parameter>
+      <parameter base="DestClientID" access="readWrite">
+        <description action="append">Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as ''DUID''.</description>
+      </parameter>
+    </object>
+
+    <profile name="IPsec:1">
+      <object ref="Device.IPsec." requirement="present">
+        <parameter ref="AHSupported" requirement="readOnly"/>
+        <parameter ref="IKEv2SupportedEncryptionAlgorithms" requirement="readOnly"/>
+        <parameter ref="ESPSupportedEncryptionAlgorithms" requirement="readOnly"/>
+        <parameter ref="IKEv2SupportedPseudoRandomFunctions" requirement="readOnly"/>
+        <parameter ref="SupportedIntegrityAlgorithms" requirement="readOnly"/>
+        <parameter ref="SupportedDiffieHellmanGroupTransforms" requirement="readOnly"/>
+        <parameter ref="MaxFilterEntries" requirement="readOnly"/>
+        <parameter ref="MaxProfileEntries" requirement="readOnly"/>
+        <parameter ref="FilterNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ProfileNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="TunnelNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPsec.Stats." requirement="present">
+        <parameter ref="NegotiationFailures" requirement="readOnly"/>
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="UnknownSPIErrors" requirement="readOnly"/>
+        <parameter ref="DecryptionErrors" requirement="readOnly"/>
+        <parameter ref="IntegrityErrors" requirement="readOnly"/>
+        <parameter ref="OtherReceiveErrors" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPsec.Filter.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="AllInterfaces" requirement="readWrite"/>
+        <parameter ref="DestIP" requirement="readWrite"/>
+        <parameter ref="DestMask" requirement="readWrite"/>
+        <parameter ref="DestIPExclude" requirement="readWrite"/>
+        <parameter ref="SourceIP" requirement="readWrite"/>
+        <parameter ref="SourceMask" requirement="readWrite"/>
+        <parameter ref="SourceIPExclude" requirement="readWrite"/>
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="ProtocolExclude" requirement="readWrite"/>
+        <parameter ref="DestPort" requirement="readWrite"/>
+        <parameter ref="DestPortRangeMax" requirement="readWrite"/>
+        <parameter ref="DestPortExclude" requirement="readWrite"/>
+        <parameter ref="SourcePort" requirement="readWrite"/>
+        <parameter ref="SourcePortRangeMax" requirement="readWrite"/>
+        <parameter ref="SourcePortExclude" requirement="readWrite"/>
+        <parameter ref="ProcessingChoice" requirement="readWrite"/>
+        <parameter ref="Profile" requirement="readWrite"/>
+      </object>
+      <object ref="Device.IPsec.Profile.{i}." requirement="createDelete">
+        <parameter ref="MaxChildSAs" requirement="readWrite"/>
+        <parameter ref="RemoteEndpoints" requirement="readWrite"/>
+        <parameter ref="ForwardingPolicy" requirement="readWrite"/>
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="IKEv2AuthenticationMethod" requirement="readWrite"/>
+        <parameter ref="IKEv2AllowedEncryptionAlgorithms" requirement="readWrite"/>
+        <parameter ref="ESPAllowedEncryptionAlgorithms" requirement="readWrite"/>
+        <parameter ref="IKEv2AllowedPseudoRandomFunctions" requirement="readWrite"/>
+        <parameter ref="IKEv2AllowedIntegrityAlgorithms" requirement="readWrite"/>
+        <parameter ref="ESPAllowedIntegrityAlgorithms" requirement="readWrite"/>
+        <parameter ref="IKEv2AllowedDiffieHellmanGroupTransforms" requirement="readWrite"/>
+      </object>
+      <object ref="Device.IPsec.Tunnel.{i}." requirement="present">
+        <parameter ref="TunnelInterface" requirement="readOnly"/>
+        <parameter ref="TunneledInterface" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPsec.Tunnel.{i}.Stats." requirement="present">
+        <parameter ref="DecryptionErrors" requirement="readOnly"/>
+        <parameter ref="IntegrityErrors" requirement="readOnly"/>
+        <parameter ref="OtherReceiveErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="IPsecAdv:1" extends="IPsec:1">
+      <object ref="Device.IPsec." requirement="present">
+        <parameter ref="IKEv2SANumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPsec.IKEv2SA.{i}." requirement="present">
+        <parameter ref="Tunnel" requirement="readOnly"/>
+        <parameter ref="LocalAddress" requirement="readOnly"/>
+        <parameter ref="RemoteAddress" requirement="readOnly"/>
+        <parameter ref="CreationTime" requirement="readOnly"/>
+        <parameter ref="ChildSANumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPsec.IKEv2SA.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="DecryptionErrors" requirement="readOnly"/>
+        <parameter ref="IntegrityErrors" requirement="readOnly"/>
+        <parameter ref="OtherReceiveErrors" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPsec.IKEv2SA.{i}.ChildSA.{i}." requirement="present">
+        <parameter ref="InboundSPI" requirement="readOnly"/>
+        <parameter ref="OutboundSPI" requirement="readOnly"/>
+        <parameter ref="CreationTime" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="DecryptionErrors" requirement="readOnly"/>
+        <parameter ref="IntegrityErrors" requirement="readOnly"/>
+        <parameter ref="OtherReceiveErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+
+    <profile name="DSLite:2" base="DSLite:1">
+      <object ref="Device.DSLite.InterfaceSetting.{i}." requirement="present">
+        <parameter ref="EndpointAddressTypePrecedence" requirement="readWrite"/>
+        <parameter ref="EndpointAddressInUse" requirement="readOnly"/>
+      </object>
+    </profile>
+  </model>
+</dm:document>

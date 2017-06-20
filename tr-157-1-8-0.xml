@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Component Objects for CWMP
+  
+  Copyright (c) 2009-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    This document defines objects for use in CWMP managed devices.  The objects
+    may exist at the top level of a hierarchy, or in some cases within an 
+    existing object.  The objects are intended for use in all CWMP Root 
+    objects. The objects define varying functionality, diagnostics, etc. that 
+    are agnostic to the type of device.
+    
+  Editors:
+    John Blackford, Pace
+    Mike Digdon, Aptean
+    
+  BroadbandHome™ Working Group Chairs:
+    John Blackford, Pace
+    Jason Walls, QACafe
+
+  Issue History:
+    * March 2009: tr-157-1-0-0.xml
+        - corresponds to TR-157 Issue 1, Section 4 
+          (Data Model Definition) and Section 5 (Profile Definition)
+    * September 2009: tr-157-1-1-0.xml
+        - corresponds to TR-157 Issue 1 Amendment 1, Section 4 
+          (Data Model Definition) and Section 5 (Profile Definition)
+    * May 2010: tr-157-1-2-0.xml
+        - corresponds to TR-157 Issue 1 Amendment 2
+    * December 2010: tr-157-1-3-0.xml
+        - corresponds to TR-157 Issue 1 Amendment 3
+    * September 2011: tr-157-1-4-0.xml
+        - updates for Alias-Based Addressing and Proxy Management
+    * December 2011: tr-157-1-5-0.xml
+        - updates related to 3GPP LTE and 3GPP2 cdma2000 (TR-196 Issue 2)
+    * May 2012: tr-157-1-6-0.xml
+        - updates for Bulk Data Collection (TR-232)
+    * November 2012: tr-157-1-7-0.xml
+        - new components for UPnP and DnsSd Discovery updates to 
+          InternetGatewayDevice.DeviceInfo.SupportedDataModel.{i}.URL and 
+          Proxy objects for Discovery and Proxy References
+    * November 2013: tr-157-1-8-0.xml
+        - updates for XMPP Connections and Standby Policy
+
+  Publication Date:
+    * January 8, 2014
+
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-4" 
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-4
+                                   http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-4.xsd
+                                 urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                                   http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-157-1-8-0"  file="tr-157-1-8-0.xml">
+
+  <description>
+    Component Object definitions
+    TR-157 Issue 1 Amendment 8
+  </description>
+
+  <import file="tr-106-1-0-types.xml">
+    <dataType name="Alias"/>
+  </import>
+  
+  <import file="tr-157-1-7.xml" spec="urn:broadband-forum-org:tr-157-1-7">
+    <component name="BulkDataCollection"/>
+    <component name="DI_Location"/>
+    <component name="DI_MemoryStatus"/>
+    <component name="DI_NetworkProperties"/>
+    <component name="DI_Processors"/>
+    <component name="DI_ProcessStatus"/>
+    <component name="DI_ProxierInfo"/>
+    <component name="DI_SupportedDataModel"/>
+    <component name="DI_TemperatureStatus"/>
+    <component name="DI_VendorLogFiles"/>
+    <component name="DLNACapabilities"/>
+    <component name="DNS_SD"/>
+    <component name="DownloadAvailability"/>
+    <component name="FaultManagement"/>
+    <component name="MS_AutonomousTransferCompletePolicy"/>
+    <component name="MS_DUStateChangeCompletePolicy"/>
+    <component name="MS_EmbeddedDevice"/>
+    <component name="MS_VirtualDevice"/>
+    <component name="NSLookupDiag"/>
+    <component name="PeriodicStatistics"/>
+    <component name="Security"/>
+    <component name="SelfTestDiag"/>
+    <component name="SimpleFirewall"/>
+    <component name="SmartCardReader"/>
+    <component name="SoftwareModules"/>
+    <component name="UI_LocalDisplay"/>
+    <component name="USBHosts"/>
+    <component name="USBHosts_Device2"/>
+    <component name="User"/>
+    <component name="UI_RemoteAccess"/>
+    <component name="UPnP"/>
+  </import>
+  
+  <!--New MS_StandbyPolicy Component-->
+  <component name="MS_StandbyPolicy">
+    <object name="ManagementServer.StandbyPolicy." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Parameters related to CPE behavior when waking up from standby. If this object is supported then the CPE MUST support the requirements of {{bibref|TR-069a5|Annex L}}.
+        NOTE: "CR", as used in the names and descriptions of the parameters defined in this object, refers to the Connection Request concept defined in TR-069.
+      </description>
+      <parameter name="CRUnawarenessMaxDuration" access="readWrite">
+        <description>
+          When waking up from a non CR-Aware Standby that lasted more than this parameter's value (in {{units}}), the CPE MUST issue a WAKEUP Event.
+          If the value is -1, the CPE MUST NOT ever issue WAKEUP Events for having been non CR-aware.
+        </description>
+        <syntax>
+          <int>
+            <units value="seconds"/>
+            <range minInclusive="-1"/>
+          </int>
+          <default type="factory" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="MaxMissedPeriodic" access="readWrite">
+        <description>
+          When waking up from a non fully Timer-Aware Standby that made it miss more than this parameter's value Periodic Contacts, the CPE MUST issue a WAKEUP Event.
+          If the value is -1, the CPE MUST NOT ever issue WAKEUP Events for exceeding that limit.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+          <default type="factory" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="NotifyMissedScheduled" access="readWrite">
+        <description>
+          When waking up from a non fully Timer-Aware Standby that made it miss at least one Scheduled Contact, the CPE MUST issue a WAKEUP Event if this parameter is {{true}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="NetworkAwarenessCapable" access="readOnly">
+        <description>
+          Indicates that the CPE is capable of CR-Aware Standby.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="SelfTimerCapable" access="readOnly">
+        <description>
+          Indicates that the CPE is capable of Timer-Aware Standby.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="CRAwarenessRequested" access="readWrite">
+        <description>
+          If {{param|NetworkAwarenessCapable}} and this parameter are both {{true}}, the CPE MUST NOT go into a non CR-Aware Standby state.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="PeriodicAwarenessRequested" access="readWrite">
+        <description>
+          If {{param|SelfTimerCapable}} and this parameter are both {{true}}, the CPE MUST NOT go into a standby state that prevents it from honoring Periodic Contacts.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="ScheduledAwarenessRequested" access="readWrite">
+        <description>
+          If this parameter is true, the CPE MUST NOT go into a standby state that prevents it from honoring Scheduled Contacts. This means that, whenever the ACS has requested a Scheduled Contact:
+          *if {{param|SelfTimerCapable}} is {{true}} and the CPE chooses to go into Standby before the Scheduled Contact has been honored, it MUST use a Timer-Aware Standby;
+          *if {{param|SelfTimerCapable}} is {{false}}, the CPE MUST NOT go into Standby before the Scheduled Contact has been honored.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="StandbyPolicy:1">
+      <description>
+        Note that support for this profile implies support for the requirements of {{bibref|TR-069a5|Annex L}}.
+      </description>
+      <object ref="ManagementServer.StandbyPolicy." requirement="present">
+        <parameter ref="CRUnawarenessMaxDuration" requirement="readWrite"/>
+        <parameter ref="MaxMissedPeriodic" requirement="readWrite"/>
+        <parameter ref="NotifyMissedScheduled" requirement="readWrite"/>
+        <parameter ref="NetworkAwarenessCapable" requirement="readOnly"/>
+        <parameter ref="SelfTimerCapable" requirement="readOnly"/>
+        <parameter ref="CRAwarenessRequested" requirement="readWrite"/>
+        <parameter ref="PeriodicAwarenessRequested" requirement="readWrite"/>
+        <parameter ref="ScheduledAwarenessRequested" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <!--New XMPP Component-->
+  <component name="XMPP">
+    <object name="XMPP." access="readOnly" minEntries="1" maxEntries="1">
+      <description>The {{object}} represents the XMPP capabilities of the device as described in {{bibref|TR-069a5|Appendix III}}.</description>
+      <parameter name="ConnectionNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+    
+    <object name="XMPP.Connection.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" 
+            numEntriesParameter="ConnectionNumberOfEntries" enableParameter="Enable">
+      <description>
+        The {{object}} represents a XMPP connection between the device and a server. The {{param|Username}}, {{param|Domain}} and {{param|Resource}} comprise the full identity (JabberID) of this {{object}} for this device.
+      </description>
+      
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Username"/>
+        <parameter ref="Domain"/>
+        <parameter ref="Resource"/>
+      </uniqueKey>
+      
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax><dataType ref="Alias"/></syntax>
+      </parameter>
+      <parameter name="Username" access="readWrite">
+        <description>
+          The proposed local-part of the Jabber ID of this {{object}}, and the value to be used to authenticate this {{object}} when making a connection to the Server using the procedure outlined in {{bibref|RFC6120|Section 6}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate this {{object}} when making a connection to the {{object|Server}} using the procedure outlined in {{bibref|RFC6120|Section 6}}.
+          Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the  value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a  factory reset.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Domain" access="readWrite">
+        <description>The proposed domain-part of the Jabber ID of this {{object}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Resource" access="readWrite">
+        <description>The proposed resource-part of the Jabber ID of this {{object}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="JabberID" access="readOnly">
+        <description>
+          The complete Jabber ID as determined by the first-hop XMPP server at time of connection establishment.  This Jabber ID will usually be the standard concatentation of the local-part (Username), domain-part (Domain), and resource-part (Resource) as defined in {{bibref|RFC6120|Section 2.1}} (local-part@domain-part/resource-part), but since the Jabber ID is owned by the first-hop XMPP Server there are cases where the value will be different.
+        </description>
+        <syntax><string></string></syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of this {{object}} (see {{bibref|TR-181i2|Section 4.2.2}}).  {{enum}}
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Disabled}} or {{enum|Error}} if there is a fault condition on the interface). 
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Enabled}} if and only if the interface is able to transmit and receive PDUs; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Enabled}} if still operable when the expected actions have completed);  it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="ServerNotPresent"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error_AuthenticationFailure"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChangeDate" access="readOnly">
+        <description>The date and time at which this {{object}} entered into its current operational state.</description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerConnectAlgorithm" access="readWrite">
+        <description>The algorithm the {{object}} uses when connecting with the associated lists of servers. {{enum}}</description>
+        <syntax>
+          <string>
+            <enumeration value="DNS-SRV"><description>Use the connection algorithm as specified in {{bibref|RFC6120|Section 3.2}} where the value of the {{param|Domain}} parameter is used to look up the server address and port to use.</description></enumeration>
+            <enumeration value="ServerTable"><description>Use the instances of the {{object|Server}} table based on the values of the {{param|Server.{i}.Priority}} and {{param|Server.{i}.Weight}} parameters as the basis for reconnect. Instances must be reachable and reachable instances with the lowest value MUST be preferred.</description></enumeration>
+          </string>
+          <default type="object" value="DNS-SRV"/>
+        </syntax>
+      </parameter>
+      <parameter name="KeepAliveInterval" access="readWrite">
+        <description>
+          The number of {{units}} that keep alive events as specified in {{bibref|RFC6120|Section 4.6.1}} are sent by this {{object}}. 
+          A value of 0 disables the keep alive functionality. A value of -1 indicates that the keep alive interval is a vendor specific implementation.
+          {{bibref|RFC6120|Section 4.6.4}} recommends not checking more frequently than every 5 minutes (or 300 {{units}}).
+        </description>
+        <syntax>
+          <long>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </long>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerConnectAttempts" access="readWrite">
+        <description>
+          The number of times that this {{object}} attempts to connect to a given IP address before moving on to the current server's next IP address, or to the next server if the current server has no more IP addresses.
+          If {{param}}, {{param|ServerRetryInitialInterval}}, {{param|ServerRetryIntervalMultiplier}} and {{param|ServerRetryMaxInterval}} all have their default values, the maximum reconnection wait intervals, in ''minutes'', will be ''{1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 512, 512, 512, 512, 512}''.  After the initial attempt there are 15 further attempts, making a total of 16.  The maximum reconnection wait interval is reached on the 10th retry, i.e. the 11th attempt.
+          NOTE: If this {{object}} fails to connect to any of the servers' IP addresses, fallback behavior SHOULD be as specified in {{bibref|RFC6120|Section 3.2}}.
+          NOTE: If the value of this parameter is 0, server connection and reconnection behavior is implementation-dependent.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="16"/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerRetryInitialInterval" access="readWrite">
+        <description>
+          The maximum first reconnection wait interval, in {{units}}, as specified in {{bibref|TR-069a5|Annex K XMPP Connection Request}}.
+          The Device MUST use a random value between ''0'' and {{param}} as the first reconnection wait interval.
+          NOTE: If the value of the {{param|ServerConnectAttempts}} parameter is 0, the value of this parameter is ignored.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerRetryIntervalMultiplier" access="readWrite">
+        <description>
+          The reconnection interval multiplier as specified in {{bibref|TR-069a5|Annex K XMPP Connection Request}}. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535.
+          For the ''n''th reconnection wait interval, the Device MUST use a random value, in ''seconds'', between ''0'' and {{param|ServerRetryInitialInterval}} * ({{param}} / 1000) ** (''n'' - ''1'').
+          NOTE: If the value of the {{param|ServerConnectAttempts}} parameter is 0, the value of this parameter is ignored.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="2000"/>
+        </syntax>
+      </parameter>
+      <parameter name="ServerRetryMaxInterval" access="readWrite">
+        <description>
+          The maximum reconnection wait interval, in {{units}}.
+          If the ''n''th reconnection wait interval calculated from {{param|ServerRetryInitialInterval}} and {{param|ServerRetryIntervalMultiplier}} exceeds the value of this parameter, then the Device MUST use the value of this parameter as the next reconnection wait interval.
+          NOTE: If the value of the {{param|ServerConnectAttempts}} parameter is 0, the value of this parameter is ignored.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="30720"/>
+        </syntax>
+      </parameter>
+      <parameter name="UseTLS" access="readWrite">
+        <description>
+          This parameter allows an ACS to configure whether or not this XMPP Connection is required to use TLS independent of whether or not the XMPP Server that is being connected to is configured for TLS "mandatory-to-negotiate".
+          If the value of {{param}} is {{true}} then the CPE will initiate TLS negotiation if not required to by the XMPP Server.  
+          If the value of {{param}} is {{false}} then the CPE will not initiate TLS negotiation if not required to by the XMPP Server.
+        </description>
+        <syntax>
+          <boolean></boolean>
+          <default type="object" value="false"></default>
+        </syntax>
+      </parameter>
+      <parameter name="TLSEstablished" access="readOnly">
+        <description>
+          This parameter represents the TLS state of this XMPP Connection.
+          If this XMPP Connection is established and is secured by TLS then the value of this parameter is {{true}}.
+          If this XMPP Connection is either not established or established but not secured by TLS then the value of this parameter is {{false}}.
+        </description>
+        <syntax><boolean></boolean></syntax>
+      </parameter>
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+    
+    <object name="XMPP.Connection.{i}.Server.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" 
+            numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable">
+      <description>
+        The {{object}} represents an XMPP server to be used for a {{object|##.Connection}}.
+        This table is only relevant when {{param|##.Connection.{i}.ServerConnectAlgorithm}} is set to {{enum|ServerTable|##.Connection.{i}.ServerConnectAlgorithm}}.  If {{param|##.Connection.{i}.ServerConnectAlgorithm}} is set to {{enum|DNS-SRV|##.Connection.{i}.ServerConnectAlgorithm}} then any instances of this table are ignored by this {{object|##.Connection}}.
+      </description>
+      
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="ServerAddress"/>
+        <parameter ref="Port"/>
+      </uniqueKey>
+      
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite">
+        <description>{{datatype|expand}}</description>
+        <syntax><dataType ref="Alias"/></syntax>
+      </parameter>
+      <parameter name="Priority" access="readWrite">
+        <description>The priority of this {{object}} that is used by the {{object|##.Connection}} when determining the {{object}} to connect. The {{object|##.Connection}} MUST contact the {{object}} with the lowest-numbered priority that the {{object|##.Connection}} can reach as defined in {{bibref|RFC2782}}. The selection of {{object}}s with the same {{param}} value utilizes the {{param|Weight}} parameter to determine which {{object}} is selected by the {{object|##.Connection}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Weight" access="readWrite">
+        <description>
+          This parameter specifies a relative weight for entries with the same {{param|Priority}}. The mechanism is defined in {{bibref|RFC2782}}. A value of -1 indicates that the implementation of this parameter is specific to the Vendor.
+        </description>
+        <syntax>
+          <long>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </long>
+        </syntax>
+      </parameter>
+      <parameter name="ServerAddress" access="readWrite">
+        <description>
+          Fully Qualified Domain Name (FQDN) or IP address of the XMPP server for this {{object|##.Connection}}.
+          If the value of this Parameter is a FQDN that resolves to multiple addresses then each address SHOULD be attemtped (in an implemnetation-specific order) until a connection can be made or all addresses are exhausted, in which case the next {{object}} instance (based on {{param|Priority}} and {{param|Weight}}) SHOULD be used.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Port" access="readWrite">
+        <description>Port number of the XMPP server for this {{object|##.Connection}}.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="5222"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="XMPP.Connection.{i}.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>XMPP Connection statistics information for this resource.</description>
+      
+      <parameter name="ReceivedMessages" access="readOnly">
+        <description>The number of XMPP stanzas (iq, presence, or message) that have been received on this {{object|##.Connection}}.</description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="TransmittedMessages" access="readOnly">
+        <description>The number of XMPP stanzas (iq, presence, or message) that have been transmitted by this {{object|##.Connection}}.</description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="ReceivedErrorMessages" access="readOnly">
+        <description>The number of XMPP stanzas (iq, presence, or message) that have been received on this {{object|##.Connection}} where the type attribute had a value of "error".</description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+      <parameter name="TransmittedErrorMessages" access="readOnly">
+        <description>The number of XMPP stanzas (iq, presence, or message) that have been transmitted by this {{object|##.Connection}} where the type attribute had a value of "error".</description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <profile name="XMPPBasic:1">
+      <object ref="XMPP." requirement="present">
+        <parameter ref="ConnectionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="XMPP.Connection.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+        <parameter ref="Domain" requirement="readWrite"/>
+        <parameter ref="Resource" requirement="readWrite"/>
+        <parameter ref="JabberID" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="LastChangeDate" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="XMPPAdvanced:1" extends="XMPPBasic:1">
+      <object ref="XMPP.Connection.{i}." requirement="createDelete">
+        <parameter ref="ServerConnectAlgorithm" requirement="readWrite"/>
+        <parameter ref="KeepAliveInterval" requirement="readWrite"/>
+        <parameter ref="ServerNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="UseTLS" requirement="readWrite"/>
+        <parameter ref="TLSEstablished" requirement="readOnly"/>
+      </object>
+      <object ref="XMPP.Connection.{i}.Server.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Priority" requirement="readWrite"/>
+        <parameter ref="Weight" requirement="readWrite"/>
+        <parameter ref="ServerAddress" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+      </object>
+      <object ref="XMPP.Connection.{i}.Stats." requirement="present">
+        <parameter ref="ReceivedMessages" requirement="readOnly"/>
+        <parameter ref="TransmittedMessages" requirement="readOnly"/>
+        <parameter ref="ReceivedErrorMessages" requirement="readOnly"/>
+        <parameter ref="TransmittedErrorMessages" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="XMPPReconnect:1">
+      <object ref="XMPP.Connection.{i}." requirement="createDelete">
+        <parameter ref="ServerConnectAttempts" requirement="readWrite"/>
+        <parameter ref="ServerRetryInitialInterval" requirement="readWrite"/>
+        <parameter ref="ServerRetryIntervalMultiplier" requirement="readWrite"/>
+        <parameter ref="ServerRetryMaxInterval" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+  
+  <!-- New Component to extend the Management Server Object for XMPPP Connection Requests -->
+  <component name="XMPPConnReq">
+    <object base="ManagementServer." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="SupportedConnReqMethods" access="readOnly">
+        <description>
+          The connection request methods supported by this {{object}}. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HTTP" optional="false">
+              <description>The connection request method as specified in {{bibref|TR-069|Section 3.2.2 ACS Connection Initiation}}, '''REQUIRED'''</description>
+            </enumeration>
+            <enumeration value="STUN" optional="true">
+              <description>The connection request method as specified in {{bibref|TR-069|Annex G Connection Request via NAT Gateway}}</description>
+            </enumeration>
+            <enumeration value="XMPP" optional="true">
+              <description>The connection request method as specified in {{bibref|TR-069a5|Annex K XMPP Connection Request}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ConnReqXMPPConnection" access="readWrite">
+        <description>
+          {{reference|the {{object|.XMPP.Connection}} instance that is used for connection requests to this {{object}}}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".XMPP.Connection." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ConnReqAllowedJabberIDs" access="readWrite">
+        <description>
+          When an XMPP Connection Request is sent to a CPE the XMPP IQ Stanza will contian a "from" address that contains the Jabber ID of the initiating entity.
+          This parameter is a {{list}} Each entry represents a Jabber ID, or address, that is allowed to initiate an XMPP Connection Request.  
+          Each Jabber ID is allowed to be either a "Full JID" (containing a local-part, domain-part, and resource-part in the following format: "local-part@domain-part/resource-part") or a "Bare JID" (containing a local-part and a domain-part in the following format: "local-part@domain-part").  "Full JID" entries require an exact match whereas "Bare JID" entries are a wildcard match and will match any Jabber ID with the same local-part and domain-part independent of the resource-part.
+          For example, if {{param}} contained "ACS1@tr069.example.com, ACS2@tr-069.example.com/resource1" then the following incoming "from" addresses would be '''allowed''': 
+          * "ACS1@tr069.example.com/resource1"
+          * "ACS1@tr069.example.com/resource2"
+          * "ACS2@tr069.example.com/resource1"
+          And the following incoming "from" addresses '''would not be allowed''': 
+          * "ACS2@tr069.example.com/resource2"
+          * "ACS@tr069.example.com/resource"  
+          If this Parameter is {{empty}} then all Jabber IDs are allowed and an XMPP Connection Request can not be deemed invalid due to the "from" address.
+        </description>
+        <syntax>
+          <list maxItems="32"/>
+          <string>
+            <size maxLength="256"></size>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ConnReqJabberID" access="readOnly" activeNotify="forceDefaultEnabled">
+        <description>
+          The value MUST be the value of the {{param|.XMPP.Connection.{i}.JabberID}} contained in the {{object|.XMPP.Connection}} instance referenced by the {{param|ConnReqXMPPConnection}} parameter.  
+          If the {{param|ConnReqXMPPConnection}} parameter is empty or the {{object|.XMPP.Connection}} instance being reference is disabled, then this value will be empty.  
+          If the {{object|.XMPP.Connection}} instance being referenced by the {{param|ConnReqXMPPConnection}} parameter is lost ({{param|.XMPP.Connection.{i}.Status}} parameter changes from Enabled to some other value), then the value of this parameter MUST remain unchanged until the connection can be reestablished and a new {{param|.XMPP.Connection.{i}.JabberID}} can be established.  If the new {{param|.XMPP.Connection.{i}.JabberID}} is identical to the existing value, then the value of this parameter MUST NOT be altered and a VALUE CHANGE event MUST NOT be generated.
+        </description>
+        <syntax><string></string></syntax>
+      </parameter>
+    </object>
+      
+    <profile name="XMPPConnReq:1" extends="XMPPBasic:1">
+      <object ref="ManagementServer." requirement="present">
+        <parameter ref="SupportedConnReqMethods" requirement="readOnly"/>
+        <parameter ref="ConnReqXMPPConnection" requirement="readWrite"/>
+        <parameter ref="ConnReqAllowedJabberIDs" requirement="readWrite"/>
+        <parameter ref="ConnReqJabberID" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+  
+  <!--New HTTPCompression Component-->
+  <component name="HTTPCompression">
+    <object base="ManagementServer." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="HTTPCompressionSupported" access="readOnly">
+        <description>
+          Indicates the HTTP Compression mechanism(s) supported by this CPE.  Requirements for the use of HTTP Compression for CWMP can be found in {{bibref|TR-069a5|Section 3.4.7}}. {{enum}}
+          Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106a7|Section 3.3}} MUST be adhered to.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="GZIP">
+              <description>As defined in {{bibref|RFC2616|Section 3.5}}</description>
+            </enumeration>
+            <enumeration value="Compress">
+              <description>As defined in {{bibref|RFC2616|Section 3.5}}</description>
+            </enumeration>
+            <enumeration value="Deflate">
+              <description>As defined in {{bibref|RFC2616|Section 3.5}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="HTTPCompression" access="readWrite">
+        <description>The value of this parameter represents the HTTP Compression mechanism to be used by the CPE when communicating with the ACS.</description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="HTTPCompressionSupported" nullValue="Disabled"/>
+          </string>
+          <default type="factory" value="Disabled"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+  
+  <!--New LwNotif Component-->
+  <component name="LwNotif">
+    <object base="ManagementServer." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="LightweightNotificationProtocolsSupported" access="readOnly">
+        <description>
+          Indicates the Lightweight Notification Protocol(s) supported by this CPE.  {{enum}}
+          Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106a7|Section 3.3}} MUST be adhered to.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="UDP">
+              <description>As defined in {{bibref|TR-069a5|Annex M}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LightweightNotificationProtocolsUsed" access="readWrite">
+        <description>
+          The value of this parameter represents the protocol(s) that will be used by the CPE when sending Lightweight Notifications.
+          {{empty}} means that Lightweight Notifications are disabled, despite any SetParameterAttributes that have been configured on various parameters.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam="LightweightNotificationProtocolsSupported" nullValue=""/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="UDPLightweightNotificationHost" access="readWrite">
+        <description>
+          Host name or address to be used when sending the UDP Lightweight Notifications.
+          {{param}} is only applicable when {{param|LightweightNotificationProtocolsUsed}} contains the {{enum|UDP|LightweightNotificationProtocolsUsed}} enumeration.
+          If {{param}} is not implemented or is {{empty}}, and UDP Lightweight Notifications are supported, the destination host MUST be the same as the ACS (as contained in the host portion of the {{param|URL}}).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="UDPLightweightNotificationPort" access="readWrite">
+        <description>
+          The port number to be used when sending UDP Lightweight Notifications. 
+          {{param}} is only applicable when {{param|LightweightNotificationProtocolsUsed}} contains the {{enum|UDP|LightweightNotificationProtocolsUsed}} enumeration.
+          If {{param}} is not implemented and UDP Lightweight Notifications are supported, the destination port MUST be 7547.
+        </description>
+        <syntax><unsignedInt></unsignedInt></syntax>
+      </parameter>
+    </object>
+  </component>
+  
+</dm:document>

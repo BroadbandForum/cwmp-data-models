@@ -1,0 +1,1084 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  FAPService:2.1 Femto Access Point Service Data Model
+
+  Copyright (c) 2011-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-196 FAPServce:2.1 Service data model with radio specific parts
+        for UMTS, LTE and CDMA2000 Femto cells.
+
+  Editors:
+    Klaus Wich, Nokia Siemens Networks (Original)
+    Douglas Knisely, Qualcomm Incorporated (Corrigendum 1)
+    William Lupton, Broadband Forum (Corrigendum 2)
+    Tim Carey Alcatel-Lucent (Amendment 1)
+
+  BroadbandHome™ Working Group Chairs:
+    Jason Walls, QA Cafe
+    John Blackford, Pace
+
+  Issue History (Filename: Approval Date: Publication Date: Changes)
+    * tr-196-2-0.0.xml: November 2011: November 2011:
+        Corresponds to TR-196 Issue 2.
+    * tr-196-2-0-1.xml: November 2012: November 2012:
+        Corresponds to TR-196 Issue 2 Corrigendum 1.
+    * tr-196-2-0-2.xml: March 2015: March 2015:
+        Corresponds to TR-196 Issue 2 Corrigendum 2.
+    * tr-196-2-1-0.xml: 24 August 2015: 2 October 2015:
+        Corresponds to TR-196 Issue 2 Amendment 1.
+-->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                           http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+    spec="urn:broadband-forum-org:tr-196-2-1-0" file="tr-196-2-1-0.xml">
+
+    <description>
+      {{docname|TR-196 FAPService:2.1 Femto Access Point Service Data Model}}
+      {{appdate|August 2015}}
+      Added parameters for 3GPP SA5 Rel 11 and 12 (TS 32.452, TS 32.453)
+      Added parameters for 3GPP SA5 Rel 13 (CR S5-145293)
+      Added parameters for 3GPP SA5 Rel 13 (CR S5-146268)
+    </description>
+  
+  <import file="tr-069-1-3-biblio.xml" spec="urn:broadband-forum-org:tr-069-1-3"/>
+    
+  <import file="tr-196-2-0.xml" spec="urn:broadband-forum-org:tr-196-2-0">
+    <model name="FAPService:2.0"/>
+  </import>
+
+  <model name="FAPService:2.1"  base="FAPService:2.0" isService="true">
+
+  <!-- HNB RRC Connection monitoring-->
+    <object name="FAPService.{i}.CellConfig.UMTS.RAN.RRC." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the RRC in the HNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.UMTS.RAN.RRC.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the RRC statistics as defined in {{bibref|3GPP-TS.32.452}}.</description>
+      <parameter name="AttConnEstab" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of RRC connection establishment attempts by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="FailConnEstab" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of RRC establishment failures by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccConnEstab" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of successful RRC establishments by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+  <!-- HNB PS RAB monitoring-->
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the Packet Switch RAB in the HNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the RAB statistics in the PS Domain as defined in {{bibref|3GPP-TS.32.452}}.</description>
+      <parameter name="AttEstabPS" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of requested RAB in establishment attempts for the PS domain by traffic class.
+          {{list| where each item is defined as the "traffic class name=measurement value"}} The total of all the measurements is provided using the traffic class name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccEstabPS" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the total number of successfully established RABs for the PS domain
+        </description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="FailEstabPS" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the total number of RABs establishment failures for the PS domain.
+        </description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="RelDropPS" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the total number of abnormally released PS RAB connections.
+        </description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="ULNumUserBitsEDCH" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of uplink User Bits for PS RABs related with EDCH above RLC. The average uplink data throughput on EDCH RABs can be derived from this measurement.</description>
+        <syntax><unsignedLong/></syntax>
+      </parameter>
+      <parameter name="ULNumUserBits64K" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of Uplink User Bits for PS RABs with UL 64 kbps data rate. The average uplink data throughput on 64 kbps RABs can be derived from this measurement.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="ULNumUserBits128K" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of Uplink User Bits for PS RABs with UL 128 kbps data rate. The average uplink data throughput on 128 kbps RABs can be derived from this measurement.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="ULNumUserBits384K" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of Uplink User Bits for PS RABs with UL 384 kbps data rate. The average uplink data throughput on 384 kbps RABs can be derived from this measurement.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="DLNumUserBitsHSDPA" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of Downlink User Bits for PS RABs related with HSDPA above RLC. The average downlink data throughput on HSDPA RABs can be derived from this measurement.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="DLNumUserBits64K" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of Downlink User Bits for PS RABs (non-HSDPA) with DL 64 kbps data rate above RLC. The average downlink data throughput on 64 kbps RABs (non-HSDPA) can be derived from this measurement.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="DLNumUserBits128K" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of Downlink User Bits for PS RABs (non-HSDPA) with DL 128 kbps data rate above RLC. The average downlink data throughput on 128 kbps RABs (non-HSDPA) can be derived from this measurement.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="DLNumUserBits384K" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of Downlink User Bits for PS RABs (non-HSDPA) with DL 384 kbps data rate above RLC. The average downlink data throughput on 384 kbps RABs (non-HSDPA) can be derived from this measurement.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="LGWNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB.Stats.LGW.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="LGWNumberOfEntries">
+      <description>This object provides statistics for the Direct User Plane Path between HNB and Local Gateway as defined in {{bibref|3GPP-TS.32.452}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="CorrelationID"/>
+      </uniqueKey>
+      <parameter name="CorrelationID" access="readOnly" activeNotify="canDeny">
+        <description>The value of this parameter is equal to the user plane GGSN TEID that the Gn-SGSN has received or the user plane PDN GW TEID that the S4-SGSN has received. {{bibref|3GPP-TS.25.413}}.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EstabDirectPathLGWAttNbr" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of direct user plane path between HNB and Local GW attempted to setup.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="EstabDirectPathLGWSuccNbr" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of direct user plane path between HNB and Local GW successfully established.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="EstabDirectPathLGWFailNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of direct user plane path between HNB and Local GW RABs failed to setup by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+  <!-- HNB CS RAB monitoring-->
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.RAB." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the Circuit Switch RAB  in the HNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.RAB.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the RAB statistics in the CS Domain as defined in {{bibref|3GPP-TS.32.452}}.</description>
+      <parameter name="AttEstabCS" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the total number of requested RABs in establishment attempts.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="FailEstabCS" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of RABs establishment failures for the CS domain.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="SuccEstabCS" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of successfully established RABs for the CS domain.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="RelDropCS" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the total number of dropped RAB connections for service type CS Domain.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+    
+  <!-- HNB HHO monitoring-->
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.HHO." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the Hard Handover (HHO) properties in the HNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.HHO.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the HHO statistics as defined in {{bibref|3GPP-TS.32.452}}.</description>
+      <parameter name="SuccHnbUmtsIntraFreq" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of successful HNB to UMTS macro cell intra frequency hard handovers.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="AttHnbUmtsIntraFreq" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of attempted HNB to UMTS macro cell intra frequency hard handovers.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="AttHnbUmtsInterFreq" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of attempted HNB to UMTS macro cell inter frequency hard handovers.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.HHO." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the circuit switch Hard Handover (HHO) in the HNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.HHO.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the circuit switch HHO statistics as defined in {{bibref|3GPP-TS.32.452}}.</description>
+      <parameter name="Att3GMacroToHnbCSHO" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of attempted 3G Macro to HNB CS handovers.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="Succ3GMacroToHnbCSHO" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of successful 3G Macro to HNB CS handovers.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="Att2GMacroToHnbCSHO" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of attempted 2G Macro to HNB CS handovers.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="Succ2GMacroToHnbCSHO" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of successful 2G Macro to HNB CS handovers.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+    </object>
+  
+  <!-- TS 32 453-->
+  <!-- HeNB CSG monitoring-->
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.CSG." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of Closed Subscriber Groups (CSG) in the HeNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.CSG.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the LTE RAN CSG statistics as defined in {{bibref|3GPP-TS.32.453}}.</description>
+      <parameter name="MeanNbrUsr" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the mean number of attached CSG UEs in the HeNB.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="AttInboundMobility" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of attempted inbound mobility for UEs to CSG cells or hybrid cells in RRC_CONNECTED mode.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="SuccInboundMobility" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of successful inbound mobility for UEs to CSG cells or hybrid cells in RRC_CONNECTED mode.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="FailedInboundMobility" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of failed successful inbound mobility for UEs to CSG cells or hybrid cells in RRC_CONNECTED mode by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+  <!-- HeNB RRC Connection monitoring-->
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.RRC." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the RRC in the HeNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.RRC.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the RRC statistics as defined in {{bibref|3GPP-TS.32.453}}.</description>
+      <parameter name="AttConnEstab" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of RRC connection establishment attempts by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="FailConnEstab" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of RRC establishment failures by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SuccConnEstab" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of successful RRC establishments by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the cause name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+  <!-- HeNB ERAB Connection monitoring-->
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.ERAB." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of E-RABs in the HeNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.ERAB.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the E-RAB statistics as defined in {{bibref|3GPP-TS.32.453}}.</description>
+      <parameter name="EstabInitAttNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of initial E-RABs attempted to setup by QoS level (QCI).
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EstabInitSuccNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of initial E-RABs successfully established QoS level (QCI).
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EstabInitFailNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of initial E-RABs failed to setup by cause.
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EstabAttNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of E-RABs attempted to setup by QoS level (QCI).
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EstabSuccNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of E-RABs successfully established by QoS level (QCI).
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EstabFailNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of E-RABs failed to setup by cause.
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="RelEnbNbrQCI" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of E-RABs requested to release initiated by HeNB by QCI.
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="RelEnbNbrCause" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of E-RABs requested to release initiated by HeNB by cause.
+          {{list| where each item is defined as the "QCI level name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="LGWNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.ERAB.Stats.LGW.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="LGWNumberOfEntries">
+      <description>This object provides statistics for the Direct User Plane Path between HeNB and Local Gateway as defined in {{bibref|3GPP-TS.32.453}}.</description>
+      <uniqueKey functional="true">
+        <parameter ref="CorrelationID"/>
+      </uniqueKey>
+      <parameter name="CorrelationID" access="readOnly" activeNotify="canDeny">
+        <description>The value of this parameter is equal to the user plane PDN GW TEID (GTP-based S5) or GRE key (PMIP-based S5). {{bibref|3GPP-TS.25.401}}.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EstabDirectPathLGWAttNbr" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of direct user plane path between HeNB and Local GW attempted to setup.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="EstabDirectPathLGWSuccNbr" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the number of direct user plane path between HeNB and Local GW successfully established.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="EstabDirectPathLGWFailNbr" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of direct user plane path between HeNB and Local GW E-RABs failed to setup by cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+  <!-- HeNB HHO monitoring-->
+    <object name="FAPService.{i}.CellConfig.LTE.EPC.HO." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the Handover (HO) properties in the HeNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.LTE.EPC.HO.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the HO statistics as defined in {{bibref|3GPP-TS.32.453}}.</description>
+      <parameter name="ToeNBAtt" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of attempted outbound handover to HeNB by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToeNBSucc" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of successful outbound handover to HeNB by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToeNBFail" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of failed outbound handover to HeNB by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="FromeNBAtt" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of attempted inbound handover from HeNB by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="FromeNBSucc" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of successful inbound handover from HeNB by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="FromeNBFail" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of failed inbound handover from HeNB by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToUtranAtt" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of attempted outbound handover to Utran by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToUtranSucc" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of successful outbound handover to Utran by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToUtranFail" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of failed outbound handover to Utran by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToGeranAtt" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of attempted outbound handover to Geran by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToGeranSucc" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of successful outbound handover to Geran by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ToGeranFail" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the number of failed outbound handover to Geran by handover cause.
+          {{list| where each item is defined as the "cause name=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+  <!-- HeNB DRB monitoring-->
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.DRB." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of Data Radio Bearers (DRB) in the HeNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.DRB.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the DRB statistics as defined in {{bibref|3GPP-TS.32.453}}.</description>
+      <parameter name="PdcpSduBitrateDl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the average cell bit-rate of PDCP SDUs on the downlink.  This represents the ingress rate of user plane traffic to the HeNB (via S1) by SAE Bearer QoS level (QCI).
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="PdcpSduBitrateUl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the average cell bit-rate of PDCP SDUs on the uplink. This represents successful transmissions of user plane traffic; control signalling and retransmissions are excluded from this measure. Measurement is by SAE Bearer QoS level (QCI).
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="PdcpSduBitrateDlMax" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the maximum cell bit-rate of PDCP SDUs on the downlink.  This represents the maximum ingress rate of user plane traffic to the HeNB (via S1).  This is a sum counter measured across all QCIs.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="PdcpSduBitrateUlMax" access="readOnly" activeNotify="canDeny">
+        <description>This measurement provides the maximum cell bit-rate of PDCP SDUs measured on the uplink. This represents successful transmissions of user plane traffic; control signalling and retransmissions are excluded from this measure.  This is a sum counter measured across all QCIs.</description>
+        <syntax><unsignedInt/></syntax>
+      </parameter>
+      <parameter name="PdcpSduDelayDl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the average (arithmetic mean) PDCP SDU delay on the downlink by ERAB Bearer QoS level (QCI).
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="PdcpSduDropRateDl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the fraction of IP packets (PDCP SDUs) which are dropped on the downlink by ERAB Bearer QoS level (QCI).  Only user-plane traffic (DTCH) is considered.  A dropped packet is one whose context is removed from the HeNB without any part of it having been transmitted on the air interface.  Packets discarded during handover are excluded from the count.
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="PdcpSduAirLossRateDl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the fraction of IP packets (PDCP SDUs) which are lost (not successfully transmitted) on the downlink air interface by ERAB Bearer QoS level (QCI). Only user-plane traffic (DTCH) is considered. A lost packet is one whose context is removed from the HeNB after an attempt has been made to transmit part or all of the packet on the air interface but the whole packet has not been successfully transmittedafter an attempt has been made to transmit part or all of the packet on the air interface but the whole packet has not been successfully transmitted.
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="PdcpSduLossRateUl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the fraction of IP packets (PDCP SDUs) which are lost (not successfully received) on the uplink by ERAB Bearer QoS level (QCI).  Only user-plane traffic (DTCH) and only PDCP SDUs that have entered PDCP (and given a PDCP sequence number) are considered.
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="UEActiveDl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the average number of UEs that have user-plane (DTCH) data queued on the downlink by ERAB Bearer QoS level (QCI).
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="UEActiveUl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the average number of UEs that have user-plane (DTCH) data queued on the uplink by ERAB Bearer QoS level (QCI).
+          {{list| where each item is defined as the "QCI level=measurement value"}} The total of all the measurements is provided using the name= "sum".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+      <!-- HeNB RRU monitoring-->
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.RRU." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides monitoring of the Radio Resource Usage in the HeNB.</description>
+    </object>
+    
+    <object name="FAPService.{i}.CellConfig.LTE.RAN.RRU.Stats." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides the RRU statistics as defined in {{bibref|3GPP-TS.32.453}}.</description>
+      <parameter name="PrbTotDl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the total usage, in {{units}}, of physical resource blocks (PRBs) on the downlink for any purpose.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="percentage"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="PrbTotUl" access="readOnly" activeNotify="canDeny">
+        <description>
+          This measurement provides the total usage, in {{units}}, of physical resource blocks (PRBs) on the uplink for any purpose.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="percentage"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    
+    
+      <!-- TS 32 592-->
+  <!-- HeNB Energy Savings-->
+    <object name="FAPService.{i}.CellConfig.LTE.EnergySavings." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object provides for the managment of energy savings capabilities in the HeNB.</description>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          This attribute determines whether the energy saving function is enabled or disabled.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="State" access="readOnly">
+        <description>
+          Specifies the status regarding the energy saving in the cell. This parameter is applicable when the value of {{param|Enable}} is {{true}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="IsEnergySaving"></enumeration>
+            <enumeration value="IsNotEnergySaving"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NotAllowedTimePeriodNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="FAPService.{i}.CellConfig.LTE.EnergySavings.ActivationCandidateCellsLoad." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object is relevant if the cell acts as a candidate cell. This object indicates the traffic load threshold and the time duration, which are used by distributed energy saving algorithms to allow an ‘original’ cell to enter the energy saving state. Threshold and TimeDuration are applied to the candidate cell(s) which provide coverage backup of an original cell when it is in the energy saving state. 
+      </description>
+      <parameter name="Threshold" access="readWrite">
+        <description>
+          PRB usage as a {{units}} {{bibref|3GPP-TS.36.314}}. The threshold applies in the same way for a candidate cell no matter which original cell it will provide backup coverage.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="100"></range>
+            <units value="percent"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TimeDuration" access="readWrite">
+        <description>
+          This parameter indicates how long the traffic in the candidate cell needs to have been below the threshold, in {{units}}, before any original cells which will be provided backup coverage by the candidate cell enters energy saving state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="FAPService.{i}.CellConfig.LTE.EnergySavings.DeactivationCandidateCellsLoad." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object is relevant if the cell acts as a candidate cell. This object indicates the traffic load threshold and the time duration which is used by distributed energy saving algorithms to allow a cell to leave the energy saving state. Threshold and time duration are applied to the candidate cell when it provides coverage backup for the cell in energy saving state. 
+      </description>
+      <parameter name="Threshold" access="readWrite">
+        <description>
+          PRB usage as a {{units}} {{bibref|3GPP-TS.36.314}}. The threshold applies in the same way for a candidate cell, no matter for which original cell it provides backup coverage.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="100"></range>
+            <units value="percent"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TimeDuration" access="readWrite">
+        <description>
+          This parameter indicates how long the traffic in the candidate cell needs to have been above the threshold, in {{units}}, to wake up one or more original cells which have been provided backup coverage by the candidate cell.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="FAPService.{i}.CellConfig.LTE.EnergySavings.NotAllowedTimePeriod.{i}." access="readWrite" enableParameter="Enable" numEntriesParameter="NotAllowedTimePeriodNumberOfEntries" minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true">
+      <description>
+        This object provides a time period for which energy saving is not allowed.
+        This object can be used to prevent a cell entering energy saving state. 
+        This object is valid on the specified day(s) and time of every week.
+      </description>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          This attribute determines whether the time period is enabled or disabled.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="StartTime" access="readWrite">
+        <description>
+          Starting time for this time period formatted as "HH:MM:SS" in UTC.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EndTime" access="readWrite">
+        <description>
+          Ending time for this time period formatted as "HH:MM:SS" in UTC.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="DaysOfWeek" access="readWrite">
+        <description>
+          {{list| that represents the days of the week that are effective for this time period}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Monday"></enumeration>
+            <enumeration value="Tuesday"></enumeration>
+            <enumeration value="Wednesday"></enumeration>
+            <enumeration value="Thursday"></enumeration>
+            <enumeration value="Friday"></enumeration>
+            <enumeration value="Saturday"></enumeration>
+            <enumeration value="Sunday"></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <profile name="UMTSCSRABMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.RAB." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.RAB.Stats." requirement="present">
+        <parameter ref="AttEstabCS" requirement="readOnly"/>
+        <parameter ref="FailEstabCS" requirement="readOnly"/>
+        <parameter ref="SuccEstabCS" requirement="readOnly"/>
+        <parameter ref="RelDropCS" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="UMTSCSHHOMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.HHO." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.CSDomain.HHO.Stats." requirement="present">
+        <parameter ref="Att3GMacroToHnbCSHO" requirement="readOnly"/>
+        <parameter ref="Succ3GMacroToHnbCSHO" requirement="readOnly"/>
+        <parameter ref="Att2GMacroToHnbCSHO" requirement="readOnly"/>
+        <parameter ref="Succ2GMacroToHnbCSHO" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="UMTSPSRABMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB.Stats." requirement="present">
+        <parameter ref="AttEstabPS" requirement="readOnly"/>
+        <parameter ref="FailEstabPS" requirement="readOnly"/>
+        <parameter ref="SuccEstabPS" requirement="readOnly"/>
+        <parameter ref="RelDropPS" requirement="readOnly"/>
+        <parameter ref="ULNumUserBitsEDCH" requirement="readOnly"/>
+        <parameter ref="ULNumUserBits64K" requirement="readOnly"/>
+        <parameter ref="ULNumUserBits128K" requirement="readOnly"/>
+        <parameter ref="ULNumUserBits384K" requirement="readOnly"/>
+        <parameter ref="DLNumUserBitsHSDPA" requirement="readOnly"/>
+        <parameter ref="DLNumUserBits64K" requirement="readOnly"/>
+        <parameter ref="DLNumUserBits128K" requirement="readOnly"/>
+        <parameter ref="DLNumUserBits384K" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="UMTSPSRABLGWMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB.Stats." requirement="present">
+        <parameter ref="LGWNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.PSDomain.RAB.Stats.LGW.{i}." requirement="present">
+        <parameter ref="CorrelationID" requirement="readOnly"/>
+        <parameter ref="EstabDirectPathLGWAttNbr" requirement="readOnly"/>
+        <parameter ref="EstabDirectPathLGWSuccNbr" requirement="readOnly"/>
+        <parameter ref="EstabDirectPathLGWFailNbr" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="UMTSHHOMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.HHO." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.UMTS.CN.HHO.Stats." requirement="present">
+        <parameter ref="SuccHnbUmtsIntraFreq" requirement="readOnly"/>
+        <parameter ref="AttHnbUmtsIntraFreq" requirement="readOnly"/>
+        <parameter ref="AttHnbUmtsInterFreq" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="UMTSRANRRCMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.UMTS.RAN.RRC." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.UMTS.RAN.RRC.Stats." requirement="present">
+        <parameter ref="AttConnEstab" requirement="readOnly"/>
+        <parameter ref="FailConnEstab" requirement="readOnly"/>
+        <parameter ref="SuccConnEstab" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTEEPCHOMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.EPC.HO." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.EPC.HO.Stats." requirement="present">
+        <parameter ref="ToeNBAtt" requirement="readOnly"/>
+        <parameter ref="ToeNBSucc" requirement="readOnly"/>
+        <parameter ref="ToeNBFail" requirement="readOnly"/>
+        <parameter ref="FromeNBAtt" requirement="readOnly"/>
+        <parameter ref="FromeNBSucc" requirement="readOnly"/>
+        <parameter ref="FromeNBFail" requirement="readOnly"/>
+        <parameter ref="ToUtranAtt" requirement="readOnly"/>
+        <parameter ref="ToUtranSucc" requirement="readOnly"/>
+        <parameter ref="ToUtranFail" requirement="readOnly"/>
+        <parameter ref="ToGeranAtt" requirement="readOnly"/>
+        <parameter ref="ToGeranSucc" requirement="readOnly"/>
+        <parameter ref="ToGeranFail" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTERANCSGMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.CSG." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.CSG.Stats." requirement="present">
+        <parameter ref="MeanNbrUsr" requirement="readOnly"/>
+        <parameter ref="AttInboundMobility" requirement="readOnly"/>
+        <parameter ref="SuccInboundMobility" requirement="readOnly"/>
+        <parameter ref="FailedInboundMobility" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTERANRRCMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.RRC." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.RRC.Stats." requirement="present">
+        <parameter ref="AttConnEstab" requirement="readOnly"/>
+        <parameter ref="FailConnEstab" requirement="readOnly"/>
+        <parameter ref="SuccConnEstab" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTERANERABMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.ERAB." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.ERAB.Stats." requirement="present">
+        <parameter ref="EstabInitAttNbr" requirement="readOnly"/>
+        <parameter ref="EstabInitSuccNbr" requirement="readOnly"/>
+        <parameter ref="EstabInitFailNbr" requirement="readOnly"/>
+        <parameter ref="EstabAttNbr" requirement="readOnly"/>
+        <parameter ref="EstabSuccNbr" requirement="readOnly"/>
+        <parameter ref="EstabFailNbr" requirement="readOnly"/>
+        <parameter ref="RelEnbNbrQCI" requirement="readOnly"/>
+        <parameter ref="RelEnbNbrCause" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTERANERABLGWMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.ERAB." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.ERAB.Stats." requirement="present">
+        <parameter ref="LGWNumberOfEntries" requirement="readOnly"/>
+      </object>
+       <object ref="FAPService.{i}.CellConfig.LTE.RAN.ERAB.Stats.LGW.{i}." requirement="present">
+        <parameter ref="CorrelationID" requirement="readOnly"/>
+        <parameter ref="EstabDirectPathLGWAttNbr" requirement="readOnly"/>
+        <parameter ref="EstabDirectPathLGWSuccNbr" requirement="readOnly"/>
+        <parameter ref="EstabDirectPathLGWFailNbr" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTERANEDRBMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.DRB." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.DRB.Stats." requirement="present">
+        <parameter ref="PdcpSduBitrateDl" requirement="readOnly"/>
+        <parameter ref="PdcpSduBitrateUl" requirement="readOnly"/>
+        <parameter ref="PdcpSduBitrateDlMax" requirement="readOnly"/>
+        <parameter ref="PdcpSduBitrateUlMax" requirement="readOnly"/>
+        <parameter ref="PdcpSduDelayDl" requirement="readOnly"/>
+        <parameter ref="PdcpSduDropRateDl" requirement="readOnly"/>
+        <parameter ref="PdcpSduAirLossRateDl" requirement="readOnly"/>
+        <parameter ref="PdcpSduLossRateUl" requirement="readOnly"/>
+        <parameter ref="UEActiveDl" requirement="readOnly"/>
+        <parameter ref="UEActiveUl" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTERANERRUMonitoring:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.RRU." requirement="present">
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.RAN.RRU.Stats." requirement="present">
+        <parameter ref="PrbTotDl" requirement="readOnly"/>
+        <parameter ref="PrbTotUl" requirement="readOnly"/>
+      </object>
+    </profile>
+    
+    <profile name="LTECellConfigEnergySavings:1">
+      <object ref="FAPService.{i}.CellConfig.LTE.EnergySavings." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="State" requirement="readOnly"/>
+        <parameter ref="NotAllowedTimePeriodNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.EnergySavings.ActivationCandidateCellsLoad." requirement="present">
+        <parameter ref="Threshold" requirement="readWrite"/>
+        <parameter ref="TimeDuration" requirement="readWrite"/>
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.EnergySavings.DeactivationCandidateCellsLoad." requirement="present">
+        <parameter ref="Threshold" requirement="readWrite"/>
+        <parameter ref="TimeDuration" requirement="readWrite"/>
+      </object>
+      <object ref="FAPService.{i}.CellConfig.LTE.EnergySavings.NotAllowedTimePeriod.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="StartTime" requirement="readWrite"/>
+        <parameter ref="EndTime" requirement="readWrite"/>
+        <parameter ref="DaysOfWeek" requirement="readWrite"/>
+      </object>
+    </profile>
+    
+  </model>
+
+</dm:document>

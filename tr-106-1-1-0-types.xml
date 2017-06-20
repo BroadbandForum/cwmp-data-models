@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 Data Model Data Types
+
+  Copyright (c) 2009-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    TR-069 Data Model Data Types.  Contains normative definitions of named 
+    (i.e. not built-in) data types that can be used in data model definitions.
+
+  Editor:
+    * Klaus Wich, Axiros
+
+  BroadbandHome Working Group Chairs:
+    * Jason Walls, QA Cafe
+    * John Blackford, Pace
+
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    * tr-106-1-0-0-types.xml: March 2009 - June 2014:
+      - many updates
+    * tr-106-1-1-0-types.xml: 9 November 2015: 13 November 2015
+      - added data type "DiagnosticsState"
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                                   http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd" 
+             spec="urn:broadband-forum-org:tr-106-1-1-0" file="tr-106-1-1-0-types.xml">
+
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="IPv4Prefix"/>
+    <dataType name="IPv6Prefix"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <dataType name="DiagnosticsState">
+    <description>
+      Indicates the availability of diagnostics data. Enumeration of:
+      {{enum}}
+      If the ACS sets the value of this parameter to {{enum|Requested}}, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed values are {{enum|Requested}} and {{enum|Canceled}}. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set, and any errors or inconsistencies in the test parameters MUST be detected, either prior to or at the same time as (in the same SetParameterValues) setting this parameter to {{enum|Requested}}.
+      When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic test.
+      When the test is completed, the value of this parameter MUST be either {{enum|Complete}} (if the test completed successfully), or one of the ''Error'' values listed above.
+      If the value of this parameter is anything other than {{enum|Complete}}, the values of the results parameters for this test are indeterminate.
+      When the diagnostic initiated by the ACS is completed (successfully or not), but not if it is canceled for any reason, the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform message.
+      After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to {{enum|None}}.
+      Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to {{enum|None}}.
+      While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to {{enum|None}}.
+      While the test is in progress, setting this parameter to {{enum|Requested}} (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.
+      While the test is in progress, setting this parameter to {{enum|Canceled}} MUST result in the test being canceled and the value of this parameter being set to {{enum|None}}. If the CPE does not support the {{enum|Canceled}} value, it MUST return a SPV error with "Invalid Parameter value" (9007) to the ACS instead.
+    </description>
+    <string>
+      <enumeration value="None" access="readOnly"/>
+      <enumeration value="Requested"/>
+      <enumeration value="Canceled" optional="true"/>
+      <enumeration value="Complete" access="readOnly"/>
+      <enumeration value="Error" access="readOnly" optional="true"/>
+    </string>
+  </dataType>
+
+</dm:document>

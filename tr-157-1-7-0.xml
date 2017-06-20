@@ -1,0 +1,962 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Component Objects for CWMP
+    
+  Copyright (c) 2009-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+    Issue History:
+    * March 2009: tr-157-1-0-0.xml: corresponds to TR-157 Issue 1, Section 4 
+          (Data Model Definition) and Section 5 (Profile Definition).
+    * September 2009: tr-157-1-1-0.xml: corresponds to TR-157 Issue 1 
+          Amendment 1, Section 4 (Data Model Definition) and Section 5 (Profile 
+          Definition).
+    * May 2010: tr-157-1-2-0.xml: corresponds to TR-157 Issue 1 Amendment 2.
+    * December 2010: tr-157-1-3-0.xml: corresponds to TR-157 Issue 1 Amendment 3.
+    * September 2011: tr-157-1-4-0.xml: updates for Alias-Based Addressing and 
+          Proxy Management
+    * December 2011: tr-157-1-5-0.xml: updates related to 3GPP LTE and 3GPP2 
+          cdma2000 (TR-196 Issue 2)
+    * May 2012: tr-157-1-6-0.xml: updates for Bulk Data Collection (TR-232)
+    * November 2012: tr-157-1-7-0.xml: new components for UPnP and DnsSd Discovery
+        updates to InternetGatewayDevice.DeviceInfo.SupportedDataModel.{i}.URL and 
+        Proxy objects for Discovery and Proxy References
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-4"
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-4 
+                                   http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-4.xsd
+                                 urn:broadband-forum-org:cwmp:datamodel-report-0-1 
+                                   http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd" 
+             spec="urn:broadband-forum-org:tr-157-1-7-0" file="tr-157-1-7-0.xml">
+    
+  <description>
+Component Objects for CWMP
+November 2012
+TR-157 Amendment 7
+</description>
+    
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="Alias"/>
+    <dataType name="UUID"/>
+  </import>
+        
+  <import file="tr-157-1-5.xml" spec="urn:broadband-forum-org:tr-157-1-5">
+    <component name="_MS_EmbeddedDevice" ref="MS_EmbeddedDevice"/>
+    <component name="_MS_VirtualDevice" ref="MS_VirtualDevice"/>
+    <component name="_DI_ProxierInfo" ref="DI_ProxierInfo"/>
+
+  </import>
+  <import file="tr-157-1-6.xml" spec="urn:broadband-forum-org:tr-157-1-6">
+    <component name="DI_Processors"/>
+    <component name="DI_MemoryStatus"/>
+    <component name="DI_ProcessStatus"/>
+    <component name="DI_TemperatureStatus"/>
+    <component name="DI_NetworkProperties"/>
+    <component name="DI_Location"/>
+    <component name="MS_DUStateChangeCompletePolicy"/>
+    <component name="MS_AutonomousTransferCompletePolicy"/>
+    <component name="UI_LocalDisplay"/>
+    <component name="User"/>
+    <component name="DLNACapabilities"/>
+    <component name="SmartCardReader"/>
+    <component name="SelfTestDiag"/>
+    <component name="NSLookupDiag"/>
+    <component name="SimpleFirewall"/>
+    <component name="USBHosts"/>
+    <component name="USBHosts_Device2"/>
+    <component name="DownloadAvailability"/>
+    <component name="SoftwareModules"/>
+    <component name="FaultManagement"/>
+    <component name="Security"/>
+    <component name="_UI_RemoteAccess" ref="UI_RemoteAccess"/>
+    <component name="_PeriodicStatistics" ref="PeriodicStatistics"/>
+    <component name="_DI_VendorLogFiles" ref="DI_VendorLogFiles"/>
+    <component name="_BulkDataCollection" ref="BulkDataCollection"/>
+    <component name="_DI_SupportedDataModel" ref="DI_SupportedDataModel"/>
+    <component name="_UPnP" ref="UPnP" />
+
+  </import>
+
+  <!--Update to PeriodicStatistics object to remove non-ascii characters-->
+  <component name="PeriodicStatisticsDiffs">
+    <object base="PeriodicStatistics.SampleSet.{i}.Parameter.{i}." access="readWrite" numEntriesParameter="ParameterNumberOfEntries" enableParameter="Enable" minEntries="0" maxEntries="unbounded">
+      <parameter base="Failures" access="readOnly">
+        <description action="replace">
+                    Counts the number of times (since this object instance was last enabled) that a newly-calculated sample value (accounting for {{param|SampleMode}}) transitioned from the "in range" state to the "out of range" state, or between the "out of range (low)" and "out of range (high)" states.  The states are defined as follows:
+                    * "in range" : current value is greater than {{param|LowThreshold}} and less than {{param|HighThreshold}}.
+                    * "out of range" : current value is less than or equal to {{param|LowThreshold}}, or greater than or equal to {{param|HighThreshold}}.
+                    * "out of range (low)" : current value is less than or equal to {{param|LowThreshold}}.
+                    * "out of range (high)" : current value is greater than or equal to {{param|HighThreshold}}.
+                    Note that, if {{param|LowThreshold}} and {{param|HighThreshold}} are both the same, the threshold/failure mechanism is disabled, so the value of this parameter will not increment.
+                    This parameter can be incremented at any time during a sample interval, and might be incremented more than once during a single sample interval. For this reason, the CPE SHOULD place a locally specified limit on the frequency at which it will notify the ACS of such changes, as described in {{bibref|TR-069a2|Section 3.2.1}}.
+                    Parameters of non-numeric types cannot support the threshold/failure mechanism.  The value of this parameter MUST be ignored for such parameters.
+                </description>
+      </parameter>
+    </object>
+  </component>
+  <component name="PeriodicStatistics">
+    <component ref="_PeriodicStatistics"/>
+    <component ref="PeriodicStatisticsDiffs"/>
+  </component>
+  
+    
+  <!--Update to VendorLogFiles object to remove non-ascii characters-->
+ <component name="DI_VendorLogFilesDiffs">
+   <object base="DeviceInfo.VendorLogFile.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="VendorLogFileNumberOfEntries">
+     <parameter base="MaximumSize" access="readOnly">
+       <description action="replace">The maximum size of the log file in {{units}}.  If the device doesn't know the maximum file size then {{param}} will be 0.</description>
+      </parameter>
+   </object>
+  </component>
+  <component name="DI_VendorLogFiles">
+    <component ref="_DI_VendorLogFiles"/>
+    <component ref="DI_VendorLogFilesDiffs"/>
+  </component>
+      
+<!--Update to UI_RemoteAccess object to remove non-ascii characters-->
+ <component name="UI_RemoteAccessDiffs">
+    <object base="UserInterface.RemoteAccess." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="Enable" access="readWrite">
+        <description action="replace">Enables/Disables remotely accessing the CPE's user interface.</description>
+      </parameter>
+      </object>
+  </component>
+  <component name="UI_RemoteAccess">
+      <component ref="_UI_RemoteAccess"/>
+    <component ref="UI_RemoteAccessDiffs"/>
+  </component>
+
+<!-- Define BulkDataCollectionDiffs -->
+  <component name="BulkDataCollectionDiffs">
+    <object base="BulkData.Profile.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="ControlFileFormat" access="readWrite">
+        <description action="replace">
+                    If this collection profile is configured for the IPDR File Transfer Protocol {{bibref|IPDR-FTP}} (the {{param|Protocol}} parameter has a value of {{enum|File|#.Protocols}}) then the control file names will be of the following format:
+                    : &lt;ControlFilePrefix&gt;_&lt;ControlFilePolicy&gt;.&lt;ControlFileSuffix&gt;
+                    Where the following rules apply:
+                    * ControlFilePrefix MUST NOT contain an underscore '_' or any other character not suitable for a file name.
+                    * ControlFilePolicy MUST contain one or more 'N' characters, where the number of 'N' characters denotes the number of digits in the sequence number, including leading zeros as necessary to match the number of 'N' characters. 
+                    * ControlFileSuffix is a file extension.  
+                    For example, BulkData_NNNN.log where "BulkData" would be the prefix, "NNNN" would be the policy, and "log" would be the suffix.  Files adhering to this file format would look like: BulkData_0000.log, BulkData_0001.log, etc.
+                </description>
+      </parameter>
+    </object>
+  </component>
+<!-- Update component, incuding profiles if necessary -->
+  <component name="BulkDataCollection">
+    <component ref="_BulkDataCollection"/>
+    <component ref="BulkDataCollectionDiffs"/>
+  </component>
+
+<!-- Define DI_SupportedDataModelDiffs -->
+  <component name="DI_SupportedDataModelDiffs">
+    <object base="DeviceInfo.SupportedDataModel.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <uniqueKey functional="true">
+        <parameter ref="UUID"/>
+      </uniqueKey>
+      <parameter name="UUID" access="readOnly" dmr:previousParameter="URL">
+        <description>
+          UUID ({{bibref|RFC4122}}) that is the value of the uuid attribute in the DT Instance referenced by {{param|URL}}.
+        </description>
+        <syntax>
+          <dataType ref="UUID"/>
+        </syntax>
+      </parameter>
+      <parameter base="URL" access="readOnly">
+        <description action="replace">
+                    URL ({{bibref|RFC3986}}) that describes some or all of the device's Current Supported Data Model.
+                    The URL MUST reference an XML file which describes the appropriate part of the Supported Data Model.
+                    The referenced XML file MUST be compliant with the DT (Device Type) Schema that is described in {{bibref|TR-106a3|Annex B}}, including any additional normative requirements referenced within the Schema.
+                    The XML file referenced by this URL MUST NOT change while the CPE is running, and SHOULD NOT change across a CPE reboot. Note that {{param|UUID}} is a unique key, so the XML file referenced by this URL will never change.
+                    The XML file MAY be located within the CPE. In this scenario the CPE MAY use the value of "localhost" as URL host portion, When the "localhost" value is used, the ACS has the responsibility to substitute the "localhost" value with the host portion of the connection request URL.
+                    Behavior in the event of an invalid URL, failure to access the referenced XML file, or an invalid XML file, is implementation-dependent.</description>
+      </parameter>
+    </object>
+    
+    <profile name="SupportedDataModel:2" extends="SupportedDataModel:1">
+      <object ref="DeviceInfo.SupportedDataModel.{i}." requirement="present">
+        <parameter ref="UUID" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+<!-- Update component, incuding profiles if necessary -->
+  <component name="DI_SupportedDataModel">
+    <component ref="_DI_SupportedDataModel"/>
+    <component ref="DI_SupportedDataModelDiffs"/>
+  </component>
+
+  <!-- Define UPnPDiffs -->
+  <component name="UPnPDiffs">
+    <object base="UPnP.Discovery.RootDevice.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date and time at which the last advertisement from this {{object}} was received.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+    <object base="UPnP.Discovery.Device.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date and time at which the last advertisement from this {{object}} was received.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+    <object base="UPnP.Discovery.Service.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date and time at which the last advertisement from this {{object}} was received.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="ParentDevice" access="readOnly">
+        <description>{{reference|the {{object|#.RootDevice}} or {{object|#.Device}} table entries that embeds this {{object}}}} This parameter is populated by extracting the "device-UUID" from the service's USN and matching the value against the root device or embedded device UUID value.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.RootDevice. #.Device." targetType="row"/>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="UPnP.Description." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains information from the  Description Document discovered from the UPnP Devices and Services.
+      </description>
+      <parameter name="DeviceDescriptionNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DeviceInstanceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="ServiceInstanceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="UPnP.Description.DeviceDescription.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="DeviceDescriptionNumberOfEntries">
+      <description>
+            This table contains information read from the Device Description Document of discovered root devices.
+            The CPE MAY, but need not, retain some or all of the information in this table after the associated SSDP advertisement (objects in the  UPnP.Discovery. object tables) expires. 
+            In case the SSDP advertisement expires and the CPE deletes the related instances from the tables in UPnP.Discovery., the reference to such instances MUST be set to the empty string.
+             </description>
+      <uniqueKey>
+        <parameter ref="URLBase"/>
+      </uniqueKey>
+      <parameter name="URLBase" access="readOnly">
+        <description>
+        The value extracted from the URLBase element in the Device Description Document of the discovered root device. If the URLBase element in the root device&apos;s Device Description Document is empty or absent, the URL from which the device description was retrieved (e.g. the LOCATION from the SSDP message) is utilized as the URLBase.
+        Note: the URLBase element is not recommended by {{bibref|UPnP-DAv1}} and is not permitted by {{bibref|UPnP-DAv11}}, so the value of {{param}} will usually be the URL from which the device description was retrieved.
+      </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SpecVersion" access="readOnly">
+        <description>
+          The UPnP Device Architecture version extracted from the specVersion element in the Device Description Document of the discovered root device. The {{param}} is encoded as "major revison.minor revision". {{pattern}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pattern value="\d+\.\d+"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Host" access="readOnly">
+        <description>
+          {{list}} {{reference|the Host table entries associated with the root device from which the device description was retrieved|ignore}}
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetParent=".LANDevice.{i}.Hosts.Host. .Hosts.Host." targetType="row"/>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="UPnP.Description.DeviceInstance.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="DeviceInstanceNumberOfEntries">
+      <description>
+          This table contains the information from Device Description Document retrieved for a discovered UPnP root or embedded device.
+		    </description>
+      <uniqueKey>
+        <parameter ref="UDN"/>
+      </uniqueKey>
+      <parameter name="UDN" access="readOnly">
+        <description>
+          Unique Device Name of this device represented as a UUID for the device.
+          This value is extracted from the UDN element in the Device Description Document with the leading uuid: removed.
+        </description>
+        <syntax>
+          <dataType ref="UUID"/>
+        </syntax>
+      </parameter>
+      <parameter name="ParentDevice" access="readOnly">
+        <description>
+          {{reference|a {{object}} table entry (if this is an embedded device) or {{empty}} (if this is a root device)}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.DeviceInstance." targetType="row"/>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DiscoveryDevice" access="readOnly">
+        <description>
+          {{reference|a {{object|##.Discovery.RootDevice}} table entry (if this is a root device) or a {{object|##.Discovery.Device}} table entry (if this is an embedded device)}}
+          This {{param}} value can be {{empty}} because the referenced object has been deleted or the CPE was unable to retrieve the Description Document due to some out-of-band error. The determination to delete this {{object}} or use {{empty}} is implementation specific.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="##.Discovery.Device. ##.Discovery.RootDevice." targetType="row"/>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DeviceType" access="readOnly">
+        <description>
+        The value of the UPnP deviceType element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="FriendlyName" access="readOnly">
+        <description>
+          The value of the UPnP friendlyName element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Manufacturer" access="readOnly">
+        <description>
+          The value of the UPnP manufacturer element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ManufacturerURL" access="readOnly">
+        <description>
+          The value of the UPnP manufacturerURL element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ModelDescription" access="readOnly">
+        <description>
+          The value of the UPnP modelDescription element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ModelName" access="readOnly">
+        <description>
+          The value of the UPnP modelName element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ModelNumber" access="readOnly">
+        <description>
+          The value of the UPnP modelNumber element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ModelURL" access="readOnly">
+        <description>
+          The value of the UPnP modelURL element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SerialNumber" access="readOnly">
+        <description>
+          The value of the UPnP serialNumber element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="UPC" access="readOnly">
+        <description>
+          The value of the UPnP UPC element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="12"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter access="readOnly" name="PresentationURL">
+        <description>
+        The value of the UPnP presentationURL element in the Device Description Document for this {{object}} and MUST be an absolute URL.
+        The way to obtain an absolute URL from the presentationURL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}.
+        If the presentationURL is not provided by the device then this value MUST be {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="UPnP.Description.ServiceInstance.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="ServiceInstanceNumberOfEntries">
+      <description>
+            This table contains the information from Device Description Document retrieved for a discovered UPnP service.
+          </description>
+      <uniqueKey>
+        <parameter ref="ParentDevice"/>
+        <parameter ref="ServiceId"/>
+      </uniqueKey>
+      <parameter name="ParentDevice" access="readOnly">
+        <description>
+          {{reference|a {{object|#.DeviceInstance}} table entry}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.DeviceInstance." targetType="row"/>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ServiceId" access="readOnly">
+        <description>The value of the UPnP serviceId element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the service.
+If the UPnP serviceId is not provided by the UPnP service, this {{object}} MUST be deleted.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ServiceDiscovery" access="readOnly">
+        <description>
+          {{reference|a {{object|##.Discovery.Service}} table entry}}
+          This {{param}} value can be {{empty}} because the referenced object has been deleted or the CPE was unable to retrieve the Description Document due to some out-of-band error. The determination to delete this {{object}} or use {{empty}} is implementation specific.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="##.Discovery.Service." targetType="row"/>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ServiceType" access="readOnly">
+        <description>
+          The value of the UPnP serviceType element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the service.
+      </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SCPDURL" access="readOnly">
+        <description>
+          The value of the UPnP SCPDURL element in the Device Description Document for this {{object}} and MUST be an absolute URL.
+          The way to obtain an absolute URL from the SCPDURL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}.
+          If the SCPDURL is not provided by the device then this value MUST be {{empty}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="ControlURL" access="readOnly">
+        <description>
+          The value of the UPnP controlURL element in the Device Description Document for this {{object}} and MUST be an absolute URL.
+          The way to obtain an absolute URL from the controlURL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}.
+          If the controlURL is not provided by the device then this value MUST be {{empty}}
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="EventSubURL" access="readOnly">
+        <description>
+          The value of the UPnP eventSubURL element in the Device Description Document for this {{object}} and MUST be an absolute URL.
+          The way to obtain an absolute URL from the eventSubURLL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}.
+          If the eventSubURL is not provided by the device then this value MUST be {{empty}}
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    <profile name="UPnPDiscAdv:2" extends="UPnPDiscAdv:1" dmr:previousProfile="UPnPDiscAdv:1">
+      <object ref="UPnP.Discovery.Device.{i}." requirement="present">
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="Host" requirement="readOnly"/>
+      </object>
+      <object ref="UPnP.Discovery.Service.{i}." requirement="present">
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="Host" requirement="readOnly"/>
+        <parameter ref="ParentDevice" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+  <!-- Update UPnP component, incuding profiles if necessary -->
+  <component name="UPnP">
+    <component ref="_UPnP"/>
+    <component ref="UPnPDiffs"/>
+  </component>
+
+  <!--Update to MS_EmbeddedDevice EmbeddedDeivce object-->
+  <component name="MS_EmbeddedDeviceDiffs">
+    <object base="ManagementServer.EmbeddedDevice.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="EmbeddedDeviceNumberOfEntries">
+      <parameter base="ProxyProtocol" access="readOnly">
+        <syntax>
+          <string><size status="deleted"/>
+            <enumeration value="Z-Wave"></enumeration>
+            <enumeration value="ZigBee"></enumeration>
+            <enumeration value="UPnP-DM"></enumeration>
+            <enumeration value="ETSI-M2M"><description>see {{bibref|ETSIM2MFA}}</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ProxyProtocolReference" access="readOnly" dmr:previousParameter="ProxyProtocol">
+        <description>{{reference|a protocol object that uses the {{param|ProxyProtocol}}}}</description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"></pathRef>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DiscoveryProtocol" access="readOnly" dmr:previousParameter="ProxyProtocolReference">
+        <description>{{list|that represents the discovery protocol(s) for this proxied device}}
+{{enum}}
+Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106a3|Section 3.3}} MUST be adhered to.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Z-Wave"><description>see {{bibref|Z-Wave}}</description></enumeration>
+            <enumeration value="ZigBee"><description>see {{bibref|ZigBee}}</description></enumeration>
+            <enumeration value="UPnP"><description>see {{bibref|UPnP-DAv1}}</description></enumeration>
+            <enumeration value="ETSI-M2M"><description>see {{bibref|ETSIM2MFA}}</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DiscoveryProtocolReference" access="readOnly" dmr:previousParameter="DiscoveryProtocol">
+        <description>{{list}} {{reference|an object discovered using one or more protocols listed in {{param|DiscoveryProtocol}}|ignore}}
+For objects discovered by the UPnP discovery protocol, the {{param}} would contain items that are references to instances of the following:
+* {{object|.UPnP.Discovery.RootDevice}}
+* {{object|.UPnP.Discovery.Device}}
+* {{object|.UPnP.Discovery.Service}}
+For objects discovered by the ETSI-M2M discovery protocol, the {{param}} would contain items that are references to instances of ETSIM2M.SCL.{i}.AreaNwkDeviceInfoInstance.</description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"></pathRef>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+  <component name="MS_EmbeddedDevice">
+    <component ref="_MS_EmbeddedDevice"/>
+    <component ref="MS_EmbeddedDeviceDiffs"/>
+  </component>
+  
+      <!--Update to MS_VirtualDevice VirtualDevice object-->
+  <component name="MS_VirtualDeviceDiffs">
+    <object base="ManagementServer.VirtualDevice.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="VirtualDeviceNumberOfEntries">
+      <parameter base="ProxyProtocol" access="readOnly">
+        <syntax>
+          <string><size status="deleted"/>
+            <enumeration value="Z-Wave"></enumeration>
+            <enumeration value="ZigBee"></enumeration>
+            <enumeration value="UPnP-DM"></enumeration>
+            <enumeration value="ETSI-M2M"><description>see {{bibref|ETSIM2MFA}}</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ProxyProtocolReference" access="readOnly" dmr:previousParameter="ProxyProtocol">
+        <description>{{reference|a protocol object that uses the {{param|ProxyProtocol}}}}</description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"></pathRef>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DiscoveryProtocol" access="readOnly" dmr:previousParameter="ProxyProtocolReference">
+        <description>{{list|that represents the discovery protocol(s) for this proxied device}}
+{{enum}}
+Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106a3|Section 3.3}} MUST be adhered to.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Z-Wave"><description>see {{bibref|Z-Wave}}</description></enumeration>
+            <enumeration value="ZigBee"><description>see {{bibref|ZigBee}}</description></enumeration>
+            <enumeration value="UPnP"><description>see {{bibref|UPnP-DAv1}}</description></enumeration>
+            <enumeration value="ETSI-M2M"><description>see {{bibref|ETSIM2MFA}}</description></enumeration>
+          </string>
+        </syntax>
+        </parameter>
+      <parameter name="DiscoveryProtocolReference" access="readOnly" dmr:previousParameter="DiscoveryProtocol">
+        <description>{{list}} {{reference|an object discovered using one or more protocols listed in {{param|DiscoveryProtocol}}|ignore}}
+For objects discovered by the UPnP discovery protocol, the {{param}} would contain items that are references to instances of the following:
+* {{object|.UPnP.Discovery.RootDevice}}
+* {{object|.UPnP.Discovery.Device}}
+* {{object|.UPnP.Discovery.Service}}
+For objects discovered by the ETSI-M2M discovery protocol, the {{param}} would contain items that are references to instances of ETSIM2M.SCL.{i}.AreaNwkDeviceInfoInstance.</description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"></pathRef>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+  <component name="MS_VirtualDevice">
+    <component ref="_MS_VirtualDevice"/>
+    <component ref="MS_VirtualDeviceDiffs"/>
+  </component>
+
+<!--Update to DI_ProxierInfo object-->
+  <component name="DI_ProxierInfoDiffs">
+    <object base="DeviceInfo.ProxierInfo." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter base="ProxyProtocol" access="readOnly">
+        <syntax>
+          <string><size status="deleted"/>
+            <enumeration value="Z-Wave"></enumeration>
+            <enumeration value="ZigBee"></enumeration>
+            <enumeration value="UPnP-DM"></enumeration>
+            <enumeration value="ETSI-M2M"><description>see {{bibref|ETSIM2MFA}}</description></enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+  <component name="DI_ProxierInfo">
+    <component ref="_DI_ProxierInfo"/>
+    <component ref="DI_ProxierInfoDiffs"/>
+  </component>
+
+  <!--  Define DNS_SD component -->
+  <component name="DNS_SD">
+    <object name="DNS.SD." access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object contains the DNS Service Discovery {{bibref|DNS-SD}} object and parameters necessary to discover services and their associated devices.
+        Upon reboot the the contents of the service table are repopulated. When the DNS.SD service is disabled, the contents of the service table is implementation specific.
+        
+      </description>
+      <parameter access="readWrite" name="Enable">
+        <description>The parameter, when {{true}}, enables the discovery of DNS-SD services hosted by other devices.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="ServiceNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="DNS.SD.Service.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="ServiceNumberOfEntries">
+      <description>The {{object}} table contains discovered DNS-SD services. DNS.SD service information is provided in DNS RR SRV records {{bibref|RFC2782}}. The Service Instance Name {{bibref|DNS-SD|Section 4.1 Structured Instance Names}} further specifies information about the service name (RFC2782 Service field) and domain name (RFC2782 Name field) in the form:
+Service Instance Name = &lt;InstanceName&gt; . &lt;Service&gt; . &lt;Domain&gt;
+&lt;Service&gt; = _&lt;ApplicationProtocol&gt; . _&lt;TransportProtocol&gt;
+RFC2782 Service field will always be equal to &lt;InstanceName&gt;. &lt;Service&gt;
+RFC2782 Name field will always be equal to &lt;Domain&gt; 
+For example, an SSH service might have:
+*{{param|InstanceName}} = "Secure Shell (SSH))"
+*{{param|ApplicationProtocol}} = "ssh"
+*{{param|TransportProtocol}} = "TCP"
+*{{param|Domain}} = "example.com"
+*{{param|Port}} = 22
+*{{param|Target}} = "ssh.example.com."
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="InstanceName"/>
+        <parameter ref="ApplicationProtocol"/>
+        <parameter ref="TransportProtocol"/>
+        <parameter ref="Domain"/>
+      </uniqueKey>
+      <parameter name="InstanceName" access="readOnly">
+        <description>Human-readable instance name {{bibref|DNS-SD|Section 4.1.1 Instance Names}} (i.e. The "&lt;{{param}}&gt;" portion of the '"Service Instance Name'").
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="63"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ApplicationProtocol" access="readOnly">
+        <description>
+          The Application Protocol, without the leading underscore, associated with the service (e.g., daap) as defined by the DNS-SD service {{bibref|DNS-SD|Section 7 Application Protocol Names}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="15"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TransportProtocol" access="readOnly">
+        <description>
+          The Transport Protocol associated with the service as defined by the DNS-SD service {{bibref|DNS-SD|Section 4.1.2 Service Names}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="TCP"/>
+            <enumeration value="UDP"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Domain" access="readOnly">
+        <description>
+        The value extracted from the Name field of the DNS SRV record {{bibref|RFC2782}} which represents the fully qualified domain name (FQDN) associated with the service as defined by the DNS-SD service {{bibref|DNS-SD|Section 4.1.3 Domain Names}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Port" access="readOnly">
+        <description>
+          The value extracted from the Port field of the DNS SRV record {{bibref|RFC2782}} that is used to contact the service.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Target" access="readOnly">
+        <description>
+          The fully qualified domain name (FQDN) with the trailing dot "." of the target host implementing the service as in the DNS SRV record {{bibref|RFC2782}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the discovered {{object}} at {{param|LastUpdate}} time. {{enum}}
+          The ability to instantiate an inactive {{object}} is OPTIONAL.
+          The time an inactive {{object}} remains listed in this table is a local matter to the device. 
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="LeaseActive">
+              <description>
+                The {{object}} has received a response record with TTL > 0 and the {{param|#.Service.{i}.TimeToLive}} has not expired yet. The {{object}} is considered active.
+              </description>
+            </enumeration>
+            <enumeration value="GoodbyeReceived">
+              <description>
+                The device has received a response record containing TTL=0 indicating a goodbye message and the {{param|#.Service.{i}.TimeToLive}} has not expired yet. The {{object}} is considered inactive.
+              </description>
+            </enumeration>
+            <enumeration value="LeaseExpired">
+              <description>
+                The {{param|#.Service.{i}.TimeToLive}} has expired. The {{object}} is considered inactive
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+            The date and time at which the last advertisement for this {{object}} was received.
+          </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      <parameter name="Host" access="readOnly">
+        <description>
+          {{list}} {{reference|all Host table entries, active or inactive, that correspond to this discovered DNS.SD service. As such, when entries are added or removed from the Host tables the value of this parameter MUST be updated accordingly|ignore}}
+          </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetParent=".LANDevice.{i}.Hosts.Host. .Hosts.Host." targetType="row"/>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TimeToLive" access="readOnly">
+        <description>
+          The value extracted from the TTL field of the DNS SRV record {{bibref|RFC2782}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="2147483647"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Priority" access="readOnly">
+        <description>
+          The value extracted from the Priority field of the DNS SRV record {{bibref|RFC2782}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Weight" access="readOnly">
+        <description>
+          A server selection mechanism. The value extracted from the Weight field of the DNS SRV record {{bibref|RFC2782}} that specifies the relative weight for entries with the same {{param|Priority}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TextRecordNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="DNS.SD.Service.{i}.TextRecord.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="TextRecordNumberOfEntries" dmr:noUniqueKeys="true">
+      <description>This object maintains an instance of a (key/value pairs) of the service. The information is extracted from DNS TXT records {{bibref|RFC1035}} of the discovered service.
+When multiple instances of the {{object}} table have the same value for the {{param|Key}} parameter, the implementation is CPE specific.
+    </description>
+      <parameter name="Key" access="readOnly">
+        <description>The key that identifies the text record</description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Value" access="readOnly">
+        <description>The value of the text record.</description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <profile name="DNS_SD:1">
+      <object ref="DNS.SD." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ServiceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="DNS.SD.Service.{i}." requirement="present">
+        <parameter ref="InstanceName" requirement="readOnly"/>
+        <parameter ref="ApplicationProtocol" requirement="readOnly"/>
+        <parameter ref="TransportProtocol" requirement="readOnly"/>
+        <parameter ref="Domain" requirement="readOnly"/>
+        <parameter ref="Port" requirement="readOnly"/>
+        <parameter ref="Target" requirement="readOnly"/>
+        <parameter ref="Priority" requirement="readOnly"/>
+        <parameter ref="Weight" requirement="readOnly"/>
+        <parameter ref="TimeToLive" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="Host" requirement="readOnly"/>
+        <parameter ref="TextRecordNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="DNS.SD.Service.{i}.TextRecord.{i}." requirement="present">
+        <parameter ref="Key" requirement="readOnly"/>
+        <parameter ref="Value" requirement="readOnly"/>
+      </object>
+    </profile>
+
+  </component>
+
+</dm:document>

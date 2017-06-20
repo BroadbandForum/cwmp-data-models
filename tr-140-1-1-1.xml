@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 StorageService:1.1 Service Object definition (Corrigendum 1)
+
+  Copyright (c) 2011-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+TR-069 StorageService:1.1 Service Object definition (Corrigendum 1)
+
+  Version History:
+    * December 2011: tr-140-1-1-1.xml.
+      - corrected import of tr-140-1-0.xml
+
+-->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-1"
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-1 http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-1.xsd
+                                 urn:broadband-forum-org:cwmp:datamodel-report-0-1 http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-140-1-1-1">
+  <import file="tr-140-1-0.xml" spec="urn:broadband-forum-org:tr-140-1-0">
+<model name="StorageService:1.0"></model>  
+  </import>
+  <model name="StorageService:1.1"  base="StorageService:1.0"  isService="true">
+    <parameter name="StorageServiceNumberOfEntries" access="readOnly">
+      <description>Number of entries in {{object|StorageService}}.</description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+    <object base="StorageService.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="StorageServiceNumberOfEntries">
+    </object>
+    <object base="StorageService.{i}.LogicalVolume.{i}.Folder.{i}.UserAccess.{i}." access="readWrite" minEntries="0" maxEntries="unbounded" enableParameter="Enable" numEntriesParameter="UserAccessNumberOfEntries">
+<parameter name="Enable" access="readWrite" dmr:previousParameter="">
+<description>Enables or disables the entry.</description>
+<syntax><boolean></boolean>
+<default type="object" value="false"></default>
+</syntax>
+</parameter>
+    </object>
+    <object base="StorageService.{i}.LogicalVolume.{i}.Folder.{i}.GroupAccess.{i}." access="readWrite" minEntries="0" maxEntries="unbounded"  enableParameter="Enable" numEntriesParameter="GroupAccessNumberOfEntries">
+<parameter name="Enable" access="readWrite" dmr:previousParameter="">
+<description>Enables or disables the entry.</description>
+<syntax><boolean></boolean>
+<default type="factory" value="false"></default>
+</syntax>
+</parameter>
+</object>
+    <profile name="Baseline:2" base="Baseline:1" >
+<parameter ref="StorageServiceNumberOfEntries" requirement="readOnly"></parameter>
+    </profile>
+    <profile name="UserAccess:2" base="UserAccess:1">
+      <object ref="StorageService.{i}.LogicalVolume.{i}.Folder.{i}.UserAccess.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite" dmr:previousParameter=""></parameter>
+      </object>
+    </profile>
+    <profile name="GroupAccess:2" base="GroupAccess:1">
+      <object ref="StorageService.{i}.LogicalVolume.{i}.Folder.{i}.GroupAccess.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite" dmr:previousParameter=""></parameter>
+      </object>
+    </profile>
+
+  </model>
+</dm:document>

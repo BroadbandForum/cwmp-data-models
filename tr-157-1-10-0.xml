@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Component Objects for CWMP
+  
+  Copyright (c) 2009-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    This document defines objects for use in CWMP managed devices.  The objects
+    may exist at the top level of a hierarchy, or in some cases within an 
+    existing object.  The objects are intended for use in all CWMP Root 
+    objects. The objects define varying functionality, diagnostics, etc. that 
+    are agnostic to the type of device.
+
+  Editors:
+    * Tim Carey, Alcatel-Lucent
+    
+  BroadbandHome™ Working Group Chairs:
+    * John Blackford, Pace
+    * Jason Walls, QACafe
+
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    * tr-157-1-0-0.xml: March 2009: 
+      - corresponds to TR-157 Issue 1, Section 4 
+        (Data Model Definition) and Section 5 (Profile Definition)
+    * tr-157-1-1-0.xml: September 2009: 
+      - corresponds to TR-157 Issue 1 Amendment 1, Section 4 
+        (Data Model Definition) and Section 5 (Profile Definition)
+    * tr-157-1-2-0.xml: May 2010: 
+      - corresponds to TR-157 Issue 1 Amendment 2
+    * tr-157-1-3-0.xml: December 2010: 
+      - corresponds to TR-157 Issue 1 Amendment 3
+    * tr-157-1-4-0.xml: September 2011: 
+      - updates for Alias-Based Addressing and Proxy Management
+    * tr-157-1-5-0.xml: December 2011: 
+      - updates related to 3GPP LTE and 3GPP2 cdma2000 (TR-196 Issue 2)
+    * tr-157-1-6-0.xml: May 2012: 
+      - updates for Bulk Data Collection (TR-232)
+    * tr-157-1-7-0.xml: November 2012: 
+      - new components for UPnP and DnsSd Discovery updates to 
+        InternetGatewayDevice.DeviceInfo.SupportedDataModel.{i}.URL and 
+        Proxy objects for Discovery and Proxy References
+    * tr-157-1-8-0.xml: November 2013: 
+      - updates for XMPP, HTTP Compression, Lightweight Notifications,
+        and the ManagementServer Standby Policy
+    * tr-157-1-9-0.xml: 8 September 2014: 17 September 2014:
+        - Added Inform Parameters table to ManagementServer 
+        - Added HTIP Component to DeviceInfo containing HTIP related parameters
+        - Updated the UPnP component for HTIP parameters
+    * tr-157-1-10-0.xml: 9 November 2015: 13 November 2015: 
+        - Update Bulk Data Collection for HTTP Transport
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5" 
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                                   http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+                                 urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                                   http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-157-1-10-0"  file="tr-157-1-10-0.xml">
+
+  <description>
+    {{docname|Component Objects for CWMP}}
+    {{appdate|November 2015}}
+    {{trname|TR-157a10}}
+    Update Bulk Data Collection for HTTP Transport
+  </description>
+
+  <import file="tr-069-1-4-biblio.xml" spec="urn:broadband-forum-org:tr-069-1-4"/>
+  
+  <import file="tr-106-1-0-types.xml">
+    <dataType name="Alias"/>
+  </import>
+  
+  <import file="tr-157-1-9.xml" spec="urn:broadband-forum-org:tr-157-1-9">
+    <component name="DI_Location"/>
+    <component name="DI_MemoryStatus"/>
+    <component name="DI_NetworkProperties"/>
+    <component name="DI_Processors"/>
+    <component name="DI_ProcessStatus"/>
+    <component name="DI_ProxierInfo"/>
+    <component name="DI_SupportedDataModel"/>
+    <component name="DI_TemperatureStatus"/>
+    <component name="DI_VendorLogFiles"/>
+    <component name="DLNACapabilities"/>
+    <component name="DNS_SD"/>
+    <component name="DownloadAvailability"/>
+    <component name="FaultManagement"/>
+    <component name="HTTPCompression"/>
+    <component name="LwNotif"/>
+    <component name="MS_AutonomousTransferCompletePolicy"/>
+    <component name="MS_DUStateChangeCompletePolicy"/>
+    <component name="MS_EmbeddedDevice"/>
+    <component name="MS_InformParameters"/>
+    <component name="MS_StandbyPolicy"/>
+    <component name="MS_VirtualDevice"/>
+    <component name="NSLookupDiag"/>
+    <component name="PeriodicStatistics"/>
+    <component name="Security"/>
+    <component name="SelfTestDiag"/>
+    <component name="SimpleFirewall"/>
+    <component name="SmartCardReader"/>
+    <component name="SoftwareModules"/>
+    <component name="UI_LocalDisplay"/>
+    <component name="UPnP"/>
+    <component name="USBHosts"/>
+    <component name="USBHosts_Device2"/>
+    <component name="User"/>
+    <component name="UI_RemoteAccess"/>
+    <component name="XMPP"/>
+    <component name="XMPPConnReq"/>
+    <component name="DI_HTIP"/>
+
+    <!-- Modified components -->
+    <component name="_BulkDataCollection" ref="BulkDataCollection"/>
+  </import>
+  
+  <!-- Update BulkDataCollection component for new HTTP transport and CSV Encoding -->
+  <component name="BulkDataCollectionDiffs">
+    <object base="BulkData." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">
+        This object provides bulk data collection capabilities and global collection settings that affect the entire device.
+        Bulk Data utilizes various solutions (e.g., IPDR, HTTP) to collect data from devices and transfer the data to a collection server.        
+        The IPDR solution is based on a service specification described in {{bibref|TR-232}}.
+        The HTTP solution is based on transfer mechanisms described in {{bibref|TR-157a10|Annex A}}.
+        The Bulk Data Collection Profiles are measured over a reporting interval (which can be aligned with absolute time) and are made available to the collection server.
+      </description>
+      <parameter base="Protocols" access="readOnly">
+        <description action="replace">Represents the IPDR and transport protocols that this device is capable of supporting.</description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Streaming"></enumeration>
+            <enumeration value="File"></enumeration>
+            <enumeration value="HTTP">
+              <description>Hypertext Transfer Protocol {{bibref|RFC2616}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter base="EncodingTypes" access="readOnly">
+        <description action="replace">Represents the Encoding Types for the protocols that this device is capable of supporting.</description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="XML"><description action="replace">Used with the IPDR Streaming and File Protocols. {{bibref|IPDR-XML}}</description></enumeration>
+            <enumeration value="XDR"><description action="replace">Used with the IPDR Streaming and File Protocols. {{bibref|IPDR-XDR}}</description></enumeration>
+            <enumeration value="CSV">
+              <description>Comma Separated Values. Used with the HTTP Protocol. {{bibref|RFC4180}}</description>
+            </enumeration>
+            <enumeration value="JSON">
+              <description>JavaScript Object Notation. Used with the HTTP Protocol {{bibref|RFC7159}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ParameterWildCardSupported" access="readOnly">
+        <description>When {{true}}, the Device supports the use of wildcards to determine the parameters that are reported using a Profile.</description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="BulkData.Profile.{i}." access="readWrite" numEntriesParameter="ProfileNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Protocol" access="readWrite">
+        <description action="replace">The Bulk Data Protocol being used for this collection profile.</description>
+      </parameter>
+      <parameter base="EncodingType" access="readWrite">
+        <description action="replace">The Bulk Data encoding type being used for this collection profile.</description>
+      </parameter>
+      <parameter name="Name" access="readWrite" dmr:previousParameter="Alias">
+        <description>The name of the profile.
+        </description>
+        <syntax>
+          <string><size maxLength="255"/></string>
+        </syntax>
+      </parameter>
+      <parameter name="NumberOfRetainedFailedReports" access="readWrite">
+        <description>The number of failed reports to be retained and transmitted (in addition to the current report) at the end of the current reporting interval. 
+If the value of the {{param|EncodingType}} parameter is modified any outstanding failed reports are deleted.
+If the CPE cannot retain the number of failed reports from previous reporting intervals while transmitting the report of the current reporting interval, then the oldest failed reports are deleted until the CPE is able to transmit the report from the current reporting interval.
+A value of 0 indicates that failed reports are not to be retained for transmission in the next reporting interval.
+A value of -1 indicates that the CPE will retain as many failed reports as possible.
+        </description>
+        <syntax>
+          <int><range minInclusive="-1"></range></int>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="BulkData.Profile.{i}.Parameter.{i}." access="readWrite" numEntriesParameter="ParameterNumberOfEntries" minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true">
+      <parameter name="Name" access="readWrite" dmr:previousParameter="">
+        <description>
+          Name of the parameter in the report body. 
+          If the value of this parameter is {{empty}}, then the value of the {{param|Reference}} parameter is used as the name.
+          When the value {{param|Reference}} parameter contains wildcards and/or partial parameter names, the rules for determining the value of this parameter are specified in {{bibref|TR-157a10|Annex A.3.2.1}}.</description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter base="Reference" access="readWrite">
+        <description action="replace">Represents the parameter(s) that are part of this Bulk Data collection profile. The value MUST be a path name of a parameter or an object.
+When the {{param|##.ParameterWildCardSupported}} parameter has a value of {{true}}, patterns for instance identifiers are permitted with wildcards (an "*" character) in place of instance identifiers; any attempt to set the value otherwise MUST be rejected by the CPE.
+In the case where a partial parameter path is specified, the sub-objects of the resolved pattern and contained parameters will be part of the bulk data collected and reported. If the path name refers to an object then it MUST end with a '.'.
+        </description>
+      </parameter>
+    </object>
+    
+    <object name="BulkData.Profile.{i}.CSVEncoding." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object defines the properties to be used when the {{object|##.Profile}} object's {{param|#.EncodingType}} parameter value is {{enum|CSV|##.EncodingTypes}}.</description>
+      <parameter name="FieldSeparator" access="readWrite">
+        <description>
+          Field separator to use when encoding CSV data.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value=","/>
+        </syntax>
+      </parameter>
+      <parameter name="RowSeparator" access="readWrite">
+        <description>
+          Row separator to use when encoding CSV data.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value="&#13;&#10;"/>
+        </syntax>
+      </parameter>
+      <parameter name="EscapeCharacter" access="readWrite">
+        <description>
+          Escape character to use when encoding CSV data.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value="&quot;"/>
+        </syntax>
+      </parameter>
+      <parameter name="ReportFormat" access="readWrite">
+        <description>This parameter describes the formatting used for reports defined by this profile as described in {{bibref|TR-157a10|Annex A.3.4}}.
+Note: This parameter is encoded as a token in the BBF-Report-Format header field and MUST NOT include spaces or other characters excluded from token characters defined in {{bibref|RFC2616}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ParameterPerRow">
+              <description>Reports are formatted with each parameter formatted as a row entry.</description>
+            </enumeration>
+            <enumeration value="ParameterPerColumn">
+              <description>Reports are formatted with each parameter formatted as a column entry.</description>
+            </enumeration>
+          </string>
+          <default type="object" value="ParameterPerColumn"/>
+        </syntax>
+      </parameter>
+      <parameter name="RowTimestamp" access="readWrite">
+        <description>
+          The format of the timestamp to use for data inserted into the row.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unix-Epoch"><description>Timestamp is inserted using the UNIX epoch time (milliseconds since Jan 1, 1970 UTC) timestamp format. If the CPE is unable to acquire a time, then the time that has elapsed since the last reboot of the device is used.</description></enumeration>
+            <enumeration value="ISO-8601"><description>Timestamp is inserted using the ISO-8601 timestamp format. If the CPE is unable to acquire a time, then the processing described by the dateTime type in {{bibref|TR-069|Table 12}} is followed.</description></enumeration>
+            <enumeration value="None"><description>Timestamp is not inserted in the row.</description></enumeration>
+          </string>
+          <default type="object" value="Unix-Epoch"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="BulkData.Profile.{i}.JSONEncoding." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object defines the properties to be used when the {{object|##.Profile}} object's {{param|#.EncodingType}} parameter value is {{enum|JSON|##.EncodingTypes}}.</description>
+      <parameter name="ReportFormat" access="readWrite">
+        <description>This parameter describes the formatting used for the report as described in {{bibref|TR-157a10|Annex A.3.5}}.
+Note: This parameter is encoded as a token in the BBF-Report-Format header field and MUST NOT include spaces or other characters excluded from token characters defined in {{bibref|RFC2616}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ObjectHierarchy">
+              <description>Reports are formatted with each object in the object hierarchy of the data model encoded as a corresponding hierarchy of JSON Objects with the parameters of the object specified as name/value pairs of the JSON Object.</description>
+            </enumeration>
+            <enumeration value="NameValuePair">
+              <description>Reports are formatted with each parameter of the data model encoded as a corresponding array of JSON Objects with the parameters specified as name/value pairs.</description>
+            </enumeration>
+          </string>
+          <default type="object" value="ObjectHierarchy"/>
+        </syntax>
+      </parameter>
+      <parameter name="ReportTimestamp" access="readWrite">
+        <description>
+          The format of timestamp to use for the JSON Object named "CollectionTime" as described in {{bibref|TR-157a10}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unix-Epoch"><description>Timestamp is inserted using the UNIX epoch time (milliseconds since Jan 1, 1970 UTC) timestamp format. If the CPE is unable to acquire a time, then the time that has elapsed since the last reboot of the device is used.</description></enumeration>
+            <enumeration value="ISO-8601"><description>Timestamp is inserted using the ISO-8601 timestamp format. If the CPE is unable to acquire a time, then the processing described by the dateTime type in {{bibref|TR-069|Table 12}} is followed.</description></enumeration>
+            <enumeration value="None"><description>Timestamp is not inserted.</description></enumeration>
+          </string>
+          <default type="object" value="Unix-Epoch"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="BulkData.Profile.{i}.HTTP." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object defines the properties to be used when transporting bulk data using the HTTP/HTTPS protocol. This object is used when the {{param|#.Protocol}} parameter has a value of {{enum|HTTP|##.Protocols}}. For authentication purposes the CPE MUST support HTTP Basic and Digest Access Authentication as defined in {{bibref|RFC2616}}.</description>
+      <parameter name="URL" access="readWrite">
+        <description>The URL, as defined in {{bibref|RFC3986}}, for the collection server to receive the Bulk Data transmitted by the CPE.</description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Username" access="readWrite">
+        <description>Username used to authenticate the CPE when making a connection to the collection server.</description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Password" access="readWrite">
+        <description>Password used to authenticate the CPE when making a connection to the collection server.</description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CompressionsSupported" access="readOnly">
+        <description>Indicates the HTTP Compression mechanism(s) supported by this CPE for the purposes of transferring bulk data.  
+</description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="GZIP">
+              <description>As defined in {{bibref|RFC2616|Section 3.5}}</description>
+            </enumeration>
+            <enumeration value="Compress">
+              <description>As defined in {{bibref|RFC2616|Section 3.5}}</description>
+            </enumeration>
+            <enumeration value="Deflate">
+              <description>As defined in {{bibref|RFC2616|Section 3.5}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Compression" access="readWrite">
+        <description>The value of this parameter represents the HTTP Compression mechanism to be used by the CPE when transferring data to the collection server.</description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="CompressionsSupported" nullValue="None"/>
+          </string>
+          <default type="object" value="None"/>
+        </syntax>
+      </parameter>
+      <parameter name="MethodsSupported" access="readOnly">
+        <description>Indicates the HTTP method(s) supported by this CPE for the purposes of transferring bulk data.</description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="POST">
+              <description>As defined in {{bibref|RFC2616|Section 9.5}}</description>
+            </enumeration>
+            <enumeration value="PUT">
+              <description>As defined in {{bibref|RFC2616|Section 9.6}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Method" access="readWrite">
+        <description>The value of this parameter represents the HTTP method to be used by the CPE when transferring data to the collection server.</description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="MethodsSupported"/>
+          </string>
+          <default type="object" value="POST"/>
+        </syntax>
+      </parameter>
+      <parameter name="UseDateHeader" access="readWrite">
+        <description>When {{true}}, the CPE encodes the HTTP Date Header {{bibref|RFC2616|Section 14.18}} in the HTTP client request.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+      <parameter name="RetryEnable" access="readWrite">
+        <description>When {{true}}, the CPE retries unsuccessful attempts to transfer data.</description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="RetryMinimumWaitInterval" access="readWrite">
+        <description>Configures the data transfer retry wait interval, in seconds, as specified in {{bibref|TR-157a10|Annex A.2.2.1}}.
+The device MUST use a random value between {{param}}  and ({{param}} * {{param|RetryIntervalMultiplier}} / 1000) as the first retry wait interval.  Other values in the retry pattern MUST be calculated using this value as a starting point.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+      <parameter name="RetryIntervalMultiplier" access="readWrite">
+        <description>Configures the retry interval multiplier as specified in {{bibref|TR-157a10|Annex A.2.2.1}}.
+This value is expressed in units of 0.001.  Hence the values of the multiplier range between 1.000 and 65.535.
+The device MUST use a random value between {{param|RetryMinimumWaitInterval}}  and ({{param|RetryMinimumWaitInterval}} * {{param}} / 1000) as the first retry wait interval.  Other values in the retry pattern MUST be calculated using this value as a starting point.</description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="2000"/>
+        </syntax>
+      </parameter>
+      <parameter name="RequestURIParameterNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="BulkData.Profile.{i}.HTTP.RequestURIParameter.{i}." access="readWrite" numEntriesParameter="RequestURIParameterNumberOfEntries" minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true">
+      <description>
+        This object represents an instance of a parameter to be used in the report header used as part of the HTTP Request-URI transmitted by the CPE to the collection server using the Request-URI in addition to the parameters required by {{bibref|TR-157a10|Annex A.2.1}}.
+      </description>
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the Request-URI parameter. 
+          If {{param}} is {{empty}}, the name of the Request-URI parameter is the value of {{param|Reference}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Reference" access="readWrite">
+        <description>
+         The value MUST be the path name of the Request-URI parameter.
+         If the value of this parameter is empty, then this object is not encoded in the report header.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <profile name="BulkDataHTTP:1" extends="BulkDataColl:1">
+      <object ref="BulkData.Profile.{i}.HTTP." requirement="present">
+        <parameter ref="URL" requirement="readWrite"/>
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+        <parameter ref="CompressionsSupported" requirement="readOnly"/>
+        <parameter ref="Compression" requirement="readWrite"/>
+        <parameter ref="MethodsSupported" requirement="readOnly"/>
+        <parameter ref="Method" requirement="readWrite"/>
+        <parameter ref="UseDateHeader" requirement="readWrite"/>
+        <parameter ref="RetryEnable" requirement="readWrite"/>
+        <parameter ref="RetryMinimumWaitInterval" requirement="readWrite"/>
+        <parameter ref="RetryIntervalMultiplier" requirement="readWrite"/>
+        <parameter ref="RequestURIParameterNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="BulkData.Profile.{i}.HTTP.RequestURIParameter.{i}." requirement="createDelete">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Reference" requirement="readWrite"/>
+      </object>
+    </profile>
+    
+    <profile name="BulkDataCSVEncoding:1" extends="BulkDataColl:1">
+      <object ref="BulkData.Profile.{i}.CSVEncoding." requirement="present">
+        <parameter ref="FieldSeparator" requirement="readWrite"/>
+        <parameter ref="RowSeparator" requirement="readWrite"/>
+        <parameter ref="EscapeCharacter" requirement="readWrite"/>
+        <parameter ref="ReportFormat" requirement="readWrite"/>
+        <parameter ref="RowTimestamp" requirement="readWrite"/>
+      </object>
+    </profile>
+    
+    <profile name="BulkDataJSONEncoding:1" extends="BulkDataColl:1">
+      <object ref="BulkData.Profile.{i}.JSONEncoding." requirement="present">
+        <parameter ref="ReportFormat" requirement="readWrite"/>
+        <parameter ref="ReportTimestamp" requirement="readWrite"/>
+      </object>
+    </profile>
+    
+    <profile name="BulkDataReports:1" extends="BulkDataColl:1">
+      <object ref="BulkData." requirement="present">
+        <parameter ref="ParameterWildCardSupported" requirement="readOnly"/>
+      </object>
+      <object ref="BulkData.Profile.{i}." requirement="createDelete">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="NumberOfRetainedFailedReports" requirement="readWrite"/>
+      </object>
+      <object ref="BulkData.Profile.{i}.Parameter.{i}." requirement="createDelete">
+        <parameter ref="Name" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <component name="BulkDataCollection">
+    <component ref="_BulkDataCollection"/>
+    <component ref="BulkDataCollectionDiffs"/>
+  </component>
+
+</dm:document>
