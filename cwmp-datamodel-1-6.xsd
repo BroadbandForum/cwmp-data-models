@@ -202,7 +202,6 @@ In BBF standards, a data type name MUST NOT include any hyphens.</xs:documentati
       <xs:enumeration value="parameter">
         <xs:annotation>
           <xs:documentation>Default if parameter isn't supported.</xs:documentation>
-          <xs:documentation>XXX This makes "parameter" defaults available everywhere, which is a change.</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
     </xs:restriction>
@@ -287,12 +286,12 @@ In BBF standards, a model name MUST NOT include any hyphens.</xs:documentation>
   </xs:simpleType>
   <xs:simpleType name="MountType">
     <xs:annotation>
-      <xs:documentation>Indicates whether an object is mountable or a mount point.</xs:documentation>
+      <xs:documentation>Indicates whether an object is mountable or a mount point.  Mountable objects MUST be top-level children of the Root Object (other objects are not permitted to be mounted).</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:token">
       <xs:enumeration value="none"/>
       <xs:enumeration value="mountable"/>
-      <xs:enumeration value="mountpoint"/>
+      <xs:enumeration value="mountPoint"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="ObjectName">
@@ -778,9 +777,9 @@ If the object is a table (see maxEntries), the final part of the name MUST be "{
     </xs:attribute>
     <xs:attribute name="status" type="tns:Status" default="current"/>
     <xs:attribute name="id" type="tns:OpaqueID"/>
-    <xs:attribute name="numEntriesParameter" type="tns:ParameterName">
+    <xs:attribute name="discriminatorParameter" type="tns:ParameterName">
       <xs:annotation>
-        <xs:documentation>MUST be specified for a table with a variable number of entries, i.e. for which maxEntries is greater than minEntries ("unbounded" is regarded as being greater than all values).</xs:documentation>
+        <xs:documentation>MUST be present and specified for all single-instance objects which are part of a union and point to the same parameter specifying the name of the object which is currently in use, i.e. only one object which is part of a union can exist at the same time.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:anyAttribute namespace="##other"/>
@@ -840,6 +839,7 @@ If the object is a table (see maxEntries), the final part of the name MUST be "{
     <xs:sequence>
       <xs:element name="description" type="tns:Description" minOccurs="0"/>
       <xs:choice maxOccurs="unbounded">
+        <xs:element name="component" type="tns:ComponentReference"/>
         <xs:element name="parameter" type="tns:CommandParameter"/>
         <xs:element name="object" type="tns:CommandObject"/>
       </xs:choice>
@@ -850,13 +850,12 @@ If the object is a table (see maxEntries), the final part of the name MUST be "{
   <xs:complexType name="CommandObject">
     <xs:annotation>
       <xs:documentation>Command Object definition and reference.</xs:documentation>
-      <xs:documentation>XXX Why does allowing ##other make the content model non-deterministic?</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="tns:BaseObject">
         <xs:sequence>
-          <xs:element name="parameter" type="tns:EventParameter" maxOccurs="unbounded" minOccurs="0"
-          />
+          <xs:element name="parameter" type="tns:CommandParameter" maxOccurs="unbounded"
+            minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -869,7 +868,7 @@ If the object is a table (see maxEntries), the final part of the name MUST be "{
       <xs:extension base="tns:BaseParameter">
         <xs:attribute default="false" name="mandatory" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>If true, the parameter MUST be present in the event.</xs:documentation>
+            <xs:documentation>If true, the parameter MUST be present in the command.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -929,7 +928,9 @@ If the object is a table (see maxEntries), the final part of the name MUST be "{
     </xs:annotation>
     <xs:sequence>
       <xs:element name="description" type="tns:Description" minOccurs="0"/>
-      <xs:element name="list" type="tns:ListFacet" minOccurs="0"/>
+      <xs:choice minOccurs="0">
+        <xs:element name="list" type="tns:ListFacet" minOccurs="0"/>
+      </xs:choice>
       <xs:choice>
         <xs:group ref="tns:AllFacets" minOccurs="0" maxOccurs="unbounded">
           <xs:annotation>
@@ -1050,7 +1051,6 @@ Specify "prefix" to prefix to the previous description, "append" to append to th
   <xs:complexType name="EventObject">
     <xs:annotation>
       <xs:documentation>Event Object definition and reference.</xs:documentation>
-      <xs:documentation>XXX Why does allowing ##other make the content model non-deterministic?</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="tns:BaseObject">
@@ -1258,7 +1258,6 @@ MUST be present if and only if defining a new command.</xs:documentation>
     <xs:attribute name="status" type="tns:Status" default="current"/>
     <xs:attribute name="id" type="tns:OpaqueID"/>
     <xs:attribute default="false" name="async" type="xs:boolean"/>
-    <xs:attribute default="false" name="persist" type="xs:boolean"/>
     <xs:anyAttribute namespace="##other"/>
   </xs:complexType>
   <xs:complexType name="ModelEvent">
@@ -1268,6 +1267,7 @@ MUST be present if and only if defining a new command.</xs:documentation>
     <xs:sequence>
       <xs:element name="description" type="tns:Description" minOccurs="0"/>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="component" type="tns:ComponentReference"/>
         <xs:element name="parameter" type="tns:EventParameter"/>
         <xs:element name="object" type="tns:EventObject"/>
       </xs:choice>
@@ -1304,10 +1304,15 @@ MUST be present if and only if defining a new event.</xs:documentation>
           <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="access" type="tns:ReadWriteAccess" use="required"/>
-        <xs:attribute name="mounttype" type="tns:MountType" default="none"/>
+        <xs:attribute name="mountType" type="tns:MountType" default="none"/>
         <xs:attribute name="enableParameter" type="tns:ParameterName">
           <xs:annotation>
-            <xs:documentation>MUST be specified for a table in which the ACS can create entries and which has one or more uniqueKey elements that define functional keys.</xs:documentation>
+            <xs:documentation>MUST be specified for a table in which the Controller can create entries and which has one or more uniqueKey elements that define functional keys.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="numEntriesParameter" type="tns:ParameterName">
+          <xs:annotation>
+            <xs:documentation>MUST be specified for a table with a variable number of entries, i.e. for which maxEntries is greater than minEntries ("unbounded" is regarded as being greater than all values).</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -1382,8 +1387,6 @@ MUST be present if and only if defining a new event.</xs:documentation>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="parameter" type="tns:ProfileParameter"/>
         <xs:element name="object" type="tns:ProfileObject"/>
-        <xs:element name="command" type="tns:ProfileCommand"/>
-        <xs:element name="event" type="tns:ProfileEvent"/>
       </xs:choice>
       <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
@@ -1415,14 +1418,58 @@ MUST be present if and only if defining a new profile.</xs:documentation>
   <xs:complexType name="ProfileCommand">
     <xs:annotation>
       <xs:documentation>Profile command definition.</xs:documentation>
-      <xs:documentation>XXX This doesn't support placing requirements on command arguments (objects and parameters).</xs:documentation>
     </xs:annotation>
     <xs:sequence>
       <xs:element name="description" type="tns:Description" minOccurs="0">
         <xs:annotation>
-          <xs:documentation>If the requirement attribute is insufficient to express the requirement, any additional requirements MUST be specified here and MAY override the attribute.</xs:documentation>
-          <xs:documentation>XXX Currently there is no requirement attribute.</xs:documentation>
+          <xs:documentation>Any additional requirements MUST be specified here.</xs:documentation>
         </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="input">
+        <xs:complexType>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="parameter">
+              <xs:complexType>
+                <xs:attribute name="ref" type="tns:ParameterName"/>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="object">
+              <xs:complexType>
+                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                  <xs:element name="parameter">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="tns:ParameterName"/>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+                <xs:attribute name="ref" type="tns:ObjectName"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="output">
+        <xs:complexType>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="parameter">
+              <xs:complexType>
+                <xs:attribute name="ref" type="tns:ParameterName"/>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="object">
+              <xs:complexType>
+                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                  <xs:element name="parameter">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="tns:ParameterName"/>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+                <xs:attribute name="ref" type="tns:ObjectName"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
       </xs:element>
     </xs:sequence>
     <xs:attribute name="ref" type="tns:CommandName" use="required"/>
@@ -1432,15 +1479,32 @@ MUST be present if and only if defining a new profile.</xs:documentation>
   <xs:complexType name="ProfileEvent">
     <xs:annotation>
       <xs:documentation>Profile event definition.</xs:documentation>
-      <xs:documentation>XXX This doesn't support placing requirements on event arguments (objects and parameters).</xs:documentation>
     </xs:annotation>
     <xs:sequence>
       <xs:element name="description" type="tns:Description" minOccurs="0">
         <xs:annotation>
-          <xs:documentation>If the requirement attribute is insufficient to express the requirement, any additional requirements MUST be specified here and MAY override the attribute.</xs:documentation>
-          <xs:documentation>XXX Currently there is no requirement attribute.</xs:documentation>
+          <xs:documentation>Any additional requirements MUST be specified here.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element name="parameter">
+          <xs:complexType>
+            <xs:attribute name="ref" type="tns:ParameterName"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="object">
+          <xs:complexType>
+            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+              <xs:element name="parameter">
+                <xs:complexType>
+                  <xs:attribute name="ref" type="tns:ParameterName"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="ref" type="tns:ObjectName"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
     </xs:sequence>
     <xs:attribute name="ref" type="tns:EventName" use="required"/>
     <xs:attribute name="status" type="tns:Status" default="current"/>
@@ -1458,8 +1522,18 @@ MUST be present if and only if defining a new profile.</xs:documentation>
       </xs:element>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element name="parameter" type="tns:ProfileParameter"/>
-        <xs:element name="command" type="tns:ProfileCommand"/>
-        <xs:element name="event" type="tns:ProfileEvent"/>
+        <xs:element name="command" type="tns:ProfileCommand">
+          <xs:annotation>
+            <xs:documentation>If no argument requirements are listed, this is the same as if just the mandatory arguments were listed.</xs:documentation>
+            <xs:documentation>If any argument requirements are given then all the mandatory arguments MUST be listed, and additional arguments MAY be listed.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="event" type="tns:ProfileEvent">
+          <xs:annotation>
+            <xs:documentation>If no argument requirements are listed, this is the same as if just the mandatory arguments were listed.</xs:documentation>
+            <xs:documentation>If any argument requirements are given then all the mandatory arguments MUST be listed, and additional arguments MAY be listed.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
       </xs:choice>
     </xs:sequence>
     <xs:attribute name="ref" type="tns:ObjectName" use="required"/>
@@ -1521,12 +1595,14 @@ MUST be present if and only if defining a new profile.</xs:documentation>
       <xs:documentation>Parameter syntax specification.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="list" type="tns:ListFacet" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>For lists, the TR-069 parameter is always a string and the data type specification applies to individual list items, not to the parameter value.
+      <xs:choice>
+        <xs:element name="list" type="tns:ListFacet" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>For lists, the TR-069 parameter is always a string and the data type specification applies to individual list items, not to the parameter value.
 See section 3.2 for comma-separated list formatting rules.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
       <xs:choice>
         <xs:group ref="tns:AllBuiltinDataTypes">
           <xs:annotation>
@@ -1556,7 +1632,7 @@ See section 3.2 for comma-separated list formatting rules.</xs:documentation>
     </xs:attribute>
     <xs:attribute name="command" type="xs:boolean" default="false">
       <xs:annotation>
-        <xs:documentation>If true, setting this parameter triggers a CPE action. Such a parameter is not part of the device configuration and MUST always read back as the null value for the parameter's base data type (A.2.3.5).</xs:documentation>
+        <xs:documentation>If true, setting this parameter triggers an Agent action. Such a parameter is not part of the device configuration and MUST always read back as the null value for the parameter's base data type (A.2.3.5).</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:anyAttribute namespace="##other"/>

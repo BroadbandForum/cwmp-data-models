@@ -24,7 +24,7 @@ def main(argv=None):
     format = '%s:%s'
     loglevel = 0
     paths = None
-    
+
     parser = argparse.ArgumentParser(prog=prog, description="TBD")
     parser.add_argument("-f", "--format", type=str, default=format, nargs='?',
                         help="Format substituting supplied and latest paths; "
@@ -49,7 +49,7 @@ def main(argv=None):
         for path in paths:
             process(format, path)
         return 0
-        
+
     except (ParseException, MatchException) as e:
         sys.stderr.write('%s: %s\n' % (e.__class__.__name__, e))
         return 1
@@ -67,7 +67,7 @@ def process(format, path):
 def parse(path):
     (dir, name) = os.path.split(path)
 
-    # XXX this is more general than is needed, e.g. 
+    # XXX this is more general than is needed, e.g.
     match = re.match(r"""([^-]+)-     # tr -
                          (\d+)        # nnn
                          (?:-(\d+))?  # - i    (optional)
@@ -96,7 +96,7 @@ def unparse(dir, tr, nnn, i, a, c, label, ext):
 def latest(dir, tr, nnn, i, a, label, ext):
     patt = unparse(dir, tr, nnn, i, a, '*', label, ext)
     paths = glob.glob(patt)
-    
+
     c = None
     for path in paths:
         logging.debug('latest %s -> %s' % (patt, path))
@@ -105,9 +105,11 @@ def latest(dir, tr, nnn, i, a, label, ext):
         if label_ == label and (c is None or int(c_) > c):
             c = int(c_)
 
+    # XXX this isn't necessarily a problem; can get it when passing full
+    #     XML paths (perhaps shouldn't pass these in the first place)
     if c is None:
         raise MatchException('pattern %s has no valid matches' % patt)
-    
+
     return None if c is None else str(c)
 
 if __name__ == "__main__":

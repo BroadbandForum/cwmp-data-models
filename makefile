@@ -57,6 +57,8 @@ latestxml = tr-098-1-8-0.xml \
 	    tr-140-1-3-0.xml \
 	    tr-181-1-7-0.xml \
 	    tr-181-2-11-0.xml \
+	    tr-181-2-12-0-cwmp.xml \
+	    tr-181-2-12-0-usp.xml \
 	    tr-196-1-1-1.xml tr-196-2-1-0.xml
 LATESTXML = $(filter $(latestxml), $(SRCXML))
 
@@ -95,10 +97,10 @@ BIBLIOHTML = $(BIBLIOXML:%.xml=%.html)
 TYPESHTML = $(TYPESXML:%.xml=%.html)
 SUPPORTHTML = $(BIBLIOHTML) $(TYPESHTML)
 
-# model HTML (diffs; not new major version and excluding dev+igd)	   
+# model HTML (diffs; not new major version and excluding dev+igd)
 DIFFSMODELHTML = $(modelxml1:%.xml=%-diffs.html)
 
-# model HTML (full; everything, including dev+igd)	   
+# model HTML (full; everything, including dev+igd)
 FULLMODELHTML = $(MODELXML:%.xml=%.html)
 
 # dev+igd HTML
@@ -146,11 +148,13 @@ $(INDEXHTML): $(SRCXSD) $(LATESTXML)
 
 # XXX a (better?) alternative would be for it to output to an included (and
 #     therefore remade) makefile; I tried this... and failed...
-LATEST = ./latest.py --format '%s:_%s;_ln_-sf_$$<_$$@'
+LOGLEVEL = 0
+LATEST = ./latest.py --loglevel $(LOGLEVEL) --format '%s:_%s;_ln_-sf_$$<_$$@'
 $(foreach LINE,$(shell $(LATEST) $(LINKS)), \
   $(eval $(subst _, ,$(LINE))) \
 )
 
+# XXX need also to link cwmp to . to avoid index.html warnings
 link: $(LINKS)
 
 unlink:
