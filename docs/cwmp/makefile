@@ -5,7 +5,7 @@
 #     directory (to fix this, we'd need to be much more careful about
 #     deriving all variables only from CWMPDIR)
 
-TOPDIR = ..
+TOPDIR = ../..
 
 include $(TOPDIR)/../../install/etc/defs.mk
 
@@ -14,10 +14,7 @@ REPORTFLAGS += --quiet
 
 REPORTINDEXFLAGS += --report=htmlbbf
 REPORTINDEXFLAGS += --configfile=OD-148.txt
-# XXX --cwmppath defaults to 'cwmp', which is appropriate for the BBF CWMP
-#     page; a soft link from . to cwmp prevents warnings of non-existent files
-#     when generating the index file
-#REPORTINDEXFLAGS += --cwmppath=''
+REPORTINDEXFLAGS += --cwmppath=''
 
 # disable default CWMP stuff
 # XXX shouldn't be using reportincludes (it's lower case so internal)
