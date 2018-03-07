@@ -5,7 +5,7 @@
 #     directory (to fix this, we'd need to be much more careful about
 #     deriving all variables only from CWMPDIR)
 
-TOPDIR = .
+TOPDIR = ..
 
 include $(TOPDIR)/../../install/etc/defs.mk
 
@@ -149,7 +149,8 @@ $(INDEXHTML): $(SRCXSD) $(LATESTXML)
 # XXX a (better?) alternative would be for it to output to an included (and
 #     therefore remade) makefile; I tried this... and failed...
 LOGLEVEL = 0
-LATEST = ./latest.py --loglevel $(LOGLEVEL) --format '%s:_%s;_ln_-sf_$$<_$$@'
+LATEST_PY = $(TOPDIR)/scripts/latest.py
+LATEST = $(LATEST_PY) --loglevel $(LOGLEVEL) --format '%s:_%s;_ln_-sf_$$<_$$@'
 $(foreach LINE,$(shell $(LATEST) $(LINKS)), \
   $(eval $(subst _, ,$(LINE))) \
 )
