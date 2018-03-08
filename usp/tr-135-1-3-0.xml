@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  STBService:1.3 Service Object definition
+  
+  Copyright (c) 2009-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    STBService:1.3 Service Object update.
+    Adds loss event histograms in statistics.
+
+  Issue History:
+    * September 2009: tr-135-1-0-0.xml, corresponds to TR-135 Issue 1, Section 6 
+                      (Parameter Definitions) and Section 7 (Profile Definitions)
+    * November  2010: tr-135-1-1-0.xml, corresponds to TR-135 Issue 1, Amendment 1
+    * July      2011: tr-135-1-2-0.xml, corresponds to TR-135 Issue 1, Amendment 2
+    * November  2012: tr-135-1-3-0.xml, corresponds to TR-135 Issue 1, Amendment 3
+
+-->
+ 
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-4"
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-4
+                                    http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-4.xsd 
+                                 urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                                    http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-135-1-3-0" file="tr-135-1-3-0.xml">
+
+  <description>
+    STBService:1.3 Service Object.
+    Adds loss event histograms in statistics.
+  </description>
+
+  <import file="tr-135-1-2.xml" spec="urn:broadband-forum-org:tr-135-1-2">
+    <model name="STBService:1.2"></model>  
+  </import>
+
+  <model name="STBService:1.3"  base="STBService:1.2" isService="true">
+
+    <object base="STBService.{i}.AVStreams.AVStream.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="AVStreamNumberOfEntries">
+      <parameter base="Inbound" access="readOnly">
+        <description action="replace">Inbound IP stream object instance associated with the FrontEnd for this AV stream, or {{empty}} if the inbound stream is not delivered over IP.  For example:
+''.Components.FrontEnd.2.IP.Inbound.3''
+        </description>
+      </parameter>
+      <parameter base="Outbound" access="readOnly">
+        <description action="replace">Outbound IP stream object instance associated with the output FrontEnd for this AV stream (which is always the IP FrontEnd), or {{empty}} if the outbound stream is not delivered over IP.  For example:
+''.Components.FrontEnd.2.IP.Outbound.3''
+        </description>
+      </parameter>
+    </object>
+
+    <object base="STBService.{i}.ServiceMonitoring.MainStream.{i}." access="readOnly" numEntriesParameter="MainStreamNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter name="PacketsLostByEventHistogramIntervals" access="readWrite">
+        <description>
+          {{list}} Definition of the histogram intervals for counting loss events according to their size (in {{units}}). Each value indicates the maximum value of the interval. For example, "1,2,4,8," defines the five intervals: 1 packet lost, 2 packets, 3 or 4 packets, 5 to 8 packets and 9 or more packets. (No value after the last comma means no upper bound.)
+          If this parameter is set to an empty string, no PacketsLostByEvent stats will be collected.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="packets"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DelayBetweenLossEventsHistogramIntervals" access="readWrite">
+        <description>
+          {{list}} Definition of the histogram intervals for counting loss events according to their delay (in {{units}}) after the preceding loss event. Each value indicates the maximum value of the interval. For example, "10,20,50,100,1000,60000,3600000," defines the intervals up to 10 ms, to 20 ms, to 50 ms, to 100 ms, to 1 s, to 1 mn, to 1 h and more than 1 h. (No value after the last comma means no upper bound.)
+          If this parameter is set to an empty string, no DelayBetweenLossEvents stats will be collected.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DurationSevereLossEventsHistogramIntervals" access="readWrite">
+        <description>
+          {{list}} Definition of the histogram intervals for counting severe loss events according to their duration (in {{units}}). Each value indicates the maximum value of the interval. For example, "50,100,500,1000,2000,5000,10000,120000," defines the intervals up to 50 ms, to 100 ms, to 500 ms, to 1 s, to 2 s etc. (No value after the last comma means no upper bound.)
+          If this parameter is set to an empty string, no DurationSevereLossEvents stats will be collected.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.RTPStats." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="PacketsLostByEventHistogram" access="readOnly" dmr:previousParameter="PacketsLostBeforeEC">
+        <description>
+          {{list}} Total number of loss events counted by their length in packets (1 packet, 2 packets, etc.) according to the intervals defined by {{param|##.PacketsLostByEventHistogramIntervals}}.
+          These statistics are collected when no EC is applied or after any EC if available.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsLostByEventHistogramBeforeEC" access="readOnly">
+        <description>
+          {{list}} Total number of loss events counted by their length in packets (1 packet, 2 packets, etc.) according to the intervals defined by {{param|##.PacketsLostByEventHistogramIntervals}}.
+          These statistics are collected before any EC, if available, is applied.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DelayBetweenLossEventsHistogram" access="readOnly" dmr:previousParameter="LossEventsBeforeEC">
+        <description>
+          {{list}} Total number of times that the delay (in milliseconds) between two consecutive loss events belongs to each time interval defined by {{param|##.DelayBetweenLossEventsHistogramIntervals}}.
+          These statistics are collected when no EC is applied or after any EC if available.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DelayBetweenLossEventsHistogramBeforeEC" access="readOnly">
+        <description>
+          {{list}} Total number of times that the delay (in milliseconds) between two consecutive loss events belongs to each time interval defined by {{param|##.DelayBetweenLossEventsHistogramIntervals}}.
+          These statistics are collected before any EC, if available, is applied.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DurationSevereLossEventsHistogram" access="readOnly" dmr:previousParameter="SevereLossLengthCountBeforeEC">
+        <description>
+          {{list}} Total number of severe loss events counted by their duration (in milliseconds) according to the intervals defined by {{param|##.DurationSevereLossEventsHistogramIntervals}}.
+          These statistics are collected when no EC is applied or after any EC if available.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DurationSevereLossEventsHistogramBeforeEC" access="readOnly">
+        <description>
+          {{list}} Total number of severe loss events counted by their duration (in milliseconds) according to the intervals defined by {{param|##.DurationSevereLossEventsHistogramIntervals}}.
+          These statistics are collected before any EC, if available, is applied.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="STBService.{i}.ServiceMonitoring.MainStream.{i}.Sample." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">Sample statistics collected since collection was last enabled or reset.
+Most of the parameters in this object are comma-separated lists of individual statistics values, each of which corresponds to a sample interval.
+The statistics values in these comma-separated lists MUST be in time order, with the oldest one first and the most recent one last.
+Each comma-separated list can contain up to {{param|##.ReportSamples}} statistics values.  When the list is full, each new value causes the oldest one to be discarded.
+Some comma-separated lists contain terms that are comma-separated lists themselves and are used to store measurements on an event basis. These sub-lists can contain up to {{param|.Capabilities.ServiceMonitoring.MaxEventsPerSampleInterval}} values.
+If no data was collected for a statistic during a sample interval then the value for that sample interval MUST be zero unless otherwise specified in the description of the individual statistics parameter.</description>
+    </object>
+
+    <object base="STBService.{i}.ServiceMonitoring.MainStream.{i}.Sample.RTPStats." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="PacketsLostByEventHistogram" access="readOnly" dmr:previousParameter="PacketsLostBeforeEC">
+        <description>
+          {{list}} Each list item is a comma-separated list of unsigned integers that represents, for a sample interval, a histogram of loss events counted by their length in packets (1 packet, 2 packets, etc.) according to the intervals defined by {{param|##.PacketsLostByEventHistogramIntervals}}.
+          These statistics are collected when no EC is applied or after any EC if available.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsLostByEventHistogramBeforeEC" access="readOnly">
+        <description>
+          {{list}} Each list item is a comma-separated list of unsigned integers that represents, for a sample interval, a histogram of loss events counted by their length in packets (1 packet, 2 packets, etc.) according to the intervals defined by {{param|##.PacketsLostByEventHistogramIntervals}}.
+          These statistics are collected before any EC, if available, is applied.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="DelayBetweenLossEventsHistogram" access="readOnly" dmr:previousParameter="LossEventsBeforeEC">
+        <description>
+          {{list}} Each list item is a comma-separated list of unsigned integers that represents, for a sample interval, a histogram of the number of times that the delay (in milliseconds) between two consecutive loss events belongs to each time interval defined by {{param|##.DelayBetweenLossEventsHistogramIntervals}}.
+          These statistics are collected when no EC is applied or after any EC if available.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="DelayBetweenLossEventsHistogramBeforeEC" access="readOnly">
+        <description>
+          {{list}} Each list item is a comma-separated list of unsigned integers that represents, for a sample interval, a histogram of the number of times that the delay (in milliseconds) between two consecutive loss events belongs to each time interval defined by {{param|##.DelayBetweenLossEventsHistogramIntervals}}.
+          These statistics are collected before any EC, if available, is applied.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="DurationSevereLossEventsHistogram" access="readOnly" dmr:previousParameter="SevereLossLengthCountBeforeEC">
+        <description>
+          {{list}} Each list item is a comma-separated list of unsigned integers that represents, for a sample interval, a histogram of the number of severe loss events counted by their duration (in milliseconds) according to the intervals defined by {{param|##.DurationSevereLossEventsHistogramIntervals}}.
+          These statistics are collected when no EC is applied or after any EC if available.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="DurationSevereLossEventsHistogramBeforeEC" access="readOnly">
+        <description>
+          {{list}} Each list item is a comma-separated list of unsigned integers that represents, for a sample interval, a histogram of the number of severe loss events counted by their duration (in milliseconds) according to the intervals defined by {{param|##.DurationSevereLossEventsHistogramIntervals}}.
+          These statistics are collected before any EC, if available, is applied.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile base="Baseline:1" name="Baseline:2" dmr:previousProfile="Baseline:1">
+      <parameter ref="STBServiceNumberOfEntries" requirement="readOnly"/>
+      <object ref="STBService.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile base="DigitalOutput:2" name="DigitalOutput:3" dmr:previousProfile="DigitalOutput:2">
+      <object ref="STBService.{i}.Components." requirement="present">
+        <parameter ref="HDMINumberOfEntries" requirement="readOnly"/>
+        <parameter ref="SPDIFNumberOfEntries" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="HistoPerfMon:1" dmr:previousProfile="BasicPerfMon:2">
+      <object ref="STBService.{i}.ServiceMonitoring.MainStream.{i}." requirement="present">
+        <parameter ref="SevereLossMinLength" requirement="readWrite"/>
+        <parameter ref="PacketsLostByEventHistogramIntervals" requirement="readWrite"/>
+        <parameter ref="DelayBetweenLossEventsHistogramIntervals" requirement="readWrite"/>
+        <parameter ref="DurationSevereLossEventsHistogramIntervals" requirement="readWrite"/>
+      </object>
+      <object ref="STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.RTPStats." requirement="present">
+        <parameter ref="SevereLossLengthCount" requirement="readOnly"/>
+        <parameter ref="PacketsLostByEventHistogram" requirement="readOnly"/>
+        <parameter ref="DelayBetweenLossEventsHistogram" requirement="readOnly"/>
+        <parameter ref="DurationSevereLossEventsHistogram" requirement="readOnly"/>
+      </object>
+      <object ref="STBService.{i}.ServiceMonitoring.MainStream.{i}.Sample.RTPStats." requirement="present">
+        <parameter ref="SevereLossLengthCount" requirement="readOnly"/>
+        <parameter ref="PacketsLostByEventHistogram" requirement="readOnly"/>
+        <parameter ref="DelayBetweenLossEventsHistogram" requirement="readOnly"/>
+        <parameter ref="DurationSevereLossEventsHistogram" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="HistoECPerfMon:1" dmr:previousProfile="ECPerfMon:1">
+      <object ref="STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.RTPStats." requirement="present">
+        <parameter ref="SevereLossLengthCountBeforeEC" requirement="readOnly"/>
+        <parameter ref="PacketsLostByEventHistogramBeforeEC" requirement="readOnly"/>
+        <parameter ref="DelayBetweenLossEventsHistogramBeforeEC" requirement="readOnly"/>
+        <parameter ref="DurationSevereLossEventsHistogramBeforeEC" requirement="readOnly"/>
+      </object>
+      <object ref="STBService.{i}.ServiceMonitoring.MainStream.{i}.Sample.RTPStats." requirement="present">
+        <parameter ref="SevereLossLengthCountBeforeEC" requirement="readOnly"/>
+        <parameter ref="PacketsLostByEventHistogramBeforeEC" requirement="readOnly"/>
+        <parameter ref="DelayBetweenLossEventsHistogramBeforeEC" requirement="readOnly"/>
+        <parameter ref="DurationSevereLossEventsHistogramBeforeEC" requirement="readOnly"/>
+      </object>
+    </profile>
+
+  </model>
+
+</dm:document>

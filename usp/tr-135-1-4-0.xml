@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  STBService:1.4 Service Object definition
+
+  Copyright (c) 2009-2017, Broadband Forum
+  
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+  
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+  
+  Summary:
+    STBService:1.4 Service Object update.
+    Adds Service Monitoring of Events
+
+  Editors:
+    * Timothy Carey, Alcatel-Lucent
+    
+  BroadbandHome Working Group Chairs:
+    * Jason Walls, QA Cafe
+    * John Blackford, Pace
+
+  Issue History (Filename: Approval Date: Publication Date: Changes)
+    * tr-135-1-0-0.xml: September 2009: September 2009:
+       - Corresponds to TR-135 Issue 1, Section 6 
+       - (Parameter Definitions) and Section 7 (Profile Definitions)
+    * tr-135-1-1-0.xml: November 2010: November 2010:
+      - Corresponds to TR-135 Issue 1, Amendment 1
+    * tr-135-1-2-0.xml, July 2011: July 2012:
+      - Corresponds to TR-135 Issue 1, Amendment 2
+    * tr-135-1-3-0.xml: November 2012: November 2012:
+      - Corresponds to TR-135 Issue 1, Amendment 3
+    * tr-135-1-4-0.xml: 24 August 2015: 2 October 2015:
+      - Corresponds to TR-135 Issue 1, Amendment 4
+
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-5"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-5
+                          http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-5.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                          http://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+    spec="urn:broadband-forum-org:tr-135-1-4-0" file="tr-135-1-4-0.xml">
+
+  <description>
+    {{docname|STBService:1.4 Service Object}}
+    {{appdate|August 2015}}
+    Added objects for Service Monitoring of Events
+  </description>
+  
+  <import file="tr-106-1-0-types.xml" spec="urn:broadband-forum-org:tr-106-1-0">
+    <dataType name="UUID"/>
+  </import>
+  
+  <import file="tr-135-1-3.xml" spec="urn:broadband-forum-org:tr-135-1-3">
+    <model name="STBService:1.3"/>
+  </import>
+
+  <model name="STBService:1.4"  base="STBService:1.3" isService="true">
+  
+    <object base="STBService.{i}.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.{i}." access="readOnly" minEntries="0" maxEntries="unbounded" numEntriesParameter="ProfileLevelNumberOfEntries">
+      <description action="replace">Table to describe the set of profiles and levels combinations supported by the STB when MPEG4 Part 10 is used as video standard.
+{{keys}} The table MUST include a distinct entry for each supported combination of these parameters.</description>
+    </object>
+    
+    <object base="STBService.{i}.Capabilities.ServiceMonitoring." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="MaxMainStreamEventLogEntries" access="readOnly">
+        <description>
+          Maximum number of event log entries that the STB is able to record for a MainStream object instance.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="STBService.{i}.ServiceMonitoring." access="readOnly" minEntries="1" maxEntries="1">
+      <description action="replace">Records events and collects QoS / QoE related statistics for Main AV streams.
+These statistics are broken down into categories, e.g. de-jittering and RTP, and for each category there are two types of statistics:
+* '''Total''' statistics, which count the number of occurrences of something.
+* '''Sample''' statistics, which are measured over a sample interval, and are made available to the ACS as a list of the most recent n samples.
+Total statistics are always collected (collection cannot be disabled, but the values can be reset).
+For Sample statistics, an STB uses a single sample interval and number of samples (n) for all {{object|MainStream}} instances.  The sample interval can be aligned with absolute time.
+When Sample statistics collection is enabled, statistics collection MUST proceed regardless of whether there are any active Main AV streams.  For example, even when the STB is not receiving any data, sample intervals will continue to be timed as normal.
+Refer to {{bibref|TR-135|I.3}} for non-normative explanation of the operation of the ''ServiceMonitoring'' object.</description>   
+      <parameter name="EventCollectionEnable" access="readWrite">
+        <description>
+          Enables or disables the collection of the events for all main streams.
+          When the collection of events is enabled, any previously collected events are discarded and the collection of new events begins immediately.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="STBService.{i}.ServiceMonitoring.MainStream.{i}." access="readOnly" numEntriesParameter="MainStreamNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <parameter base="Enable" access="readWrite">
+        <description action="replace">Enables or disables collection of Total and Sample statistics and events for this object instance.
+The collection of events requires the value of this parameter to be {{true}} and the value of the {{param|##.ServiceMonitoring.EventCollectionEnable}} to be {{true}}.
+        </description>
+      </parameter>
+      <parameter base="Status" access="readOnly">
+        <description action="replace">Total and Sample statistics and event collection status for this object instance.  {{enum}}
+The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.</description>
+      </parameter>
+      <parameter name="SessionId" access="readOnly">
+        <description>Time based UUID {{bibref|RFC4122|Section 4.2}} that is the identifier for the associated {{param|AVStream}} parameter when available to the device.</description>
+        <syntax>
+          <dataType ref="UUID"/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog." access="readOnly" minEntries="1" maxEntries="1">
+      <description>This object represents the log entries of events recorded by the MainStream object instance.
+When the number of log entries in the EventLog exceeds the value of the {{param|###.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries}} parameter, the Entry object with the lowest SequenceNumber value is replaced by the new EventLog Entry object.
+Log entries are persisted across reboots of the CPE.</description>
+      <parameter name="Reset" access="readWrite">
+        <description>
+          When set to true, clears the events from the event log and the value of {{param|Entry.{i}.SequenceNumber}} parameter is reset to the parameter's minimum value.
+        </description>
+        <syntax command="true">
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="EntryNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.Entry.{i}." access="readOnly" numEntriesParameter="EntryNumberOfEntries" minEntries="0" maxEntries="unbounded">
+      <description>This object represents an entry (e.g., start session, channel change) in the event log. </description>
+      <uniqueKey>
+        <parameter ref="SequenceNumber"></parameter>
+      </uniqueKey>
+      <parameter name="SequenceNumber" access="readOnly">
+        <description>The sequence number of the event within the EventLog.
+This parameter is incremented by one (1) for each entry within the EventLog.
+When the value of the parameter exceeds the maximium range, the lowest value of this parameter that is not contained in current EventLog entries is used.</description>
+        <syntax>
+          <unsignedInt><range minInclusive="1"/></unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Type" access="readOnly">
+        <description>Type of the event. The values for this parameter are vendor specific.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="Time" access="readOnly">
+        <description>Timestamp of the event.</description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ParameterNumberOfEntries" access="readOnly">
+        <description>{{numentries}}</description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.Entry.{i}.Parameter.{i}." access="readOnly" numEntriesParameter="ParameterNumberOfEntries" minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true">
+      <description>This object represents an instance of a parameter that is associated with the Entry object Instance.</description>
+      <parameter name="Name" access="readOnly">
+        <description>Name of the parameter (vendor-specific).</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="Value" access="readOnly">
+        <description>Value of the parameter.</description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+    
+  </model>
+
+</dm:document>

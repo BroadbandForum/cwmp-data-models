@@ -1,19 +1,23 @@
-# makefile
+# cwmp/makefile
 
 # XXX the 'link' target can't be made until 'all' has been made; this is
 #     because it searches for "latest corrigendum" files in the current
 #     directory (to fix this, we'd need to be much more careful about
 #     deriving all variables only from CWMPDIR)
 
-TOPDIR = ../..
+# XXX will move common parts of cwmp/makefile and usp/makefile to ../defs.mk
+#     and ../rules.mk
+
+TOPDIR = ..
 
 include $(TOPDIR)/../../install/etc/defs.mk
 
+REPORTFLAGS += --cwmpindex=../cwmp
 REPORTFLAGS += --nowarnreport
 REPORTFLAGS += --quiet
 
 REPORTINDEXFLAGS += --report=htmlbbf
-REPORTINDEXFLAGS += --configfile=OD-148.txt
+REPORTINDEXFLAGS += --configfile=$(TOPDIR)/OD-148.txt
 REPORTINDEXFLAGS += --cwmppath=''
 
 # disable default CWMP stuff
@@ -25,7 +29,9 @@ PUBLISHCWMP =
 
 # CWMPDIR contains all the source files
 SRCXSD = $(subst $(CWMPDIR),,$(wildcard $(CWMPDIR)*.xsd))
-SRCXML = $(subst $(CWMPDIR),,$(wildcard $(CWMPDIR)*.xml))
+# XXX have to manually filter out USP files
+SRCXML = $(filter-out tr-181-2-12-0-usp.xml, \
+		$(subst $(CWMPDIR),,$(wildcard $(CWMPDIR)*.xml)))
 
 # XXX a script should generate at least some of these hard-coded lists
 
@@ -53,9 +59,7 @@ latestxml = tr-098-1-8-0.xml \
 	    tr-135-1-4-0.xml \
 	    tr-140-1-3-0.xml \
 	    tr-181-1-7-0.xml \
-	    tr-181-2-11-0.xml \
 	    tr-181-2-12-0-cwmp.xml \
-	    tr-181-2-12-0-usp.xml \
 	    tr-196-1-1-1.xml tr-196-2-1-0.xml
 LATESTXML = $(filter $(latestxml), $(SRCXML))
 

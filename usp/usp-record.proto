@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+//**************************************************************************
+// WT-369 USP Record Protocol Buffer Schema
+//
+//  Copyright (c) 2017, Broadband Forum
+//
+//  The undersigned members have elected to grant the copyright to
+//  their contributed material used in this software:
+//    Copyright (c) 2017 ARRIS Enterprises, LLC.
+//
+// This is draft software, is subject to change, and has not been approved
+//  by members of the Broadband Forum. It is made available to non-members
+//  for internal study purposes only. For such study purposes, you have the
+//  right to make copies and modifications only for distributing this software
+//  internally within your organization among those who are working on it
+//  (redistribution outside of your organization for other than study purposes
+//  of the original or modified works is not permitted). For the avoidance of
+//  doubt, no patent rights are conferred by this license.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS
+//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+//  THE POSSIBILITY OF SUCH DAMAGE.
+//
+// Unless a different date is specified upon issuance of a draft software
+//  release, all member and non-member license rights under the draft software
+//  release will expire on the earliest to occur of (i) nine months from the
+//  date of issuance, (ii) the issuance of another version of the same software
+//  release, or (iii) the adoption of the draft software release as final.
+//
+//
+// | Unique Identifier | Name                   | Type  | Date          | Expiry         |
+//
+// BBF software release registry: http://www.broadband-forum.org/software
+//**************************************************************************
+
+package usp_record;
+
+message Record {
+  string version = 1;
+  string to_id = 2;
+  string from_id = 3;
+  PayloadSecurity payload_security = 4;
+  bytes mac_signature = 5;  //MAC or Signature
+  bytes sender_cert = 6;
+
+  oneof record_type {
+    NoSessionContextRecord no_session_context = 7;
+    SessionContextRecord session_context = 8;
+  }
+
+  enum PayloadSecurity {
+    PLAINTEXT = 0;
+    TLS12 = 1;
+  }
+}
+
+message NoSessionContextRecord {
+  bytes payload = 2;
+}
+
+message SessionContextRecord {
+  uint64 session_id = 1;
+  uint64 sequence_id = 2;
+  uint64 expected_id = 3;
+  uint64 retransmit_id = 4;
+  PayloadSARState payload_sar_state = 5;
+  PayloadSARState payloadrec_sar_state = 6;
+  repeated bytes payload = 7;
+
+  enum PayloadSARState {
+    NONE = 0; 	    //No segmentation
+    BEGIN = 1;      //Begin segmentation
+    INPROCESS = 2;  //Segmentation in process
+    COMPLETE = 3;   //Segmentation is complete
+  }
+}
+
