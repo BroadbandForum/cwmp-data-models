@@ -13,6 +13,7 @@ TOPDIR = ..
 include $(TOPDIR)/../../install/etc/defs.mk
 
 REPORTFLAGS += --cwmpindex=../cwmp
+REPORTFLAGS += --nofontstyles
 REPORTFLAGS += --nowarnreport
 REPORTFLAGS += --quiet
 
