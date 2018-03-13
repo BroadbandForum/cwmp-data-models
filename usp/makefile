@@ -12,6 +12,7 @@ TOPDIR = ..
 
 include $(TOPDIR)/../../install/etc/defs.mk
 
+REPORTFLAGS += --altnotifreqstyle
 REPORTFLAGS += --ignoreenableparameter
 REPORTFLAGS += --immutablenonfunctionalkeys
 REPORTFLAGS += --cwmpindex=../usp
