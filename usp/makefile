@@ -24,8 +24,8 @@ REPORTINDEXFLAGS += --report=htmlbbf
 REPORTINDEXFLAGS += --configfile=$(TOPDIR)/OD-148.txt
 REPORTINDEXFLAGS += --cwmppath=''
 REPORTINDEXFLAGS += --option htmlbbf_configfile_suffix=usp
-REPORTINDEXFLAGS += --option htmlbbf_configfile_omitcommonxml=true
-REPORTINDEXFLAGS += --option htmlbbf_configfile_onlyfullxml=true
+REPORTINDEXFLAGS += --option htmlbbf_omitcommonxml=true
+REPORTINDEXFLAGS += --option htmlbbf_onlyfullxml=true
 
 # disable default CWMP stuff
 # XXX shouldn't be using reportincludes (it's lower case so internal)
