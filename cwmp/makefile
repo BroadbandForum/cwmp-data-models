@@ -62,6 +62,7 @@ latestxml = tr-098-1-8-0.xml \
 	    tr-135-1-4-0.xml \
 	    tr-140-1-3-0.xml \
 	    tr-181-1-7-0.xml \
+	    tr-181-2-11-0.xml \
 	    tr-181-2-12-0-cwmp.xml \
 	    tr-196-1-1-1.xml tr-196-2-1-0.xml
 LATESTXML = $(filter $(latestxml), $(SRCXML))
