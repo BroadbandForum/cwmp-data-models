@@ -8,11 +8,11 @@
 # XXX will move common parts of cwmp/makefile and usp/makefile to ../defs.mk
 #     and ../rules.mk
 
-TOPDIR = ..
+TOPDIR = .
 
 include $(TOPDIR)/../../install/etc/defs.mk
 
-REPORTFLAGS += --cwmpindex=../cwmp
+REPORTFLAGS += --cwmpindex=..
 REPORTFLAGS += --nofontstyles
 REPORTFLAGS += --nowarnreport
 REPORTFLAGS += --quiet
