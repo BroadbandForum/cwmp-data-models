@@ -23,6 +23,7 @@ REPORTINDEXFLAGS += --cwmppath=''
 REPORTINDEXFLAGS += --option \
 	htmlbbf_deprecatedmodels="InternetGatewayDevice:1 Device:1"
 REPORTINDEXFLAGS += --option htmlbbf_omitcommonxml=true
+REPORTINDEXFLAGS += --option htmlbbf_createfragment=true
 REPORTINDEXFLAGS += --option htmlbbf_onlyfullxml=true
 
 # disable default CWMP stuff
@@ -118,7 +119,7 @@ IGDMODELHTML = $(DUALXML:%.xml=%-igd-diffs.html) $(DUALXML:%.xml=%-igd.html)
 COMPHTML = $(COMPXML:%.xml=%.html)
 
 # index HTML
-INDEXHTML = index.html
+INDEXHTML = _index.html
 
 # all HTML excluding "no corrigendum" soft links
 HTML = $(SUPPORTHTML) $(DIFFSMODELHTML) $(FULLMODELHTML) \
@@ -162,7 +163,7 @@ $(foreach LINE,$(shell $(LATEST) $(LINKS)), \
   $(eval $(subst _, ,$(LINE))) \
 )
 
-# XXX need also to link cwmp to . to avoid index.html warnings
+# XXX need also to link cwmp to . to avoid $(INDEXHTML) warnings
 link: $(LINKS)
 
 unlink:
@@ -180,4 +181,5 @@ ZIPFLAGS = --symlinks
 #     file contents?
 zip:
 	$(RM) $(ZIPFILE)
-	$(ZIP) $(ZIPFLAGS) $(ZIPFILE) index.html catalog.xml cwmp-*.xsd tr-*.*
+	$(ZIP) $(ZIPFLAGS) $(ZIPFILE) $(INDEXHTML) catalog.xml cwmp-*.xsd \
+		tr-*.*
