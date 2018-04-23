@@ -1,23 +1,30 @@
-# makefile
+# cwmp/makefile
 
 # XXX the 'link' target can't be made until 'all' has been made; this is
 #     because it searches for "latest corrigendum" files in the current
 #     directory (to fix this, we'd need to be much more careful about
 #     deriving all variables only from CWMPDIR)
 
+# XXX will move common parts of cwmp/makefile and usp/makefile to ../defs.mk
+#     and ../rules.mk
+
 TOPDIR = .
 
 include $(TOPDIR)/../../install/etc/defs.mk
 
+REPORTFLAGS += --cwmpindex=..
+REPORTFLAGS += --nofontstyles
 REPORTFLAGS += --nowarnreport
 REPORTFLAGS += --quiet
 
 REPORTINDEXFLAGS += --report=htmlbbf
-REPORTINDEXFLAGS += --configfile=OD-148.txt
-# XXX --cwmppath defaults to 'cwmp', which is appropriate for the BBF CWMP
-#     page; a soft link from . to cwmp prevents warnings of non-existent files
-#     when generating the index file
-#REPORTINDEXFLAGS += --cwmppath=''
+REPORTINDEXFLAGS += --configfile=$(TOPDIR)/OD-148.txt
+REPORTINDEXFLAGS += --cwmppath=''
+REPORTINDEXFLAGS += --option \
+	htmlbbf_deprecatedmodels="InternetGatewayDevice:1 Device:1"
+REPORTINDEXFLAGS += --option htmlbbf_omitcommonxml=true
+REPORTINDEXFLAGS += --option htmlbbf_createfragment=true
+REPORTINDEXFLAGS += --option htmlbbf_onlyfullxml=true
 
 # disable default CWMP stuff
 # XXX shouldn't be using reportincludes (it's lower case so internal)
@@ -28,7 +35,9 @@ PUBLISHCWMP =
 
 # CWMPDIR contains all the source files
 SRCXSD = $(subst $(CWMPDIR),,$(wildcard $(CWMPDIR)*.xsd))
-SRCXML = $(subst $(CWMPDIR),,$(wildcard $(CWMPDIR)*.xml))
+# XXX have to manually filter out USP files
+SRCXML = $(filter-out tr-181-2-12-0-usp.xml, \
+		$(subst $(CWMPDIR),,$(wildcard $(CWMPDIR)*.xml)))
 
 # XXX a script should generate at least some of these hard-coded lists
 
@@ -57,6 +66,7 @@ latestxml = tr-098-1-8-0.xml \
 	    tr-140-1-3-0.xml \
 	    tr-181-1-7-0.xml \
 	    tr-181-2-11-0.xml \
+	    tr-181-2-12-0-cwmp.xml \
 	    tr-196-1-1-1.xml tr-196-2-1-0.xml
 LATESTXML = $(filter $(latestxml), $(SRCXML))
 
@@ -95,10 +105,10 @@ BIBLIOHTML = $(BIBLIOXML:%.xml=%.html)
 TYPESHTML = $(TYPESXML:%.xml=%.html)
 SUPPORTHTML = $(BIBLIOHTML) $(TYPESHTML)
 
-# model HTML (diffs; not new major version and excluding dev+igd)	   
+# model HTML (diffs; not new major version and excluding dev+igd)
 DIFFSMODELHTML = $(modelxml1:%.xml=%-diffs.html)
 
-# model HTML (full; everything, including dev+igd)	   
+# model HTML (full; everything, including dev+igd)
 FULLMODELHTML = $(MODELXML:%.xml=%.html)
 
 # dev+igd HTML
@@ -109,7 +119,7 @@ IGDMODELHTML = $(DUALXML:%.xml=%-igd-diffs.html) $(DUALXML:%.xml=%-igd.html)
 COMPHTML = $(COMPXML:%.xml=%.html)
 
 # index HTML
-INDEXHTML = index.html
+INDEXHTML = _index.html
 
 # all HTML excluding "no corrigendum" soft links
 HTML = $(SUPPORTHTML) $(DIFFSMODELHTML) $(FULLMODELHTML) \
@@ -146,11 +156,14 @@ $(INDEXHTML): $(SRCXSD) $(LATESTXML)
 
 # XXX a (better?) alternative would be for it to output to an included (and
 #     therefore remade) makefile; I tried this... and failed...
-LATEST = ./latest.py --format '%s:_%s;_ln_-sf_$$<_$$@'
+LOGLEVEL = 0
+LATEST_PY = $(TOPDIR)/scripts/latest.py
+LATEST = $(LATEST_PY) --loglevel $(LOGLEVEL) --format '%s:_%s;_ln_-sf_$$<_$$@'
 $(foreach LINE,$(shell $(LATEST) $(LINKS)), \
   $(eval $(subst _, ,$(LINE))) \
 )
 
+# XXX need also to link cwmp to . to avoid $(INDEXHTML) warnings
 link: $(LINKS)
 
 unlink:
@@ -168,4 +181,5 @@ ZIPFLAGS = --symlinks
 #     file contents?
 zip:
 	$(RM) $(ZIPFILE)
-	$(ZIP) $(ZIPFLAGS) $(ZIPFILE) index.html catalog.xml cwmp-*.xsd tr-*.*
+	$(ZIP) $(ZIPFLAGS) $(ZIPFILE) $(INDEXHTML) catalog.xml cwmp-*.xsd \
+		tr-*.*
