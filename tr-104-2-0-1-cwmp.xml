@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 VoiceService:2.0 Service Object definition [CWMP]
+
+  Copyright (c) 2009-2019, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Summary:
+    TR-104 VoiceService:2.1 Service Object definition.
+
+  Editors:
+    Alexandre Francois, Orange
+    Grégory Foucher, Orange
+
+  Broadband User Services Work Area Directors:
+    John Blackford, CommScope
+    Jason Walls, QA Cafe
+
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    * tr-104-1-0-0.xml: September 2009:
+      corresponds to TR-104 Issue 1, Section 3 (Data Model Definition) and Section 4 (Profile Definition).
+    * tr-104-1-1-0.xml: July 2011:
+      corresponds to TR-104 Issue 1, Amendment 1.
+    * tr-104-2-0-0.xml: 3 March 2014: 24 April 2014:
+      corresponds to TR-104 Issue 2.
+    * tr-104-2-0-1-cwmp.xml: 13 September 2019: 13 September 2019:
+      added USP support (split XML into common, CWMP and USP files).
+
+-->
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-7"
+             xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-7
+             https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-7.xsd
+             urn:broadband-forum-org:cwmp:datamodel-report-0-1
+             https://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+             spec="urn:broadband-forum-org:tr-104-2-0-1-cwmp" file="tr-104-2-0-1-cwmp.xml">
+
+  <description>
+    {{docname|VoiceService:2.0 for CWMP}}
+    {{appdate|September 2019}}
+    {{trname|tr-104-2-0-0}}
+    March 2014: {{xmlref|tr-104-2-0-0|Original}}
+    * Original
+    September 2019: {{xmlref|tr-104-2-0-1-cwmp|Corrigendum 1}}
+    * Added USP support (split XML into common, CWMP and USP files)
+  </description>
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCWMP"/>
+    <dataType name="DiagnosticsState"/>
+  </import>
+
+  <import file="tr-104-2-common.xml" spec="urn:broadband-forum-org:tr-104-2-0">
+    <component name="TerminalTestInput"/>
+    <component name="TerminalTestOutput"/>
+    <component name="FXOPortTestInput"/>
+    <component name="FXOPortTestOutput"/>
+    <component name="FXSPortTestInput"/>
+    <component name="FXSPortTestOutput"/>
+    <model name="_VoiceService:2.0" ref="VoiceService:2.0"/>
+  </import>
+
+
+  <model name="VoiceService:2.0" base="_VoiceService:2.0" isService="true">
+    <object name="VoiceService.{i}.Terminal.{i}.DiagTests." access="readOnly" minEntries="1" maxEntries="1" dmr:version="2.0">
+      <description>
+        Terminal level tests.
+      </description>
+      <parameter name="DiagnosticsState" access="readWrite" dmr:version="2.0">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <component ref="TerminalTestInput"/>
+      <component ref="TerminalTestOutput"/>
+    </object>
+    <object name="VoiceService.{i}.POTS.FXO.{i}.DiagTests." access="readOnly" minEntries="1" maxEntries="1" dmr:version="2.0">
+      <description>
+        FXO port tests.
+      </description>
+      <parameter name="DiagnosticsState" access="readWrite" dmr:version="2.0">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <component ref="FXOPortTestInput"/>
+      <component ref="FXOPortTestOutput"/>
+    </object>
+    <object name="VoiceService.{i}.POTS.FXS.{i}.DiagTests." access="readOnly" minEntries="1" maxEntries="1" dmr:version="2.0">
+      <description>
+        FXS port tests.
+      </description>
+      <parameter name="DiagnosticsState" access="readWrite" dmr:version="2.0">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <enumeration value="Error_Internal" access="readOnly"/>
+            <enumeration value="Error_Other" access="readOnly"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <component ref="FXSPortTestInput"/>
+      <component ref="FXSPortTestOutput"/>
+    </object>
+  </model>
+</dm:document>

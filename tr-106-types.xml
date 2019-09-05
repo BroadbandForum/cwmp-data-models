@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TR-069 Data Model Data Types
+
+  Copyright (c) 2008-2019, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2017-2018 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Summary:
+    TR-069 Data Model Data Types.  Contains normative definitions of named
+    (i.e. not built-in) data types that can be used in data model definitions.
+
+  Broadband User Services Work Area Directors:
+    John Blackford, CommScope
+    Jason Walls, QA Cafe
+
+  Issue History (Filename: Approval Date: Publication Date: Changes):
+    November 2008: tr-106-1-0-0-types.xml, corresponds to parts of TR-106
+            section 3.2, with some updates from Amendments 1 and 2.
+    September 2009: tr-106-1-0-0-types.xml (name unchanged)
+            - replaced bibrefs with import from biblio file
+            - fixed cwmp-datamodel.xsd to be cwmp-datamodel-1-0.xsd
+    May 2010: tr-106-1-0-0-types.xml (name unchanged)
+            - defined the IPPrefix and IPv4Address data types
+            - specified doctype entities to help simplify data type definitions
+    November 2010: tr-106-1-0-0-types.xml (name unchanged)
+            - Updated the IPAddress and IPv4Address definition/description.
+            - Added new types IPv4Prefix, IPv6Address, IPv6Prefix,
+              StatsCounter32, StatsCounter64
+            - Added new entity definition ipv4PrefixRange
+    July 2011: tr-106-1-0-0-types.xml (name unchanged)
+            - Added new type Alias
+    November 2011: tr-106-1-0-0-types.xml (name unchanged)
+            - Added new type Dbm1000
+            - Updated StatsCounter32 and StatsCounter64 types to indicate that
+              "maxval" indicates "no data available"
+    November 2012: tr-106-1-0-0-types.xml (name unchanged)
+            - Added new type UUID
+            - Modified description for IPPrefix to better describe processing of
+              unspecified or unapplicable IP prefixes.
+            - Added new pattern to IPv4Prefix for IP ranges
+    September 2013: tr-106-1-0-0-types.xml (name unchanged)
+            - Clarified use of the "cpe-" prefix for the Alias type
+    November 2013: tr-106-1-0-0-types.xml (name unchanged)
+            - Added new types IEEE_EUI64 and ZigBeeNetworkAddress
+    * tr-106-1-1-0-types.xml: 9 November 2015: 13 November 2015
+      - added data type "DiagnosticsState"
+    * tr-106-1-2-0-types.xml: 26 March 2018: 26 March 2018
+      - added data type "JSONObject"
+    * tr-106-types.xml (name unchanged): 13 September 2019: 13 September 2019:
+      - added datatypes from versioned files
+      - added CWMP and USP versions of the Alias datatype
+      - added URI, URL and URL datatypes
+-->
+
+<!DOCTYPE cwmp-datamodel-entities [
+  <!ENTITY colon ":">
+  <!ENTITY hash "#">
+  <!ENTITY caret "\^">
+  <!ENTITY dot "\.">
+  <!ENTITY num "(\d+)">
+  <!ENTITY octet "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])">  <!-- 0 to 255 -->
+  <!ENTITY ipv4PrefixRange "(3[0-2]|[012]?[0-9])">          <!-- 0 to 32 -->
+]>
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-7"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-7
+                                    http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-7.xsd"
+             spec="urn:broadband-forum-org:tr-106" file="tr-106-types.xml">
+
+  <description>
+    {{appdate|September 2019}}
+    * Added datatypes from versioned files
+    * Added CWMP and USP versions of the Alias datatype
+    * Added URI, URL and URL datatypes
+  </description>
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <dataType name="_AliasCommon">
+    <description>
+      A non-volatile handle used to reference this instance.
+      '''This is intended only for use in protocol-independent "common" definitions, and MUST NOT be used in protocol-specific definitions.'''
+    </description>
+    <string>
+      <size maxLength="64"/>
+    </string>
+  </dataType>
+
+  <dataType name="_AliasCWMP" base="_AliasCommon">
+    <description action="replace">
+      A non-volatile handle used to reference this instance. Alias provides a mechanism for an ACS to label this instance for future reference.
+      If the CPE supports the Alias-based Addressing feature as defined in {{bibref|TR-069|3.6.1}} and described in {{bibref|TR-069|Appendix II}}, the following mandatory constraints MUST be enforced:
+      * Its value MUST NOT be empty.
+      * Its value MUST start with a letter.
+      * If its value is not assigned by the ACS, it MUST start with a "cpe-" prefix.
+      * The CPE MUST NOT change the parameter value.
+    </description>
+  </dataType>
+
+  <dataType name="_AliasUSP" base="_AliasCommon">
+    <description action="replace">
+      A non-volatile unique key used to reference this instance. Alias provides a mechanism for a Controller to label this instance for future reference.
+      The following mandatory constraints MUST be enforced:
+      * The value MUST NOT be empty.
+      * The value MUST start with a letter.
+      * If the value is not assigned by the Controller at creation time, the Agent MUST assign a value with an "cpe-" prefix.
+      The value MUST NOT change once it's been assigned.
+    </description>
+  </dataType>
+
+  <!-- For backwards compatibility, "Alias" means "_AliasCWMP" -->
+  <dataType name="Alias" base="_AliasCWMP"/>
+
+  <dataType name="Dbm1000">
+    <description>
+      The value is measured in ''dBm/1000'', i.e. the value divided by 1000 is dB relative to 1 mW.  For example, -12345 means -12.345 dBm, 0 means 0 dBm (1 mW) and 12345 means 12.345 dBm.
+    </description>
+    <int/>
+  </dataType>
+
+  <dataType name="DiagnosticsState">
+    <description>
+      Indicates the availability of diagnostics data. Enumeration of:
+      {{enum}}
+      If the ACS sets the value of this parameter to {{enum|Requested}}, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed values are {{enum|Requested}} and {{enum|Canceled}}. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set, and any errors or inconsistencies in the test parameters MUST be detected, either prior to or at the same time as (in the same SetParameterValues) setting this parameter to {{enum|Requested}}.
+      When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic test.
+      When the test is completed, the value of this parameter MUST be either {{enum|Complete}} (if the test completed successfully), or one of the ''Error'' values listed above.
+      If the value of this parameter is anything other than {{enum|Complete}}, the values of the results parameters for this test are indeterminate.
+      When the diagnostic initiated by the ACS is completed (successfully or not), but not if it is canceled for any reason, the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform message.
+      After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to {{enum|None}}.
+      Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to {{enum|None}}.
+      While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to {{enum|None}}.
+      While the test is in progress, setting this parameter to {{enum|Requested}} (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.
+      While the test is in progress, setting this parameter to {{enum|Canceled}} MUST result in the test being canceled and the value of this parameter being set to {{enum|None}}. If the CPE does not support the {{enum|Canceled}} value, it MUST return a SPV error with "Invalid Parameter value" (9007) to the ACS instead.
+    </description>
+    <string>
+      <enumeration value="None" access="readOnly"/>
+      <enumeration value="Requested"/>
+      <enumeration value="Canceled" optional="true"/>
+      <enumeration value="Complete" access="readOnly"/>
+      <enumeration value="Error" access="readOnly" optional="true"/>
+    </string>
+  </dataType>
+
+  <dataType name="IEEE_EUI64">
+    <description>
+      The IEEE EUI 64-bit identifier as defined in {{bibref|EUI64}}. The IEEE defined 64-bit extended unique identifier (EUI-64) is a concatenation of:
+      * The 24-bit (OUI-24) or 36-bit (OUI-36) company_id value assigned by the IEEE Registration Authority (IEEE-RA), and
+      * The extension identifier (40 bits for OUI-24 or 28 bits for OUI-36) assigned by the organization with that company_id assignment.
+    </description>
+    <string>
+      <size maxLength="23"></size>
+      <pattern value=""></pattern>
+      <pattern value="([0-9A-Fa-f][0-9A-Fa-f]:){7}([0-9A-Fa-f][0-9A-Fa-f])"></pattern>
+    </string>
+  </dataType>
+
+  <dataType name="IPAddress">
+    <description>
+      IP address, i.e. IPv4 address (or IPv4 subnet mask) or IPv6 address.
+      All IPv4 addresses and subnet masks MUST be represented as strings in IPv4 dotted-decimal notation.  Here are some examples of valid IPv4 address textual representations:
+      * 216.52.29.100
+      * 192.168.1.254
+      All IPv6 addresses MUST be represented using any of the 3 standard textual representations defined in {{bibref|RFC4291}} Sections 2.2.1, 2.2.2 and 2.2.3.  Both lower-case and upper-case letters can be used, but use of lower-case letters is RECOMMENDED.  Here are some examples of valid IPv6 address textual representations:
+      * 1080:0:0:800:ba98:3210:11aa:12dd
+      * 1080::800:ba98:3210:11aa:12dd
+      * 0:0:0:0:0:0:13.1.68.3
+      IPv6 addresses MUST NOT include zone identifiers. Zone identifiers are discussed in {{bibref|RFC4007|Section 6}}.
+      Unspecified or inapplicable addresses (or IPv4 subnet masks) MUST be represented as empty strings unless otherwise specified by the parameter definition.
+    </description>
+    <string>
+      <size maxLength="45"/>
+    </string>
+  </dataType>
+
+  <dataType name="IPv4Address" base="IPAddress">
+    <description>
+      IPv4 address (or subnet mask).
+      Can be any IPv4 address that is permitted by the ''IPAddress'' data type.
+    </description>
+    <size maxLength="15"/>
+    <pattern value=""/>
+    <pattern value="(&octet;&dot;){3}&octet;"/>
+  </dataType>
+
+  <dataType name="IPv6Address" base="IPAddress">
+    <description>
+      IPv6 address.
+      Can be any IPv6 address that is permitted by the ''IPAddress'' data type.
+    </description>
+  </dataType>
+
+  <dataType name="IPPrefix">
+    <description>
+      IPv4 or IPv6 routing prefix in Classless Inter-Domain Routing (CIDR) notation {{bibref|RFC4632}}. This is specified as an IP address followed by an appended "/n" suffix, where ''n'' (the prefix size) is an integer in the range 0-32 (for IPv4) or 0-128 (for IPv6) that indicates the number of (leftmost) '1' bits of the routing prefix.
+      * IPv4 example: 192.168.1.0/24
+      * IPv6 example: 2001:edff:fe6a:f76::/64
+      If the IP address part is unspecified or inapplicable, it MUST be {{empty}} unless otherwise specified by the parameter definition.  In this case the IP prefix will be of the form "/n".
+      If the entire IP prefix is unspecified or inapplicable, it MUST be {{empty}} unless otherwise specified by the parameter definition.
+    </description>
+    <string>
+      <size maxLength="49"/>
+    </string>
+  </dataType>
+
+  <dataType name="IPv4Prefix" base="IPPrefix">
+    <description>
+      IPv4 address prefix.
+      Can be any IPv4 prefix that is permitted by the ''IPPrefix'' data type.
+    </description>
+    <size maxLength="18"/>
+    <pattern value=""/>
+    <pattern value="/&ipv4PrefixRange;"/>
+    <pattern value="(&octet;&dot;){3}&octet;/&ipv4PrefixRange;"/>
+  </dataType>
+
+  <dataType name="IPv6Prefix" base="IPPrefix">
+    <description>
+      IPv6 address prefix.
+      Can be any IPv6 prefix that is permitted by the ''IPPrefix'' data type.
+    </description>
+  </dataType>
+
+  <dataType name="JSONObject">
+    <description>
+      A JSON Object as defined in {{bibref|RFC7159|Section 4}}.
+    </description>
+    <string/>
+  </dataType>
+
+  <dataType name="MACAddress">
+    <description>
+      All MAC addresses are represented as strings of 12 hexadecimal digits (digits 0-9, letters A-F or a-f) displayed as six pairs of digits separated by colons.  Unspecified or inapplicable MAC addresses MUST be represented as empty strings unless otherwise specified by the parameter definition.
+    </description>
+    <string>
+      <size maxLength="17"/>
+      <pattern value=""/>
+      <pattern value="([0-9A-Fa-f][0-9A-Fa-f]:){5}([0-9A-Fa-f][0-9A-Fa-f])"/>
+    </string>
+  </dataType>
+
+  <dataType name="StatsCounter32">
+    <description>
+      A 32-bit statistics parameter, e.g. a byte counter.
+      This data type SHOULD NOT be used for statistics parameters whose values might become greater than the maximum value that can be represented as an ''unsignedInt'' (i.e. 0xffffffff, referred to below as ''maxval''). ''StatsCounter64'' SHOULD be used for such parameters.
+      The value ''maxval'' indicates that no data is available for this parameter.  In the unlikely event that the actual value of the statistic is ''maxval'', the CPE SHOULD return ''maxval - 1''.
+      The actual value of the statistic might be greater than ''maxval''. Such values SHOULD wrap around through zero.
+      The term ''packet'' is to be interpreted as the transmission unit appropriate to the protocol layer in question, e.g. an IP packet or an Ethernet frame.
+    </description>
+    <unsignedInt/>
+  </dataType>
+
+  <dataType name="StatsCounter64">
+    <description>
+      A 64-bit statistics parameter, e.g. a byte counter.
+      This data type SHOULD be used for all statistics parameters whose values might become greater than the maximum value that can be represented as an ''unsignedInt''.
+      The maximum value that can be represented as an ''unsignedLong'' (i.e. 0xffffffffffffffff) indicates that no data is available for this parameter.
+      The term ''packet'' is to be interpreted as the transmission unit appropriate to the protocol layer in question, e.g. an IP packet or an Ethernet frame.
+    </description>
+    <unsignedLong/>
+  </dataType>
+
+  <dataType name="UUID">
+    <description>
+      Universally Unique Identifier.  See {{bibref|RFC4122}}.
+    </description>
+    <string>
+      <size minLength="36" maxLength="36"/>
+      <pattern value="[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}"/>
+    </string>
+  </dataType>
+
+  <dataType name="URI">
+    <description>
+      Uniform Resource Identifier.  See {{bibref|RFC3986}}.
+    </description>
+    <string>
+      <size maxLength="2048"/>
+    </string>
+  </dataType>
+
+  <dataType name="URN" base="URI">
+    <description>
+      Uniform Resource Name.  See {{bibref|RFC3986}} (URI) and {{bibref|RFC8141}} (''urn'' URI scheme).
+    </description>
+    <!-- The pattern enforces the "urn" : NID part of the RFC 8141 BNF:
+         - assigned-name = "urn" ":" NID ":" NSS
+         - NID           = (alphanum) 0*30(ldh) (alphanum)
+         - ldh           = alphanum / "-"
+    -->
+    <pattern value="urn:[A-Za-z0-9][A-Za-z0-9-]{0,30}[A-Za-z0-9]:.+"/>
+  </dataType>
+
+  <dataType name="URL" base="URI">
+    <description>
+      Uniform Resource Locator.  See {{bibref|RFC3986}} (URI), {{bibref|IANA-uri-schemes}}, and individual URI scheme RFCs such as {{bibref|RFC7252}} (''coap'', ''coaps'') and {{bibref|RFC7230}} (''http'', ''https'').
+    </description>
+  </dataType>
+
+  <dataType name="ZigBeeNetworkAddress">
+    <description>
+      The ZigBee 16-bit network address (NWK) as defined in {{bibref|ZigBee2007}}. The address is assigned to a device by the network layer and used by the network layer for routing messages between devices.
+    </description>
+    <string>
+      <size maxLength="4"></size>
+      <pattern value=""></pattern>
+      <pattern value="([0-9A-Fa-f]){4}"></pattern>
+    </string>
+  </dataType>
+</dm:document>
