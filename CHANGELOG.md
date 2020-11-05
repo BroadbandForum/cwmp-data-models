@@ -2,6 +2,23 @@
 
 *The latest [CPE WAN Management Protocol (CWMP)](https://www.broadband-forum.org/technical/download/TR-069.pdf) data models can be found at <https://cwmp-data-models.broadband-forum.org>.*
 
+## 2020-11-05: [TR-106 Amendment 10](https://data-model-template.broadband-forum.org) and [TR-181 Issue 2 Amendment 14](https://usp-data-models.broadband-forum.org/#Device:2.14)
+
+*Tag: [v1.6.2](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.2)*
+
+TR-106
+
+* Converted document to markdown
+* Various editorial improvements
+
+TR-181
+
+* Added WWC (5G Wireline Wireless Convergence), PDU (Protocol Data Unit) and FWE (5G Wireline wireless Encapsulation) top-level objects
+* Updated Cellular object to be applicable to 5G Residential Gateways
+* Extended support for TR-471 IP-layer metrics, including new IP-layer capacity test
+* Supported LAN device time-based access-control
+* Various Wi-Fi improvements
+
 ## 2020-04-06: [TR-069 Amendment 6 Corrigendum 1](https://www.broadband-forum.org/technical/download/TR-069.pdf)
 
 *Tag: [v1.6.1](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.1)*
