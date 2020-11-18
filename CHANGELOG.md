@@ -2,6 +2,15 @@
 
 *The latest [CPE WAN Management Protocol (CWMP)](https://www.broadband-forum.org/technical/download/TR-069.pdf) data models can be found at <https://cwmp-data-models.broadband-forum.org>.*
 
+## 2020-11-17: [TR-181 Issue 2 Amendment 14 Corrigendum 1](https://cwmp-data-models.broadband-forum.org/#Device:2.14)
+
+*Tag: [v1.6.3](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.3)*
+
+TR-181
+
+* Removed duplicate remarks about CWMP BOOTSTRAP from descriptions
+* Fixed typos
+
 ## 2020-11-05: [TR-106 Amendment 10](https://data-model-template.broadband-forum.org) and [TR-181 Issue 2 Amendment 14](https://usp-data-models.broadband-forum.org/#Device:2.14)
 
 *Tag: [v1.6.2](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.2)*
