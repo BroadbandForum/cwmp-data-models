@@ -1,0 +1,2041 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Ghn]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-ghn"
+    file="tr-181-2-15-0-ghn.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <dataType name="PSMBreakPointIndexAndLevel">
+    <description>
+      # The PSM breakpoint sub-carrier index in the range [0:4095], and
+
+      # the value of the level of the PSM at this sub-carrier expressed in
+        ''0.1 dBm/Hz'' with an offset of -140 dBm/Hz.
+
+      Both values are represented as unsignedInt.
+
+      {{bibref|G.9964|Clause 5.2}} defines limits on PSM breakpoint levels.
+    </description>
+    <list minItems="2" maxItems="2"/>
+    <unsignedInt/>
+  </dataType>
+
+  <component name="GhnPHYThroughputDiagnosticsInput">
+
+    <parameter name="Interface" access="readWrite" mandatory="true"
+        version="2.8">
+      <description>
+        The interface over which the test is to be performed.
+      </description>
+      <syntax>
+        <string>
+          <pathRef refType="strong" targetParent=".Ghn.Interface."
+              targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="DiagnoseMACAddress" access="readWrite" mandatory="true"
+        version="2.8">
+      <description>
+        The MAC address of the originating G.hn interface of the link that is
+        being diagnosed.
+
+        Note: This MAC address might belong to another node of the domain.
+      </description>
+      <syntax>
+        <dataType ref="MACAddress"/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="GhnPHYThroughputDiagnosticsOutput">
+
+    <object name="Result.{i}." access="readOnly"
+        numEntriesParameter="PHYThroughputResultNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.8">
+      <description>
+        PHY throughput diagnostics results.
+      </description>
+      <uniqueKey>
+        <parameter ref="DestinationMACAddress"/>
+      </uniqueKey>
+
+      <parameter name="DestinationMACAddress" access="readOnly">
+        <description>
+          MAC address of the destination node of the link being measured.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LinkState" access="readOnly">
+        <description>
+          Indicates the state of the link between the G.hn Interface with MAC
+          address {{param|#.DiagnoseMACAddress}} and the G.hn Interface with
+          MAC address {{param|DestinationMACAddress}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Direct">
+              <description>
+                There is a direct link between G.hn Interface with MAC address
+                {{param|#.DiagnoseMACAddress}} and G.hn Interface with MAC
+                address {{param|DestinationMACAddress}}
+              </description>
+            </enumeration>
+            <enumeration value="NonDirect">
+              <description>
+                There is no direct link between G.hn Interface with MAC address
+                {{param|#.DiagnoseMACAddress}} and G.hn Interface with MAC
+                address {{param|DestinationMACAddress}}
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPhyRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          PHY data rate in transmit direction in the link between the G.hn
+          Interface with MAC address {{param|#.DiagnoseMACAddress}} and the
+          G.hn Interface with MAC address {{param|DestinationMACAddress}}. It
+          is represented in {{units}} as defined in Note 1 to
+          {{bibref|G.9961|Table 8-48}}. To convert from the value in the table,
+          divide by 32K (32768) and round down.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPhyRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          PHY data rate in receive direction in the link between the G.hn
+          Interface with MAC address {{param|#.DiagnoseMACAddress}} and the
+          G.hn Interface with MAC address {{param|DestinationMACAddress}}. It
+          is represented in {{units}} as defined in Note 1 to
+          {{bibref|G.9961|Table 8-48}}. To convert from the value in the table,
+          divide by 32K (32768) and round down.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="GhnPerformanceMonitoringDiagnosticsInput">
+
+    <parameter name="Interface" access="readWrite" mandatory="true"
+        version="2.8">
+      <description>
+        The interface over which the test is to be performed.
+      </description>
+      <syntax>
+        <string>
+          <pathRef refType="strong" targetParent=".Ghn.Interface."
+              targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="DiagnoseMACAddress" access="readWrite" mandatory="true"
+        version="2.8">
+      <description>
+        The MAC address of the originating G.hn interface of the link that is
+        being diagnosed.
+
+        Note: This MAC address might belong to another node of the domain.
+      </description>
+      <syntax>
+        <dataType ref="MACAddress"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SampleInterval" access="readWrite" mandatory="true"
+        version="2.8">
+      <description>
+        Time in {{units}} between automatic collection of performance
+        monitoring data. A value of zero disables automatic collection of data.
+
+        The node MAY impose a minimum sample interval, in which case an attempt
+        to set a (non-zero) interval that is less than this minimum MUST set
+        the interval to the minimum and MUST NOT be regarded as an error.
+
+        If SampleInterval is a simple fraction of a day, e.g. 900 (a quarter of
+        an hour) or 3600 (an hour), the device MAY choose to align sample
+        intervals with time of day, but is not required to do so.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="seconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="SNRGroupLength" access="readWrite" mandatory="true"
+        version="2.8">
+      <description>
+        The number of sub-carriers in a group to be used for averaging SNR
+        values when providing SNR information for a channel.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="1" maxInclusive="1"/>
+          <range minInclusive="2" maxInclusive="2"/>
+          <range minInclusive="4" maxInclusive="4"/>
+          <range minInclusive="8" maxInclusive="8"/>
+          <range minInclusive="16" maxInclusive="16"/>
+          <range minInclusive="32" maxInclusive="32"/>
+          <range minInclusive="64" maxInclusive="64"/>
+          <range minInclusive="128" maxInclusive="128"/>
+          <range minInclusive="256" maxInclusive="256"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="GhnPerformanceMonitoringDiagnosticsOutputNumberOfEntries">
+    <object base="Nodes." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="NodeNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}} This is the number of G.hn nodes for which performance
+          monitoring results were collected during the current sample interval.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object base="Channels." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="ChannelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="GhnPerformanceMonitoringDiagnosticsOutput">
+
+    <object name="Nodes." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.8">
+      <description>
+        Per-node G.hn performance monitoring results.
+
+        When automatic collection is enabled, i.e. {{param|#.SampleInterval}}
+        is non-zero, the "current" interval is defined by the most recent
+        automatic sample and the most recent subsequent manual sample, if any.
+
+        When automatic collection is disabled, i.e. SampleInterval is zero, the
+        "current" interval is defined by the three most recent manual samples.
+
+        Note: Packets in statistics counters are Ethernet packets.
+      </description>
+
+      <parameter name="CurrentStart" access="readOnly">
+        <description>
+          Start time for the current interval.
+
+          When automatic collection is enabled, i.e. SampleInterval is
+          non-zero, the current interval started at the most recent automatic
+          sample.
+
+          When automatic collection is disabled, i.e. SampleInterval is zero,
+          the current interval started two manual samples ago.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentEnd" access="readOnly">
+        <description>
+          End time for the current interval.
+
+          When automatic collection is enabled, i.e. SampleInterval is
+          non-zero, the current interval ended at the most recent manual sample
+          since the most recent automatic sample. If there has been no such
+          manual sample, the current interval is empty.
+
+          When automatic collection is disabled, i.e. SampleInterval is zero,
+          the current interval ended at the most recent manual sample.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Nodes.Node.{i}." access="readOnly"
+        numEntriesParameter="NodeNumberOfEntries" minEntries="1"
+        maxEntries="unbounded" version="2.8">
+      <description>
+        Per-node G.hn performance monitoring results during the current sample
+        interval. Each table entry contains the results collected between the
+        G.hn nodes with MAC addresses {{param|##.DiagnoseMACAddress}}) and
+        {{param|DestinationMACAddress}}).
+
+        Note: Packet counters indicate the number of packets received between
+        {{param|#.CurrentStart}} and {{param|#.CurrentEnd}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="DestinationMACAddress"/>
+      </uniqueKey>
+
+      <parameter name="DestinationMACAddress" access="readOnly">
+        <description>
+          MAC address of the destination node of the link being measured.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of MPDU bytes transmitted or retransmitted by the
+          node through a physical medium (i.e., PMI defined in
+          {{bibref|G.9960|Clause 5.2.1}}), which correspond to data LPDUs
+          (i.e., data packets) and framing overhead (e.g., LFH, LPH, LPCS
+          defined in {{bibref|G.9961|Clause 8.1}}). It does not include
+          transmitted bytes contributed by management LPDUs (i.e., management
+          packets).
+
+          Note: LPDUs in mixed LLC frame blocks are considered data LPDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of MPDU bytes received by the node through a
+          physical medium, which correspond to data LPDUs and framing overhead.
+          It does not include received bytes contributed by management LPDUs.
+          It might include blocks with errors.
+
+          Note: LPDUs in mixed LLC frame blocks are considered data LPDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of APDUs requested for transmission by a higher
+          layer (i.e., outbound APDUs at the x1 reference point defined in
+          {{bibref|G.9960|Clause 5.2.1}}) that were transmitted by the node
+          through the physical medium. It does not include transmitted LCDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of APDUs delivered to a higher layer (i.e., inbound
+          APDUs at the x1 reference point) that were received by the node
+          through the physical medium. It does not include received LCDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of APDUs that were requested for transmission by a
+          higher layer (i.e., outbound APDUs at the x1 reference point defined
+          in {{bibref|G.9960|Clause 5.2.1}}). This parameter represents the
+          total number of LCDUs requested for transmission by a management
+          layer (i.e., outbound LCDUs generated in LLC defined in in
+          {{bibref|G.9961|Clause 8.1.3}}) that were transmitted by the node
+          through a physical medium) but could not be transmitted because of
+          errors (e.g., APDUs containing CRC errors).
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received APDUs that contained errors preventing
+          them from being delivered to a higher layer (i.e., inbound APDUs at
+          the x1 reference point defined in {{bibref|G.9960|Clause 5.2.1}}).
+          The possible causes of error are: incorrect CRC, incorrect MIC,
+          incorrect MIC size, and incorrect size of packet.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of APDUs that were requested for transmission by a
+          higher layer (i.e., outbound APDUs at the x1 reference point) and
+          which were addressed to a unicast address at this layer. It includes
+          APDUs that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received APDUs that were delivered to a higher
+          layer (i.e., inbound APDUs at the x1 reference point) and which were
+          addressed to a unicast address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of APDUs that were requested for transmission by a
+          higher layer (i.e., outbound APDUs at the x1 reference point) but
+          chosen to be discarded even though no errors had been detected to
+          prevent their being transmitted (e.g., buffer overflow).
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received APDUs that were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of APDUs that were requested for transmission by a
+          higher layer (i.e., outbound APDUs at the x1 reference point) and
+          which were addressed to a multicast address at this layer. It
+          includes APDUs that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received APDUs that were delivered to a higher
+          layer (i.e., inbound APDUs at the x1 reference point) and which were
+          addressed to a multicast address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of APDUs that were requested for transmission by a
+          higher layer (i.e., outbound APDUs at the x1 reference point) and
+          which were addressed to a broadcast address at this layer. It
+          includes APDUs that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received APDUs that were delivered to a higher
+          layer (i.e., inbound APDUs at the x1 reference point) and which were
+          addressed to a broadcast address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of APDUs received by the management that were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtBytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of MPDU bytes transmitted by the node through a
+          physical medium, which correspond to management LPDUs and framing
+          overhead.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtBytesReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of MPDU bytes received by the node through a
+          physical medium, which correspond to management LPDUs and framing
+          overhead.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of LCDUs requested for transmission by a management
+          layer (i.e., outbound LCDUs generated in LLC defined in
+          {{bibref|G.9961|Clause 8.1.3}}) that were transmitted by the node
+          through a physical medium.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of LCDUs delivered to a management layer (i.e.,
+          inbound LCDUs) that were received by the node through a physical
+          medium.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of LPDUs that were transmitted by the node through a
+          physical medium, regardless of new or retransmitted LPDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of LPDUs that were received by the node through a
+          physical medium, with or without errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksResent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of LPDUs that were retransmitted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received LPDUs that contained errors.
+
+          Note the following relationships hold:
+
+          * PacketsSent + ErrorsSent + DiscardPacketsSent = UnicastPacketsSent
+            + MulticastPacketsSent + BroadcastPacketsSent.
+
+          * PacketsReceived = UnicastPacketsReceived + MulticastPacketsReceived
+            + BroadcastPacketsReceived.
+
+          * Retransmission rate = BlocksResent / BlocksSent.
+
+          * Block error rate = BlocksErrorReceived / BlocksReceived.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Channels." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.8">
+      <description>
+        Per-channel G.hn performance monitoring results.
+
+        Note: channels are unidirectional.
+      </description>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          Time at which channel data was last collected.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Channels.Channel.{i}." access="readOnly"
+        numEntriesParameter="ChannelNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.8">
+      <description>
+        Per-channel G.hn performance monitoring results during the current
+        sample interval. Each table entry contains the results collected from
+        the channel between a G.hn interface (as indicated by
+        {{param|##.DiagnoseMACAddress}}) and a G.hn interface indicated by
+        {{param|DestinationMACAddress}})
+      </description>
+      <uniqueKey>
+        <parameter ref="DestinationMACAddress"/>
+      </uniqueKey>
+
+      <parameter name="DestinationMACAddress" access="readOnly">
+        <description>
+          MAC address of the destination node of the link being measured.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SNR" access="readOnly">
+        <description>
+          The result of an SNR test performed over the channel. It is formatted
+          as a comma-separated list of N/M unsigned integers that represents
+          the result of Signal-to-Noise-Ratio measurement averaging in groups
+          of M subcarriers. The number N depends on the bandplan used by the
+          node and corresponds to the OFDM control parameter N of each medium
+          as defined in {{bibref|G.9964}}. The number M corresponds to the
+          parameter {{param|##.SNRGroupLength}}.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <units value="0.1 dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="Ghn">
+
+    <object name="Device.Ghn." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.4">
+      <description>
+        G.hn object that contains an {{object|Interface}} table for G.hn
+        supported CPE. The ITU-T G.hn specifications {{bibref|G.9960}} and
+        {{bibref|G.9961}} define Physical and MAC Layers for communication
+        between two or more G.hn nodes in the home network over multiple wired
+        media such as power line, phone line and coaxial cable.
+      </description>
+
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Ghn.Interface.{i}." access="readOnly"
+        numEntriesParameter="InterfaceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true" version="2.4">
+      <description>
+        G.hn interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). Each table entry models the PHY
+        {{bibref|G.9960}} and MAC {{bibref|G.9961}} layers of a G.hn interface.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since {{object}} is a layer 1 interface, it is expected that
+          {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC Address of the interface, denoted as node MAC address or
+          REGID in {{bibref|G.9961}}.
+
+          Note: This is not necessarily the same as the Ethernet header source
+          or destination MAC address, which is associated with the IP interface
+          and is modeled via the {{param|.Ethernet.Link.{i}.MACAddress}}
+          parameter.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FirmwareVersion" access="readOnly">
+        <description>
+          The firmware version of the interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionType" access="readOnly" status="deleted">
+        <description>
+          {{deprecated|2.8|because it has been replaced by
+          {{param|MediumType}}}}
+
+          {{obsoleted|2.14}}
+
+          {{deleted|2.15}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Powerline"/>
+            <enumeration value="Phone"/>
+            <enumeration value="Coax"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxTransmitRate" access="readOnly" version="2.8">
+        <description>
+          The maximum PHY data rate that the interface is capable of
+          transmitting (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TargetDomainNames" access="readWrite">
+        <description>
+          {{list}} Identifies the target domains configured by the user, as
+          described in {{bibref|G.9961|Section 8.6.1}}. When registering or
+          re-registering, the G.hn interface SHOULD try to register to one of
+          these domains in the given order.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DomainName" access="readOnly">
+        <description>
+          This is the domain name to which the interface is currently
+          registered.
+
+          {{empty}} indicates that the interface is currently not registered.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DomainNameIdentifier" access="readOnly">
+        <description>
+          The Domain Name Identifier, a shortened version of
+          {{param|DomainName}}, denoted as DNI in {{bibref|G.9961|Section
+          8.6.11.2.1}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DomainId" access="readOnly">
+        <description>
+          The Domain Identifier of the domain to which the interface is
+          registered, denoted as DOD in {{bibref|G.9961}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceId" access="readOnly">
+        <description>
+          The Device Identifier assigned by the Domain Master, denoted as
+          DEVICE_ID in {{bibref|G.9961}}.
+
+          The value 0 indicates that the device is not currently registered.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxBitRate" access="readOnly">
+        <description>
+          The maximum PHY bit rate supported by this interface (expressed in
+          {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeTypeDMCapable" access="readOnly">
+        <description>
+          Indicates whether this interface has the capability to act as Domain
+          Master in the G.hn domain.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DMRequested" access="readWrite" version="2.8">
+        <description>
+          Indicates a request to force the role of the G.hn interface to Domain
+          Master (DM) for the G.hn domain it is connected to. The selection of
+          the Domain Master follows the procedures described in
+          {{bibref|G.9961|Clause 8.6.6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsDM" access="readOnly" version="2.8">
+        <description>
+          Indicates whether this G.hn interface is currently the Domain Master
+          (DM) for the G.hn domain it is connected to, as described in
+          {{bibref|G.9961|Clause 8.6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeTypeSCCapable" access="readOnly">
+        <description>
+          Indicates whether this interface has the capability to act as
+          Security Controller in the G.hn domain.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SCRequested" access="readWrite" version="2.8">
+        <description>
+          Indicates a request to force the role of the G.hn interface to
+          Security Controller (SC) for the G.hn domain it is connected to. The
+          selection of the Security Controller follows the procedures described
+          in {{bibref|G.9961|Clause 9.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsSC" access="readOnly" version="2.8">
+        <description>
+          Indicates whether this G.hn interface is currently the Security
+          Controller (SC) for the G.hn domain it is connected to, as described
+          in {{bibref|G.9961|Clause 9.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StandardVersions" access="readOnly" version="2.8">
+        <description>
+          The standard versions that the interface supports. The list MUST have
+          an even number of items. The first item of each pair represents an
+          ITU-T G.hn Recommendation while the second element of each pair
+          represents the amendment version of the indicated Recommendation that
+          this interface supports (the value 0 corresponds to the base
+          Recommendation).
+
+          For example, to indicate support for the G.9960 base document and
+          G.9961 amendment 1, the corresponding list would be
+          "G9960,0,G9961,1".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxBandPlan" access="readOnly" version="2.8">
+        <description>
+          The largest bandplan that the interface can support, as defined in
+          {{bibref|G.9961|Clause 8.8.5.5}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MediumType" access="readOnly" version="2.8">
+        <description>
+          The medium type that the interface currently operates on. Refer to
+          {{bibref|G.9962|Table 7-5}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="PowerLineBaseband"/>
+            <enumeration value="PhoneLineBaseband"/>
+            <enumeration value="CoaxBaseband"/>
+            <enumeration value="CoaxRF"/>
+            <enumeration value="PlasticOpticalFiber"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TAIFG" access="readOnly" version="2.8">
+        <description>
+          The Acknowledgement InterFrame Gap, or TAIFG, as defined in
+          {{bibref|G.9961|Clause 8.4}}. It is represented as multiples of
+          {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="1.28 microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotchedAmateurRadioBands" access="readWrite"
+          version="2.8">
+        <description>
+          A bit map representing usage of international amateur bands (0 =
+          masked, 1 = unmasked). The LSB represents the lowest band (1.8-2.0
+          MHz), the second LSB represents the second lowest band (3.5-4.0 MHz),
+          and so on. The maximum value for this parameter is 0x03FF, i.e. it is
+          a 10-bit quantity represented in 16 bits and the top 6 bits are
+          always zero.
+
+          International Radio amateur bands are described in
+          {{bibref|G.9964|Table D-1}} and conveyed by the Domain Master in the
+          Amateur radio band descriptor (see {{bibref|G.9961|Table 8-77}}).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="2"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="PHYThroughputDiagnosticsEnable" access="readWrite"
+          version="2.8">
+        <description>
+          Comma-separated list of DeviceIDs of nodes that need to enable their
+          PHY throughput diagnostics mode. All devices that are enabled will
+          participate in the G.hn network PHY throughput diagnostics process.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PerformanceMonitoringDiagnosticsEnable"
+          access="readWrite" version="2.8">
+        <description>
+          Comma-separated list of DeviceIDs of nodes that need to enable their
+          Performance Monitoring diagnostics mode on this node. All devices
+          that are enabled will participate in the G.hn network Performance
+          Monitoring diagnostics process.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SMMaskedBandNumberOfEntries" access="readOnly"
+          version="2.8">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeTypeDMConfig" access="readWrite">
+        <description>
+          Requests the interface to become the Domain Master in the G.hn
+          domain.
+
+          This parameter is valid only if {{param|NodeTypeDMCapable}} is
+          {{true}}.
+
+          Note that, if more than one node is configured to act as Domain
+          Master, G.hn specifies a protocol to ensure only one device actually
+          becomes DM.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeTypeDMStatus" access="readOnly">
+        <description>
+          Indicates whether the interface is acting as Domain Master ({{true}})
+          or not ({{false}}).
+
+          See Note in {{param|NodeTypeDMConfig}} regarding the possibility of
+          more than one node being configured with {{param|NodeTypeDMConfig}} =
+          {{true}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeTypeSCStatus" access="readOnly">
+        <description>
+          Indicates whether the interface is acting as Security Controller
+          ({{true}}) or not ({{false}}).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedDeviceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSM" access="readWrite" version="2.12">
+        <description>
+          Specifies the list of PSD shaping mask (PSM) breakpoints to be
+          applied to the G.hn interface.
+
+          {{list|with each list item consisting of the following}}
+
+          {{datatype|expand}}
+
+          The PSM level is 0.1*(the value of the level of the PSM) - 140
+          dBm/Hz.
+
+          For example, a PSM defined by two breakpoints (subcarrier 450, PSM
+          level -80 dBm/Hz) and (subcarrier 1050, PSM level -90 dBm/Hz) is
+          represented by PSM [450,600],[1050,500] .
+        </description>
+        <syntax>
+          <list minItems="2" maxItems="32" nestedBrackets="required"/>
+          <dataType ref="PSMBreakPointIndexAndLevel"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Ghn.Interface.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.4">
+      <description>
+        Throughput statistics for this interface at the different G.hn
+        reference points described in {{bibref|G.9961|Clause 8.1}}.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+
+          More specifically, this is the total number of MPDU bytes transmitted
+          or retransmitted by the node through a physical medium (i.e., PMI
+          defined in {{bibref|G.9960|Clause 5.2.1}}), which correspond to data
+          LPDUs (i.e., data packets) and framing overhead (e.g., LFH, LPH, LPCS
+          defined in {{bibref|G.9961|Clause 8.1}}). It does not include
+          transmitted bytes contributed by management LPDUs (i.e., management
+          packets).
+
+          Note: LPDUs in mixed LLC frame blocks are considered data LPDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+
+          More specifically, this is the total number of MPDU bytes received by
+          the node through a physical medium, which correspond to data LPDUs
+          and framing overhead. It does not include received bytes contributed
+          by management LPDUs. It can include blocks with errors.
+
+          Note: LPDUs in mixed LLC frame blocks are considered data LPDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+
+          More specifically, this is the total number of APDUs requested for
+          transmission by a higher layer (i.e., outbound APDUs at the x1
+          reference point defined in {{bibref|G.9960|Clause 5.2.1}}) that were
+          transmitted by the node through the physical medium. It does not
+          include transmitted LCDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+
+          More specifically, this is the total number of APDUs delivered to a
+          higher layer (i.e., inbound APDUs at the x1 reference point) that
+          were received by the node through the physical medium. It does not
+          include received LCDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+
+          More specifically, this is the total number of APDUs that were
+          requested for transmission by a higher layer (i.e., outbound APDUs at
+          the x1 reference point defined in {{bibref|G.9960|Clause 5.2.1}}) but
+          could not be transmitted because of errors (e.g., APDUs containing
+          CRC errors).
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+
+          More specifically, this is the total number of received APDUs that
+          contained errors preventing them from being delivered to a higher
+          layer (i.e., inbound APDUs at the x1 reference point defined in
+          {{bibref|G.9960|Clause 5.2.1}}). The possible causes of error are:
+          incorrect CRC, incorrect MIC, incorrect MIC size, and incorrect size
+          of packet.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+
+          More specifically, this is the total number of APDUs that were
+          requested for transmission by a higher layer (i.e., outbound APDUs at
+          the x1 reference point) and which were addressed to a unicast address
+          at this layer. It includes APDUs that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+
+          More specifically, this is the total number of received APDUs that
+          were delivered to a higher layer (i.e., inbound APDUs at the x1
+          reference point) and which were addressed to a unicast address at
+          this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+
+          More specifically, this is the total number of APDUs that were
+          requested for transmission by a higher layer (i.e., outbound APDUs at
+          the x1 reference point) but chosen to be discarded even though no
+          errors had been detected to prevent their being transmitted (e.g.,
+          buffer overflow).
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+
+          More specifically, this is the total number of received APDUs that
+          were chosen to be discarded even though no errors had been detected
+          to prevent their being delivered.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+
+          More specifically, this is the total number of APDUs that were
+          requested for transmission by a higher layer (i.e., outbound APDUs at
+          the x1 reference point) and which were addressed to a multicast
+          address at this layer. It includes APDUs that were discarded or not
+          sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+
+          More specifically, this is the total number of received APDUs that
+          were delivered to a higher layer (i.e., inbound APDUs at the x1
+          reference point) and which were addressed to a multicast address at
+          this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+
+          More specifically, this is the total number of APDUs that were
+          requested for transmission by a higher layer (i.e., outbound APDUs at
+          the x1 reference point) and which were addressed to a broadcast
+          address at this layer. It includes APDUs that were discarded or not
+          sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+
+          More specifically, this is the total number of received APDUs that
+          were delivered to a higher layer (i.e., inbound APDUs at the x1
+          reference point) and which were addressed to a broadcast address at
+          this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+
+          More specifically, this is the total number of APDUs received by the
+          management that were discarded because of an unknown or unsupported
+          protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtBytesSent" access="readOnly" activeNotify="canDeny"
+          version="2.8">
+        <description>
+          The total number of MPDU bytes transmitted by the node through a
+          physical medium, which correspond to management LPDUs and framing
+          overhead.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtBytesReceived" access="readOnly"
+          activeNotify="canDeny" version="2.8">
+        <description>
+          The total number of MPDU bytes received by the node through a
+          physical medium, which correspond to management LPDUs and framing
+          overhead.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtPacketsSent" access="readOnly"
+          activeNotify="canDeny" version="2.8">
+        <description>
+          The total number of LCDUs requested for transmission by a management
+          layer (i.e., outbound LCDUs generated in LLC defined in
+          {{bibref|G.9961|Clause 8.1.3}}) that were transmitted by the node
+          through a physical medium.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtPacketsReceived" access="readOnly"
+          activeNotify="canDeny" version="2.8">
+        <description>
+          The total number of LCDUs delivered to a management layer (i.e.,
+          inbound LCDUs) that were received by the node through a physical
+          medium.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksSent" access="readOnly" activeNotify="canDeny"
+          version="2.8">
+        <description>
+          The total number of LPDUs that were transmitted by the node through a
+          physical medium, regardless of new or retransmitted LPDUs.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksReceived" access="readOnly"
+          activeNotify="canDeny" version="2.8">
+        <description>
+          The total number of LPDUs that were received by the node through a
+          physical medium, with or without errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksResent" access="readOnly" activeNotify="canDeny"
+          version="2.8">
+        <description>
+          The total number of LPDUs that were retransmitted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlocksErrorsReceived" access="readOnly"
+          activeNotify="canDeny" version="2.8">
+        <description>
+          The total number of received LPDUs that contained errors.
+
+          Note the following relationships hold:
+
+          * PacketsSent + ErrorsSent + DiscardPacketsSent = UnicastPacketsSent
+            + MulticastPacketsSent + BroadcastPacketsSent.
+
+          * PacketsReceived = UnicastPacketsReceived + MulticastPacketsReceived
+            + BroadcastPacketsReceived.
+
+          * Retransmission rate = BlocksResent / BlocksSent.
+
+          * Block error rate = BlocksErrorReceived / BlocksReceived.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Ghn.Interface.{i}.AssociatedDevice.{i}."
+        access="readOnly" numEntriesParameter="AssociatedDeviceNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.4">
+      <description>
+        This table contains information about other G.hn devices connected to
+        this G.hn interface.
+      </description>
+      <uniqueKey>
+        <parameter ref="MACAddress"/>
+      </uniqueKey>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          MAC address of remote G.hn device.
+
+          This is denoted as REGID in {{bibref|G.9961}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceId" access="readOnly">
+        <description>
+          Device Id (as defined in G.hn) for the remote G.hn device, denoted as
+          DEVICE_ID in {{bibref|G.9961}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPhyRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          The PHY transmit Rate (expressed in {{units}}) to this remote device,
+          denoted as PHY data rate in {{bibref|G.9961}}.
+
+          Refer to Note 1 of {{bibref|G.9961|Table 8-48}}. To convert from the
+          value in the table, divide by 32K (32768) and round down.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPhyRate" access="readOnly" activeNotify="canDeny">
+        <description>
+          The PHY receive Rate (expressed in {{units}}) from this remote
+          device, denoted as PHY data rate in {{bibref|G.9961}}.
+
+          Refer to Note 1 of {{bibref|G.9961|Table 8-48}}. To convert from the
+          value in the table, divide by 32K (32768) and round down.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Active" access="readOnly">
+        <description>
+          Whether or not this device is currently present in the G.hn domain.
+
+          The ability to list inactive nodes is OPTIONAL. If the CPE includes
+          inactive nodes in this table, {{param}} MUST be set to {{false}} for
+          each inactive node. The length of time an inactive node remains
+          listed in this table is a local matter to the CPE.
+
+          If {{param}} is {{true}}, it indicates that the Status of the remote
+          device is 0, 1, or 2 (see {{bibref|G.9961|Table 7-3}}).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Ghn.Interface.{i}.DMInfo." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        This object specifies management parameters pertaining to the domain
+        functionality (Domain Master function; see {{bibref|G.9961|Clause
+        8.6}}). The object exists only on G.hn interfaces that are currently
+        the Domain Master, i.e. for which parameter {{param|#.IsDM}} is
+        {{true}}.
+      </description>
+
+      <parameter name="DomainName" access="readWrite">
+        <description>
+          This is the domain name to which the interface is currently
+          registered. {{empty}} indicates that the interface is currently not
+          registered.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="32"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="DomainNameIdentifier" access="readOnly">
+        <description>
+          The Domain Name Identifier, a shortened version of
+          {{param|DomainName}}, denoted as DNI in {{bibref|G.9961|Section
+          8.6.11.2.1}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="2"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="DomainId" access="readOnly">
+        <description>
+          The Domain Identifier of the domain to which the interface is
+          registered, denoted as DOD in {{bibref|G.9961}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACCycleDuration" access="readWrite">
+        <description>
+          The MAC cycle duration, as specified in {{bibref|G.9961|Clause 8.4}}.
+          It is represented as multiples of {{units}}. In the case of power
+          line, writing to this parameter has no effect and it reads back as 0,
+          which is a special value indicating that the MAC cycle is
+          synchronized with 2 AC cycles as defined in {{bibref|G.9961|Clause
+          8.6.3.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="0"/>
+            <range minInclusive="10" maxInclusive="200"/>
+            <units value="0.5 msec"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SCDeviceId" access="readWrite">
+        <description>
+          The DEVICE_ID of the Security Controller selected by the Domain
+          Master.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SCMACAddress" access="readWrite">
+        <description>
+          The REGID of the Security Controller selected by the Domain Master.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReregistrationTimePeriod" access="readWrite">
+        <description>
+          The time interval for periodic re-registration, as specified in
+          {{bibref|G.9961|Clause 8.8.5.8}}. It is represented as multiples of
+          {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="5" maxInclusive="63"/>
+            <units value="2 seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TopologyPeriodicInterval" access="readWrite">
+        <description>
+          The time interval that a node sends out the periodic topology update
+          using TM_NodeTopologyChange.ind message, as specified in
+          {{bibref|G.9961|Clause 8.8.5.8.1}}. It is represented as multiples of
+          {{units}}. The special value 0 represents an infinite interval (i.e.,
+          no periodic topology update).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="0.1 sec"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinSupportedBandplan" access="readWrite">
+        <description>
+          Indicates the value of the minimal bandplan capability for a node
+          that is allowed to register to the domain.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxSupportedBandplan" access="readWrite">
+        <description>
+          Indicates the value of the minimal bandplan capability for a node
+          that is allowed to register to the domain.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Ghn.Interface.{i}.SCInfo." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        This object specifies management parameters pertaining to the Security
+        Controller functionality (Security Controller function; see
+        {{bibref|G.9961|Clause 9.2}}). The object exists only on G.hn
+        interfaces that are currently the Security Controller, i.e. for which
+        parameter {{param|#.IsSC}} is {{true}}.
+      </description>
+
+      <parameter name="ModesSupported" access="readOnly">
+        <description>
+          The security modes that the Security Controller can support. Refer to
+          {{bibref|G.9961|Clause 9.2}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="NN">
+              <description>Node-to-Node</description>
+            </enumeration>
+            <enumeration value="NMK">
+              <description>Network Membership Key</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ModeEnabled" access="readWrite">
+        <description>
+          The security mode in which the Security Controller is operating.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="ModesSupported" nullValue="Disabled"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MICSize" access="readWrite">
+        <description>
+          The selected MIC size used in the domain.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="4-byte MIC"/>
+            <enumeration value="8-byte MIC"/>
+            <enumeration value="16-byte MIC"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Location" access="readOnly">
+        <description>
+          Indicates whether the Security Controller is above the L1 reference
+          point. It is set to {{true}} if the Security Controller is above the
+          L1 reference point, and set to {{false}} otherwise.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Ghn.Interface.{i}.SMMaskedBand.{i}."
+        access="readWrite" numEntriesParameter="SMMaskedBandNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="32" version="2.8">
+      <description>
+        Specifies the list of masked bands to be applied to the G.hn interface.
+        This information is conveyed by the Domain Master in the SM descriptor
+        as specified in {{bibref|G.9961|Table 8-77}}.
+
+        Instances of this object are expected to exist only on G.hn interfaces
+        that are currently the Domain Master, i.e. for which parameter
+        {{param|#.IsDM}} is {{true}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="BandNumber"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BandNumber" access="readWrite">
+        <description>
+          The masked band number.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StartSubCarrier" access="readWrite">
+        <description>
+          Index of the lowest frequency sub-carrier in the band to be masked as
+          specified in {{bibref|G.9961|Table 8-79}}. This parameter is writable
+          only on the interface which acts as the Domain Master.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StopSubCarrier" access="readWrite">
+        <description>
+          Index of the highest frequency sub-carrier in the band to be masked
+          as specified in Table 8-79 in {{bibref|G.9961}}. This parameter is
+          writable only on the interface which acts as the Domain Master.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Ghn.Diagnostics." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.8">
+      <description>
+        The G.hn Diagnostics object.
+      </description>
+    </object>
+
+    <profile name="Ghn:1" version="2.4">
+      <object ref="Device.Ghn." requirement="present">
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Ghn.Interface.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="Upstream" requirement="readOnly"/>
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="FirmwareVersion" requirement="readOnly"/>
+        <parameter ref="TargetDomainNames" requirement="readWrite"/>
+        <parameter ref="DomainName" requirement="readOnly"/>
+        <parameter ref="DomainNameIdentifier" requirement="readOnly"/>
+        <parameter ref="DomainId" requirement="readOnly"/>
+        <parameter ref="DeviceId" requirement="readOnly"/>
+        <parameter ref="MaxBitRate" requirement="readOnly"/>
+        <parameter ref="NodeTypeDMCapable" requirement="readOnly"/>
+        <parameter ref="NodeTypeSCCapable" requirement="readOnly"/>
+        <parameter ref="NodeTypeDMConfig" requirement="readOnly"/>
+        <parameter ref="NodeTypeDMStatus" requirement="readOnly"/>
+        <parameter ref="NodeTypeSCStatus" requirement="readOnly"/>
+        <parameter ref="AssociatedDeviceNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.Ghn.Interface.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Ghn.Interface.{i}.AssociatedDevice.{i}."
+          requirement="present">
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="DeviceId" requirement="readOnly"/>
+        <parameter ref="TxPhyRate" requirement="readOnly"/>
+        <parameter ref="RxPhyRate" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Ghn:2.14">
+    <component ref="Root"/>
+    <component ref="Ghn"/>
+  </model>
+</dm:document>

@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [IPv6rd]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-ipv6rd"
+    file="tr-181-2-14-0-ipv6rd.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Prefix"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="IPv6rd">
+
+    <object name="Device.IPv6rd." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.2">
+      <description>
+        Settings allowing a CPE to derive and route IPv6 Rapid Deployment (6rd)
+        delegated prefixes as specified in {{bibref|RFC5969}}. The 6rd
+        mechanism is intended to be implemented only on what {{bibref|RFC5969}}
+        refers to as ''Customer Edge Routers'', i.e. on gateway devices, that
+        support IPv6 on the LAN side and only have IPv4 connectivity on the WAN
+        side.
+
+        See the 6rd Theory of Operation {{bibref|TR-181i2|Appendix VI}} for a
+        description of the working of this 6rd data model.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables IPv6rd.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IPv6rd.InterfaceSetting.{i}." access="readOnly"
+        numEntriesParameter="InterfaceSettingNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.2">
+      <description>
+        6rd {{bibref|RFC5969}} settings.
+
+        A 6rd delegated prefix is expected to be of maximum length 64 bits, and
+        is the concatenation of the following two items:
+
+        * Service provider IPv6 prefix: specified via the
+          {{param|SPIPv6Prefix}} parameter
+
+        * IPv4 address suffix: the IPv4 address with the first
+          {{param|IPv4MaskLength}} bits removed
+
+        This object definition is derived from {{bibref|RFC5969}} with some
+        minor nomenclature changes.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable or disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BorderRelayIPv4Addresses" access="readWrite">
+        <description>
+          List items are the IPv4 addresses (possibly anycast) of the 6rd
+          Relay(s).
+        </description>
+        <syntax>
+          <list maxItems="4">
+            <size/>
+          </list>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllTrafficToBorderRelay" access="readWrite">
+        <description>
+          If {{true}}, the destination address for all 6rd traffic will be set
+          (IPv4 destination address) to one of the
+          {{param|BorderRelayIPv4Addresses}}. If {{false}}, traffic whose
+          destination address begins with the same prefix as
+          {{param|SPIPv6Prefix}} will be sent directly to the destination IPv4
+          address of the endpoint, which is in the same 6rd domain. See 6rd
+          Theory of Operation for further explanation
+          {{bibref|TR-181i2|Appendix VI}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SPIPv6Prefix" access="readWrite">
+        <description>
+          The Service Provider's 6rd IPv6 prefix for this deployment and this
+          6rd RG.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4MaskLength" access="readWrite">
+        <description>
+          The number of high-order {{units}} that are identical across all IPv4
+          addresses within a given 6rd domain. This number of {{units}} MUST be
+          removed from the start of the IPv4 address when generating the 6rd
+          delegated prefix.
+
+          For example, if this value is 8, only the final 24 {{units}} of the
+          subscriber IPv4 prefix will be used when creating the IPv6 delegated
+          prefix, determining the destination IPv4 encapsulation address, etc.
+
+          If the value is 0, then the whole 32 {{units}} of the IPv4 address
+          are used in the encoding.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="32"/>
+            <units value="bits"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AddressSource" access="readWrite">
+        <description>
+          {{reference}} Points to the IPv4 address that is the source of the
+          IPv4 address embedded in the IPv6 6rd prefix, and used as the source
+          encapsulating IPv4 address. If the value is {{empty}} or this
+          parameter is not present, the device will use internal logic to
+          determine which IPv4 source address to use.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv4Address." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TunnelInterface" access="readOnly">
+        <description>
+          {{reference}} This is an IP interface of ''Type''
+          {{enum|Tunnel|.IP.Interface.{i}.Type}} that is logically the tunnel
+          entry point for upstream IPv6 traffic and is also logically the
+          tunnel exit point for downstream IPv6 traffic (i.e. the entry point
+          for non-tunneled upstream IPv6 traffic to enter a tunnel and become
+          tunneled, or conversely, the exit point for downstream IPv6 traffic
+          leaving a tunnel after being un-tunneled).
+
+          IPv6 traffic that enters {{param}} from the LAN is expected to
+          continue on through {{param|TunneledInterface}}, and traffic from the
+          WAN is expected to come from {{param|TunneledInterface}} into
+          {{param}}. {{param}} is a logical interface that can allow for
+          classification, marking (of IPv6 headers), and policing of IPv6
+          traffic that will be going over a 6rd tunnel. These functions are
+          modeled in the {{object|.QoS.}} object.
+
+          {{param}} can be used also to represent the 6rd virtual interface
+          defined in {{bibref|RFC5969}}.
+
+          Note: In 6rd, IPv6 packets arriving over one or more device LAN IP
+          interfaces are logically fed into this {{param}}. Likewise, 6rd
+          traffic from the WAN gets logically sent from this {{param}} to LAN
+          IP interfaces.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TunneledInterface" access="readOnly">
+        <description>
+          {{reference}} This is an IP interface of ''Type''
+          {{enum|Tunneled|.IP.Interface.{i}.Type}} that provides information
+          about the IPv4 headers used to encapsulate the IPv6 packets.
+
+          Encapsulated IPv6 traffic that enters {{param}} from the WAN is
+          expected to continue on through {{param|TunnelInterface}}, and
+          traffic from the LAN is expected to come from
+          {{param|TunnelInterface}} into {{param}}. {{param}} is a logical
+          interface that can allow for classification, marking (of IPv4 headers
+          and VLAN tags), and policing of IPv4 packets that encapsulate IPv6
+          packets in 6rd traffic. These functions are modeled in the
+          {{object|.QoS.}} object.
+
+          Note: In 6rd, {{param}} traffic originating from the LAN logically
+          feeds into a WAN-side IPv4 capable IP interface that the "IPv6 6rd
+          tunnel" goes over. 6rd traffic that enters over this IPv4 WAN
+          interface gets logically sent to this {{param}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="IPv6rd:1" version="2.2">
+      <object ref="Device.IPv6rd." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.IPv6rd.InterfaceSetting.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="BorderRelayIPv4Addresses" requirement="readWrite"/>
+        <parameter ref="AllTrafficToBorderRelay" requirement="readWrite"/>
+        <parameter ref="SPIPv6Prefix" requirement="readWrite"/>
+        <parameter ref="IPv4MaskLength" requirement="readWrite"/>
+        <parameter ref="AddressSource" requirement="readWrite"/>
+        <parameter ref="TunnelInterface" requirement="readOnly"/>
+        <parameter ref="TunneledInterface" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="IPv6rd:2.14">
+    <component ref="Root"/>
+    <component ref="IPv6rd"/>
+  </model>
+</dm:document>

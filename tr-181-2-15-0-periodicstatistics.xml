@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [PeriodicStatistics]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-periodicstatistics"
+    file="tr-181-2-15-0-periodicstatistics.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="PeriodicStatistics">
+
+    <object name="Device.PeriodicStatistics." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        This object configures collection of periodic statistics for the
+        device.
+
+        Periodic statistics are measured over a sample interval (which can be
+        aligned with absolute time) and are made available to the Controller as
+        a comma-separated list of the most recent &lt;n&gt; samples.
+
+        This object provides a single set of global settings that affect the
+        entire device unless overridden locally.
+      </description>
+
+      <parameter name="MinSampleInterval" access="readOnly">
+        <description>
+          Minimum sample interval in {{units}} that the CPE is able to support.
+
+          A value of 0 indicates no specific minimum sample interval.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxReportSamples" access="readOnly">
+        <description>
+          Maximum number of samples of each statistic that the CPE is able to
+          store and report.
+
+          A value of 0 indicates no specific maximum number of samples.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SampleSetNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicStatistics.SampleSet.{i}." access="readWrite"
+        numEntriesParameter="SampleSetNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        Periodic statistics sample set table. Each sample set has its own
+        sample interval etc.
+      </description>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny"
+          version="2.3">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables collection of periodic statistics for this sample
+          set.
+
+          When collection of periodic statistics is enabled, any stored samples
+          are discarded, and the first sample interval begins immediately.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates availability of Sample statistics. {{enum}}
+
+          The {{enum|Trigger}} value is only used for triggering the Controller
+          to fetch the collected data and can only be used when
+          {{param|FetchSamples}} is in the range [1:{{param|ReportSamples}}].
+
+          The transition from {{enum|Enabled}} to {{enum|Trigger}} to
+          {{enum|Enabled}} MUST be instantaneous and so will result in only a
+          single value change for notification purposes.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>Collection is disabled.</description>
+            </enumeration>
+            <enumeration value="Enabled">
+              <description>Collection is enabled.</description>
+            </enumeration>
+            <enumeration value="Trigger">
+              <description>
+                Collection is enabled and the Controller SHOULD now fetch the
+                collected data.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The name of this sample set, which uniquely distinguishes each sample
+          set.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SampleInterval" access="readWrite">
+        <description>
+          The sample interval in {{units}}. Each statistic is measured over
+          this sample interval.
+
+          The CPE MAY reject a request to set {{param}} to less than
+          {{param|.PeriodicStatistics.MinSampleInterval}}.
+
+          Sample intervals MUST begin every {{param}} {{units}}, with no delay
+          between samples.
+
+          If {{param}} is changed while collection of periodic statistics is
+          enabled, any stored samples are discarded, and the first sample
+          interval begins immediately.
+
+          For example, if {{param|ReportSamples}} is 24 and {{param}} is 3600
+          (an hour), the CPE can store up to a day's worth of samples for each
+          statistic.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="3600"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportSamples" access="readWrite">
+        <description>
+          The number of samples that the CPE will store and report for each
+          statistic.
+
+          The CPE MUST permit {{param}} to be set to at least
+          {{param|.PeriodicStatistics.MaxReportSamples}}.
+
+          If {{param}} is changed while collection of periodic statistics is
+          enabled, the CPE will truncate or extend its statistics buffers as
+          appropriate, but statistics collection MUST NOT otherwise be
+          affected.
+
+          For example, if {{param}} is 24 and {{param|SampleInterval}} is 3600
+          (an hour), the CPE can store up to a day's worth of samples for each
+          statistic.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+          <default type="object" value="24"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeReference" access="readWrite">
+        <description>
+          An absolute time reference in UTC to determine when sample intervals
+          will complete. Each sample interval MUST complete at this reference
+          time plus or minus an integer multiple of {{param|SampleInterval}}.
+
+          {{param}} is used only to set the "phase" of the sample and fetch
+          intervals. The actual value of {{param}} can be arbitrarily far into
+          the past or future.
+
+          This time reference also determines when the {{param|Status}}
+          {{enum|Enabled|Status}} to {{enum|Trigger|Status}} to
+          {{enum|Enabled|Status}} transitions that are controlled by
+          {{param|FetchSamples}} will occur. If collection of periodic
+          statistics is enabled and {{param|FetchSamples}} is in the range
+          [1:{{param|ReportSamples}}] then each such {{param|Status}}
+          transition MUST occur at this reference time plus or minus an integer
+          multiple of {{param|FetchSamples}} * {{param|SampleInterval}} (the
+          fetch interval).
+
+          If {{param}} is changed while collection of periodic statistics is
+          enabled, any stored samples are discarded, and the first sample
+          interval begins immediately.
+
+          The Unknown Time value defined in {{bibref|TR-106}} indicates that no
+          particular time reference is specified. That is, the CPE MAY locally
+          choose the time reference, and is required only to adhere to the
+          specified sample and fetch intervals.
+
+          If absolute time is not available to the CPE, its sample and fetch
+          interval behavior MUST be the same as if the {{param}} parameter was
+          set to the Unknown Time value.
+
+          For example, if {{param|SampleInterval}} is 3600 (an hour) and if
+          {{param}} is set to UTC midnight on some day (in the past, present,
+          or future) then sample intervals will complete on each UTC hour
+          (00:00, 01:00, 02:00 etc).
+
+          If, in addition, {{param|FetchSamples}} is 24, then the fetch
+          interval is 86400 (a day) and {{param|Status}}
+          {{enum|Enabled|Status}} to {{enum|Trigger|Status}} to
+          {{enum|Enabled|Status}} transitions will occur every day at UTC
+          midnight.
+
+          Note that, if {{param}} is set to a time other than the Unknown Time,
+          the first sample interval (which has to begin immediately) will
+          almost certainly be shorter than {{param|SampleInterval}}). This is
+          why {{param}} is defined in terms of when sample intervals complete
+          rather than start.
+        </description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value="0001-01-01T00:00:00Z"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FetchSamples" access="readWrite">
+        <description>
+          The number of sample intervals to be collected before transitioning
+          {{param|Status}} from {{enum|Enabled|Status}} to
+          {{enum|Trigger|Status}} to {{enum|Enabled|Status}}.
+
+          If this SampleSet is enabled and {{param}} is in the range
+          [1:{{param|ReportSamples}}] then {{param|Status}} MUST transition
+          from {{enum|Enabled|Status}} to {{enum|Trigger|Status}} to
+          {{enum|Enabled|Status}} on completion of every {{param}} sample
+          intervals. Otherwise, the transition MUST NOT occur.
+
+          For example, if {{param|ReportSamples}} is 25 and {{param}} is 24,
+          then the CPE will store 25 values for each monitored parameter and
+          the above {{param|Status}} transition will occur as the CPE stores
+          each 24th of 25 sample intervals, which means that the Controller
+          could delay for up to two sample intervals before reading the stored
+          values and would still not miss any samples (see also
+          {{template|PERIODICSTATISTICS-FORCESAMPLE}}).
+
+          To disable this trigger mechanism and still collect sampled
+          statistics, {{param}} can be set to either 0 or a value greater than
+          {{param|ReportSamples}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportStartTime" access="readOnly">
+        <description>
+          The absolute time at which the sample interval for the first stored
+          sample (for each statistic) started.
+        </description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportEndTime" access="readOnly">
+        <description>
+          The absolute time at which the sample interval for the last stored
+          sample (for each statistic) ended.
+
+          If {{template|PERIODICSTATISTICS-FORCESAMPLE}} has been used to force
+          statistics for the current sample to be calculated and updated in the
+          data model, then {{param}} MUST be updated to reflect the actual time
+          over which stored data was collected.
+        </description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SampleSeconds" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} Each entry indicates the number of {{units}} during which
+          data was collected during the sample interval.
+
+          Individual {{param}} values can be less than
+          {{param|SampleInterval}}, for several reasons, including:
+
+          : {{param|TimeReference}} has been set to a time other than the
+            Unknown Time and the current sample interval started part of the
+            way through a scheduled sample interval.
+
+          : {{template|PERIODICSTATISTICS-FORCESAMPLE}} has been used to force
+            statistics for the current sample to be calculated and updated in
+            the data model.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ParameterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicStatistics.SampleSet.{i}.Parameter.{i}."
+        access="readWrite" numEntriesParameter="ParameterNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        Periodic statistics parameter table for this sample set. This table
+        contains entries for parameters whose values are to be sampled.
+
+        Note that the comma-separated lists in this object (SampleSeconds,
+        SuspectData and Values) only ever change (a) when first enabled, (b)
+        when {{template|PERIODICSTATISTICS-FORCESAMPLE}} is set to true (a
+        "sneak preview" of the current sample), or (c) at the end of the sample
+        interval.
+      </description>
+      <uniqueKey>
+        <parameter ref="Reference"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny"
+          version="2.3">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this object instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Reference" access="readWrite">
+        <description>
+          {{reference}} This is the parameter being monitored by the Periodic
+          Statistics mechanism.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="weak" targetType="parameter"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SampleMode" access="readWrite">
+        <description>
+          Controls how this parameter's value is sampled. {{enum}}
+
+          Parameters of non-numeric types can only support {{enum|Current}}.
+          The value of the {{param}} MUST be ignored for such parameters.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Current">
+              <description>Sampled value is current value</description>
+            </enumeration>
+            <enumeration value="Change">
+              <description>
+                Sampled value is change in value since start of sample interval
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Current"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CalculationMode" access="readWrite">
+        <description>
+          Controls how this parameter's statistic is calculated from the
+          sampled value(s). {{enum}}
+
+          Parameters of non-numeric types can only support {{enum|Latest}}. The
+          value of the {{param}} MUST be ignored for such parameters.
+
+          {{param|SampleMode}} MUST be applied before {{param}}, i.e. the
+          inputs to the calculation will have already accounted for
+          {{param|SampleMode}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Latest">
+              <description>
+                Statistic is sampled value at end of sample interval
+              </description>
+            </enumeration>
+            <enumeration value="Minimum">
+              <description>
+                Statistic is minimum sampled value during sample interval
+              </description>
+            </enumeration>
+            <enumeration value="Maximum">
+              <description>
+                Statistic is maximum sampled value during sample interval
+              </description>
+            </enumeration>
+            <enumeration value="Average">
+              <description>
+                Statistic is average (mean) sampled value during sample
+                interval
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Latest"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowThreshold" access="readWrite">
+        <description>
+          The low threshold value that controls the calculation of
+          {{param|Failures}}.
+
+          A value equal to {{param|HighThreshold}} disables the
+          threshold/failure mechanism.
+
+          Parameters of non-numeric types cannot support the threshold/failure
+          mechanism. The value of this parameter MUST be ignored for such
+          parameters.
+        </description>
+        <syntax>
+          <int/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighThreshold" access="readWrite">
+        <description>
+          The high threshold value that controls the calculation of
+          {{param|Failures}}.
+
+          A value equal to {{param|LowThreshold}} disables the
+          threshold/failure mechanism.
+
+          Parameters of non-numeric types cannot support the threshold/failure
+          mechanism. The value of this parameter MUST be ignored for such
+          parameters.
+        </description>
+        <syntax>
+          <int/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SampleSeconds" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} Each entry indicates the number of {{units}} during which
+          data was collected for this parameter during the sample interval.
+
+          Individual {{param}} values can be less than
+          {{param|.PeriodicStatistics.SampleSet.{i}.SampleInterval}}, for
+          several reasons, including:
+
+          : Any of the reasons for which
+            {{param|.PeriodicStatistics.SampleSet.{i}.SampleSeconds}} values
+            might be less than
+            {{param|.PeriodicStatistics.SampleSet.{i}.SampleInterval}}.
+
+          : The parameter doesn't exist, or was created or deleted during a
+            sample interval.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuspectData" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} Each entry is 0 if the sampled value is believed to be
+          valid, or 1 if an event that might affect the validity of the sampled
+          value occurred during the sample interval.
+
+          For example, if the parameter value were to be reset during the
+          sample interval then it would be appropriate to set {{param}} to 1.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="1"/>
+          </unsignedInt>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Values" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} Each entry indicates the value of the referenced parameter,
+          as determined by {{param|SampleMode}}, during the sample interval.
+
+          The statistics values in this comma-separated list MUST be in time
+          order, with the oldest one first and the most recent one last.
+
+          If the {{param|SampleMode}} parameter is not present, or is
+          inappropriate for the referenced parameter, the statistics values
+          MUST be collected in Current mode.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Failures" access="readOnly">
+        <description>
+          Counts the number of times (since this object instance was last
+          enabled) that a newly-calculated sample value (accounting for
+          {{param|SampleMode}}) transitioned from the "in range" state to the
+          "out of range" state, or between the "out of range (low)" and "out of
+          range (high)" states. The states are defined as follows:
+
+          * "in range" : current value is greater than {{param|LowThreshold}}
+            and less than {{param|HighThreshold}}.
+
+          * "out of range" : current value is less than or equal to
+            {{param|LowThreshold}}, or greater than or equal to
+            {{param|HighThreshold}}.
+
+          * "out of range (low)" : current value is less than or equal to
+            {{param|LowThreshold}}.
+
+          * "out of range (high)" : current value is greater than or equal to
+            {{param|HighThreshold}}.
+
+          Note that, if {{param|LowThreshold}} and {{param|HighThreshold}} are
+          both the same, the threshold/failure mechanism is disabled, so the
+          value of this parameter will not increment.
+
+          This parameter can be incremented at any time during a sample
+          interval, and might be incremented more than once during a single
+          sample interval. For this reason, the CPE SHOULD place a locally
+          specified limit on the frequency at which it will notify the
+          Controller of such changes.
+
+          Parameters of non-numeric types cannot support the threshold/failure
+          mechanism. The value of this parameter MUST be ignored for such
+          parameters.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="PeriodicStatsBase:1" version="2.0">
+      <object ref="Device.PeriodicStatistics." requirement="present">
+        <parameter ref="MinSampleInterval" requirement="readOnly"/>
+        <parameter ref="MaxReportSamples" requirement="readOnly"/>
+        <parameter ref="SampleSetNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.PeriodicStatistics.SampleSet.{i}."
+          requirement="createDelete">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="SampleInterval" requirement="readWrite"/>
+        <parameter ref="ReportSamples" requirement="readWrite"/>
+        <parameter ref="ReportStartTime" requirement="readOnly"/>
+        <parameter ref="ReportEndTime" requirement="readOnly"/>
+        <parameter ref="SampleSeconds" requirement="readOnly"/>
+        <parameter ref="ParameterNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.PeriodicStatistics.SampleSet.{i}.Parameter.{i}."
+          requirement="createDelete">
+        <parameter ref="Reference" requirement="readWrite"/>
+        <parameter ref="SampleSeconds" requirement="readOnly"/>
+        <parameter ref="SuspectData" requirement="readOnly"/>
+        <parameter ref="Values" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="PeriodicStatistics:2.15">
+    <component ref="Root"/>
+    <component ref="PeriodicStatistics"/>
+  </model>
+</dm:document>

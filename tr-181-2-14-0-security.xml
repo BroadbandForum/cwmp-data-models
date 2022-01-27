@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Security]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-security"
+    file="tr-181-2-14-0-security.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106"/>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Security">
+
+    <object name="Device.Security." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.4">
+      <description>
+        This object contains general information related to managing security
+        features on the device.
+      </description>
+
+      <parameter name="CertificateNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Security.Certificate.{i}." access="readOnly"
+        numEntriesParameter="CertificateNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        This table provides information about all types of public key-based
+        credentials, such as X.509 certificates, see {{bibref|RFC5280}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="SerialNumber"/>
+        <parameter ref="Issuer"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this certificate.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastModif" access="readOnly">
+        <description>
+          The last modification time of this certificate.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SerialNumber" access="readOnly">
+        <description>
+          The Serial Number field in an X.509 certificate, see
+          {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Issuer" access="readOnly">
+        <description>
+          The Issuer field in an X.509 certificate, see {{bibref|RFC5280}};
+          i.e. the Distinguished Name (DN) of the entity who has signed the
+          certificate.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotBefore" access="readOnly">
+        <description>
+          The beginning of the certificate validity period; i.e. the Not Before
+          field in an X.509 certificate, see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotAfter" access="readOnly">
+        <description>
+          The end of the certificate validity period; i.e., the Not After field
+          in an X.509 certificate, see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Subject" access="readOnly">
+        <description>
+          The Distinguished Name (DN) of the entity associated with the Public
+          Key; i.e., the Subject field in an X.509 certificate, see
+          {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubjectAlt" access="readOnly">
+        <description>
+          {{list}} Each item is a DNS Name.
+
+          The Subject Alternative Names extension field in an X.509
+          certificate, see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignatureAlgorithm" access="readOnly">
+        <description>
+          The algorithm used in signing the certificate; i.e. the Signature
+          Algorithm field in an X.509 certificate, see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="Security:2.14">
+    <component ref="Root"/>
+    <component ref="Security"/>
+  </model>
+</dm:document>

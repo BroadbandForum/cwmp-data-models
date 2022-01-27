@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [NAT]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-nat"
+    file="tr-181-2-14-0-nat.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="NAT">
+
+    <object name="Device.NAT." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.0">
+      <description>
+        Properties for Network Address Translation (NAT).
+
+        The entire {{object}} object only applies to IPv4.
+      </description>
+
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortMappingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.NAT.InterfaceSetting.{i}." access="readWrite"
+        numEntriesParameter="InterfaceSettingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        NAT settings for an associated IP Interface on which NAT is enabled.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the {{object}} entry, indicating if NAT is
+          enabled for the referenced IP Interface instance. On creation, an
+          {{object}} entry is disabled by default.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Enabled_NATForcedDisabled">
+              <description>
+                NAT enabled but forced by a third party to be operationally
+                disabled, e.g. because a {{object|##.MAP.Domain}} is enabled
+                but there is no Basic Mapping Rule {{bibref|RFC7597}}.
+              </description>
+            </enumeration>
+            <enumeration value="Enabled_PortMappingDisabled">
+              <description>
+                NAT enabled but port mapping has been operationally disabled by
+                a third party, e.g. because this is REQUIRED by the current
+                {{object|##.Firewall}} level.
+              </description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} The associated IP interface on which NAT is to be
+          enabled.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TCPTranslationTimeout" access="readWrite"
+          version="2.13">
+        <description>
+          Determines the timeout, in {{units}}, of NAT translations for TCP
+          sessions. It is the time after which a NAT entry is removed from the
+          NAT table if there is no activity. A value of -1 represents an
+          infinite duration.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="300"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UDPTranslationTimeout" access="readWrite"
+          version="2.13">
+        <description>
+          Determines the timeout, in {{units}}, of NAT translations for UDP
+          bindings. It is the time after which a NAT entry is removed from the
+          NAT table if there is no activity. A value of -1 represents an
+          infinite duration.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="30"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.NAT.PortMapping.{i}." access="readWrite"
+        numEntriesParameter="PortMappingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        Port mapping table.
+
+        This table MUST contain all NAT port mappings associated with this
+        connection, including static and dynamic port mappings programmatically
+        created via local control protocol, such as UPnP.
+
+        This table MUST NOT contain dynamic NAT binding entries associated with
+        the normal operation of NAT.
+
+        If the CPE hosts a firewall, it is assumed that it will appropriately
+        configure the firewall for the port mapping.
+
+        For enabled table entries, if {{param|InternalClient}} is {{empty}}, or
+        if {{param|Interface}} is not a valid reference and
+        {{param|AllInterfaces}} is {{false}}, then the table entry is
+        inoperable and the CPE MUST set {{param|Status}} to
+        {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="RemoteHost"/>
+        <parameter ref="ExternalPort"/>
+        <parameter ref="Protocol"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the port mapping instance. On creation, an entry
+          is disabled by default.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+
+          Note: There is no guarantee that the {{param}} value on
+          automatically-created {{object}} instances will be retained. This is
+          because automatically-created {{object}} instances can be transitory.
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} Specifies the IP interface to which this port mapping
+          applies.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllInterfaces" access="readWrite">
+        <description>
+          Indicates whether this port mapping applies to all IP interfaces that
+          support port mappings. If {{true}}, the value of {{param|Interface}}
+          is ignored since all supported IP interfaces are indicated.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LeaseDuration" access="readWrite"
+          activeNotify="canDeny">
+        <description>
+          Determines the time to live, in {{units}}, of a port mapping lease,
+          where "time to live" means the number of {{units}} before the port
+          mapping expires.
+
+          A value of 0 means the port mapping is static. Support for dynamic
+          (non-static) port mappings is OPTIONAL. That is, the only value for
+          {{param}} that MUST be supported is 0.
+
+          For a dynamic (non-static) port mapping, when this parameter is read,
+          the value represents the time remaining on the port mapping lease.
+          That is, for a dynamic port mapping, the value counts down toward 0.
+          When a dynamic port mapping lease expires, the CPE MUST automatically
+          terminate that port mapping, and MUST automatically delete the
+          corresponding {{object}} table entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemoteHost" access="readWrite">
+        <description>
+          This parameter is the IP address of the source of inbound packets.
+          {{empty}} indicates a "wildcard", i.e. any IP address (this will be
+          {{empty}} in most cases). CPE are REQUIRED only to support {{empty}}.
+
+          When {{param}} is {{empty}}, all traffic sent to the
+          {{param|ExternalPort}} on the WAN interface of the gateway is
+          forwarded to the {{object|.IP.Interface}} associated with the
+          {{param|InternalClient}} on the {{param|InternalPort}}.
+
+          When {{param}} is specified as one external IP address, the NAT will
+          only forward inbound packets from this {{param}} to the
+          {{param|InternalClient}}, all other packets will be dropped.
+
+          If a CPE supports non-empty values for {{param}}, it MAY additionally
+          support the ability to have more than one port mapping with the same
+          {{param|ExternalPort}} and {{param|Protocol}}, but with differing
+          values of {{param}}.
+
+          When wildcard values are used for {{param}} and/or
+          {{param|ExternalPort}}, the following precedence order applies (with
+          the highest precedence listed first):
+
+          # Explicit {{param}}, explicit {{param|ExternalPort}}
+
+          # Explicit {{param}}, zero {{param|ExternalPort}}
+
+          # Empty {{param}}, explicit {{param|ExternalPort}}
+
+          # Empty {{param}}, zero {{param|ExternalPort}}
+
+          If an incoming packet matches the criteria associated with more than
+          one entry in this table, the CPE MUST apply the port mapping
+          associated with the highest precedence entry.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExternalPort" access="readWrite">
+        <description>
+          The external port (or the first port of a range of external ports)
+          that the NAT gateway would listen on for traffic to a corresponding
+          {{param|InternalPort}}. Inbound packets to this external port on the
+          WAN interface SHOULD be forwarded to the {{object|.IP.Interface}}
+          associated with the {{param|InternalClient}} on the
+          {{param|InternalPort}}.
+
+          A value of zero ({{null}}) represents a "wildcard", i.e. any port
+          number. If this value is {{null}}, traffic on all external ports
+          (that are not otherwise mapped) will be forwarded to
+          {{param|InternalClient}}, and the value(s) of {{param|InternalPort}}
+          on {{param|InternalClient}} are ignored.
+
+          When wildcard values are used for {{param|RemoteHost}} and/or
+          {{param}}, the following precedence order applies (with the highest
+          precedence listed first):
+
+          # Explicit {{param|RemoteHost}}, explicit {{param}}
+
+          # Explicit {{param|RemoteHost}}, zero {{param}}
+
+          # Empty {{param|RemoteHost}}, explicit {{param}}
+
+          # Empty {{param|RemoteHost}}, zero {{param}}
+
+          If an incoming packet matches the criteria associated with more than
+          one entry in this table, the CPE MUST apply the port mapping
+          associated with the highest precedence entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExternalPortEndRange" access="readWrite">
+        <description>
+          Indicates the last port of the external port range that starts with
+          {{param|ExternalPort}}.
+
+          If an external port range is specified, then the behavior described
+          for {{param|ExternalPort}} applies to all ports within the range.
+
+          A value of zero (0) indicates that no external port range is
+          specified, i.e. that the range consists only of
+          {{param|ExternalPort}}.
+
+          If {{param|ExternalPort}} is zero (wildcard), the value of this
+          parameter MUST be ignored.
+
+          If specified, the value of this parameter MUST be greater than or
+          equal to the value of {{param|ExternalPort}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InternalPort" access="readWrite">
+        <description>
+          The port on {{param|InternalClient}} that the gateway SHOULD forward
+          traffic to.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          The protocol of the port mapping. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="TCP"/>
+            <enumeration value="UDP"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InternalClient" access="readWrite">
+        <description>
+          The IP address or DNS host name of an internal client (on the LAN).
+
+          Support for an IP address is mandatory. If {{param}} is specified as
+          an IP address and the LAN device's IP address subsequently changes,
+          the port mapping MUST remain associated with the original IP address.
+
+          Support for DNS host names is OPTIONAL. If {{param}} is specified as
+          a DNS host name and the LAN device's IP address subsequently changes,
+          the port mapping MUST remain associated with this LAN device. In this
+          case, it is the responsibility of the CPE to maintain the
+          name-to-address mapping in the event of IP address changes. This can
+          be accomplished, for example, by assigning the DNS host name via use
+          of DHCP option 12 (Host Name) or option 81 (FQDN). Note that the
+          Controller can learn the host name associated with a given LAN device
+          via the {{object|.Hosts.Host.}} table.
+
+          Read access to this parameter MUST always return the exact value that
+          was last set by the Controller. For example, if the internal client
+          is set to a DNS host name, it MUST read back as a DNS host name and
+          not as an IP address.
+
+          It MUST be possible to set the {{param}} to the broadcast IP address
+          255.255.255.255 for UDP mappings. This is to enable multiple NAT
+          clients to use the same well-known port simultaneously.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readWrite">
+        <description>
+          User-readable description of this port mapping.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="NAT:1" version="2.0">
+      <object ref="Device.NAT." requirement="present">
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+        <parameter ref="PortMappingNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.NAT.InterfaceSetting.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+      </object>
+      <object ref="Device.NAT.PortMapping.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="AllInterfaces" requirement="readWrite"/>
+        <parameter ref="LeaseDuration" requirement="readOnly"/>
+        <parameter ref="RemoteHost" requirement="readWrite"/>
+        <parameter ref="ExternalPort" requirement="readWrite"/>
+        <parameter ref="InternalPort" requirement="readWrite"/>
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="InternalClient" requirement="readWrite"/>
+        <parameter ref="Description" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="NAT:2.14">
+    <component ref="Root"/>
+    <component ref="NAT"/>
+  </model>
+</dm:document>

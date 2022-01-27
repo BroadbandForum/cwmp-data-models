@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [UserInterface]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-userinterface"
+    file="tr-181-2-14-0-userinterface.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="URL"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="UserInterface">
+
+    <object name="Device.UserInterface." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        This object contains parameters relating to the user interface of the
+        CPE.
+      </description>
+
+      <parameter name="Enable" access="readWrite" version="2.11">
+        <description>
+          Enables and disables the CPE's user interface.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PasswordRequired" access="readWrite">
+        <description>
+          Present only if the CPE provides a password-protected LAN-side user
+          interface.
+
+          Indicates whether or not the local user interface MUST require a
+          password to be chosen by the user. If {{false}}, the choice of
+          whether or not a password is used is left to the user.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PasswordUserSelectable" access="readWrite">
+        <description>
+          Present only if the CPE provides a password-protected LAN-side user
+          interface and supports LAN-side Auto-Configuration.
+
+          Indicates whether or not a password to protect the local user
+          interface of the CPE MAY be selected by the user directly (i.e.
+          {{param|.Users.User.{i}.Password}}), or MUST be equal to the password
+          used by the LAN-side Auto-Configuration protocol (i.e.
+          {{param|.LANConfigSecurity.ConfigPassword}}).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpgradeAvailable" access="readWrite">
+        <description>
+          Indicates that a CPE upgrade is available, allowing the CPE to
+          display this information to the user.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="WarrantyDate" access="readWrite">
+        <description>
+          Indicates the date and time in UTC that the warranty associated with
+          the CPE is to expire.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPName" access="readWrite">
+        <description>
+          The name of the customer's ISP.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPHelpDesk" access="readWrite">
+        <description>
+          The help desk phone number of the ISP.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPHomePage" access="readWrite">
+        <description>
+          The {{datatype}} of the ISP's home page.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPHelpPage" access="readWrite">
+        <description>
+          The {{datatype}} of the ISP's on-line support page.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPLogo" access="readWrite">
+        <description>
+          Base64 encoded GIF or JPEG image. The binary image is constrained to
+          4095 bytes or less.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="0" maxLength="4095"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPLogoSize" access="readWrite">
+        <description>
+          Un-encoded binary image size in bytes.
+
+          If ISPLogoSize input value is 0 then the ISPLogo is cleared.
+
+          ISPLogoSize can also be used as a check to verify correct transfer
+          and conversion of Base64 string to image size.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="4095"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPMailServer" access="readWrite">
+        <description>
+          The {{datatype}} of the ISP's mail server.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ISPNewsServer" access="readWrite">
+        <description>
+          The {{datatype}} of the ISP's news server.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TextColor" access="readWrite">
+        <description>
+          The color of text on the GUI screens in RGB hexadecimal notation
+          (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="BackgroundColor" access="readWrite">
+        <description>
+          The color of the GUI screen backgrounds in RGB hexadecimal notation
+          (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="ButtonColor" access="readWrite">
+        <description>
+          The color of buttons on the GUI screens in RGB hexadecimal notation
+          (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="ButtonTextColor" access="readWrite">
+        <description>
+          The color of text on buttons on the GUI screens in RGB hexadecimal
+          notation (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoUpdateServer" access="readWrite">
+        <description>
+          The server the CPE can check to see if an update is available for
+          direct download to it.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserUpdateServer" access="readWrite">
+        <description>
+          The server where a user can check via a web browser if an update is
+          available for download to a PC.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AvailableLanguages" access="readOnly">
+        <description>
+          {{list}} List items represent user-interface languages that are
+          available, where each language is specified according to
+          {{bibref|RFC3066}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentLanguage" access="readWrite">
+        <description>
+          Current user-interface language, specified according to
+          {{bibref|RFC3066}}. The value MUST be a member of the list reported
+          by the {{param|AvailableLanguages}} parameter.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="16"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.UserInterface.RemoteAccess." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object contains parameters relating to remotely accessing the
+        CPE's user interface.
+
+        Remote access is defined as any entity not of a local subnet attempting
+        to connect to the CPE.
+
+        Remote access requires user authentication. To provide remote access
+        authentication the CPE MUST support a "User" table with at least one
+        instance that has "RemoteAccessCapable" set to {{true}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables/Disables remotely accessing the CPE's user interface.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Destination TCP port required for remote access connection.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedProtocols" access="readOnly">
+        <description>
+          {{list}} Indicates the protocols that are supported by the CPE for
+          the purpose of remotely accessing the user interface.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HTTP">
+              <description>As defined in {{bibref|RFC2616}}</description>
+            </enumeration>
+            <enumeration value="HTTPS">
+              <description>As defined in {{bibref|RFC2818}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          This is the protocol currently being used for remote access.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedProtocols"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.UserInterface.LocalDisplay." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object describes how to remotely manage the initial positioning of
+        a user interface on a device's local display.
+      </description>
+
+      <parameter name="Movable" access="readWrite">
+        <description>
+          Controls whether the user is allowed to change the GUI window
+          position on the local CPE's display.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Resizable" access="readWrite">
+        <description>
+          Controls whether the user is allowed to resize the GUI window on the
+          local CPE's display.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PosX" access="readWrite" activeNotify="canDeny">
+        <description>
+          The horizontal position of the User Interface's top left corner
+          within the local CPE's display measured from the top left corner,
+          expressed in {{units}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="pixels"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="PosY" access="readWrite" activeNotify="canDeny">
+        <description>
+          The vertical position of the User Interface's top left corner within
+          the local CPE's display measured from the top left corner, expressed
+          in {{units}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="pixels"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Width" access="readWrite" activeNotify="canDeny">
+        <description>
+          The width of the user interface within the local CPE's display,
+          expressed in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="pixels"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Height" access="readWrite" activeNotify="canDeny">
+        <description>
+          The height of the user interface within the local CPE's display,
+          expressed in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="pixels"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DisplayWidth" access="readOnly">
+        <description>
+          The width of the local CPE's display, expressed in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="pixels"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DisplayHeight" access="readOnly">
+        <description>
+          The height of the local CPE's display, expressed in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="pixels"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.UserInterface.Messages." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.11">
+      <description>
+        Definition of user information message displays.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables and displays the user information message.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Title" access="readWrite">
+        <description>
+          Message title to be displayed.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubTitle" access="readWrite">
+        <description>
+          Message sub title to be displayed.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Text" access="readWrite">
+        <description>
+          Message text.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IconType" access="readWrite">
+        <description>
+          Icon to be displayed.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="Greeting"/>
+            <enumeration value="Information"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Important"/>
+            <enumeration value="Urgent"/>
+            <enumeration value="Advertisement"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MessageColor" access="readWrite">
+        <description>
+          The color of message text in RGB hexadecimal notation (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="BackgroundColor" access="readWrite">
+        <description>
+          The color of the message screen background in RGB hexadecimal
+          notation (e.g., FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="TitleColor" access="readWrite">
+        <description>
+          The color of the message title in RGB hexadecimal notation (e.g.,
+          FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubTitleColor" access="readWrite">
+        <description>
+          The color of the sub title in RGB hexadecimal notation (e.g.,
+          FF0088).
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequestedNumberOfRepetitions" access="readWrite">
+        <description>
+          The number of times the device SHOULD repeat the message.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutedNumberOfRepetitions" access="readOnly">
+        <description>
+          The number of times the device repeated the message.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="UserInformationBasic:1" version="2.11">
+      <object ref="Device.UserInterface.Messages." requirement="present">
+        <parameter ref="Title" requirement="readWrite"/>
+        <parameter ref="SubTitle" requirement="readWrite"/>
+        <parameter ref="Text" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="UserInformationExtended:1" version="2.11">
+      <object ref="Device.UserInterface.Messages." requirement="present">
+        <parameter ref="Title" requirement="readWrite"/>
+        <parameter ref="SubTitle" requirement="readWrite"/>
+        <parameter ref="Text" requirement="readWrite"/>
+        <parameter ref="IconType" requirement="readWrite"/>
+        <parameter ref="MessageColor" requirement="readWrite"/>
+        <parameter ref="BackgroundColor" requirement="readWrite"/>
+        <parameter ref="TitleColor" requirement="readWrite"/>
+        <parameter ref="SubTitleColor" requirement="readWrite"/>
+        <parameter ref="RequestedNumberOfRepetitions" requirement="readWrite"/>
+        <parameter ref="ExecutedNumberOfRepetitions" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="UserInterface:2.14">
+    <component ref="Root"/>
+    <component ref="UserInterface"/>
+  </model>
+</dm:document>

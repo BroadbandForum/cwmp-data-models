@@ -1,0 +1,1966 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [LocalAgent]
+
+  Copyright (c) 2021, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2021 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-localagent"
+    file="tr-181-2-15-0-localagent.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="URL"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="USPLocalAgent">
+    <parameter name="EndpointID" access="readOnly">
+      <description>
+        The unique USP identifier for this USP Agent.
+      </description>
+      <syntax>
+        <string/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SoftwareVersion" access="readOnly">
+      <description>
+        The current USP Agent software version; not the version of the overall
+        device firmware, which is located in
+        {{param|.DeviceInfo.SoftwareVersion}}.
+
+        To allow version comparisons, this element SHOULD be in the form of
+        dot-delimited integers, where each successive integer represents a more
+        minor category of variation. For example, ''3.0.21'' where the
+        components mean: ''Major.Minor.Build''.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="64"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="UpTime" access="readOnly" activeNotify="canDeny">
+      <description>
+        Time in {{units}} since the USP Agent was last restarted (either via a
+        reset of the software or reboot of the underlying device).
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="seconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="SupportedProtocols" access="readOnly">
+      <description>
+        USP Message Transfer Protocols supported by this USP Agent. The USP
+        Agent MUST support at least one Protocol.
+      </description>
+      <syntax>
+        <list minItems="1"/>
+        <string>
+          <enumeration value="CoAP" status="deprecated">
+            <description>
+              See {{bibref|RFC7252}}. {{deprecated|2.15|because the CoAP MTP
+              was deprecated in USP 1.2}}
+            </description>
+          </enumeration>
+          <enumeration value="WebSocket">
+            <description>See {{bibref|RFC6455}}</description>
+          </enumeration>
+          <enumeration value="STOMP">
+            <description>See {{bibref|STOMP1.2}}</description>
+          </enumeration>
+          <enumeration value="MQTT">
+            <description>
+              See {{bibref|MQTT311}} and {{bibref|MQTT50}}
+            </description>
+          </enumeration>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="SupportedFingerprintAlgorithms" access="readOnly">
+      <description>
+        {{list|each entry is an algorithm for calculating firgerprints that is
+        supported by the Agent}}
+      </description>
+      <syntax>
+        <list/>
+        <string>
+          <enumeration value="SHA-1">
+            <description>As specified in {{bibref|RFC3174}}.</description>
+          </enumeration>
+          <enumeration value="SHA-224">
+            <description>As specified in {{bibref|RFC6234}}.</description>
+          </enumeration>
+          <enumeration value="SHA-256">
+            <description>As specified in {{bibref|RFC6234}}.</description>
+          </enumeration>
+          <enumeration value="SHA-384">
+            <description>As specified in {{bibref|RFC6234}}.</description>
+          </enumeration>
+          <enumeration value="SHA-512">
+            <description>As specified in {{bibref|RFC6234}}.</description>
+          </enumeration>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="AdvertisedDeviceSubtypes" access="readWrite">
+      <description>
+        {{list|each entry is a subtype component of the service type that is
+        advertised for the device using mDNS as defined in {{bibref|RFC6762}}}}
+      </description>
+      <syntax>
+        <list/>
+        <string/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxSubscriptionChangeAdoptionTime" access="readWrite">
+      <description>
+        The acceptable amount of time in {{units}} between the alteration of
+        the Agent's Subscriptions (e.g. updated subscription, new subscription,
+        removed subscription, etc.) and the notifications related to those
+        subscriptions being delivered.
+
+        For example, if this parameter is set to 30 {{units}}, then once a
+        Subscription has been updated, the Agent has 30 {{units}} before it
+        needs to start delivering notifications based on the updated version of
+        the Subscription (instead of the old version of the Subscription).
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="5"/>
+          <units value="seconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MTPNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="ControllerNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="CertificateNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <object name="MTP.{i}." access="readWrite" minEntries="0"
+        maxEntries="unbounded" numEntriesParameter="MTPNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this table represents a MTP used by the local Agent.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+
+          If this {{object}} instance is to be disabled and currently used for
+          communication with the requesting controller, the agent has to send
+          the request response first, before disabling it.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the {{object}} instance.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down">
+              <description>
+                Value when this {{object}} instance cannot establish
+                communication.
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>
+                Value when this {{object}} instance is misconfigured.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          The Message Transport Protocol (MTP) to be used for communications by
+          a USP Endpoint.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.SupportedProtocols"/>
+          </string>
+          <default type="object" value="WebSocket"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableMDNS" access="readWrite">
+        <description>
+          This parameter, when {{true}}, enables the advertisement of DNS-SD
+          services defined for this {{object}} instance using mDNS as defined
+          in {{bibref|RFC6762}}.
+
+          This parameter cannot be set to {{true}} if there are multiple
+          {{object}} instances with the same value of the {{param|Protocol}}
+          parameter.
+
+          When {{true}}, the hostname advertised in the SRV record MUST be a
+          Fully Qualified Domain Name (FQDN).
+
+          The interfaces that advertise these DNS-SD services are restriced to
+          the set of interfaces associated with this {{object}} instance and
+          the interfaces defined by the
+          {{param|##.DNS.SD.AdvertisedInterfaces}} parameter.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="MTP.{i}.CoAP." access="readOnly" minEntries="0"
+        maxEntries="1" discriminatorParameter="Protocol" status="deprecated">
+      <description>
+        If the USP Endpoint uses the CoAP Message Transport Protocol (MTP),
+        then this object contains CoAP specific configuration parameters.
+
+        {{deprecated|2.15|because the CoAP MTP was deprecated in USP 1.2}}
+      </description>
+
+      <parameter name="Interfaces" access="readWrite">
+        <description>
+          {{reference|the {{object|###.IP.Interface}} object instance that this
+          server will use as its host address to receive USP messages}}
+
+          {{empty}} will bind this server to all interfaces for this device.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="###.IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          The port number used by the CoAP Server to receive USP messages.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="5683"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Path" access="readWrite">
+        <description>
+          The path that is used by the CoAP Server in order to receive USP
+          messages.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsEncrypted" status="deprecated" access="readOnly">
+        <description>
+          This parameter represents whether or not communications that utilize
+          this {{object}} object instance are encrypted.
+
+          {{deprecated|2.14|because the {{param|EnableEncryption}} parameter
+          will dictate whether all connections to this CoAP server instance are
+          or are not encrypted}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableEncryption" access="readWrite">
+        <description>
+          When {{true}}, encryption MUST be used for this MTP instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="MTP.{i}.STOMP." access="readOnly" minEntries="0"
+        maxEntries="1" discriminatorParameter="Protocol">
+      <description>
+        If the USP Endpoint uses the STOMP Message Transport Protocol (MTP),
+        then this object contains STOMP Client specific configuration
+        parameters related to how the Agent communicates with the STOMP Server.
+      </description>
+
+      <parameter name="Reference" access="readWrite">
+        <description>
+          A reference to the STOMP Connection used by this Agent when
+          communicating via the STOMP MTP.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".STOMP.Connection."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Destination" access="readWrite">
+        <description>
+          The STOMP destination where the Agent will be listening to incoming
+          USP messages.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestinationFromServer" access="readOnly">
+        <description>
+          The STOMP destination contained in the subscribe-dest header of the
+          CONNECTED STOMP Frame.
+
+          If the Agent doesn't receive a subscribe-dest header in the CONNECTED
+          STOMP Frame, then the value of this Parameter MUST be set to
+          {{empty}}.
+
+          If this parameter's value is not empty then this is the STOMP
+          destination address for this Agent, but if the value is empty the
+          {{param|Destination}} Parameter contains the STOMP destination
+          address for this Agent.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="MTP.{i}.WebSocket." access="readOnly" minEntries="0"
+        maxEntries="1" discriminatorParameter="Protocol">
+      <description>
+        If the USP Endpoint uses the WebSocket Message Transport Protocol (MTP)
+        as a WebSocket server, then this object contains WebSocket specific
+        configuration parameters.
+      </description>
+
+      <parameter name="Interfaces" access="readWrite">
+        <description>
+          {{reference|the {{object|###.IP.Interface}} object instance that this
+          server will use as its host address to receive USP messages}}
+
+          {{empty}} will bind this server to all interfaces for this device.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="###.IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          The port number used by the WebSocket Server to receive USP messages.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="5683"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Path" access="readWrite">
+        <description>
+          The service path that is provided by the WebSocket Server in order to
+          exchange USP messages. The value MUST be used as defined in
+          {{bibref|RFC3986|Section 3.3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableEncryption" access="readWrite" version="2.14">
+        <description>
+          When {{true}}, encryption MUST be used for all connections to this
+          MTP instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveInterval" access="readWrite" version="2.15">
+        <description>
+          The duration in {{units}} between when WebSocket ping control frames
+          are transmitted by the Agent's WebSocket server to the Controller's
+          WebSocket client.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="MTP.{i}.MQTT." access="readOnly" minEntries="0"
+        maxEntries="1" discriminatorParameter="Protocol" version="2.13">
+      <description>
+        If the USP Endpoint uses the MQTT Message Transport Protocol (MTP),
+        then this object contains MQTT Client specific configuration parameters
+        related to how the Agent communicates with the MQTT broker.
+      </description>
+
+      <parameter name="Reference" access="readWrite">
+        <description>
+          A reference to the MQTT Client used by this Agent when communicating
+          via the MQTT MTP.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".MQTT.Client."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResponseTopicConfigured" access="readWrite">
+        <description>
+          The Agent's configured "reply to" topic. When MQTT 5.0 is being used,
+          this value is put in the PUBLISH Response Topic property for all
+          PUBLISH packets with a USP Record, if no Response Information (value
+          recorded in {{param|ResponseTopicDiscovered}}) is included in the
+          CONNACK. When MQTT 3.1.1 is being used, this value is put at the end
+          of the PUBLISH Topic Name property (as specified in
+          {{bibref|TR-369|Section "MQTT Binding"}}. If the value of {{param}}
+          is not a subset (wildcarded or precise match) of any of the
+          {{param|Reference}} {{param|.MQTT.Client.{i}.Subscription.{i}.Topic}}
+          values the Agent MUST subscribe to this Topic. The value MUST NOT
+          contain any wild card characters (“+”, “#”).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResponseTopicDiscovered" access="readOnly">
+        <description>
+          Duplicate of {{param|Reference}}
+          {{param|.MQTT.Client.{i}.ResponseInformation}}. This is the value of
+          the CONNACK Response Information property supplied by a MQTT 5.0
+          server and is used by a MQTT 5.0 client as the basis for the PUBLISH
+          Response Topic property for all PUBLISH packets that expect a
+          response. If a value is received from the MQTT 5.0 server, it will be
+          used instead of any value configured in
+          {{param|ResponseTopicConfigured}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishQoS" access="readWrite">
+        <description>
+          The Agent MUST use this QoS value when sending a USP Record on this
+          MTP.
+
+          If the referenced MQTT Client uses MQTT 5.0 and the MQTT server only
+          indicates support for a QoS value in the CONNACK Maximum QoS property
+          lower than this QoS value, the Agent MUST use the highest QoS value
+          that is supported by the server.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Controller.{i}." access="readWrite" minEntries="0"
+        maxEntries="unbounded" numEntriesParameter="ControllerNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this table represents a USP Controller that has access
+        to this USP Agent.
+
+        On the deletion of an entry from this table, the Agent MUST send the
+        ObjectDeletion notification to all subscribed recipients, even if the
+        recipient is the deleted Controller itself. This notification is the
+        last notification sent to this Controller.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="EndpointID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointID" access="readWrite">
+        <description>
+          The unique USP identifier for this USP Controller.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControllerCode" access="readWrite">
+        <description>
+          Information about the configuration state of an Agent as it pertains
+          to the {{object}} instance. This is not information related to an
+          operator's installation or usage of the protocol, that information is
+          maintained in {{param|ProvisioningCode}}.
+
+          This parameter could be used in scenarios where the Controller needs
+          to perform some kind of initialization or periodic configuration
+          monitoring. For example, a Controller might perform some initial
+          configuration of an Agent on first contact (perhaps to configure the
+          Subscriptions). The Controller could inspect this parameter to
+          determine the current state of the Agent's configuration, allowing
+          the Controller to streamline the configuration process.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProvisioningCode" access="readWrite">
+        <description>
+          Identifying information which MAY be used by the {{object}} instance
+          to determine {{object}} instance specific customization and
+          provisioning parameters.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+
+          If the Controller instance is to be disabled, the Agent MUST send the
+          ValueChange notification to all subscribed recipients, even if the
+          recipient is the disabled Controller itself. This notification is the
+          last notification sent to this Controller until it is enabled again.
+          The USP Endpoint MUST terminate the MTP connection. When {{false}},
+          messages (notifications) are not sent to the remote endpoint
+          represented by this {{object}} instance, and any MTP session
+          establishment are refused.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssignedRole" access="readWrite">
+        <description>
+          {{list|each entry is a Role that has been assigned to this {{object}}
+          instance by means other than the
+          {{param|#.ControllerTrust.Credential.{i}.Role}} parameter}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.ControllerTrust.Role."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InheritedRole" access="readOnly">
+        <description>
+          {{list|each entry is a Role that has been assigned to this {{object}}
+          instance from the {{param|#.ControllerTrust.Credential.{i}.Role}}
+          parameter associated with the CA credential
+          ({{param|#.ControllerTrust.Credential.{i}.Credential}}) used to
+          validate the Controller certificate}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.ControllerTrust.Role."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Credential" access="readWrite">
+        <description>
+          {{nolist}}
+
+          Comma-separated list of strings, the set of certificates from
+          {{object|#.Certificate.{i}}} that a Controller can present for use in
+          authenticating the identity of this {{object}} instance.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.Certificate."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PeriodicNotifInterval" access="readWrite">
+        <description>
+          If a Periodic Event Notification Subscription instance is associated
+          with this USP Controller, then this is the duration in {{units}} of
+          the interval for which the USP Agent MUST attempt to issue a Periodic
+          Notification to the USP Controller.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PeriodicNotifTime" access="readWrite">
+        <description>
+          If a Periodic Event Notification Subscription instance is associated
+          with this USP Controller, then this is an absolute time reference in
+          UTC to determine when the USP Agent will issue a Periodic
+          Notification. Each Periodic Notification MUST occur at this reference
+          time plus or minus an integer multiple of the
+          {{param|PeriodicNotifInterval}}.
+
+          {{param}} is used only to set the ''phase'' of the Periodic Event
+          Notifications. The actual value of {{param}} can be arbitrarily far
+          into the past or future.
+
+          For example, if {{param|PeriodicNotifInterval}} is 86400 (a day) and
+          if {{param}} is set to UTC midnight on some day (in the past,
+          present, or future) then Periodic Notifications will be sent every
+          day at UTC midnight. These MUST begin on the very next midnight, even
+          if {{param}} refers to a day in the future.
+
+          The Unknown Time value defined in {{bibref|TR-106|section 3.2}}
+          indicates that no particular time reference is specified. That is,
+          the USP Agent MAY locally choose the time reference, and needs only
+          to adhere to the specified {{param|PeriodicNotifInterval}}.
+
+          If absolute time is not available to the USP Agent, its Periodic
+          Notification behavior MUST be the same as if the {{param}} parameter
+          was set to the Unknown Time value.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="USPNotifRetryMinimumWaitInterval" access="readWrite">
+        <description>
+          This parameter is related to the retry mechanism for Notifications.
+
+          Configures the first retry wait interval, in {{units}}, as specified
+          in {{bibref|TR-369|Section "Responses to Notifications and
+          Notification Retry"}}.
+
+          A value of 5 corresponds to the default behavior.
+
+          The USP Agent MUST use a random value between {{param}} and
+          ({{param}} * {{param|USPNotifRetryIntervalMultiplier}} / 1000) as the
+          first retry wait interval. Other values in the retry pattern MUST be
+          calculated using this value as a starting point.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="USPNotifRetryIntervalMultiplier" access="readWrite">
+        <description>
+          This parameter is related to the retry mechanism for Notifications.
+
+          Configures the retry interval multiplier as specified in
+          {{bibref|TR-369|Section "Responses to Notifications and Notification
+          Retry"}}.
+
+          This value is expressed in units of 0.001. Hence the values of the
+          multiplier range between 1.000 and 65.535.
+
+          A value of 2000 corresponds to the default behavior.
+
+          The USP Agent MUST use a random value between
+          {{param|USPNotifRetryMinimumWaitInterval}} and
+          ({{param|USPNotifRetryMinimumWaitInterval}} * {{param}} / 1000) as
+          the first retry wait interval. Other values in the retry pattern MUST
+          be calculated using this value as a starting point.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="2000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MTPNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Controller.{i}.MTP.{i}." access="readWrite" minEntries="0"
+        maxEntries="unbounded" numEntriesParameter="MTPNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this table represents a MTP used by this Controller.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Protocol"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+
+          If this {{object}} instance is to be disabled and currently used for
+          communication with the requesting controller, the agent has to send
+          the request response first, before disabling it.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          The Message Transport Protocol (MTP) to be used for communications by
+          a USP Endpoint.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.SupportedProtocols"/>
+          </string>
+          <default type="object" value="WebSocket"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite" version="2.15">
+        <description>
+          The order (relative priority) to use when determining which
+          {{object}} to use for communicating to the Controller.
+
+          A value of ''1'' indicates the highest precedence. For each
+          configured {{object}}, the instance with the lowest value is
+          attempted first.
+
+          When more than one {{object}} instance has the same value, then each
+          instance with the same value SHOULD be attempted at the same time.
+
+          The value of {{param}} on creation of a {{object}} table entry MUST
+          be one greater than the largest current value (initially assigned the
+          lowest precedence).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Controller.{i}.MTP.{i}.CoAP." access="readOnly"
+        minEntries="0" maxEntries="1" discriminatorParameter="Protocol"
+        status="deprecated">
+      <description>
+        If the USP Endpoint uses the CoAP Message Transport Protocol (MTP),
+        then this object contains CoAP specific configuration parameters.
+
+        {{deprecated|2.15|because the CoAP MTP was deprecated in USP 1.2}}
+      </description>
+
+      <parameter name="Host" access="readWrite">
+        <description>
+          The hostname or IP Address of the Controller's CoAP server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          The port number used by the Controller's CoAP Server to receive USP
+          messages.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Path" access="readWrite">
+        <description>
+          The path that is used by the Controller's CoAP Server in order to
+          receive USP messages.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableEncryption" access="readWrite">
+        <description>
+          When {{true}}, encryption MUST be used as specified in
+          {{bibref|TR-369|Section "MTP Message Encryption"}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Controller.{i}.MTP.{i}.STOMP." access="readOnly"
+        minEntries="0" maxEntries="1" discriminatorParameter="Protocol">
+      <description>
+        If the USP Endpoint uses the STOMP Message Transport Protocol (MTP),
+        then this object contains STOMP Client specific configuration
+        parameters related to how this Controller communicates with the STOMP
+        Server.
+      </description>
+
+      <parameter name="Reference" access="readWrite">
+        <description>
+          A reference to the STOMP Connection used by this Controller when
+          communicating via the STOMP MTP.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".STOMP.Connection."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Destination" access="readWrite">
+        <description>
+          The STOMP destination where the Controller will be listening to
+          incoming USP messages.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Controller.{i}.MTP.{i}.WebSocket." access="readOnly"
+        minEntries="0" maxEntries="1" discriminatorParameter="Protocol">
+      <description>
+        If the USP Endpoint uses the WebSocket Message Transport Protocol (MTP)
+        as a WebSocket client, then this object contains WebSocket specific
+        configuration parameters.
+      </description>
+
+      <parameter name="Host" access="readWrite">
+        <description>
+          The hostname or IP Address of the Controller's WebSocket server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          The port number used by the Controller's WebSocket server to receive
+          USP messages.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Path" access="readWrite">
+        <description>
+          The service path that is provided by the Controller's WebSocket
+          server in order to exchange USP messages. The value MUST be used as
+          defined in {{bibref|RFC3986|Section 3.3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsEncrypted" status="deprecated" access="readOnly">
+        <description>
+          This parameter represents whether or not communications that utilize
+          this {{object}} object instance are encrypted.
+
+          {{deprecated|2.14|because the {{param|EnableEncryption}} parameter
+          will dictate whether this {{object}} is or is not encrypted}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableEncryption" access="readWrite" version="2.14">
+        <description>
+          When {{true}}, encryption MUST be used for this MTP instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveInterval" access="readWrite">
+        <description>
+          The duration in {{units}} between when WebSocket ping control frames
+          are transmitted by the Agent's WebSocket client to the Controller's
+          WebSocket server.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentRetryCount" access="readOnly">
+        <description>
+          The current retry count of the session. When zero (0), the session is
+          not in a retry state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionRetryMinimumWaitInterval" access="readWrite">
+        <description>
+          Configures the first retry wait interval, in {{units}}, as specified
+          in {{bibref|TR-369|Section "WebSocket Session Retry"}}.
+
+          The USP Agent MUST use a random value between {{param}} and
+          ({{param}} * {{param|SessionRetryIntervalMultiplier}} / 1000) as the
+          first retry wait interval. Other values in the retry pattern MUST be
+          calculated using this value as a starting point.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionRetryIntervalMultiplier" access="readWrite">
+        <description>
+          Configures the retry interval multiplier as specified in
+          {{bibref|TR-369|Section "WebSocket Session Retry"}}.
+
+          This value is expressed in units of 0.001. Hence the values of the
+          multiplier range between 1.000 and 65.535.
+
+          The USP Agent MUST use a random value between
+          {{param|SessionRetryMinimumWaitInterval}} and
+          ({{param|SessionRetryMinimumWaitInterval}} * {{param}} / 1000) as the
+          first retry wait interval. Other values in the retry pattern MUST be
+          calculated using this value as a starting point.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="2000"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Controller.{i}.MTP.{i}.MQTT." access="readOnly"
+        minEntries="0" maxEntries="1" discriminatorParameter="Protocol"
+        version="2.13">
+      <description>
+        If the USP Endpoint uses the MQTT Message Transport Protocol (MTP),
+        then this object contains MQTT Client specific configuration parameters
+        related to how this Controller communicates with the MQTT broker.
+      </description>
+
+      <parameter name="Reference" access="readWrite">
+        <description>
+          A reference to the MQTT Client used by this Controller when
+          communicating via the MQTT MTP.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".MQTT.Client."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Topic" access="readWrite">
+        <description>
+          The topic name the USP Controller has subscribed to, to be used for
+          Notify messages send by the USP Agent.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishRetainResponse" access="readWrite">
+        <description>
+          If set to {{true}} the Agent MUST set the RETAIN flag in MQTT PUBLISH
+          messages carrying a USP Response Message to 1, unless the MQTT server
+          sent Retain Available = 0 (MQTT 5.0) in its CONNACK (in which case,
+          the Agent MUST set the RETAIN flag to 0).
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishRetainNotify" access="readWrite">
+        <description>
+          If set to {{true}} the Agent MUST set the RETAIN flag in MQTT PUBLISH
+          messages carrying a USP Notify Message to 1, unless the MQTT server
+          sent Retain Available = 0 (MQTT 5.0) in its CONNACK (in which case,
+          the Agent MUST set the RETAIN flag to 0).
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Certificate.{i}." access="readOnly" minEntries="0"
+        maxEntries="unbounded" numEntriesParameter="CertificateNumberOfEntries">
+      <description>
+        Each instance of this table represents information related to a X.509
+        certificate (see {{bibref|RFC5280}}) of a Controller or Certificate
+        Authority. Instances are referenced from
+        {{param|#.Controller.{i}.Credential}} and
+        {{param|#.ControllerTrust.Credential.{i}.Credential}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="SerialNumber"/>
+        <parameter ref="Issuer"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SerialNumber" access="readOnly">
+        <description>
+          The Serial Number field in an X.509 certificate, see
+          {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Issuer" access="readOnly">
+        <description>
+          The Issuer field in an X.509 certificate, see {{bibref|RFC5280}};
+          i.e. the Distinguished Name (DN) of the entity who has signed the
+          certificate.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="ControllerTrust." access="readOnly" minEntries="1"
+        maxEntries="1">
+      <description>
+        This object contains information that an Agent applies when
+        establishing a trust relationship with a Controller.
+      </description>
+
+      <parameter name="UntrustedRole" access="readWrite">
+        <description>
+          {{list|each entry is a Role that is associated with Controllers whose
+          identity cannot be authenticated. The value of the {{param}}
+          parameter is appended to the {{param|#.Controller.{i}.AssignedRole}}
+          parameter}}
+
+          In some instances, this policy is set by the Agent and cannot be
+          modified by Controllers. If the Agent does not allow modification of
+          this parameter, the Agent MUST respond with an error to the request
+          to set this parameter.
+        </description>
+        <syntax>
+          <list maxItems="1"/>
+          <string>
+            <pathRef refType="strong" targetParent="Role." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BannedRole" access="readWrite">
+        <description>
+          The Role that is associated with Controllers indicate banned access.
+
+          When assigned to a Controller or associated with an entry in the
+          {{object|Credential}} table, this MUST be the only value of the
+          {{param}} parameter of the {{param|#.Controller.{i}.AssignedRole}}
+          parameter.
+
+          The Agent SHOULD refuse to accept USP messages from, or send USP
+          messages to, any Controller that has this Role.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="Role." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TOFUAllowed" access="readWrite">
+        <description>
+          When {{true}}, Agent has active policy that allows for self-signed
+          certificates and certificates from unknown Certificate Authorities
+          (CAs) to be trusted on first use (TOFU).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TOFUInactivityTimer" access="readWrite">
+        <description>
+          Inactivity timer in {{units}}.
+
+          This timer is started when trust on first use (TOFU) policy is used
+          to accept a Controller certificate. If no USP Message is received
+          before this timer elapses, the Agent MUST tear down the MTP
+          connection and underlying (D)TLS session.
+
+          A value of 0 means that the TOFU inactivity timer is effectively
+          disabled.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CredentialNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChallengeNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="ControllerTrust.Role.{i}." access="readWrite" minEntries="0"
+        maxEntries="unbounded" numEntriesParameter="RoleNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this table represents a Role that can be assigned to
+        or inherited by a Controller via the Controller Trust mechanism. The
+        Role contains a set of permissions that determine how the Controller
+        can interact with the data model.
+
+        If multiple permission entries associated with this table contain a
+        Target that evaluates to the same instantiated Object/Parameter for
+        multiple Roles, then the permissions to be used are a union of the
+        identified permissions.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The Role assigned to this {{object}} instance.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PermissionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="ControllerTrust.Role.{i}.Permission.{i}." access="readWrite"
+        minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="PermissionNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this table represents the permissions that are
+        extended to a set of Targets for a specified Role.
+
+        If there are multiple entries in this table for a specific Role where
+        the Targets overlap, the permissions for the entry with the highest
+        value takes priority over all others.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Order"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          The order (relative priority) to use when determining the permissions
+          for overlapping Targets that are contained within the same
+          {{object|#.}}.
+
+          The larger value of this parameter takes priority over a permission
+          with a smaller value (i.e., 0 has the lowest priority).
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Targets" access="readWrite">
+        <description>
+          {{list|each entry is a target to which the value of the permissions
+          parameters are assigned}}
+
+          When an entry is a value of a Partial Path, the permissions are
+          associated to that Object and any child Object/Parameter.
+
+          When the value of an entry is an Object instance then the permissions
+          are associated to all Parameters of the Object instance.
+
+          When an entry is a value of a Search Path as defined in
+          {{bibref|TR-369}} that resolves to zero or more Parameter Paths, then
+          all Parameter Paths that result from the evaluation of the Search
+          Path are subject to the permissions assigned by this {{object}}
+          instance.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Param" access="readWrite">
+        <description>
+          The permissions of a Role for the specified Targets.
+
+          A string of 4 characters where each character represents a permission
+          ("r" for Read, "w" for Write, "x" for Execute", and "n" for Notify).
+
+          The string is always in the same order (rwxn) and the lack of a
+          permission is signified by a "-" character (e.g., r--n).
+
+          The following describes the meaning of the permissions for Parameter
+          type of Targets:
+
+          # Read: Grants the capability to read the value of the Parameter via
+            Get and read the meta-information of the Parameter via
+            GetSupportedDM.
+
+          # Write: Grants the capability to update the value of the Parameter
+            via Add or Set.
+
+          # Execute: Grants no capabilities; Parameters can not be executed.
+
+          # Notify: Grants the capability to use this Parameter in the
+            ReferenceList of a ValueChange Subscription.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="4" maxLength="4"/>
+          </string>
+          <default type="object" value="----"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Obj" access="readWrite">
+        <description>
+          The permissions of a Role for the specified Targets.
+
+          A string of 4 characters where each character represents a permission
+          ("r" for Read, "w" for Write, "x" for Execute", and "n" for Notify).
+
+          The string is always in the same order (rwxn) and the lack of a
+          permission is signified by a "-" character (e.g., r--n).
+
+          The following describes the meaning of the permissions for Object
+          type of Targets:
+
+          # Read: Grants the capability to read the meta-information of the
+            Object via GetSupportedDM.
+
+          # Write: Grants no capabilities for Static Objects. Grants the
+            capability to create a new instance of a Multi-Instanced Object via
+            Add (e.g. Device.LocalAgent.Controller.).
+
+          # Execute: Grants no capabilities; Objects are not executable and
+            Commands are controlled by the CommandEventPermissions.
+
+          # Notify: Grants the capability to use this Object in the
+            ReferenceList of an ObjectCreation (for multi-instance objects
+            only) Subscription.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="4" maxLength="4"/>
+          </string>
+          <default type="object" value="----"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InstantiatedObj" access="readWrite">
+        <description>
+          The permissions of a Role for the specified Targets.
+
+          A string of 4 characters where each character represents a permission
+          ("r" for Read, "w" for Write, "x" for Execute", and "n" for Notify).
+
+          The string is always in the same order (rwxn) and the lack of a
+          permission is signified by a "-" character (e.g., r--n).
+
+          The following describes the meaning of the permissions for
+          Instantiated Object type of Targets:
+
+          # Read: Grants the capability to read the instance numbers and unique
+            keys of the Instantiated Object via GetInstances and read the value
+            of Parameters related to the Instantiated Object via a Get
+            containing a search expression or wildcard in place of the instance
+            identifier.
+
+          # Write: Grants the capability to remove an existing instance of an
+            Instantiated Object via Delete (e.g.
+            Device.LocalAgent.Controller.1.).
+
+          # Execute: Grants no capabilities; Object Instances are not
+            executable and Commands are controlled by the
+            CommandEventPermissions.
+
+          # Notify: Grants the capability to use this Instantiated Object in
+            the ReferenceList of an ObjectDeletion Subscription.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="4" maxLength="4"/>
+          </string>
+          <default type="object" value="----"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CommandEvent" access="readWrite">
+        <description>
+          The permissions of a Role for the specified Targets.
+
+          A string of 4 characters where each character represents a permission
+          ("r" for Read, "w" for Write, "x" for Execute", and "n" for Notify).
+
+          The string is always in the same order (rwxn) and the lack of a
+          permission is signified by a "-" character (e.g., r--n).
+
+          The following describes the meaning of the permissions for Command
+          and Event type of Targets:
+
+          # Read: Grants the capability to read the meta-information of the
+            Command (including input and output arguments) and Event (including
+            arguments) via GetSupportedDM.
+
+          # Write: Grants no capabilities; Commands are executed instead of
+            written to and Events are read only.
+
+          # Execute: Grants the capability to execute the Command via Operate,
+            but grants no capabilities to an Event.
+
+          # Notify: Grants the capability to use this Event or Command in the
+            ReferenceList of an Event or OperationComplete Subscription.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="4" maxLength="4"/>
+          </string>
+          <default type="object" value="----"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="ControllerTrust.Credential.{i}." access="readWrite"
+        minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="CredentialNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this table represents a trusted credential. The
+        credential can be that of a certificate authority (CA) for a Controller
+        whose EndpointID is unknown.
+
+        When a credential is supplied to the Agent by a Controller during
+        authentication, the credentials in this table are used to determine if
+        any of the supplied certificates (including those in the chain of
+        trust) are considered "trusted".
+
+        If the Controller authenticated via an entry in this table is not
+        previously known to the Agent, the associated Role entry is
+        automatically applied to the Controller.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Credential"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Role" access="readWrite">
+        <description>
+          {{nolist}}
+
+          Comma-separated list of strings, the (set of) Role(s) applied to a
+          Controller authenticated through this {{object}} instance.
+
+          The roles are added to the Controller's current list of Roles by
+          replacing the value of the {{param|##.Controller.{i}.InheritedRole}}
+          parameter.
+
+          If the Controller is already known to the Agent, with an associated
+          Role, this parameter has no impact.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.Role." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Credential" access="readWrite">
+        <description>
+          A reference to the {{object|##.Certificate.{i}}} instance for use in
+          the authentication of certificates provided by a Controller and
+          authorization of Controllers, and for authentication of certificates
+          used for MTP encryption.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="##.Certificate."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowedUses" access="readWrite">
+        <description>
+          Identifies what usages the Certificate Authority (CA) authenticated
+          by the associated credential is trusted to authorize.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="MTP-only">
+              <description>
+                The CA can only authorize MTP (domain) connectivity, and cannot
+                authenticate Controllers.
+              </description>
+            </enumeration>
+            <enumeration value="MTP-and-USP">
+              <description>
+                The CA can authorize MTP (domain) connectivity and authenticate
+                Controllers.
+              </description>
+            </enumeration>
+            <enumeration value="MTP-and-broker">
+              <description>
+                The CA can authorize MTP (domain) connectivity and the
+                presenter of this certificate is trusted to have authenticated
+                the identity of Endpoints whose Records it transmits such that
+                the from_id can be trusted without additional authentication.
+                See {{bibref|TR-369|"Authentication and Authorization"}} for
+                additional description of the Trusted Broker function.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="ControllerTrust.Challenge.{i}." access="readWrite"
+        minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="ChallengeNumberOfEntries" enableParameter="Enable">
+      <description>
+        Each instance of this table represents information that is used to
+        challenge a Controller in order to assign a Role to the Controller or
+        to determine the authenticity of a Certificate.
+
+        The Controller requests a type of challenge from an Agent using the
+        RequestChallenge command.
+
+        The Agent returns the value of the {{param|Instruction}} for that type
+        of challenge to the Controller which the Controller then provides a
+        third-party.
+
+        The third-party responds to the Instruction which the Controller then
+        sends to the Agent using the ChallengeResponse command.
+
+        The Agent verifies the response to the Challenges and executes an
+        implementation specific Agent logic in order to establish trust with
+        the Controller.
+
+        This could include (but is not limited to):
+
+        *Assignment of roles to the Controller is done by appending the
+         non-duplicate roles of the {{param|Role}} parameter to the value of
+         the {{param|##.Controller.{i}.AssignedRole}} parameter.
+
+        *Use the Controller's certificate to which the challenge response was
+         received in order to authenticate the identity of the Controller.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readWrite">
+        <description>
+          The description of this {{object}} instance.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Role" access="readWrite">
+        <description>
+          {{nolist}}
+
+          Comma-separated list of strings, the (set of) role(s) appended
+          (non-duplicate values only) to the value of the
+          {{param|##.Controller.{i}.AssignedRole}} parameter.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.Role." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable/Disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readWrite">
+        <description>
+          The type of challenge that will be verified from the challenge
+          response provided by the third-party through the Controller.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Passphrase">
+              <description>
+                The challenge uses a passphrase the third-party is expected to
+                match.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          The value of the challenge that is specific to the type of challenge.
+        </description>
+        <syntax hidden="true">
+          <base64/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ValueType" access="readWrite">
+        <description>
+          The media type with a format as defined by {{bibref|RFC6838}} of the
+          content of the {{param|Value}} parameter.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="text/plain"/>
+            <enumeration value="image/jpeg"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Instruction" access="readWrite">
+        <description>
+          The instruction that is provided to the external party by the
+          Controller requesting the challenge.
+        </description>
+        <syntax>
+          <base64/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InstructionType" access="readWrite">
+        <description>
+          The media type with a format as defined by {{bibref|RFC6838}} of the
+          content of the {{param|Instruction}} parameter.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="text/plain"/>
+            <enumeration value="image/jpeg"/>
+            <enumeration value="text/html"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Retries" access="readWrite">
+        <description>
+          The number of consecutive failed {{template|USP-CHALLENGE-RESPONSE}}
+          attempts against this {{object}} instance (as determined by the
+          {{template|USP-REQUEST-CHALLENGE}}.ChallengeRef associated with
+          {{template|USP-CHALLENGE-RESPONSE}}.ChallengeID parameters) that are
+          allowed before a {{param|LockoutPeriod}} is started for this
+          {{object}} instance. Counts of failed attempts for a {{object}}
+          instance are reset after a successful
+          {{template|USP-CHALLENGE-RESPONSE}} for the {{object}} instance or
+          after a started {{param|LockoutPeriod}} expires.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LockoutPeriod" access="readWrite">
+        <description>
+          Once the {{param|Retries}} value has been reached by failed
+          {{template|USP-CHALLENGE-RESPONSE}} attempts against this {{object}}
+          instance (as determined by the
+          {{template|USP-REQUEST-CHALLENGE}}.ChallengeRef associated with
+          {{template|USP-CHALLENGE-RESPONSE}}.ChallengeID parameters), the
+          value of this parameter represents the amount of time (in {{units}})
+          that the Agent will prevent any {{template|USP-CHALLENGE-RESPONSE}}
+          or {{template|USP-REQUEST-CHALLENGE}} against this {{object}}
+          instance from succeeding. Any attempt to issue a
+          {{template|USP-REQUEST-CHALLENGE}} or
+          {{template|USP-CHALLENGE-RESPONSE}} command where the associated
+          {{template|USP-REQUEST-CHALLENGE}}.ChallengeRef points to this
+          {{object}} instance during the lockout period will result in an Error
+          response with 7002 as the error code. When a started lockout period
+          has expired, the count of failed attempts for this {{object}}
+          instance will be reset. If the Agent chooses to delete
+          {{template|USP-CHALLENGE-RESPONSE}}.ChallengeID values for a locked
+          out {{object}}, the Agent can send the 7004 error code for values it
+          does not recognize.
+
+          A value of zero means that a lockout period doesn't apply and the
+          {{template|USP-REQUEST-CHALLENGE}} command can be attempted without
+          the need to wait between failed challenges.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0"/>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="30"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="LocalAgent:2.15">
+    <component ref="Root"/>
+    <component ref="USPLocalAgent"/>
+  </model>
+</dm:document>

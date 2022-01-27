@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [LEDs]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-leds"
+    file="tr-181-2-14-0-leds.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="LEDs">
+
+    <object name="Device.LEDs." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.11">
+      <description>
+        This object describes the LEDs on the device.
+      </description>
+
+      <parameter name="LEDNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LEDs.LED.{i}." access="readOnly"
+        numEntriesParameter="LEDNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.11">
+      <description>
+        Each instance of this object describes an LED on the device.
+
+        The default illumination characteristics (e.g., Color, Brightness) of
+        an in use LED is vendor specific. When a cycle completes (i.e.,
+        {{param|CyclePeriodRepetitions}} = 0), the LED reverts back to its
+        default illumination characteristics.
+
+        When the value of the {{param|Status}} parameter is
+        {{enum|Controlled|Status}}, then the value of
+        {{param|CycleElementNumberOfEntries}} and
+        {{param|CycleElementNumberOfEntries}} parameters SHOULD be 0.
+
+        When the value of the {{param|RelativeXPosition}} and
+        {{param|RelativeYPosition}} parameters are 0, this indicates that the
+        position of the LED is unknown.
+      </description>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The internal name used to identify this LED.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the LED.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>The LED is currently not in use.</description>
+            </enumeration>
+            <enumeration value="InUse">
+              <description>
+                The LED is currently being used by the CPE.
+              </description>
+            </enumeration>
+            <enumeration value="Controlled">
+              <description>
+                Indicates that the LED is controlled from an electronic circuit
+                which cannot be monitored.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                The LED status cannot be determined by the CPE.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Reason" access="readOnly" activeNotify="canDeny">
+        <description>
+          The textual purpose that represents the visual display of the LED
+          (e.g., Broadband Down).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CyclePeriodRepetitions" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The number of cycle periods left for this LED. As each cycle period
+          is completed this parameter is reduced by 1. A value of -1 indicates
+          an infinite number of cycle period repetitions.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Location" access="readOnly">
+        <description>
+          The location of the LED as the user looks at the front of the device
+          in its typical orientation (e.g., on-end, flat).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Front"/>
+            <enumeration value="Back"/>
+            <enumeration value="Left"/>
+            <enumeration value="Right"/>
+            <enumeration value="Top"/>
+            <enumeration value="Bottom"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RelativeXPosition" access="readOnly">
+        <description>
+          The relative x position of the LED from left to right (x) and top to
+          bottom (y) as the user looks at the device from the orientation
+          identified in the {{param|Location}} parameter in its typical
+          orientation (e.g., on-end, flat).
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RelativeYPosition" access="readOnly">
+        <description>
+          The relative y position of the LED from left to right (x) and top to
+          bottom (y) as the user looks at the device from the orientation
+          identified in the {{param|Location}} parameter in its typical
+          orientation (e.g., on-end, flat).
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CycleElementNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LEDs.LED.{i}.CycleElement.{i}." access="readWrite"
+        numEntriesParameter="CycleElementNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.11">
+      <description>
+        Each instance of this object describes the LED characteristics for a
+        portion of the LED cycle period.
+
+        The pattern of lighting for the LED corresponding to this table (i.e.,
+        the LED cycle period) is defined by the illumination of the LED
+        according to the entries in this table, taken sequentially in the order
+        specified by the {{param|Order}} parameter, with the duration for the
+        portion of the LED illumination corresponding to a given instance
+        specified by the {{param|Duration}} parameter.
+
+        The other parameters of the instance of this object (e.g., Color,
+        Brightness) describes the illumination characteristics applied to the
+        LED for this {{object}} instance.
+
+        The length of the complete LED cycle is the sum of the Duration
+        parameters for all of the entries in this table.
+      </description>
+      <uniqueKey>
+        <parameter ref="Order"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          The relative order of this {{object}} in the LED's cycle period.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Color" access="readWrite">
+        <description>
+          The color being displayed by the LED RGB hexadecimal notation (e.g.,
+          FF0088).
+
+          Note: If the parameter is set to an unsupported color the CPE MUST
+          NOT infer a different color.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="Duration" access="readWrite">
+        <description>
+          The duration, in {{units}}, for this element of the cycle period.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="FadeInterval" access="readWrite">
+        <description>
+          The interval corresponding to this {{object}} instance, in {{units}},
+          from the starting from the target illumination characteristics of the
+          previous {{object}} instance to the target illumination
+          characteristics of this {{object}} instance.
+
+          The transition to the target illumination characteristics is
+          uniformly interpolated "perceptually" over the value of this
+          {{param}} parameter.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LEDs.LED.{i}.CurrentCycleElement." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.11">
+      <description>
+        This object describes the status of the current cycle element for this
+        LED.
+      </description>
+
+      <parameter name="CycleElementReference" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          This object describes the current properties of the
+          {{object|#.CycleElement.{i}}} object instance that is currently
+          active.
+
+          {{reference}} If the LED instances does not have a current cycle
+          element active, this parameter MUST be set to {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.CycleElement."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Color" access="readOnly" activeNotify="canDeny">
+        <description>
+          The color, formatted as RGB hexadecimal notation (e.g., FF0088), that
+          is currently being displayed by the LED.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="Duration" access="readOnly" activeNotify="canDeny">
+        <description>
+          The remaining duration, in {{units}}, for this element of the cycle
+          period.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="LEDBasic:1" version="2.11">
+      <object ref="Device.LEDs." requirement="present">
+        <parameter ref="LEDNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}." requirement="present">
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Reason" requirement="readOnly"/>
+        <parameter ref="CyclePeriodRepetitions" requirement="readOnly"/>
+        <parameter ref="Location" requirement="readOnly"/>
+        <parameter ref="RelativeXPosition" requirement="readOnly"/>
+        <parameter ref="RelativeYPosition" requirement="readOnly"/>
+        <parameter ref="CycleElementNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CycleElement.{i}."
+          requirement="present">
+        <parameter ref="Order" requirement="readOnly"/>
+        <parameter ref="Color" requirement="readOnly"/>
+        <parameter ref="Duration" requirement="readOnly"/>
+        <parameter ref="FadeInterval" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CurrentCycleElement."
+          requirement="present">
+        <parameter ref="CycleElementReference" requirement="readOnly"/>
+        <parameter ref="Color" requirement="readOnly"/>
+        <parameter ref="Duration" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="LEDAdv:1" version="2.11">
+      <object ref="Device.LEDs." requirement="present">
+        <parameter ref="LEDNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}." requirement="present">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Reason" requirement="readOnly"/>
+        <parameter ref="CyclePeriodRepetitions" requirement="readOnly"/>
+        <parameter ref="Location" requirement="readOnly"/>
+        <parameter ref="RelativeXPosition" requirement="readOnly"/>
+        <parameter ref="RelativeYPosition" requirement="readOnly"/>
+        <parameter ref="CycleElementNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CycleElement.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Color" requirement="readWrite"/>
+        <parameter ref="Duration" requirement="readWrite"/>
+        <parameter ref="FadeInterval" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LEDs.LED.{i}.CurrentCycleElement."
+          requirement="present">
+        <parameter ref="CycleElementReference" requirement="readOnly"/>
+        <parameter ref="Color" requirement="readOnly"/>
+        <parameter ref="Duration" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="LEDs:2.14">
+    <component ref="Root"/>
+    <component ref="LEDs"/>
+  </model>
+</dm:document>

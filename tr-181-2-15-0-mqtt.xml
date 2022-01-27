@@ -1,0 +1,2335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [MQTT]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-mqtt"
+    file="tr-181-2-15-0-mqtt.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <template id="MQTTChange">
+    A change of this parameter is only communicated to the MQTT server with the
+    next MQTT CONNECT packet.
+  </template>
+
+  <template id="MQTTReconnect">
+    {{template|MQTTChange}} If the change needs to be applied immediately, the
+    parameter {{param|ForceReconnect}} has to be set as well.
+  </template>
+
+  <template id="MQTTWillChange">
+    {{template|MQTTChange}}
+
+    If will handling is enabled (Parameter {{param|WillEnable}} is set to
+    {{true}}) and the change needs to be applied immediately, the parameter
+    {{param|ForceReconnect}} has to be set as well.
+  </template>
+
+  <template id="MQTT50ONLY">
+    This parameter only applies if {{param|ProtocolVersion}} is set to
+    {{enum|5.0|#.Capabilities.ProtocolVersionsSupported}}.
+  </template>
+
+  <component name="MQTT">
+
+    <object name="Device.MQTT." access="readOnly" minEntries="1"
+        maxEntries="1" dmr:fixedObject="true" version="2.10">
+      <description>
+        MQTT Base object describing all MQTT related parameters and objects.
+      </description>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BrokerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Capabilities." access="readOnly" minEntries="1"
+        maxEntries="1" dmr:fixedObject="true" version="2.10">
+      <description>
+        Indicates the MQTT capabilities of the device.
+      </description>
+
+      <parameter name="ProtocolVersionsSupported" access="readOnly">
+        <description>
+          Indicates the supported protocol versions. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="3.1">
+              <description>
+                Protocol according to {{bibref|MQTT31}}
+              </description>
+            </enumeration>
+            <enumeration value="3.1.1">
+              <description>
+                Protocol according to {{bibref|MQTT311}}
+              </description>
+            </enumeration>
+            <enumeration value="5.0" version="2.13">
+              <description>
+                Protocol according to {{bibref|MQTT50}}
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransportProtocolSupported" access="readOnly">
+        <description>
+          Indicates the supported transport protocols. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="TCP/IP">
+              <description>Unencrypted MQTT connection</description>
+            </enumeration>
+            <enumeration value="TLS">
+              <description>TLS encrypted MQTT connection</description>
+            </enumeration>
+            <enumeration value="WebSocket">
+              <description>
+                Unencrypted MQTT connection over a WebSocket transport
+              </description>
+            </enumeration>
+            <enumeration value="WebSocketTLS" version="2.15">
+              <description>
+                TLS encrypted MQTT connection over a WebSocket transport
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxNumberOfClientSubscriptions" access="readOnly">
+        <description>
+          Indicates the maximum number of subscriptions per MQTT client, which
+          can be stored in the {{object|#.Client.{i}.Subscription}} table. A
+          value of 0 means no limit.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxNumberOfBrokerBridges" access="readOnly">
+        <description>
+          Indicates the maximum number of bridges, which can be configured in
+          the {{object|#.Broker.{i}.Bridge}} table. A value of 0 means no
+          limit.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxNumberOfBrokerBridgeSubscriptions" access="readOnly">
+        <description>
+          Indicates the maximum number of subscriptions, which can be stored
+          per bridge instance in the
+          {{object|#.Broker.{i}.Bridge.{i}.Subscription}} table. A value of 0
+          means no limit.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Client.{i}." access="readWrite"
+        numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" dmr:fixedObject="true"
+        version="2.10">
+      <description>
+        MQTT client table. Contains a list of configured MQTT clients.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The textual name of the MQTT client.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Allows to enable or disable the MQTT client.
+
+          If a MQTT client gets enabled then the MQTT client has first to
+          establish a MQTT broker session and then subscribe for all enabled
+          topics in the {{object|Subscription.}} table.
+
+          If the {{param|ProtocolVersion}} is set to
+          {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}} or
+          {{enum|3.1.1|#.Capabilities.ProtocolVersionsSupported}} and
+          {{param|CleanSession}} is set to {{false}} a subscription MUST only
+          be sent for topics which haven't been subscribed before (see
+          {{bibref|MQTT311|section 3.1.2.4}}).
+
+          If the {{param|ProtocolVersion}} is set to
+          {{enum|5.0|#.Capabilities.ProtocolVersionsSupported}} and
+          {{param|CleanStart}} is set to {{false}} a subscription MUST only be
+          sent for topics which haven't been subscribed before (see
+          {{bibref|MQTT50|section 3.1.2.4}}).
+
+          If a connected MQTT client gets disabled ({{param|Status}} is either
+          {{enum|Connecting|Status}} or {{enum|Connected|Status}}) then the
+          MQTT client has to send a MQTT DISCONNECT packet to disconnect from
+          the MQTT broker (see {{bibref|MQTT311|section 3.14}} or
+          {{bibref|MQTT50|section 3.14}}), before setting the {{param|Status}}
+          to {{enum|Disabled|Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this MQTT client. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid (e.g. The MQTT client can
+          not use the defined port, because it is blocked)
+
+          The {{enum|Error_BrokerUnreachable}} value indicates that the
+          connection to the MQTT broker could not be established.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="Connected"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error_BrokerUnreachable"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtocolVersion" access="readWrite">
+        <description>
+          Specifies the MQTT protocol version used in the communication with
+          the MQTT broker.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef
+                targetParam="#.Capabilities.ProtocolVersionsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableEncryption" access="readWrite" version="2.14"
+          status="deprecated">
+        <description>
+          When {{true}}, encryption MUST be used for this MQTT {{object}}
+          instance.
+
+          {{deprecated|2.15|because it duplicates the functionality already
+          handled by the {{param|TransportProtocol}} parameter}}
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BrokerAddress" access="readWrite">
+        <description>
+          Host name or IP address of the MQTT Broker.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BrokerPort" access="readWrite">
+        <description>
+          Port number of the MQTT broker.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="1883"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransportProtocol" access="readWrite">
+        <description>
+          Indicates the transport protocol to be used for the MQTT broker
+          connection.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef
+                targetParam="#.Capabilities.TransportProtocolSupported"/>
+          </string>
+          <default type="object" value="TCP/IP"/>
+        </syntax>
+      </parameter>
+      <!-- MQTT Connect flags -->
+
+      <parameter name="CleanSession" access="readWrite">
+        <description>
+          The value of the MQTT clean session flag in the MQTT CONNECT packet
+          (see {{bibref|MQTT311|section 3.1}} and {{bibref|MQTT311|section
+          3.1.2.4}}). If this flag is set to {{true}} (default), the MQTT
+          broker will delete all subscription information after a Disconnect.
+
+          {{template|MQTTReconnect}}
+
+          This parameter only applies if {{param|ProtocolVersion}} is set to
+          {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}} or
+          {{enum|3.1.1|#.Capabilities.ProtocolVersionsSupported}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CleanStart" access="readWrite" version="2.13">
+        <description>
+          The value of the MQTT Clean Start flag in the MQTT CONNECT packet
+          (see {{bibref|MQTT50|section 3.1.2.4}}. If this flag is set to
+          {{true}} (default), the MQTT broker will delete all subscription
+          information after a Disconnect.
+
+          {{template|MQTTReconnect}}.
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillEnable" access="readWrite">
+        <description>
+          Enables or disables the will handling (see {{bibref|MQTT311|section
+          3.1}}, {{bibref|MQTT311|section 3.1.2.5}}) or {{bibref|MQTT50|section
+          3.1.2.5}}).
+
+          If the connection gets enabled and this parameter is set to {{true}}
+          and either the parameter {{param|WillTopic}} or {{param|WillValue}}
+          are {{empty}}, the CPE MUST set the {{param|Status}} to
+          {{enum|Error_Misconfigured|Status}}.
+
+          {{template|MQTTReconnect}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillQoS" access="readWrite">
+        <description>
+          The MQTT QoS level assigned with the will message (see
+          {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.6}})
+          or {{bibref|MQTT50|section 3.1.2.6}}). This parameter is only used if
+          {{param|WillEnable}} is set to {{true}}.
+
+          {{template|MQTTWillChange}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillRetain" access="readWrite">
+        <description>
+          Indicate to the MQTT broker to retain the Will over a Disconnect (see
+          {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.7}})
+          or {{bibref|MQTT50|section 3.1.2.7}}). This parameter is only used if
+          {{param|WillEnable}} is set to {{true}}.
+
+          {{template|MQTTWillChange}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveTime" access="readWrite">
+        <description>
+          Keep Alive Time in {{units}} defines the maximum wait time after
+          which a packet has to be sent to the MQTT broker (see
+          {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.10}})
+          or {{bibref|MQTT50|section 3.1.2.10}}). If no regular packet can be
+          sent a MQTT PINGREQ packet is sent.
+
+          A value of zero (0) means no keep alive packets are sent and the MQTT
+          client is not disconnected by the server.
+
+          {{template|MQTTReconnect}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+      <!-- MQTT Connect properties -->
+
+      <parameter name="SessionExpiryInterval" access="readWrite"
+          version="2.13">
+        <description>
+          Session expiry interval in {{units}} defines the wait time before a
+          session expires after the connection has been closed by the MQTT
+          client {{bibref|MQTT50|section 3.1.2.11.2}}).
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceiveMaximum" access="readWrite" version="2.13">
+        <description>
+          The MQTT client uses this value to limit the number of QoS 1 and QoS
+          2 publications that it is willing to process concurrently (see
+          {{bibref|MQTT50|section 3.1.2.11.3}}).
+
+          {{template|MQTTReconnect}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumPacketSize" access="readWrite" version="2.13">
+        <description>
+          The maximum packet size in {{units}} the MQTT client can and will
+          accept from the MQTT broker. A value of 0 means no limit. If the
+          value is set to another value, the MQTT client will inform the broker
+          in the next CONNECT packet {{bibref|MQTT50|section 3.1.2.11.4}}).
+
+          {{template|MQTTReconnect}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="byte"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TopicAliasMaximum" access="readWrite" version="2.13">
+        <description>
+          This value indicates the highest value that the MQTT client will
+          accept as a Topic Alias sent by the Server (see
+          {{bibref|MQTT50|section 3.1.2.11.5}}). The MQTT client uses this
+          value to limit the number of Topic Aliases that it is willing to hold
+          on this connection.
+
+          A value of 0 indicates that Topic Alias is not supported.
+
+          {{template|MQTTReconnect}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequestResponseInfo" access="readWrite" version="2.13">
+        <description>
+          The MQTT client uses this value in a MQTT CONNECT packet to request
+          the Server to return Response Information in the MQTT CONNACK (see
+          {{bibref|MQTT50|section 3.1.2.11.6}}).
+
+          {{template|MQTTReconnect}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequestProblemInfo" access="readWrite" version="2.13">
+        <description>
+          This value indicates whether the Reason String or User Properties are
+          sent in the case of failures.(see {{bibref|MQTT50|section
+          3.1.2.11.7}}).
+
+          {{template|MQTTReconnect}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AuthenticationMethod" access="readWrite" version="2.13">
+        <description>
+          This value defines the extended authentication method to be used (see
+          {{bibref|MQTT50|section 3.1.2.11.9}}).
+
+          If the parameter is empty, no extended authentication is performed.
+
+          {{template|MQTTReconnect}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <string>
+            <size minLength="0" maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <!-- MQTT Connect payload -->
+
+      <parameter name="ClientID" access="readWrite">
+        <description>
+          The MQTT client identifier used in the MQTT CONNECT packet (see
+          {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.1}})
+          or {{bibref|MQTT50|section 3.1.3.1}}).
+
+          If {{param|ProtocolVersion}} is set to
+          {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}} or
+          {{enum|3.1.1|#.Capabilities.ProtocolVersionsSupported}}, this
+          parameter MUST NOT be an empty string.
+
+          If {{param|ProtocolVersion}} is set to
+          {{enum|5.0|#.Capabilities.ProtocolVersionsSupported}}, an empty
+          string is allowed.
+
+          {{template|MQTTReconnect}}
+        </description>
+        <syntax>
+          <string>
+            <size minLength="0" maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillDelayInterval" access="readWrite" version="2.13">
+        <description>
+          The delay in {{units}} after the session is disconnected, before
+          sending the Will message {{bibref|MQTT50|section 3.1.3.2.2}}). A
+          value of 0 indicates that there is no delay.
+
+          {{template|MQTTWillChange}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillMessageExpiryInterval" access="readWrite"
+          version="2.13">
+        <description>
+          The lifetime in {{units}} of a Will Message (see
+          {{bibref|MQTT50|section 3.1.3.2.4}}). A value of 0 indicates that no
+          message expiry interval value is specified for in the will message
+          properties of a CONNECT packet.
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillContentType" access="readWrite" version="2.13">
+        <description>
+          Describes the type of the {{param|WillValue}} {{bibref|MQTT50|section
+          3.1.3.2.5}}).
+
+          {{template|MQTTWillChange}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillResponseTopic" access="readWrite" version="2.13">
+        <description>
+          Topic Name for a will response message. The presence of a Response
+          Topic identifies the Will Message as a Request
+          {{bibref|MQTT50|section 3.1.3.2.6}}).
+
+          If the {{param}} is an empty string the will response topic will not
+          be sent in a MQTT CONNECT packet.
+
+          {{template|MQTTWillChange}}
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillTopic" access="readWrite">
+        <description>
+          The Topic sent in the Will Message (see {{bibref|MQTT311|section
+          3.1}}, {{bibref|MQTT311|section 3.1.3.3}}) or {{bibref|MQTT50|section
+          3.1.3.3}}). This parameter is only used if {{param|WillEnable}} is
+          set to {{true}}.
+
+          {{template|MQTTWillChange}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="WillValue" access="readWrite">
+        <description>
+          The value sent in the Will Message (see {{bibref|MQTT311|section
+          3.1}}, {{bibref|MQTT311|section 3.1.2.5}}) or {{bibref|MQTT50|section
+          3.1.3.4}}). This parameter is only used if {{param|WillEnable}} is
+          set to {{true}}.
+
+          {{template|MQTTWillChange}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username used to authenticate the MQTT client when making a
+          connection to the MQTT broker. The value is sent in the MQTT CONNECT
+          packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section
+          3.1.3.4}} or {{bibref|MQTT50|section 3.1.3.5}}).
+
+          If this parameter is {{empty}} no authentication parameters are sent
+          in the MQTT CONNECT packet.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate the MQTT client when making a
+          connection to the MQTT broker. The value is sent in the MQTT CONNECT
+          packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section
+          3.1.3.5}} or {{bibref|MQTT50|section 3.1.3.6}}).
+
+          This password is only sent in the MQTT CONNECT packet if
+          {{param|Username}} is not {{empty}}.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <!-- MQTT Publish properties -->
+
+      <parameter name="PublishMessageExpiryInterval" access="readWrite"
+          version="2.13">
+        <description>
+          The lifetime in {{units}} of a PUBLISH Message (see
+          {{bibref|MQTT50|section 3.3.2.3.3}}). A value of 0 indicates that no
+          message expiry interval value is included in the PUBLISH packet.
+
+          {{template|MQTT50ONLY}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <!-- Other -->
+
+      <parameter name="MessageRetryTime" access="readWrite">
+        <description>
+          Message retry time in {{units}} defines the wait time before a MQTT
+          message that expects a response (QoS value of message is &gt; 0, or
+          PUBLISH, PUBREL, SUBSCRIBE, UNSUBSCRIBE message) is resent, because
+          the response is not received (see {{bibref|MQTT311|section 4.2}}).
+
+          This parameter only applies if {{param|ProtocolVersion}} is set to
+          {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectRetryTime" access="readWrite">
+        <description>
+          Connect retry time in {{units}} defines the wait time before a failed
+          MQTT broker connection is retried.
+
+          A failure can either be on the connection level (the TCP/IP or TLS
+          can not be established) or on the Protocol level, the MQTT client
+          does not receive a MQTT CONNACK packet on a MQTT CONNECT packet sent.
+
+          If the parameter {{param|ConnectRetryIntervalMultiplier}} is defined,
+          the MQTT client MUST use a random value between
+          {{param}}*({{param|ConnectRetryIntervalMultiplier}}/1000)^(n-1) and
+          {{param}}*({{param|ConnectRetryIntervalMultiplier}}/1000)^n for the
+          connect retry time, with n equals the current retry number. The max
+          number of n is 10, starting with the 11th retry always the value n =
+          10 is used.
+
+          If the parameters {{param|ConnectRetryIntervalMultiplier}} and
+          {{param|ConnectRetryMaxInterval}} are defined, the MQTT client MUST
+          use the value of {{param|ConnectRetryMaxInterval}} if the calculated
+          random value exceeds the value of {{param|ConnectRetryMaxInterval}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectRetryIntervalMultiplier" access="readWrite"
+          version="2.13">
+        <description>
+          Configures the retry interval multiplier.
+
+          This value is expressed in units of 0.001. Hence the values of the
+          multiplier range between 1.000 and 65.535.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="2000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectRetryMaxInterval" access="readWrite"
+          version="2.13">
+        <description>
+          The maximum reconnection wait interval, in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="30720"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResponseInformation" access="readOnly" version="2.13">
+        <description>
+          The value of the CONNACK Response Information property supplied by a
+          MQTT 5.0 server. This value is used by a MQTT 5.0 client as the basis
+          for the PUBLISH Response Topic property for all PUBLISH packets that
+          expect a response. If the value of {{param}} is not a subset
+          (wildcarded or precise match) of any of the
+          {{param|Subscription.{i}.Topic}} values the MQTT client MUST
+          subscribe to this Topic.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubscriptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserPropertyNumberOfEntries" access="readOnly"
+          version="2.13">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Client.{i}.Subscription.{i}." access="readWrite"
+        numEntriesParameter="SubscriptionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        dmr:fixedObject="true" version="2.10">
+      <description>
+        List of MQTT subscriptions handled by the MQTT client.
+
+        The MQTT client MUST subscribe with the MQTT broker for all
+        subscription instances, whose parameter {{param|Enable}} is set to
+        {{true}}, when it establishes a new connection to the MQTT broker.
+        Disabled subscription instances with {{param|Enable}} set to {{false}}
+        will be ignored during connection establishment.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Topic"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          When a MQTT client connects to a MQTT server, it MUST send a
+          SUBSCRIBE message including all instances with {{param}} set to
+          {{true}}. If the MQTT client is already connected with the MQTT
+          server ({{param|#.Status}} is {{enum|Connected|#.Status}}), a MQTT
+          SUBSCRIBE or UNSUBSCRIBE message MUST be sent directly when {{param}}
+          is changed to {{true}} or {{false}}, respectively.
+
+          The actual status of the subscription is indicated with
+          {{param|Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this subscription. {{enum}}
+
+          The {{enum|Subscribed}} value indicates that the topic was
+          successfully subscribed with the MQTT broker, the MQTT client
+          received the SUBACK message for this topic from the server.
+
+          The {{enum|Subscribing}} value MAY be used by the CPE to indicate
+          that the a SUBSCRIBE message for this topic was sent, and the CPE is
+          waiting for a SUBACK message.
+
+          The {{enum|Unsubscribed}} value indicates that the topic is not
+          registered with the MQTT broker.
+
+          The {{enum|Unsubscribing}} value MAY be used by the CPE to indicate
+          that an UNSUBSCRIBE message for this topic was sent, and the CPE is
+          waiting for an UNSUBACK message.
+
+          If the {{param|Enable}} is set to {{false}} the status MUST be either
+          {{enum|Unsubscribed}} or if the unsubscription failed {{enum|Error}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unsubscribed"/>
+            <enumeration value="Subscribed"/>
+            <enumeration value="Subscribing" optional="true"/>
+            <enumeration value="Unsubscribing" optional="true"/>
+            <enumeration value="Error"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Topic" access="readWrite">
+        <description>
+          Name of the subscribed topic. Topic names may contain wildcards
+          according to the rules specified in {{bibref|MQTT311|section Appendix
+          A}}, {{bibref|MQTT311|section 4.7}} or {{bibref|MQTT50|4.7}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="QoS" access="readWrite">
+        <description>
+          The MQTT QoS level assigned with the subscription (see
+          {{bibref|MQTT311|section 4.1}}, {{bibref|MQTT311|section 4.3}}) or
+          {{bibref|MQTT50|4.3}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Client.{i}.UserProperty.{i}." access="readWrite"
+        numEntriesParameter="UserPropertyNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        dmr:fixedObject="true" version="2.13">
+      <description>
+        List of user properties used by the MQTT client.
+
+        This table only applies if {{param|#.ProtocolVersion}} is set to
+        {{enum|5.0|##.Capabilities.ProtocolVersionsSupported}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Setting Enable to {{true}} means the user property is used in the
+          indicated control packet(s). The user property will be applied to all
+          control packets of the same control packet type (e.g PUBLISH).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the user property
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          Value of the user property
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketType" access="readWrite">
+        <description>
+          {{list}} Each entry defines the control packet type(s) in which the
+          user property is included.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="AUTH">
+              <description>
+                User property will be added in the AUTH control packet (see
+                {{bibref|MQTT50|section 3.15.2.2.5}})
+              </description>
+            </enumeration>
+            <enumeration value="CONNECT">
+              <description>
+                User property will be added in the CONNECT packet (see
+                {{bibref|MQTT50|section 3.1.3.2.8}})
+              </description>
+            </enumeration>
+            <enumeration value="DISCONNECT">
+              <description>
+                User property will be added in the DISCONNECT packet (see
+                {{bibref|MQTT50|section 3.14.2.2.4}})
+              </description>
+            </enumeration>
+            <enumeration value="PUBLISH">
+              <description>
+                User property will be added in the PUBLISH packet (see
+                {{bibref|MQTT50|section 3.3.2.3.7}})
+              </description>
+            </enumeration>
+            <enumeration value="PUBACK">
+              <description>
+                User property will be added in the PUBACK packet (see
+                {{bibref|MQTT50|section 3.4.2.2.3}})
+              </description>
+            </enumeration>
+            <enumeration value="PUBREC">
+              <description>
+                User property will be added in the PUBREC packet (see
+                {{bibref|MQTT50|section 3.5.2.2.3}})
+              </description>
+            </enumeration>
+            <enumeration value="PUBREL">
+              <description>
+                User property will be added in the PUBREL packet (see
+                {{bibref|MQTT50|section 3.6.2.2.3}})
+              </description>
+            </enumeration>
+            <enumeration value="PUBCOMP">
+              <description>
+                User property will be added in the PUBCOMP packet (see
+                {{bibref|MQTT50|section 3.7.2.2.3}})
+              </description>
+            </enumeration>
+            <enumeration value="SUBSCRIBE">
+              <description>
+                User property will be added in the SUBSCRIBE packet (see
+                {{bibref|MQTT50|section 3.8.2.1.3}})
+              </description>
+            </enumeration>
+            <enumeration value="UNSUBSCRIBE">
+              <description>
+                User property will be added in the UNSUBSCRIBE packet (see
+                {{bibref|MQTT50|section 3.10.2.1.2}})
+              </description>
+            </enumeration>
+            <enumeration value="WILL">
+              <description>
+                User property will be added in the WILL properties (see
+                {{bibref|MQTT50|section 3.1.3.2}})
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Client.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" dmr:fixedObject="true" version="2.10">
+      <description>
+        Contains the MQTT client statistics and usage information.
+
+        The CPE MUST reset the Stats parameters after the MQTT client gets
+        (re-)enabled or if the MQTT client connects with a new MQTT broker
+        (e.g. {{param|#.BrokerAddress}} has changed). The CPE MAY retain the
+        values across a reboot if it reconnects with the same MQTT broker.
+      </description>
+
+      <parameter name="BrokerConnectionEstablished" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Time when the MQTT broker connection was established.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastPublishMessageSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Time when the last publish message was sent to the MQTT broker.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastPublishMessageReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Time when the last publish message was received from the MQTT broker.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of publish messages sent to the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Number of publish messages received from to the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubscribeSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of subscribe messages sent to the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnSubscribeSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Number of unsubscribe messages sent to the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MQTTMessagesSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Total number of MQTT messages sent to the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MQTTMessagesReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Total number of MQTT messages received from the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionErrors" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Number of connection errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishErrors" access="readOnly">
+        <description>
+          Number of errors which prevented sending publish messages.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}." access="readWrite"
+        numEntriesParameter="BrokerNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" dmr:fixedObject="true"
+        version="2.10">
+      <description>
+        MQTT broker table. Contains a list of configured MQTT brokers.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The textual name of the MQTT broker.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Allows to enable or disable the MQTT broker.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of the MQTT broker. {{enum}}
+
+          The "{{enum|Error_Misconfigured}}" value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The "{{enum|Error}}" value MAY be used by the CPE to indicate a
+          locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Port used by the MQTT Broker.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="1883"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          If {{empty}} is specified, the CPE MUST bind the MQTT broker to all
+          available interfaces.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          User name used to authenticate the MQTT clients, which connect to the
+          MQTT broker.
+
+          If this parameter is {{empty}} no authentication is used.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used used to authenticate the MQTT clients, which connect to
+          the MQTT broker.
+
+          This password is only used if {{param|Username}} is not {{empty}}.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BridgeNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Bridge.{i}." access="readWrite"
+        numEntriesParameter="BridgeNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" dmr:fixedObject="true"
+        version="2.10">
+      <description>
+        Configures MQTT bridges, which are used to communicate with other MQTT
+        brokers.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The textual name of the MQTT bridge used for identification.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Allows to enable or disable the MQTT Bridge.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this MQTT Bridge. {{enum}}
+
+          The {{enum|Disabled}} value indicates that the MQTT bridge is not in
+          service; parameter {{param|Enable}} is set to {{false}}.
+
+          The {{enum|Connecting}} value indicates that the MQTT bridge is
+          currently established.
+
+          The {{enum|Connected}} value indicates that the MQTT bridge is
+          currently active.
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid (e.g. No active Server
+          entry, the MQTT broker can not use the defined bridge port, because
+          it is blocked)
+
+          The {{enum|Error_BrokerUnreachable}} value indicates that the MQTT
+          bridge connection to the remote MQTT broker could not be established.
+
+          The {{enum|Error}} value MAY be used to indicate a locally defined
+          error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="Connected"/>
+            <enumeration value="Enabled" status="deleted">
+              <description>
+                {{deleted|2.11|because it's covered by {{enum|Connecting}} and
+                {{enum|Connected}}}}
+              </description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error_BrokerUnreachable"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtocolVersion" access="readWrite">
+        <description>
+          Specifies the MQTT protocol version used in the MQTT bridge
+          connection.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef
+                targetParam="##.Capabilities.ProtocolVersionsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransportProtocol" access="readWrite">
+        <description>
+          Indicates the transport protocol to be used for the MQTT bridge
+          connection.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef
+                targetParam="##.Capabilities.TransportProtocolSupported"/>
+          </string>
+          <default type="object" value="TCP/IP"/>
+        </syntax>
+      </parameter>
+      <!-- MQTT Connect flags -->
+
+      <parameter name="CleanSession" access="readWrite">
+        <description>
+          The value of the MQTT clean session flag in the MQTT CONNECT packet
+          (see {{bibref|MQTT311|section 3.1}} and {{bibref|MQTT311|section
+          3.1.2.4}}) to establish a MQTT bridge connection. If this flag is set
+          to {{true}} (default), the remote MQTT broker will delete all
+          subscription information after a Disconnect.
+
+          {{template|MQTTReconnect}}
+
+          This parameter only applies if {{param|ProtocolVersion}} is set to
+          {{enum|3.1|##.Capabilities.ProtocolVersionsSupported}} or
+          {{enum|3.1.1|##.Capabilities.ProtocolVersionsSupported}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CleanStart" access="readWrite" version="2.13">
+        <description>
+          The value of the MQTT Clean Start flag in the MQTT CONNECT packet
+          (see {{bibref|MQTT50|section 3.1.2.4}} to establish a MQTT bridge
+          connection. If this flag is set to {{true}} (default), the remote
+          MQTT broker will delete all subscription information after a
+          Disconnect.
+
+          {{template|MQTTReconnect}}.
+
+          This parameter only applies if {{param|ProtocolVersion}} is set to
+          {{enum|5.0|##.Capabilities.ProtocolVersionsSupported}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveTime" access="readWrite">
+        <description>
+          Keep Alive Time in {{units}} defines the maximum wait time after
+          which a packet has to be sent to the remote MQTT broker (see
+          {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.10}})
+          or {{bibref|MQTT50|section 3.1.2.10}}). If no regular packet can be
+          sent a MQTT PINGREQ packet is sent.
+
+          A value of zero (0) means no keep alive packets are sent and the
+          bridge is not disconnected by the server.
+
+          {{template|MQTTReconnect}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+      <!-- MQTT Connect properties -->
+      <!-- MQTT Connect payload -->
+
+      <parameter name="ClientID" access="readWrite">
+        <description>
+          The MQTT client identifier used in the CONNECT packet (see
+          {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.1}})
+          or {{bibref|MQTT50|section 3.1.3.1}}).
+
+          If {{param|ProtocolVersion}} is set to
+          {{enum|3.1|##.Capabilities.ProtocolVersionsSupported}} or
+          {{enum|3.1.1|##.Capabilities.ProtocolVersionsSupported}}, this
+          parameter MUST NOT be an empty string.
+
+          If {{param|ProtocolVersion}} is set to
+          {{enum|5.0|##.Capabilities.ProtocolVersionsSupported}}, an empty
+          string is allowed.
+
+          {{template|MQTTReconnect}}
+        </description>
+        <syntax>
+          <string>
+            <size minLength="0" maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          User name used to authenticate the MQTT broker when making a
+          connection over the MQTT bridge. The value is sent in the MQTT
+          CONNECT packet (see {{bibref|MQTT311|section 3.1}},
+          {{bibref|MQTT311|section 3.1.3.4}} or {{bibref|MQTT50|section
+          3.1.3.5}}).
+
+          If this parameter is {{empty}} no authentication parameters are sent
+          in the MQTT CONNECT packet.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate the MQTT broker when making a
+          connection over the MQTT bridge. The value is sent in the MQTT
+          CONNECT packet (see {{bibref|MQTT311|section 3.1}},
+          {{bibref|MQTT311|section 3.1.3.5}} or {{bibref|MQTT50|section
+          3.1.3.6}}).
+
+          This password is only sent in the MQTT CONNECT packet if
+          {{param|Username}} is not {{empty}}.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <!-- Other -->
+
+      <parameter name="MessageRetryTime" access="readWrite">
+        <description>
+          Message retry time in {{units}} defines the wait time before a MQTT
+          message that expects a response (QoS value of message is &gt; 0, or
+          PUBLISH, PUBREL, SUBSCRIBE, UNSUBSCRIBE message) is resent, because
+          the response is not received (see {{bibref|MQTT311|section 4.2}}.
+
+          This parameter only applies if {{param|ProtocolVersion}} is set to
+          {{enum|3.1|##.Capabilities.ProtocolVersionsSupported}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectRetryTime" access="readWrite">
+        <description>
+          Connect retry time in {{units}} defines the wait time before a failed
+          bridge connection is retried.
+
+          A failure can either be on the connection level (e.g. the TCP/IP or
+          TLS connection can not be established) or on the Protocol level, the
+          MQTT client does not receive a MQTT CONNACK packet on a MQTT CONNECT
+          packet sent.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="30"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerSelectionAlgorithm" access="readWrite">
+        <description>
+          The algorithm used to select a server entry from the
+          {{object|Server}} table
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Priority">
+              <description>
+                Select the server from the {{object|Server.}} table according
+                to the sequence defined with the {{param|Server.{i}.Priority}}
+                and {{param|Server.{i}.Weight}} values.
+              </description>
+            </enumeration>
+            <enumeration value="RoundRobin">
+              <description>Select the servers round robin.</description>
+            </enumeration>
+            <enumeration value="Random">
+              <description>Select the servers randomly.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerConnection" access="readOnly">
+        <description>
+          {{reference|the {{object|Server.}} instance that is used for this
+          {{object}}, while the {{param|Status}} is {{enum|Connecting|Status}}
+          or {{enum|Connected|Status}}. If the MQTT bridge is not connected the
+          value MUST be an empty string}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.Bridge.{i}.Server."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubscriptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}."
+        access="readWrite" numEntriesParameter="ServerNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.10">
+      <description>
+        Each {{object}} instance represents a MQTT bridge server to be used for
+        a {{object|##.Bridge}}. A remote MQTT broker, which is connected by a
+        MQTT bridge can be reachable via several host addresses each
+        represented by its own {{object}} table entry. For an active MQTT
+        bridge at least one enabled entry has to exist.
+
+        If a MQTT bridge gets enabled by setting the parameter
+        {{param|##.Bridge.{i}.Enable}} to {{true}}, which either has an empty
+        {{object}} table or the {{object}} table only contains instances whose
+        {{param|Enable}} is set to {{false}}, the
+        {{param|##.Bridge.{i}.Status}} has to be set to
+        {{enum|Error_Misconfigured|##.Bridge.{i}.Status}}.
+
+        Any attempt to delete an instance, which is currently in use
+        ({{param|##.Bridge.{i}.ServerConnection}} refers to the instance to be
+        deleted), has to be rejected.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Address"/>
+        <parameter ref="Port"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readWrite">
+        <description>
+          The priority of this {{object}} that is used by the
+          {{object|##.Bridge}} when determining the {{object}} to connect to.
+          The {{object|##.Bridge}} MUST contact the {{object}} with the
+          lowest-numbered priority that the {{object|##.Bridge}} can reach as
+          defined in {{bibref|RFC2782}}. The selection of {{object}}s with the
+          same {{param}} value utilizes the {{param|Weight}} parameter to
+          determine which {{object}} is selected by the {{object|##.Bridge}}.
+
+          This value is only used if
+          {{param|##.Bridge.{i}.ServerSelectionAlgorithm}} is set to
+          {{enum|Priority|##.Bridge.{i}.ServerSelectionAlgorithm}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Weight" access="readWrite">
+        <description>
+          This parameter specifies a relative weight for entries with the same
+          {{param|Priority}}. The mechanism is defined in {{bibref|RFC2782}}. A
+          value of -1 indicates that the implementation of this parameter is
+          specific to the Vendor.
+
+          This value is only used if
+          {{param|##.Bridge.{i}.ServerSelectionAlgorithm}} is set to
+          {{enum|Priority|##.Bridge.{i}.ServerSelectionAlgorithm}}.
+        </description>
+        <syntax>
+          <long>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </long>
+        </syntax>
+      </parameter>
+
+      <parameter name="Address" access="readWrite">
+        <description>
+          Fully Qualified Domain Name (FQDN) or IP address of the MQTT broker
+          server this {{object|##.Bridge}} connects to.
+
+          If the value of this parameter is a FQDN that resolves to multiple
+          addresses then each address SHOULD be attempted (in an
+          implementation-specific order) until a connection can be made or all
+          addresses are exhausted, in which case the next {{object}} instance
+          (based on rules defined over the selected
+          {{param|##.Bridge.{i}.ServerSelectionAlgorithm}}) SHOULD be used.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Port number of the MQTT broker server this {{object|##.Bridge}}
+          connects to.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="1883"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}."
+        access="readWrite" numEntriesParameter="SubscriptionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.10">
+      <description>
+        List of MQTT subscriptions handled over the bridge.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Topic"/>
+        <parameter ref="Direction"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Setting Enable to {{true}} activates the handling of this
+          subscription instance. In case of incoming directions
+          ({{param|Direction}} is either {{enum|in|Direction}} or
+          {{enum|both|Direction}}) the topic is subscribed over the bridge at
+          the remote MQTT broker with a MQTT SUBSCRIBE message if {{param}} is
+          set to {{true}} or unsubscribed from the remote MQTT broker with a
+          MQTT UNSUBSCRIBE message if the value is set to {{false}}.
+
+          The actual status of the subscription is indicated with
+          {{param|Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this subscription. {{enum}}
+
+          The {{enum|Enabled}} value indicates that the this subscription is
+          active. In case of incoming directions ({{param|Direction}} is either
+          {{enum|in|Direction}} or {{enum|both|Direction}}) the topic was
+          successfully subscribed with the remote MQTT broker.
+
+          The {{enum|Disabled}} value indicates that this subscription is not
+          used.
+
+          The {{enum|Error}} value indicates that an error occurred (e.g. an
+          subscription could not be made with the remote MQTT broker) and the
+          subscription is not in use.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Error"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Topic" access="readWrite">
+        <description>
+          Name of the subscribed topic. Topic names may contain wildcards
+          according to the rules specified in {{bibref|MQTT311|section Appendix
+          A}}, {{bibref|MQTT311|section 4.7}} or {{bibref|MQTT50|4.7}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="65535"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Direction" access="readWrite">
+        <description>
+          The direction of the subscription. {{enum}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="out">
+              <description>
+                Indicates that all matching topics will be sent over the bridge
+                to the next MQTT broker.
+              </description>
+            </enumeration>
+            <enumeration value="in">
+              <description>
+                Indicates that all matching topics will be received over the
+                bridge from the next MQTT broker.
+              </description>
+            </enumeration>
+            <enumeration value="both">
+              <description>
+                Indicates that all matching topics will be sent and received
+                over the bridge.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="QoS" access="readWrite">
+        <description>
+          The MQTT QoS level assigned with the subscription (see
+          {{bibref|MQTT311|section 4.1}}, {{bibref|MQTT311|section 4.3}}) or
+          {{bibref|MQTT50|4.3}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LocalPrefix" access="readWrite">
+        <description>
+          The local prefix is used for remapping received topics to the local
+          topics of the MQTT broker and to select the topics to be sent over
+          bridge to the remote MQTT broker.
+
+          * In incoming direction ({{param|Direction}} is either
+            {{enum|in|Direction}} or {{enum|both|Direction}}):
+
+          : For remote topics received over the bridge the MQTT broker adds the
+            LocalPrefix in front of the received topic, before processing it.
+
+          :: '' ''
+
+          : ''Example:''
+
+          :: Topic is "/bus/+", LocalPrefix is "/local", Direction is "in"
+
+          :: MQTT broker receives message with topic "/bus/tr181" over bridge
+             =&gt; MQTT broker uses topic "/local/bus/tr181" for internal
+             processing
+
+          * In outgoing direction ({{param|Direction}} is either
+            {{enum|out|Direction}} or {{enum|both|Direction}}):
+
+          : For selection of the topics to be sent over the bridge the MQTT
+            broker uses the combination of {{param}} and {{param|Topic}} to
+            match the topics to be sent over bridge, and removes the {{param}}
+            from the selected topic before sending it over the bridge.
+
+          :: '' ''
+
+          : ''Example:''
+
+          :: Topic is "/bus/+", LocalPrefix is "/local", Direction is "out"
+
+          :: MQTT broker receives message with topic "/local/bus/tr181" from a
+             MQTT client =&gt; MQTT broker sends topic "/bus/tr181" to remote
+             MQTT broker
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemotePrefix" access="readWrite">
+        <description>
+          The remote prefix is used for remapping topics to the remote MQTT
+          broker topic lists.
+
+          * In incoming direction ({{param|Direction}} is either
+            {{enum|in|Direction}} or {{enum|both|Direction}}):
+
+          : For remote topics received over the bridge the MQTT broker removes
+            the remote prefix topic from the received topic (before handling
+            the {{param|LocalPrefix}}), before processing it.
+
+          :: '' ''
+
+          : ''Example:''
+
+          :: Topic is "/bus/+", LocalPrefix is "/local", RemotePrefix is
+             "/remote", Direction is "in"
+
+          :: MQTT broker receives message with topic "/remote/bus/tr181" over
+             bridge =&gt; MQTT broker uses topic "/local/bus/tr181" for
+             internal processing
+
+          : During activation of the bridge, the MQTT broker prepends the
+            {{param|Topic}} with {{param}} topic and subscribes to the remote
+            MQTT broker with it, in order to receive all applicable remote
+            topics.
+
+          :: '' ''
+
+          : ''Example:''
+
+          :: Topic is "/bus/+", RemotePrefix is "/remote", Direction is "in"
+
+          :: MQTT broker sends a subscription to the remote MQTT broker with
+             the topic "/remote/bus/+".
+
+          * In outgoing direction ({{param|Direction}} is either
+            {{enum|out|Direction}} or {{enum|both|Direction}}):
+
+          : For all topics to be sent over the bridge ({{param|Direction}} is
+            either {{enum|out|Direction}} or {{enum|both|Direction}}), the
+            RemotePrefix will be prepended to the topic after the
+            {{param|LocalPrefix}} has been processed and before sending the
+            message over the bridge.
+
+          :: '' ''
+
+          : ''Example:''
+
+          :: Topic is "/bus/+", LocalPrefix is "/local", RemotePrefix is
+             "/remote" Direction is "out"
+
+          :: MQTT broker receives message with topic "/local/bus/tr181" from a
+             MQTT client =&gt; MQTT broker sends topic "/remote/bus/tr181" to
+             remote MQTT broker
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MQTT.Broker.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" dmr:fixedObject="true" version="2.10">
+      <description>
+        The MQTT broker statistics values. These will reset with each MQTT
+        broker start, either after reboot or if the MQTT broker gets
+        (re-)enabled.
+      </description>
+
+      <parameter name="TotalNumberOfClients" access="readOnly">
+        <description>
+          Total number of MQTT clients registered with the MQTT broker.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NumberOfActiveClients" access="readOnly">
+        <description>
+          Number of MQTT clients, which have a connection with the MQTT broker
+          established.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NumberOfInactiveClients" access="readOnly">
+        <description>
+          Number of MQTT clients, which have no connection with the MQTT broker
+          established.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Subscriptions" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of subscriptions held by the MQTT broker.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of publish messages sent by the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Number of publish messages received by the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MQTTMessagesSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Total number of MQTT messages sent by the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MQTTMessagesReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Total number of MQTT messages received by the MQTT broker.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionErrors" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Number of connection errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublishErrors" access="readOnly">
+        <description>
+          Number of errors which prevented sending publish messages
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="MQTTClientCon:1" version="2.13">
+      <description>
+        Provides MQTT client control
+      </description>
+      <object ref="Device.MQTT." requirement="present">
+        <parameter ref="ClientNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Capabilities." requirement="present">
+        <parameter ref="ProtocolVersionsSupported" requirement="readOnly"/>
+        <parameter ref="TransportProtocolSupported" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Client.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ProtocolVersion" requirement="readWrite"/>
+        <parameter ref="BrokerAddress" requirement="readWrite"/>
+        <parameter ref="BrokerPort" requirement="readWrite"/>
+        <parameter ref="CleanSession" requirement="readWrite"/>
+        <parameter ref="KeepAliveTime" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="ClientID" requirement="readWrite"/>
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+        <parameter ref="TransportProtocol" requirement="readWrite"/>
+        <parameter ref="MessageRetryTime" requirement="readWrite"/>
+        <parameter ref="ConnectRetryTime" requirement="readWrite"/>
+        <parameter ref="ConnectRetryIntervalMultiplier"
+            requirement="readWrite"/>
+        <parameter ref="ConnectRetryMaxInterval" requirement="readWrite"/>
+        <parameter ref="ResponseInformation" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTClientBase:1" version="2.10">
+      <description>
+        Provides basic MQTT client control and statistics
+      </description>
+      <object ref="Device.MQTT." requirement="present">
+        <parameter ref="ClientNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Capabilities." requirement="present">
+        <parameter ref="ProtocolVersionsSupported" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Client.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ProtocolVersion" requirement="readWrite"/>
+        <parameter ref="BrokerAddress" requirement="readWrite"/>
+        <parameter ref="BrokerPort" requirement="readWrite"/>
+        <parameter ref="CleanSession" requirement="readWrite"/>
+        <parameter ref="KeepAliveTime" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Client.{i}.Stats." requirement="present">
+        <parameter ref="BrokerConnectionEstablished" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesSent" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesReceived" requirement="readOnly"/>
+        <parameter ref="ConnectionErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTClientSubscribe:1" base="MQTTClientBase:1"
+        version="2.10">
+      <description>
+        Adds client subscription control and access to received topics
+      </description>
+      <object ref="Device.MQTT.Client.{i}." requirement="present">
+        <parameter ref="SubscriptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Client.{i}.Subscription.{i}."
+          requirement="present">
+        <parameter ref="Topic" requirement="readWrite"/>
+        <parameter ref="QoS" requirement="readOnly"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTBrokerBase:1" version="2.10">
+      <description>
+        Provides basic MQTT broker control and statistics
+      </description>
+      <object ref="Device.MQTT." requirement="present">
+        <parameter ref="BrokerNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}." requirement="present">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Stats." requirement="present">
+        <parameter ref="TotalNumberOfClients" requirement="readOnly"/>
+        <parameter ref="NumberOfActiveClients" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesSent" requirement="readOnly"/>
+        <parameter ref="MQTTMessagesReceived" requirement="readOnly"/>
+        <parameter ref="ConnectionErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTBrokerBridgeBase:1" base="MQTTBrokerBase:1"
+        version="2.10">
+      <description>
+        Adds parameters for MQTT network interconnection with Bridges
+      </description>
+      <object ref="Device.MQTT.Broker.{i}." requirement="present">
+        <parameter ref="BridgeNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Bridge.{i}." requirement="present">
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ServerConnection" requirement="readOnly"/>
+        <parameter ref="ServerNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="SubscriptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}."
+          requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Priority" requirement="readWrite"/>
+        <parameter ref="Address" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}."
+          requirement="present">
+        <parameter ref="Topic" requirement="readWrite"/>
+        <parameter ref="Direction" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="QoS" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="MQTTBrokerExtended:1" base="MQTTBrokerBase:1"
+        version="2.10">
+      <description>
+        Adds client authentication and extends statistics
+      </description>
+      <object ref="Device.MQTT.Broker.{i}." requirement="present">
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MQTT.Broker.{i}.Stats." requirement="present">
+        <parameter ref="NumberOfInactiveClients" requirement="readOnly"/>
+        <parameter ref="PublishSent" requirement="readOnly"/>
+        <parameter ref="PublishReceived" requirement="readOnly"/>
+        <parameter ref="PublishErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="MQTT:2.15">
+    <component ref="Root"/>
+    <component ref="MQTT"/>
+  </model>
+</dm:document>

@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [XMPP]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-xmpp"
+    file="tr-181-2-14-0-xmpp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="XMPP">
+
+    <object name="Device.XMPP." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.7">
+      <description>
+        The {{object}} represents the XMPP capabilities of the
+        device{{template|XMPP-APP-REF}}.
+      </description>
+
+      <parameter name="ConnectionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedServerConnectAlgorithms" access="readOnly"
+          version="2.11">
+        <description>
+          The algorithms supported by the CPE for resolving XMPP server
+          addresses and ports. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="DNS-SRV">
+              <description>
+                Use the preferred connection algorithm as specified in
+                {{bibref|RFC6120|Section 3.2.1}} where the value of the
+                {{param|Connection.{i}.Domain}} parameter is used to look up
+                the server address and port to use.
+              </description>
+            </enumeration>
+            <enumeration value="DNS">
+              <description>
+                Use the fallback connection mechanism as specified in
+                {{bibref|RFC6120|Section 3.2.2}}, where the value of the
+                {{param|Connection.{i}.Domain}} parameter is used to look up
+                the server address, and the port is the ''xmpp-client'' port
+                (5222).
+              </description>
+            </enumeration>
+            <enumeration value="ServerTable">
+              <description>
+                Use the instances of the {{object|Connection.{i}.Server}} table
+                based on the values of the
+                {{param|Connection.{i}.Server.{i}.Priority}} and
+                {{param|Connection.{i}.Server.{i}.Weight}} parameters as the
+                basis for reconnect. Instances MUST be reachable and reachable
+                instances with the lowest value MUST be preferred.
+              </description>
+            </enumeration>
+            <enumeration value="WebSocket">
+              <description>
+                Use the discovery and connection algorithm as specified in
+                {{bibref|RFC7395|Section 4}} where the value of the
+                {{param|Connection.{i}.Domain}} parameter is used to create a
+                secure HTTP request to discover the URL to use for the XMPP
+                over WebSocket connection.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XMPP.Connection.{i}." access="readWrite"
+        numEntriesParameter="ConnectionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.7">
+      <description>
+        The {{object}} represents a XMPP connection between the device and a
+        server. The {{param|Username}}, {{param|Domain}} and {{param|Resource}}
+        comprise the full identity (JabberID) of this {{object}} for this
+        device.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Username"/>
+        <parameter ref="Domain"/>
+        <parameter ref="Resource"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          The proposed local-part of the Jabber ID of this {{object}}, and the
+          value to be used to authenticate this {{object}} when making a
+          connection to the Server using the procedure outlined in
+          {{bibref|RFC6120|Section 6}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate this {{object}} when making a
+          connection to the {{object|Server}} using the procedure outlined in
+          {{bibref|RFC6120|Section 6}}.
+
+          Note that on a factory reset of the CPE, the value of this parameter
+          might be reset to its factory value. If a Controller modifies the
+          value of this parameter, it SHOULD be prepared to accommodate the
+          situation that the original value is restored as the result of a
+          factory reset.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Domain" access="readWrite">
+        <description>
+          The proposed domain-part of the Jabber ID of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Resource" access="readWrite">
+        <description>
+          The proposed resource-part of the Jabber ID of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="JabberID" access="readOnly">
+        <description>
+          The complete Jabber ID as determined by the first-hop XMPP server at
+          time of connection establishment. This Jabber ID will usually be the
+          standard concatentation of the local-part (Username), domain-part
+          (Domain), and resource-part (Resource) as defined in
+          {{bibref|RFC6120|Section 2.1}}
+          (local-part@domain-part/resource-part), but since the Jabber ID is
+          owned by the first-hop XMPP Server there are cases where the value
+          will be different.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of this {{object}} (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Disabled}} or {{enum|Error}} if there is a fault condition on
+          the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Enabled}} if and only if the interface is able to
+          transmit and receive PDUs; it SHOULD change to {{enum|Dormant}} if
+          and only if the interface is operable but is waiting for external
+          actions before it can transmit and receive network traffic (and
+          subsequently change to {{enum|Enabled}} if still operable when the
+          expected actions have completed); it SHOULD change to
+          {{enum|Unknown}} if the state of the interface can not be determined
+          for some reason.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="ServerNotPresent"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error_AuthenticationFailure"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChangeDate" access="readOnly">
+        <description>
+          The date and time at which this {{object}} entered into its current
+          operational state.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerConnectAlgorithm" access="readWrite">
+        <description>
+          The algorithm the {{object}} uses when connecting with the associated
+          lists of servers.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.SupportedServerConnectAlgorithms"/>
+          </string>
+          <default type="object" value="DNS-SRV"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveInterval" access="readWrite">
+        <description>
+          The number of {{units}} that keep alive events as specified in
+          {{bibref|RFC6120|Section 4.6.1}} are sent by this {{object}}.
+
+          A value of 0 disables the keep alive functionality. A value of -1
+          indicates that the keep alive interval is a vendor specific
+          implementation.
+
+          {{bibref|RFC6120|Section 4.6.4}} recommends not checking more
+          frequently than every 5 minutes (or 300 {{units}}).
+        </description>
+        <syntax>
+          <long>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </long>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerConnectAttempts" access="readWrite">
+        <description>
+          The number of times that this {{object}} attempts to connect to a
+          given IP address before moving on to the current server's next IP
+          address, or to the next server if the current server has no more IP
+          addresses.
+
+          If {{param}}, {{param|ServerRetryInitialInterval}},
+          {{param|ServerRetryIntervalMultiplier}} and
+          {{param|ServerRetryMaxInterval}} all have their default values, the
+          maximum reconnection wait intervals, in ''minutes'', will be ''{1, 2,
+          4, 8, 16, 32, 64, 128, 256, 512, 512, 512, 512, 512, 512}''. After
+          the initial attempt there are 15 further attempts, making a total of
+          16. The maximum reconnection wait interval is reached on the 10th
+          retry, i.e. the 11th attempt.
+
+          NOTE: If this {{object}} fails to connect to any of the servers' IP
+          addresses, fallback behavior SHOULD be as specified in
+          {{bibref|RFC6120|Section 3.2}}.
+
+          NOTE: If the value of this parameter is 0, server connection and
+          reconnection behavior is implementation-dependent.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="16"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerRetryInitialInterval" access="readWrite">
+        <description>
+          The maximum first reconnection wait interval, in
+          {{units}}{{template|XMPP-REF}}.
+
+          The Device MUST use a random value between ''0'' and {{param}} as the
+          first reconnection wait interval.
+
+          NOTE: If the value of the {{param|ServerConnectAttempts}} parameter
+          is 0, the value of this parameter is ignored.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerRetryIntervalMultiplier" access="readWrite">
+        <description>
+          The reconnection interval multiplier{{template|XMPP-REF}}. This value
+          is expressed in units of 0.001. Hence the values of the multiplier
+          range between 1.000 and 65.535.
+
+          For the ''n''th reconnection wait interval, the Device MUST use a
+          random value, in ''seconds'', between ''0'' and
+          {{param|ServerRetryInitialInterval}} * ({{param}} / 1000) ** (''n'' -
+          ''1'').
+
+          NOTE: If the value of the {{param|ServerConnectAttempts}} parameter
+          is 0, the value of this parameter is ignored.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="2000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerRetryMaxInterval" access="readWrite">
+        <description>
+          The maximum reconnection wait interval, in {{units}}.
+
+          If the ''n''th reconnection wait interval calculated from
+          {{param|ServerRetryInitialInterval}} and
+          {{param|ServerRetryIntervalMultiplier}} exceeds the value of this
+          parameter, then the Device MUST use the value of this parameter as
+          the next reconnection wait interval.
+
+          NOTE: If the value of the {{param|ServerConnectAttempts}} parameter
+          is 0, the value of this parameter is ignored.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="30720"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseTLS" access="readWrite">
+        <description>
+          This parameter allows a Controller to configure whether or not this
+          XMPP Connection is required to use TLS independent of whether or not
+          the XMPP Server that is being connected to is configured for TLS
+          "mandatory-to-negotiate".
+
+          If the value of {{param}} is {{true}} then the CPE will initiate TLS
+          negotiation if not required to by the XMPP Server.
+
+          If the value of {{param}} is {{false}} then the CPE will not initiate
+          TLS negotiation if not required to by the XMPP Server.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TLSEstablished" access="readOnly">
+        <description>
+          This parameter represents the TLS state of this XMPP Connection.
+
+          If this XMPP Connection is established and is secured by TLS then the
+          value of this parameter is {{true}}.
+
+          If this XMPP Connection is either not established or established but
+          not secured by TLS then the value of this parameter is {{false}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XMPP.Connection.{i}.Server.{i}." access="readWrite"
+        numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.7">
+      <description>
+        The {{object}} represents an XMPP server to be used for a
+        {{object|##.Connection}}.
+
+        This table is only relevant when
+        {{param|##.Connection.{i}.ServerConnectAlgorithm}} is set to
+        {{enum|ServerTable|##.Connection.{i}.ServerConnectAlgorithm}}. If
+        {{param|##.Connection.{i}.ServerConnectAlgorithm}} is set to
+        {{enum|DNS-SRV|##.Connection.{i}.ServerConnectAlgorithm}} then any
+        instances of this table are ignored by this {{object|##.Connection}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="ServerAddress"/>
+        <parameter ref="Port"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readWrite">
+        <description>
+          The priority of this {{object}} that is used by the
+          {{object|##.Connection}} when determining the {{object}} to connect.
+          The {{object|##.Connection}} MUST contact the {{object}} with the
+          lowest-numbered priority that the {{object|##.Connection}} can reach
+          as defined in {{bibref|RFC2782}}. The selection of {{object}}s with
+          the same {{param}} value utilizes the {{param|Weight}} parameter to
+          determine which {{object}} is selected by the
+          {{object|##.Connection}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Weight" access="readWrite">
+        <description>
+          This parameter specifies a relative weight for entries with the same
+          {{param|Priority}}. The mechanism is defined in {{bibref|RFC2782}}. A
+          value of -1 indicates that the implementation of this parameter is
+          specific to the Vendor.
+        </description>
+        <syntax>
+          <long>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </long>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerAddress" access="readWrite">
+        <description>
+          Fully Qualified Domain Name (FQDN) or IP address of the XMPP server
+          for this {{object|##.Connection}}.
+
+          If the value of this Parameter is a FQDN that resolves to multiple
+          addresses then each address SHOULD be attemtped (in an
+          implemnetation-specific order) until a connection can be made or all
+          addresses are exhausted, in which case the next {{object}} instance
+          (based on {{param|Priority}} and {{param|Weight}}) SHOULD be used.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Port number of the XMPP server for this {{object|##.Connection}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="5222"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XMPP.Connection.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        XMPP Connection statistics information for this resource.
+      </description>
+
+      <parameter name="ReceivedMessages" access="readOnly">
+        <description>
+          The number of XMPP stanzas (iq, presence, or message) that have been
+          received on this {{object|##.Connection}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedMessages" access="readOnly">
+        <description>
+          The number of XMPP stanzas (iq, presence, or message) that have been
+          transmitted by this {{object|##.Connection}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceivedErrorMessages" access="readOnly">
+        <description>
+          The number of XMPP stanzas (iq, presence, or message) that have been
+          received on this {{object|##.Connection}} where the type attribute
+          had a value of "error".
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedErrorMessages" access="readOnly">
+        <description>
+          The number of XMPP stanzas (iq, presence, or message) that have been
+          transmitted by this {{object|##.Connection}} where the type attribute
+          had a value of "error".
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="XMPPBasic:1" version="2.7">
+      <object ref="Device.XMPP." requirement="present">
+        <parameter ref="ConnectionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.XMPP.Connection.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+        <parameter ref="Domain" requirement="readWrite"/>
+        <parameter ref="Resource" requirement="readWrite"/>
+        <parameter ref="JabberID" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="LastChangeDate" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="XMPPAdvanced:1" extends="XMPPBasic:1" version="2.7">
+      <object ref="Device.XMPP.Connection.{i}." requirement="createDelete">
+        <parameter ref="ServerConnectAlgorithm" requirement="readWrite"/>
+        <parameter ref="KeepAliveInterval" requirement="readWrite"/>
+        <parameter ref="ServerNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="UseTLS" requirement="readWrite"/>
+        <parameter ref="TLSEstablished" requirement="readOnly"/>
+      </object>
+      <object ref="Device.XMPP.Connection.{i}.Server.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Priority" requirement="readWrite"/>
+        <parameter ref="Weight" requirement="readWrite"/>
+        <parameter ref="ServerAddress" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+      </object>
+      <object ref="Device.XMPP.Connection.{i}.Stats." requirement="present">
+        <parameter ref="ReceivedMessages" requirement="readOnly"/>
+        <parameter ref="TransmittedMessages" requirement="readOnly"/>
+        <parameter ref="ReceivedErrorMessages" requirement="readOnly"/>
+        <parameter ref="TransmittedErrorMessages" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="XMPPReconnect:1" version="2.7">
+      <object ref="Device.XMPP.Connection.{i}." requirement="createDelete">
+        <parameter ref="ServerConnectAttempts" requirement="readWrite"/>
+        <parameter ref="ServerRetryInitialInterval" requirement="readWrite"/>
+        <parameter ref="ServerRetryIntervalMultiplier" requirement="readWrite"/>
+        <parameter ref="ServerRetryMaxInterval" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="XMPP:2.14">
+    <component ref="Root"/>
+    <component ref="XMPP"/>
+  </model>
+</dm:document>

@@ -1,0 +1,960 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Cellular]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-cellular"
+    file="tr-181-2-14-0-cellular.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPAddress"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Cellular">
+
+    <object name="Device.Cellular." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.8">
+      <description>
+        This object models cellular interfaces and access points.
+      </description>
+
+      <parameter name="RoamingEnabled" access="readWrite">
+        <description>
+          Enables or disables roaming.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoamingStatus" access="readOnly">
+        <description>
+          Current roaming status.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Home"/>
+            <enumeration value="Roaming"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessPointNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Cellular.Interface.{i}." access="readOnly"
+        numEntriesParameter="InterfaceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true" version="2.8">
+      <description>
+        Cellular interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). Each instance of this object models a
+        cellular modem with a single radio and a single {{object|USIM}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly" activeNotify="canDeny">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}}
+
+          * SHOULD change to {{enum|Up}} if and only if the interface is able
+            to transmit and receive network traffic.
+
+          * SHOULD change to {{enum|Dormant}} if and only if the interface is
+            operable but is waiting for external actions before it can transmit
+            and receive network traffic (and subsequently change to {{enum|Up}}
+            if still operable when the expected actions have completed)
+
+          * SHOULD remain in the {{enum|Error}} state if there is an error or
+            other fault condition detected on the interface
+
+          * SHOULD remain in the {{enum|NotPresent}} state if the interface has
+            missing (typically hardware) components; it SHOULD change to
+            {{enum|Unknown}} if the state of the interface can not be
+            determined for some reason.
+
+          Because the interface includes layer 1 the {{enum|LowerLayerDown}}
+          value SHOULD never be used.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up">
+              <description>
+                Corresponds to {{enum|GPRS|CurrentAccessTechnology}},
+                {{enum|UMTS|CurrentAccessTechnology}},
+                {{enum|LTE|CurrentAccessTechnology}} etc ''ATTACHED'' status
+              </description>
+            </enumeration>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent">
+              <description>
+                Corresponds to {{enum|GPRS|CurrentAccessTechnology}},
+                {{enum|UMTS|CurrentAccessTechnology}},
+                {{enum|LTE|CurrentAccessTechnology}} etc ''DETACHED'' status
+              </description>
+            </enumeration>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since {{object}} is a layer 1 interface, it is expected that
+          {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IMEI" access="readOnly">
+        <description>
+          International Mobile Station Equipment Identity number, represented
+          as a 15 digit string (digits 0-9).
+        </description>
+        <syntax>
+          <string>
+            <size minLength="15" maxLength="15"/>
+            <pattern value="[0-9]{15,15}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedAccessTechnologies" access="readOnly">
+        <description>
+          Access technologies supported by the interface.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="GPRS">
+              <description>GSM with GPRS</description>
+            </enumeration>
+            <enumeration value="EDGE">
+              <description>GSM with EDGE</description>
+            </enumeration>
+            <enumeration value="UMTS"/>
+            <enumeration value="UMTSHSPA">
+              <description>
+                UMTS with High Speed Packet Access (HSPA {{bibref|3GPP-HSPA}})
+              </description>
+            </enumeration>
+            <enumeration value="CDMA2000OneX"/>
+            <enumeration value="CDMA2000HRPD"/>
+            <enumeration value="LTE"/>
+            <enumeration value="NR" version="2.14">
+              <description>5G New Radio</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreferredAccessTechnology" access="readWrite">
+        <description>
+          Preferred access technology.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedAccessTechnologies"
+                nullValue="Auto"/>
+          </string>
+          <default type="factory" value="Auto"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentAccessTechnology" access="readOnly">
+        <description>
+          Access technology that is currently in use.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedAccessTechnologies"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AvailableNetworks" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          List of available networks.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkRequested" access="readWrite">
+        <description>
+          Name of the network which will be used, or {{empty}} if the network
+          is selected automatically.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+          <default type="factory" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkInUse" access="readOnly">
+        <description>
+          The value is {{empty}} if no network is found, or if the network
+          specified in {{param|NetworkRequested}} is not found.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+            <enumerationRef targetParam="AvailableNetworks" nullValue=""/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RSSI" access="readOnly" activeNotify="canDeny">
+        <description>
+          The received signal strength in {{units}}. The allowed values depend
+          on {{param|CurrentAccessTechnology}}:
+
+          * For {{enum|GPRS|SupportedAccessTechnologies}},
+            {{enum|EDGE|SupportedAccessTechnologies}} the range is -111
+            {{units}} to -49 {{units}}
+
+          * For {{enum|UMTS|SupportedAccessTechnologies}},
+            {{enum|UMTSHSPA|SupportedAccessTechnologies}} the range is -117
+            {{units}} to -54 {{units}}
+
+          * For {{enum|LTE|SupportedAccessTechnologies}},
+            {{enum|NR|SupportedAccessTechnologies}} the range is -117 {{units}}
+            to -25 {{units}}
+
+          Note: An undetectable signal is indicated by the appropriate lower
+          limit, e.g. -117 {{units}} for LTE.
+        </description>
+        <syntax>
+          <int>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="RSRP" access="readOnly" activeNotify="canDeny"
+          version="2.14">
+        <description>
+          The Reference Signal Received Power in {{units}} for
+          {{enum|LTE|SupportedAccessTechnologies}},
+          {{enum|NR|SupportedAccessTechnologies}} values of
+          {{param|CurrentAccessTechnology}}:
+
+          * The valid range of RSRP values from worst to best is -140 {{units}}
+            to -44 {{units}}
+        </description>
+        <syntax>
+          <int>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="RSRQ" access="readOnly" activeNotify="canDeny"
+          version="2.14">
+        <description>
+          The Reference Signal Received Quality in {{units}} for
+          {{enum|LTE|SupportedAccessTechnologies}},
+          {{enum|NR|SupportedAccessTechnologies}} values of
+          {{param|CurrentAccessTechnology}}:
+
+          * RSRQ is calculated using RSSI and RSRP values using RSRQ =
+            (N*RSRP)/RSSI where N is the number of resource blocks (bandwidth).
+
+          * The valid range of RSRP values from worst to best is -20 {{units}}
+            to -3 {{units}}
+        </description>
+        <syntax>
+          <int>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpstreamMaxBitRate" access="readOnly">
+        <description>
+          The current maximum attainable data rate upstream (expressed in
+          {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DownstreamMaxBitRate" access="readOnly">
+        <description>
+          The current maximum attainable data rate downstream (expressed in
+          {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Cellular.Interface.{i}.USIM." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        USIM (Universal Subscriber Identity Module or SIM card) parameters for
+        the interface.
+      </description>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current status of the USIM card.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None">
+              <description>No card available</description>
+            </enumeration>
+            <enumeration value="Available">
+              <description>Card is available but not verified</description>
+            </enumeration>
+            <enumeration value="Valid">
+              <description>
+                Card can be used; either valid PIN was entered, or PIN check is
+                deactivated
+              </description>
+            </enumeration>
+            <enumeration value="Blocked">
+              <description>
+                USIM is blocked because the maximum number of invalid PIN
+                entries was exceeded
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>An error was detected with the card</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IMSI" access="readOnly">
+        <description>
+          International Mobile Subscriber Identity represented as a string with
+          either 14 or 15 digits (digits 0-9). The first 3 digits are the
+          mobile country code (MCC), which are followed by the mobile network
+          code (MNC), either 2 digits (European standard) or 3 digits (North
+          American standard), followed by the mobile subscription
+          identification number (MSIN).
+        </description>
+        <syntax>
+          <string>
+            <size minLength="14" maxLength="15"/>
+            <pattern value="[0-9]{14,15}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ICCID" access="readOnly">
+        <description>
+          Integrated Circuit Card Identifier represented as a string of up to
+          20 digits (digits 0-9). The number is composed of the following
+          parts:
+
+          * Major industry identifier (MII), 2 fixed digits, 89 for
+            telecommunication purposes.
+
+          * Country code, 1–3 digits, as defined by ITU-T recommendation
+            {{bibref|ITU-E.164}}.
+
+          * identifier, 1–4 digits.
+
+          * Individual account identification number. Its length is variable,
+            but every number under one IIN will have the same length.
+
+          * Single check digit calculated from the other digits using the Luhn
+            algorithm.
+
+          For cards using an ICCID according to {{bibref|ITU-E.118}} the
+          maximum length is 19 Digits, for GSM cards 20 digits.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="20"/>
+            <pattern value="[0-9]{6,20}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MSISDN" access="readOnly">
+        <description>
+          Mobile Subscriber Integrated Service Digital Network Number, a number
+          uniquely identifying a subscription in a GSM, UMTS, or LTE mobile
+          network. {{bibref|ITU-E.164}}
+        </description>
+        <syntax>
+          <string>
+            <size minLength="14" maxLength="15"/>
+            <pattern value="[0-9]{14,15}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PINCheck" access="readWrite">
+        <description>
+          Controls the PIN verification of the USIM card.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="OnNetworkAccess">
+              <description>
+                Check the PIN with each access to a new network
+              </description>
+            </enumeration>
+            <enumeration value="Reboot">
+              <description>
+                Check the PIN with first access after (re)boot
+              </description>
+            </enumeration>
+            <enumeration value="Off">
+              <description>Disable the PIN check</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PIN" access="readWrite">
+        <description>
+          Allows the Controller to change the USIM PIN used for SIM card
+          activation.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="4"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Cellular.Interface.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Cellular.AccessPoint.{i}." access="readWrite"
+        numEntriesParameter="AccessPointNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.8">
+      <description>
+        Cellular Access Point table. Each entry is identified by an
+        {{param|APN}} (Access Point Name) that identifies a gateway between the
+        mobile network and another computer network.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="APN"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the Access Point.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="APN" access="readWrite">
+        <description>
+          Access Point Name.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username used to authenticate the CPE when making a connection to the
+          Access Point.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate the CPE when making a connection to the
+          Access Point.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Proxy" access="readWrite">
+        <description>
+          Proxy server IP address.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProxyPort" access="readWrite">
+        <description>
+          Proxy server port.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          Reference to the interface with which the access point is associated.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".Cellular.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="CellularInterfaceBase:1" version="2.8">
+      <object ref="Device.Cellular." requirement="present">
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="AccessPointNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Cellular.Interface.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="NetworkInUse" requirement="readOnly"/>
+        <parameter ref="CurrentAccessTechnology" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Cellular.Interface.{i}.USIM." requirement="present">
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="MSISDN" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Cellular.AccessPoint.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="APN" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="CellularInterfaceExtended:1"
+        extends="CellularInterfaceBase:1" version="2.8">
+      <object ref="Device.Cellular." requirement="present">
+        <parameter ref="RoamingEnabled" requirement="readWrite"/>
+        <parameter ref="RoamingStatus" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Cellular.Interface.{i}." requirement="present">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="IMEI" requirement="readOnly"/>
+        <parameter ref="SupportedAccessTechnologies" requirement="readOnly"/>
+        <parameter ref="PreferredAccessTechnology" requirement="readWrite"/>
+        <parameter ref="NetworkRequested" requirement="readOnly"/>
+        <parameter ref="AvailableNetworks" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Cellular.Interface.{i}.USIM." requirement="present">
+        <parameter ref="IMSI" requirement="readOnly"/>
+        <parameter ref="ICCID" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="CellularInterfaceStats:1" version="2.8">
+      <object ref="Device.Cellular.Interface.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Cellular:2.14">
+    <component ref="Root"/>
+    <component ref="Cellular"/>
+  </model>
+</dm:document>

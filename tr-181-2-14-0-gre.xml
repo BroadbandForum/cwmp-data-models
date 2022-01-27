@@ -1,0 +1,918 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [GRE]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-gre"
+    file="tr-181-2-14-0-gre.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="GRE">
+
+    <object name="Device.GRE." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.8">
+      <description>
+        This object contains parameters associated with the Generic Routing
+        Encapsulation (GRE) Tunnel ({{bibref|RFC2784}}) with Key and Sequence
+        Number extensions ({{bibref|RFC2890}}). This object also provides a
+        means to treat packets that are encapsulated within a GRE Tunnel by
+        using a set of {{object|Filter}} objects to determine the treatment of
+        the packet.
+      </description>
+
+      <parameter name="TunnelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FilterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.GRE.Tunnel.{i}." access="readWrite"
+        numEntriesParameter="TunnelNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.8">
+      <description>
+        GRE Tunnel table, models the GRE Tunnel instance and represents the
+        entry point and exit point of the tunnel in relation to the WAN
+        interface. A {{object}} object has one or more {{object|Interface}}
+        objects that further define the sessions or flows within the tunnel.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the tunnel.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the tunnel.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemoteEndpoints" access="readWrite">
+        <description>
+          The Fully Qualified Domain Name (FQDN) or IP address of the remote
+          GRE tunnel endpoint. If more than one name/address is supplied, they
+          will be tried in turn, i.e. they are in decreasing order of
+          precedence.
+        </description>
+        <syntax>
+          <list maxItems="4">
+            <size/>
+          </list>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAlivePolicy" access="readWrite">
+        <description>
+          The mechanism used to keep the tunnel from timing out at the
+          {{param|ConnectedRemoteEndpoint}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ICMP"/>
+            <enumeration value="None"/>
+          </string>
+          <default type="object" value="None"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveTimeout" access="readWrite">
+        <description>
+          The tunnel keepalive timeout in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="10"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveThreshold" access="readWrite">
+        <description>
+          Number of KeepAlive messages unacknowledged by the
+          {{param|ConnectedRemoteEndpoint}} before the {{object}} is perceived
+          failed.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="3"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeliveryHeaderProtocol" access="readWrite">
+        <description>
+          The protocol used for the delivery header.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="IPv4"/>
+            <enumeration value="IPv6"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DefaultDSCPMark" access="readWrite">
+        <description>
+          If the specified entries in the {{object|#.Filter}} table do not
+          match this {{object}} object or an instance of the
+          {{object|Interface}} object for this {{object}} object, then the
+          value of this parameter is applied to the delivery header of the
+          packets in this {{object}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectedRemoteEndpoint" access="readOnly">
+        <description>
+          The Fully Qualified Domain Name (FQDN) name or IP address of the
+          connected remote GRE tunnel endpoint.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.GRE.Tunnel.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        Statistics for this GRE tunnel, i.e. all traffic that has passed
+        through the tunnel.
+
+        The device MUST reset the tunnel's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        tunnel becomes operationally down due to a previous administrative down
+        (i.e., Status parameter transitions to a disabled state after the
+        tunnel has been disabled) or when the tunnel becomes administratively
+        up (i.e. the Enable parameter transitioned from {{false}} to {{true}}).
+      </description>
+
+      <parameter name="KeepAliveSent" access="readOnly">
+        <description>
+          The total number of KeepAlive {{units}} sent out the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="messages"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAliveReceived" access="readOnly">
+        <description>
+          The total number of KeepAlive {{units}} received by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="messages"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by the tunnel due to any
+          error. This can include packets dropped due to a lack of transmit
+          buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel that contained
+          errors preventing them from being delivered to a higher-layer
+          protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.GRE.Tunnel.{i}.Interface.{i}." access="readWrite"
+        numEntriesParameter="InterfaceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.8">
+      <description>
+        GRE Interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). The {{object}} object models the GRE
+        Header as defined in {{bibref|RFC2784}} and extensions to the GRE
+        Header as defined in {{bibref|RFC2890}}. The {{object}} object provides
+        a way to discriminate how sessions or flows are encapsulated within the
+        GRE Tunnel. In addition the {{object}} object represents the entry
+        point and exit point of the tunnel in relation to the LAN interface.
+        Unless the Key Identifier of {{bibref|RFC2890}} is supported there is
+        only one instance of this {{object}} object per tunnel.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtocolIdOverride" access="readWrite">
+        <description>
+          The Protocol ID assigned to this {{object}}. The Protocol Id is the
+          EtherType value used to identify the encapsulated payload. When set
+          to {{null}} the CPE determines the Protocol Id.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseChecksum" access="readWrite">
+        <description>
+          When {{true}}, includes the "Checksum" field in the GRE header as
+          defined in {{bibref|RFC2784}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeyIdentifierGenerationPolicy" access="readWrite">
+        <description>
+          The method used to generate the Key Identifier extension as defined
+          in.{{bibref|RFC2890}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Provisioned"/>
+            <enumeration value="CPE_Generated" optional="true">
+              <description>
+                The generation of the Key field is CPE specific implementation.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeyIdentifier" access="readWrite">
+        <description>
+          When the value of {{param|KeyIdentifierGenerationPolicy}} is
+          {{enum|Provisioned|KeyIdentifierGenerationPolicy}} this {{param}}
+          parameter is used to identify an individual traffic flow within a GRE
+          tunnel, as defined in {{bibref|RFC2890}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseSequenceNumber" access="readWrite">
+        <description>
+          When {{true}}, includes the "SequenceNumber" field in the GRE header
+          as defined in {{bibref|RFC2890}}
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.GRE.Tunnel.{i}.Interface.{i}.Stats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        Statistics for this GRE tunnel interface, i.e. all traffic that has
+        passed through the interface.
+
+        The device MUST reset the interface's Stats parameters (unless
+        otherwise stated in individual object or parameter descriptions) either
+        when the interface becomes operationally down due to a previous
+        administrative down (i.e., the interface's Status parameter transitions
+        to a down state after the interface has been disabled) or when the
+        interface becomes administratively up (i.e. the Enable parameter
+        transitioned from {{false}} to {{true}}).
+      </description>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by this interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by this interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by this interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by this interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by this interface due to any
+          error. This can include packets dropped due to a lack of transmit
+          buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by this interface that
+          contained errors preventing them from being delivered to a
+          higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardChecksumReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel interface that
+          are discarded because of Checksum errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardSequenceNumberReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel interface that
+          are discarded because of Sequence Number errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.GRE.Filter.{i}." access="readWrite"
+        numEntriesParameter="FilterNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        GRE Filter table. Entries in this table are applied against the packets
+        that are to be encapsulated within the GRE Tunnel based on the
+        following conditions:
+
+        * If the value of the {{param|AllInterfaces}} is {{true}}, then this
+          entry will be applied to all {{object|#.Tunnel}} and
+          {{object|#.Tunnel.{i}.Interface}} instances.
+
+        * If the value of {{param|AllInterfaces}} is {{false}} and the value of
+          {{param|Interface}} parameter is a reference to a row in the
+          {{object|#.Tunnel}} table then this entry is applied to all
+          {{object|#.Tunnel.{i}.Interface}} instances of the
+          {{object|#.Tunnel}} reference.
+
+        * If the value of {{param|AllInterfaces}} is {{false}} and the value of
+          {{param|Interface}} parameter is a reference to a row in the
+          {{object|#.Tunnel.{i}.Interface}} table then this entry is applied to
+          the {{object|#.Tunnel.{i}.Interface}} reference.
+
+        * If no entries are matched for the packet, then the default treatment
+          (e.g., {{param|#.Tunnel.{i}.DefaultDSCPMark}}) is applied to the
+          packet.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference and {{param|AllInterfaces}} is {{false}}, then the table
+        entry is inoperable and the CPE MUST set {{param|Status}} to
+        {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this filter.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this filter. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the {{object}} entry in the order of precedence. A value
+          of ''1'' indicates the first entry considered (highest precedence).
+          For each packet, the highest ordered entry that matches the filter
+          criteria is applied. All lower order entries are ignored.
+
+          When this value is modified, if the value matches that of an existing
+          entry, the {{param}} value for the existing entry and all lower
+          {{param}} entries is incremented (lowered in precedence) to ensure
+          uniqueness of this value. A deletion causes {{param}} values to be
+          compacted. When a value is changed, incrementing occurs before
+          compaction.
+
+          The value of {{param}} on creation of a {{object}} table entry MUST
+          be one greater than the largest current value (initially assigned the
+          lowest precedence).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          Filter criterion. {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef
+                refType="strong"
+                targetParent="
+                  #.Tunnel.
+                  #.Tunnel.{i}.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllInterfaces" access="readWrite">
+        <description>
+          Filter criterion. This specifies that all ingress GRE tunnel
+          interfaces are associated with the entry. If {{true}}, the value of
+          {{param|Interface}} is ignored since all ingress GRE tunnel
+          interfaces are indicated.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VLANIDCheck" access="readWrite">
+        <description>
+          Filter criterion.
+
+          Current outer Ethernet VLAN ID as defined in 802.1Q. A value of -1
+          indicates this criterion is not used for filtering.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VLANIDExclude" access="readWrite">
+        <description>
+          If {{false}}, the filter includes only those packets that match the
+          {{param|VLANIDCheck}} entry, if specified.
+
+          If {{true}}, the filter includes all packets except those that match
+          the {{param|VLANIDCheck}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DSCPMarkPolicy" access="readWrite">
+        <description>
+          DSCP with which to mark the outer IP header for traffic that is
+          associated with the interface criterion.
+
+          Automatic DSCP marking behavior is a local matter to the device,
+          possibly influenced by other Broadband Forum standards that it
+          supports.
+
+          * A value of -1 indicates copy from the upstream packet.
+
+          * A value of -2 indicates automatic marking of DSCP.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-2" maxInclusive="63"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="GREBasic:1" version="2.8">
+      <object ref="Device.GRE." requirement="present">
+        <parameter ref="TunnelNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.GRE.Tunnel.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="RemoteEndpoints" requirement="readWrite"/>
+        <parameter ref="KeepAlivePolicy" requirement="readWrite"/>
+        <parameter ref="KeepAliveTimeout" requirement="readWrite"/>
+        <parameter ref="KeepAliveThreshold" requirement="readWrite"/>
+        <parameter ref="DeliveryHeaderProtocol" requirement="readWrite"/>
+        <parameter ref="ConnectedRemoteEndpoint" requirement="readOnly"/>
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.GRE.Tunnel.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+      </object>
+      <object ref="Device.GRE.Tunnel.{i}.Interface.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="LowerLayers" requirement="readOnly"/>
+        <parameter ref="ProtocolIdOverride" requirement="readWrite"/>
+        <parameter ref="UseChecksum" requirement="readWrite"/>
+      </object>
+      <object ref="Device.GRE.Tunnel.{i}.Interface.{i}.Stats."
+          requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="GREAdv:1" extends="GREBasic:1" version="2.8">
+      <object ref="Device.GRE." requirement="present">
+        <parameter ref="FilterNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.GRE.Tunnel.{i}.Stats." requirement="present">
+        <parameter ref="KeepAliveSent" requirement="readOnly"/>
+        <parameter ref="KeepAliveReceived" requirement="readOnly"/>
+      </object>
+      <object ref="Device.GRE.Tunnel.{i}.Interface.{i}."
+          requirement="createDelete">
+        <parameter ref="KeyIdentifierGenerationPolicy" requirement="readWrite"/>
+        <parameter ref="KeyIdentifier" requirement="readWrite"/>
+        <parameter ref="UseSequenceNumber" requirement="readWrite"/>
+      </object>
+      <object ref="Device.GRE.Tunnel.{i}.Interface.{i}.Stats."
+          requirement="present">
+        <parameter ref="DiscardChecksumReceived" requirement="readOnly"/>
+        <parameter ref="DiscardSequenceNumberReceived" requirement="readOnly"/>
+      </object>
+      <object ref="Device.GRE.Filter.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="AllInterfaces" requirement="readWrite"/>
+        <parameter ref="VLANIDCheck" requirement="readWrite"/>
+        <parameter ref="VLANIDExclude" requirement="readWrite"/>
+        <parameter ref="DSCPMarkPolicy" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="GRE:2.14">
+    <component ref="Root"/>
+    <component ref="GRE"/>
+  </model>
+</dm:document>

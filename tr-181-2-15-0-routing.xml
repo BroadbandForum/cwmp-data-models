@@ -1,0 +1,2026 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Routing]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-routing"
+    file="tr-181-2-15-0-routing.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="IPv6Prefix"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPPrefix"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Routing">
+
+    <object name="Device.Routing." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        Routing object that contains the {{object|Router}} table and
+        {{object|RIP}} protocol object.
+      </description>
+
+      <parameter name="RouterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Routing.Router.{i}." access="readWrite"
+        numEntriesParameter="RouterNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        This object allows the handling of the routing and forwarding
+        configuration of the device.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this ''Router'' entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this ''Router'' entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4ForwardingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6ForwardingNumberOfEntries" access="readOnly"
+          version="2.2">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Routing.Router.{i}.IPv4Forwarding.{i}."
+        access="readWrite" numEntriesParameter="IPv4ForwardingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        Layer 3 IPv4 forwarding table.
+
+        In addition to statically configured routes, this table MUST include
+        dynamic routes learned through layer 3 routing protocols, including RIP
+        (i.e. RIP version 2), OSPF, DHCPv4, and IPCP. The CPE MAY reject
+        attempts to delete or modify a dynamic route entry.
+
+        For each incoming packet, the layer 3 forwarding decision is
+        conceptually made as follows:
+
+        * Only enabled table entries with a matching {{param|ForwardingPolicy}}
+          are considered, i.e. those that either do not specify a
+          {{param|ForwardingPolicy}}, or else specify a
+          {{param|ForwardingPolicy}} that matches that of the incoming packet.
+
+        * Next, table entries that also have a matching destination
+          address/mask are considered, and the matching entry with the longest
+          prefix is applied to the packet (i.e. the entry with the most
+          specific network). An unspecified destination address is a wild-card
+          and always matches, but with a prefix length of zero.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference to an IPv4-capable interface (that is attached to the IPv4
+        stack), then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="DestIPAddress"/>
+        <parameter ref="DestSubnetMask"/>
+        <parameter ref="ForwardingPolicy"/>
+        <parameter ref="GatewayIPAddress"/>
+        <parameter ref="Interface"/>
+        <parameter ref="ForwardingMetric"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the forwarding entry. On creation, an entry is
+          disabled by default.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of the forwarding entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StaticRoute" access="readOnly">
+        <description>
+          If {{true}}, this route is a Static route.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestIPAddress" access="readWrite">
+        <description>
+          Destination IPv4 address. {{empty}} indicates no destination address
+          is specified.
+
+          A Forwarding table entry for which {{param}} and
+          {{param|DestSubnetMask}} are both {{empty}} is a default route.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestSubnetMask" access="readWrite">
+        <description>
+          Destination subnet mask. {{empty}} indicates no destination subnet
+          mask is specified.
+
+          If a destination subnet mask is specified, the {{param}} is ANDed
+          with the destination address before comparing with the
+          {{param|DestIPAddress}}. Otherwise, the full destination address is
+          used as is.
+
+          A Forwarding table entry for which {{param|DestIPAddress}} and
+          {{param}} are both {{empty}} is a default route.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ForwardingPolicy" access="readWrite">
+        <description>
+          Identifier of a set of classes or flows that have the corresponding
+          {{param}} value as defined in the {{object|Device.QoS}} object.
+
+          A value of -1 indicates no {{param}} is specified.
+
+          If specified, this forwarding entry is to apply only to traffic
+          associated with the specified classes and flows.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GatewayIPAddress" access="readWrite">
+        <description>
+          IPv4 address of the gateway.
+
+          Only one of {{param}} and Interface SHOULD be configured for a route.
+
+          If both are configured, {{param}} and {{param|Interface}} MUST be
+          consistent with each other.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} Specifies the egress layer 3 interface associated with
+          this entry. Example: Device.IP.Interface.1.
+
+          Only one of {{param|GatewayIPAddress}} and {{param}} SHOULD be
+          configured for a route.
+
+          If both are configured, {{param|GatewayIPAddress}} and {{param}} MUST
+          be consistent with each other.
+
+          For a route that was configured by setting {{param|GatewayIPAddress}}
+          but not {{param}}, read access to {{param}} MUST return the full
+          hierarchical parameter name for the routes egress interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Origin" access="readOnly" version="2.2">
+        <description>
+          Protocol via which the IPv4 forwarding rule was learned. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCPv4"/>
+            <enumeration value="OSPF"/>
+            <enumeration value="IPCP"/>
+            <enumeration value="RIP"/>
+            <enumeration value="Static">
+              <description>
+                For example, present in the factory default configuration,
+                created by the Controller, or created by some other management
+                entity (e.g. via a GUI).
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Static"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ForwardingMetric" access="readWrite">
+        <description>
+          Forwarding metric. A value of -1 indicates this metric is not used.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Routing.Router.{i}.IPv6Forwarding.{i}."
+        access="readWrite" numEntriesParameter="IPv6ForwardingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.2">
+      <description>
+        Layer 3 IPv6 forwarding table.
+
+        In addition to statically configured routes, this table MUST include
+        dynamic routes learned through layer 3 routing protocols, including
+        RIPng, OSPF, DHCPv6, and RA. The CPE MAY reject attempts to delete or
+        modify a dynamic route entry.
+
+        For each incoming packet, the layer 3 forwarding decision is
+        conceptually made as follows:
+
+        * Only enabled table entries with a matching {{param|ForwardingPolicy}}
+          are considered, i.e. those that either do not specify a
+          {{param|ForwardingPolicy}}, or else specify a
+          {{param|ForwardingPolicy}} that matches that of the incoming packet.
+
+        * Next, table entries that also have a matching destination prefix are
+          considered, and the matching entry with the longest prefix length is
+          applied to the packet (i.e. the entry with the most specific
+          network). An unspecified destination address is a wild-card and
+          always matches, but with a prefix length of zero.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference to an IPv6-capable interface (that is attached to the IPv6
+        stack), then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        This object is based on ''inetCidrRouteTable'' from {{bibref|RFC4292}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="DestIPPrefix"/>
+        <parameter ref="ForwardingPolicy"/>
+        <parameter ref="NextHop"/>
+        <parameter ref="Interface"/>
+        <parameter ref="ForwardingMetric"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of the forwarding entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestIPPrefix" access="readWrite">
+        <description>
+          Destination IPv6 prefix. {{empty}} indicates that it matches all
+          destination prefixes (i.e. equivalent to "::/0"). All bits to the
+          right of the prefix MUST be zero, e.g. 2001:edff:fe6a:f76::/64.
+
+          Routes with a 128-bit prefix length (/128) are host routes for a
+          specific IPv6 destination, e.g.
+          2001:db8:28:2:713e:a426:d167:37ab/128.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ForwardingPolicy" access="readWrite">
+        <description>
+          Identifier of a set of classes or flows that have the corresponding
+          {{param}} value as defined in the {{object|.QoS}} object.
+
+          A value of -1 indicates no {{param}} is specified.
+
+          If specified, this forwarding entry is to apply only to traffic
+          associated with the specified classes and flows.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NextHop" access="readWrite">
+        <description>
+          IPv6 address of the next hop.
+
+          Only one of {{param}} and {{param|Interface}} SHOULD be configured
+          for a route. {{empty}} indicates no {{param}} is specified.
+
+          If both are configured, {{param}} and {{param|Interface}} MUST be
+          consistent with each other.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} Specifies the egress layer 3 interface associated with
+          this entry. Example: ''Device.IP.Interface.1''.
+
+          Only one of {{param|NextHop}} and {{param}} SHOULD be configured for
+          a route. {{empty}} indicates no {{param}} is specified.
+
+          If both are configured, {{param|NextHop}} and {{param}} MUST be
+          consistent with each other.
+
+          For a route that was configured by setting {{param|NextHop}} but not
+          {{param}}, read access to {{param}} MUST return the full hierarchical
+          parameter name for the route's egress interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Origin" access="readOnly">
+        <description>
+          Protocol via which the IPv6 forwarding rule was learned. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCPv6"/>
+            <enumeration value="OSPF"/>
+            <enumeration value="RA">
+              <description>
+                Router Advertisement Route Information Option
+                {{bibref|RFC4191}}.
+              </description>
+            </enumeration>
+            <enumeration value="RIPng">
+              <description>RIPng for IPv6 {{bibref|RFC2080}}</description>
+            </enumeration>
+            <enumeration value="Static">
+              <description>
+                For example, present in the factory default configuration,
+                created by the Controller, or created by some other management
+                entity (e.g. via a GUI).
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Static"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ForwardingMetric" access="readWrite">
+        <description>
+          Forwarding metric. A value of -1 indicates this metric is not used.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExpirationTime" access="readOnly">
+        <description>
+          The time at which the route will expire, or {{null}} if not known.
+          For an infinite lifetime, the parameter value MUST be
+          9999-12-31T23:59:59Z.
+
+          {{param}} is provided by an underlying dynamic routing protocol, e.g.
+          by an {{bibref|RFC4191}} route information option.
+        </description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value="9999-12-31T23:59:59Z"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Routing.RIP." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        Routing Information Protocol (RIP) object.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables RIP on the device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedModes" access="readOnly">
+        <description>
+          The supported RIP protocol modes. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Send"/>
+            <enumeration value="Receive"/>
+            <enumeration value="Both"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Routing.RIP.InterfaceSetting.{i}." access="readWrite"
+        numEntriesParameter="InterfaceSettingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        IP Interface RIP configuration table.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+
+        Note: This object only applies to RIP2; i.e. version 2 of the RIP
+        protocol is used to accept or send over the specified
+        {{param|Interface}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} This is the IP interface associated with this
+          {{object}} entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AcceptRA" access="readWrite">
+        <description>
+          When set to {{true}}, RIP route advertisements received over
+          {{param|Interface}} are accepted.
+
+          When set to {{false}}, RIP route advertisements received over
+          {{param|Interface}} are rejected.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SendRA" access="readWrite">
+        <description>
+          When set to {{true}}, RIP route advertisements are to be sent over
+          {{param|Interface}}.
+
+          When set to {{false}}, no RIP route advertisements will be sent over
+          {{param|Interface}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Routing.RouteInformation." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.2">
+      <description>
+        Received Router Advertisement (RA) route information
+        {{bibref|RFC4191}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables receiving route information from the RA.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Routing.RouteInformation.InterfaceSetting.{i}."
+        access="readOnly" numEntriesParameter="InterfaceSettingNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.2">
+      <description>
+        IP Interface RA route information table. Contains received RA route
+        information {{bibref|RFC4191}}. As such, the data in this table cannot
+        be modified.
+      </description>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ForwardingEntryCreated"/>
+            <enumeration value="NoForwardingEntry"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readOnly">
+        <description>
+          {{reference}} This is the IP interface associated with this
+          {{object}} entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceRouter" access="readOnly">
+        <description>
+          IPv6 Address of the router that sent the RA that included this route
+          info.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreferredRouteFlag" access="readOnly">
+        <description>
+          Flag included in a specific Route Information Option within an RA
+          message (Prf flag), as defined in {{bibref|RFC4191|Section 2.3}}.
+          {{enum}}
+
+          Note that this is not the Prf flag included in the base RA message.
+          Also see {{bibref|RFC4191|Section 2.1}} which discusses how this flag
+          is encoded on the wire.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="High"/>
+            <enumeration value="Medium"/>
+            <enumeration value="Low"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Prefix" access="readOnly">
+        <description>
+          IPv6 address prefix, as received in an instance of the Route
+          Information Option of a RA message.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RouteLifetime" access="readOnly">
+        <description>
+          The time at which {{param|Prefix}} will cease to be usable for use as
+          a forwarding entry, or {{null}} if not known. For an infinite
+          lifetime, the parameter value MUST be 9999-12-31T23:59:59Z.
+
+          {{param}} is received in an instance of the Route Information Option
+          of a RA message.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="Routing:1" version="2.0">
+      <object ref="Device.Routing." requirement="present">
+        <parameter ref="RouterNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.RIP." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="SupportedModes" requirement="readOnly"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.RIP.InterfaceSetting.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="AcceptRA" requirement="readWrite"/>
+        <parameter ref="SendRA" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Routing.Router.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="IPv4ForwardingNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Router.{i}.IPv4Forwarding.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="DestIPAddress" requirement="readWrite"/>
+        <parameter ref="DestSubnetMask" requirement="readWrite"/>
+        <parameter ref="GatewayIPAddress" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="ForwardingMetric" requirement="readWrite"/>
+        <parameter ref="StaticRoute" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="Routing:2" base="Routing:1" version="2.2">
+      <object ref="Device.Routing.Router.{i}.IPv4Forwarding.{i}."
+          requirement="createDelete">
+        <parameter ref="Origin" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="IPv6Routing:1" version="2.2">
+      <object ref="Device.Routing." requirement="present">
+        <parameter ref="RouterNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.RIP." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="SupportedModes" requirement="readOnly"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.RIP.InterfaceSetting.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="AcceptRA" requirement="readWrite"/>
+        <parameter ref="SendRA" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Routing.RouteInformation." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.RouteInformation.InterfaceSetting.{i}."
+          requirement="present">
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readOnly"/>
+        <parameter ref="SourceRouter" requirement="readOnly"/>
+        <parameter ref="PreferredRouteFlag" requirement="readOnly"/>
+        <parameter ref="Prefix" requirement="readOnly"/>
+        <parameter ref="RouteLifetime" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Router.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="IPv6ForwardingNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Router.{i}.IPv6Forwarding.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="DestIPPrefix" requirement="readWrite"/>
+        <parameter ref="NextHop" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="ForwardingMetric" requirement="readWrite"/>
+        <parameter ref="Origin" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <component name="BabelRoutingProtocol">
+    <object name="Device.Routing.Babel." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.15">
+      <description>
+        This object provides parameters for configuration, troubleshooting, and
+        monitoring of the Babel routing protocol {{bibref|RFC8966}}. This data
+        model is based on the Babel information model defined in
+        {{bibref|RFC9046}}.
+      </description>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables Babel on the device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the device to indicate a
+          locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="ImplementationVersion" access="readOnly">
+        <description>
+          The name and version of this implementation of the Babel protocol.
+          This is not the same as the version of the Babel protocol that has
+          been implemented. The method of naming and identifying implementation
+          versions will be specific to the implementation.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SelfRouterID" access="readOnly">
+        <description>
+          The router-id used by this instance of the Babel protocol to identify
+          itself. {{bibref|RFC8966}} describes this as an arbitrary string of 8
+          octets.
+        </description>
+        <syntax>
+          <hexBinary/>
+        </syntax>
+      </parameter>
+      <parameter name="SelfSeqno" access="readOnly">
+        <description>
+          The current sequence number included in route updates for routes
+          originated by this node.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedMetricCompAlgorithms" access="readOnly">
+        <description>
+          Supported cost computation algorithms.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="2-out-of-3">
+              <description>{{bibref|RFC8966|Section A.2.1}}</description>
+            </enumeration>
+            <enumeration value="ETX">
+              <description>{{bibref|RFC8966|Section A.2.2}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedSecurityMechanisms" access="readOnly">
+        <description>
+          Supported security mechanisms.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="MAC">
+              <description>{{bibref|RFC8967}}</description>
+            </enumeration>
+            <enumeration value="DTLS">
+              <description>{{bibref|RFC8968}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedMACAlgorithms" access="readOnly">
+        <description>
+          Supported MAC computation algorithms.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HMAC-SHA256">
+              <description>{{bibref|RFC8967}}</description>
+            </enumeration>
+            <enumeration value="BLAKE2s-128">
+              <description>{{bibref|RFC8967}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedDTLSCertTypes" access="readOnly">
+        <description>
+          Supported DTLS certificate types.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="X.509">
+              <description>{{bibref|RFC8968}}</description>
+            </enumeration>
+            <enumeration value="RawPublicKey">
+              <description>{{bibref|RFC8968}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="StatsEnable" access="readWrite">
+        <description>
+          Enables or disables collection of statistics on all
+          {{object|InterfaceSetting.}} instances. Statistics are provided in
+          {{object|InterfaceSetting.{i}.Stats.}}. When enabled, existing
+          statistics values are not cleared and will be incremented as new
+          packets are counted.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="RouteNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="MACKeySetNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DTLSCertSetNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.Constants." access="readOnly"
+        minEntries="1" maxEntries="1">
+      <description>
+        This object represents the constants used by the Babel protocol.
+      </description>
+      <parameter name="UDPPort" access="readWrite">
+        <description>
+          The UDP port number used by the Babel implementation to send and
+          receive Babel packets. The UDP port number assigned by IANA is 6696.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastGroup" access="readWrite">
+        <description>
+          The multicast group for sending and listening to multicast
+          announcements on IPv6. The multicast group assigned by IANA is
+          ff02::1:6.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.InterfaceSetting.{i}."
+        access="readWrite"
+        numEntriesParameter="InterfaceSettingNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" enableParameter="Enable">
+      <description>
+        This object provides parameters related to the interfaces the Babel
+        protocol is operating over and can act as a routing protocol for.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables Babel on this interface.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}} The {{enum|Error_Misconfigured}}
+          value indicates that a necessary configuration value is undefined or
+          invalid. The {{enum|Error}} value MAY be used by the device to
+          indicate a locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceReference" access="readOnly">
+        <description>
+          The {{object|Device.IP.Interface.}} object instance this Babel
+          implementation is running over. The referenced interface object MUST
+          have {{param|Device.IP.Interface.{i}.IPv6Enable}} set to true.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="Device.IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceMetricAlgorithm" access="readOnly">
+        <description>
+          Indicates the metric computation algorithm used on this interface,
+          from among the supported metric computation algorithms listed in
+          {{param|#.SupportedMetricCompAlgorithms}}.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.SupportedMetricCompAlgorithms"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="SplitHorizonEnabled" access="readWrite">
+        <description>
+          Enables or disables the use of split horizon optimization when
+          calculating metrics on this interface. Split horizon optimization is
+          described in {{bibref|RFC8966|Section 3.7.4}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="McastHelloSeqno" access="readOnly">
+        <description>
+          The current sequence number in use for multicast Hellos sent on this
+          interface.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="McastHelloInterval" access="readOnly">
+        <description>
+          The current interval (time in {{units}}) used for multicast Hellos
+          sent on this interface.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="centiseconds"/>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UpdateInterval" access="readOnly">
+        <description>
+          The current interval (time in {{units}}) used for all updates
+          (multicast or unicast) sent on this interface.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="centiseconds"/>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="MACEnabled" access="readWrite">
+        <description>
+          Enables or disables the MAC security mechanism.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceMACKeySets" access="readWrite">
+        <description>
+          {{object|#.MACKeySet.}} instances that apply to this {{object}}
+          instance. When an {{object}} is created, all {{object|#.MACKeySet.}}
+          instances with {{param|#.MACKeySet.{i}.DefaultApply}} of {{true}}
+          will be included in this list.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.MACKeySet."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="MACVerify" access="readWrite">
+        <description>
+          A Boolean flag indicating whether MACs in incoming Babel packets are
+          required to be present and are verified. If this parameter is
+          {{true}}, incoming packets are required to have a valid MAC.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="DTLSEnabled" access="readWrite">
+        <description>
+          Enables or disables the DTLS security mechanism.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceDTLSCertSets" access="readWrite">
+        <description>
+          {{object|#.DTLSCertSet.}} instances that apply to this {{object}}
+          instance. When an {{object}} is created, all
+          {{object|#.DTLSCertSet.}} instances with
+          {{param|#.DTLSCertSet.{i}.DefaultApply}} of {{true}} will be included
+          in this list.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.DTLSCertSet."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CachedInfoEnabled" access="readWrite">
+        <description>
+          A Boolean flag indicating whether the cached_info extension is
+          included in ClientHello and ServerHello packets (see
+          {{bibref|RFC8968|Appendix A}}. The extension is included if {{true}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="DTLSCertPrefer" access="readWrite">
+        <description>
+          Supported certificate types (from
+          {{param|#.SupportedDTLSCertTypes}}), listed in order of preference.
+          This list is used to populate the server_certificate_type extension
+          in a ClientHello (see {{bibref|RFC8968|Appendix A}}). Values that are
+          present with a non-empty
+          {{param|#.DTLSCertSet.{i}.DTLSCert.{i}.CertPrivateKey}} in at least
+          one instance of {{object|#.DTLSCertSet.{i}.DTLSCert.}} included in a
+          {{object|#.DTLSCertSet.}} instance referenced by
+          {{param|InterfaceDTLSCertSets}} will be used to populate the
+          client_certificate_type extension in a Client Hello.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.SupportedDTLSCertTypes"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="PacketLogEnable" access="readWrite">
+        <description>
+          Enables or disables the logging of Babel packets into the
+          {{param|PacketLog}} on this interface.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketLog" access="readOnly">
+        <description>
+          A reference to a {{object|.DeviceInfo.VendorLogFile}} instance that
+          contains a timestamped log of packets received and sent on
+          {{param|#.Constants.UDPPort}} on this interface. The
+          {{bibref|LIBPCAP}} file format with .pcap file extension SHOULD be
+          supported for packet log files. Logging is enabled/disabled by
+          {{param|PacketLogEnable}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent="Device.DeviceInfo.VendorLogFile."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="NeighborNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.InterfaceSetting.{i}.Stats."
+        access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object provides statistics parameters for this interface.
+      </description>
+      <parameter name="SentMcastHello" access="readOnly">
+        <description>
+          A count of the number of multicast Hello packets sent on this
+          interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="SentMcastUpdate" access="readOnly">
+        <description>
+          A count of the number of multicast update packets sent on this
+          interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="SentUcastHello" access="readOnly">
+        <description>
+          A count of the number of unicast Hello packets sent on this
+          interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="SentUcastUpdate" access="readOnly">
+        <description>
+          A count of the number of unicast update packets sent on this
+          interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="SentIHU" access="readOnly">
+        <description>
+          A count of the number of IHU ("I Heard You") packets sent on this
+          interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ReceivedPackets" access="readOnly">
+        <description>
+          A count of the number of Babel packets received on this interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.InterfaceSetting.{i}.Neighbor.{i}."
+        access="readOnly" numEntriesParameter="NeighborNumberOfEntries"
+        minEntries="0" maxEntries="unbounded">
+      <description>
+        This object provides parameters related to neighbor devices that Babel
+        packets are received from and sent to.
+      </description>
+      <uniqueKey>
+        <parameter ref="NeighborAddress"/>
+      </uniqueKey>
+      <parameter name="NeighborAddress" access="readOnly">
+        <description>
+          IP address the neighbor sends packets from.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="HelloMCastHistory" access="readOnly">
+        <description>
+          The multicast Hello history of whether or not the multicast Hello
+          packets prior to {{param|ExpectedMCastHelloSeqno}} were received.
+          This is a binary sequence where the most recently received Hello is
+          expressed as a "1" placed in the left-most bit, with prior bits
+          shifted right (and "0" bits placed between prior Hello bits and the
+          most recent Hello bit for any not-received Hellos). This value is
+          displayed using hex digits. See {{bibref|RFC8966|Section A.1}}.
+        </description>
+        <syntax>
+          <hexBinary/>
+        </syntax>
+      </parameter>
+      <parameter name="HelloUCastHistory" access="readOnly">
+        <description>
+          The unicast Hello history of whether or not the unicast Hello packets
+          prior to {{param|ExpectedUCastHelloSeqno}} were received. This is a
+          binary sequence where the most recently received Hello is expressed
+          as a "1" placed in the left-most bit, with prior bits shifted right
+          (and "0" bits placed between prior Hello bitss and the most recent
+          Hello bit for any not-received Hellos). This value is displayed using
+          hex digits. See {{bibref|RFC8966|Section A.1}}.
+        </description>
+        <syntax>
+          <hexBinary/>
+        </syntax>
+      </parameter>
+      <parameter name="TXCost" access="readOnly">
+        <description>
+          Transmission cost value from the last IHU ("I Heard You") packet
+          received from this neighbor, or maximum value (as defined in
+          {{bibref|RFC8966|Section 3.4.2}}) to indicate the IHU hold timer for
+          this neighbor has expired.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="ExpectedMCastHelloSeqno" access="readOnly">
+        <description>
+          Expected multicast Hello sequence number of next Hello to be received
+          from this neighbor. If multicast Hello packets are not expected, or
+          processing of multicast packets is not enabled, this MUST be -1. Note
+          {{bibref|RFC9046}} specifies a 16-bit unsigned integer with NULL
+          value to represent no processed or expected multicast Hello packets.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="ExpectedUCastHelloSeqno" access="readOnly">
+        <description>
+          Expected unicast Hello sequence number of next Hello to be received
+          from this neighbor. If unicast Hello packets are not expected, or
+          processing of unicast packets is not enabled, this MUST be -1.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastHelloSeqno" access="readOnly">
+        <description>
+          The current sequence number in use for unicast Hellos sent to this
+          neighbor. If unicast Hello packets are not being sent, this MUST be
+          -1.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastHelloInterval" access="readOnly">
+        <description>
+          The current interval in {{units}} used for unicast Hellos sent to
+          this neighbor.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="centiseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="RXCost" access="readOnly">
+        <description>
+          Reception cost calculated for this neighbor. This value is usually
+          derived from the Hello history, which may be combined with other
+          data, such as statistics maintained by the link layer. The {{param}}
+          is sent to a neighbor in each IHU ("I Heard You") packet. See
+          {{bibref|RFC8966|Section 3.4.3}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Cost" access="readOnly">
+        <description>
+          Link cost is computed from the values maintained by a Babel
+          implementation in its neighbor table as defined in
+          {{bibref|RFC8966|Section3.2.4}}: the statistics kept about the
+          reception of Hellos and the transmission cost computed from received
+          IHU packets. See {{bibref|RFC8966|Section 3.4.3}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.Route.{i}." access="readOnly"
+        numEntriesParameter="RouteNumberOfEntries" minEntries="0"
+        maxEntries="unbounded">
+      <description>
+        This object provides parameters for routes recieved from neighbors and
+        internal routes.
+      </description>
+      <uniqueKey>
+        <parameter ref="RoutePrefix"/>
+        <parameter ref="SourceRouterID"/>
+      </uniqueKey>
+      <parameter name="RoutePrefix" access="readOnly">
+        <description>
+          IP prefix for which this route is advertised.
+        </description>
+        <syntax>
+          <dataType ref="IPPrefix"/>
+        </syntax>
+      </parameter>
+      <parameter name="SourceRouterID" access="readOnly">
+        <description>
+          Router-id of the router that originated this route.
+        </description>
+        <syntax>
+          <hexBinary/>
+        </syntax>
+      </parameter>
+      <parameter name="Neighbor" access="readOnly">
+        <description>
+          Reference to the {{object|#.InterfaceSetting.{i}.Neighbor}} entry for
+          the neighbor that advertised this route.
+        </description>
+          <syntax>
+            <string>
+              <pathRef refType="strong"
+                targetParent="#.InterfaceSetting.{i}.Neighbor."
+                targetType="row"/>
+            </string>
+          </syntax>
+      </parameter>
+      <parameter name="ReceivedMetric" access="readOnly">
+        <description>
+          The metric with which this route was advertised by the neighbor, or
+          maximum value (as defined in {{bibref|RFC8966}}) to indicate the
+          route was recently retracted and is temporarily unreachable (see
+          {{bibref|RFC8966|Section 3.5.5}}). This metric will be -1 if the
+          route was not received from a neighbor but was generated through
+          other means. At least one of {{param}} and {{param|CalculatedMetric}}
+          MUST have a value other than -1. Having both be other than -1 is
+          expected for a route that is received and subsequently advertised.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="CalculatedMetric" access="readOnly">
+        <description>
+          A calculated metric for this route. How the metric is calculated is
+          implementation-specific. Maximum value (as defined in
+          {{bibref|RFC8966}}) indicates the route was recently retracted and is
+          temporarily unreachable ({{bibref|RFC8966|Section 3.5.5}}). At least
+          one of {{param|ReceivedMetric}} and {{param}} MUST have a value other
+          than -1. Having both be other than -1 is expected for a route that is
+          received and subsequently advertised.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="RouteSeqno" access="readOnly">
+        <description>
+          The sequence number with which this route was advertised.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="NextHop" access="readOnly">
+        <description>
+          The next-hop address of this route. This will be empty if this route
+          has no next-hop address.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="RouteFeasible" access="readOnly">
+        <description>
+          A Boolean flag indicating whether this route is feasible, as defined
+          in {{bibref|RFC8966|Section 3.5.1}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="RouteSelected" access="readOnly">
+        <description>
+          A Boolean flag indicating whether this route is selected (i.e.,
+          whether it is currently being used for forwarding and is being
+          advertised).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.MACKeySet.{i}." access="readWrite"
+        numEntriesParameter="MACKeySetNumberOfEntries" minEntries="0"
+        maxEntries="unbounded">
+      <description>
+        This object provides parameters related to use of the HMAC security
+        mechanism {{bibref|RFC8967}} to sign and verify Babel packets.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="DefaultApply" access="readWrite">
+        <description>
+          A Boolean flag indicating whether this {{object}} instance is to be
+          applied to all new {{object|#.InterfaceSetting.}} instances. If
+          {{true}}, this {{object}} instance applies to all new
+          {{object|#.InterfaceSetting.}} instances at the time they are created
+          and a reference to this {{object}} is included in the
+          {{param|#.InterfaceSetting.{i}.InterfaceMACKeySets}} parameter. If
+          {{false}}, this {{object}} is not applied to new
+          {{object|#.InterfaceSetting.}} instances when they are created.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="MACKeyNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.MACKeySet.{i}.MACKey.{i}."
+        access="readWrite" numEntriesParameter="MACKeyNumberOfEntries"
+        minEntries="0" maxEntries="unbounded">
+      <description>
+        This object provides the MAC keys used to calculate MACs for
+        verification and sending by the {{object|#.}} instance.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="KeyUseSend" access="readWrite">
+        <description>
+          Indicates whether this {{param|KeyValue}} is used to compute a MAC
+          and include that MAC in the sent Babel packet. A MAC for sent packets
+          is computed using this key if the value is {{true}}. If the value is
+          {{false}}, this key is not used to compute a MAC to include in sent
+          Babel packets.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="KeyUseVerify" access="readWrite">
+        <description>
+          Indicates whether the {{param|KeyValue}} is used to verify incoming
+          Babel packets. Incoming packets are verified using this key if
+          {{true}}. If {{false}} no MAC is computed from {{param|KeyValue}} for
+          comparing with the MAC in an incoming Babel packet.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="KeyValue" access="writeOnceReadOnly">
+        <description>
+          The value of the MAC key. This value is immutable, once written. This
+          value is of a length suitable for the associated
+          {{param|MACKeyAlgorithm}}. If the algorithm is based on the HMAC
+          construction {{bibref|RFC2104}}, the length MUST be between 0 and an
+          upper limit that is at least the size of the output length (where
+          "HMAC-SHA256" output length is 32 octets as described in
+          {{bibref|RFC4868}}). Longer lengths MAY be supported but are not
+          necessary if the management system has the ability to generate a
+          suitably random value (e.g., by randomly generating a value or by
+          using a key derivation technique as recommended in
+          {{bibref|RFC8967|Security Considerations}}). If the algorithm is
+          "BLAKE2s-128", the length MUST be between 0 and 32 bytes inclusive,
+          as specified in {{bibref|RFC7693}}.
+        </description>
+        <syntax hidden="true">
+          <hexBinary/>
+        </syntax>
+      </parameter>
+      <parameter name="MACKeyAlgorithm" access="readWrite">
+        <description>
+          The name of the MAC algorithm used with this key. The value MUST be
+          the same as one of the enumerations listed in the
+          {{param|##.SupportedMACAlgorithms}} parameter.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.SupportedMACAlgorithms"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.DTLSCertSet.{i}." access="readWrite"
+        numEntriesParameter="DTLSCertSetNumberOfEntries" minEntries="0"
+        maxEntries="unbounded">
+      <description>
+        This object provides parameters related to use of the DTLS security
+        mechanism {{bibref|RFC8968}} to encrypt Babel packets.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="DefaultApply" access="readWrite">
+        <description>
+          A Boolean flag indicating whether this {{object}} instance is to be
+          applied to all new {{object|#.InterfaceSetting.}} instances. If
+          {{true}}, this {{object}} instance applies to all new
+          {{object|#.InterfaceSetting.}} instances at the time they are created
+          and a reference to this {{object}} is included in the
+          {{param|#.InterfaceSetting.{i}.InterfaceDTLSCertSets}} parameter. If
+          {{false}}, this {{object}} is not applied to new
+          {{object|#.InterfaceSetting.}} instances when they are created.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="DTLSCertNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.Routing.Babel.DTLSCertSet.{i}.DTLSCert.{i}."
+        access="readWrite" numEntriesParameter="DTLSCertNumberOfEntries"
+        minEntries="0" maxEntries="unbounded">
+      <description>
+        This object provides the certificates used for verification and signing
+        by the {{object|#.}} instance with DTLS.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="CertValue" access="writeOnceReadOnly">
+        <description>
+          The DTLS certificate in PEM format {{bibref|RFC7468}}. This value is
+          immutable, once written.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CertType" access="readWrite">
+        <description>
+          The certificate type of {{param|CertValue}} (from among the supported
+          types in {{param|##.SupportedDTLSCertTypes}}). This value is
+          immutable, once written.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.SupportedDTLSCertTypes"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="CertPrivateKey" access="writeOnceReadOnly">
+        <description>
+          The private key of the certificate. {{param}} is only given a value
+          if the certificate belongs to this device. If {{param}} is non-empty,
+          this certificate can be supplied during DTLS handshaking. This value
+          is immutable, once written.
+        </description>
+        <syntax hidden="true">
+          <hexBinary/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="Babel:1" version="2.15">
+      <object ref="Device.Routing.Babel." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ImplementationVersion" requirement="readOnly"/>
+        <parameter ref="SelfRouterID" requirement="readOnly"/>
+        <parameter ref="SupportedMetricCompAlgorithms" requirement="readOnly"/>
+        <parameter ref="SupportedSecurityMechanisms" requirement="readOnly"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+        <parameter ref="RouteNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Babel.Constants." requirement="present">
+        <parameter ref="UDPPort" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Routing.Babel.InterfaceSetting.{i}."
+          requirement="present">
+        <parameter ref="InterfaceReference" requirement="readOnly"/>
+        <parameter ref="InterfaceMetricAlgorithm" requirement="readOnly"/>
+        <parameter ref="NeighborNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Babel.InterfaceSetting.{i}.Neighbor.{i}."
+          requirement="present">
+        <parameter ref="NeighborAddress" requirement="readOnly"/>
+        <parameter ref="TXCost" requirement="readOnly"/>
+        <parameter ref="ExpectedMCastHelloSeqno" requirement="readOnly"/>
+        <parameter ref="ExpectedUCastHelloSeqno" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Babel.Route.{i}." requirement="present">
+        <parameter ref="RoutePrefix" requirement="readOnly"/>
+        <parameter ref="SourceRouterID" requirement="readOnly"/>
+        <parameter ref="Neighbor" requirement="readOnly"/>
+        <parameter ref="ReceivedMetric" requirement="readOnly"/>
+        <parameter ref="CalculatedMetric" requirement="readOnly"/>
+        <parameter ref="RouteSeqno" requirement="readOnly"/>
+        <parameter ref="NextHop" requirement="readOnly"/>
+        <parameter ref="RouteFeasible" requirement="readOnly"/>
+        <parameter ref="RouteSelected" requirement="readOnly"/>
+      </object>
+    </profile>
+    <profile name="BabelMAC:1" extends="Babel:1" version="2.15">
+      <object ref="Device.Routing.Babel." requirement="present">
+        <parameter ref="SupportedMACAlgorithms" requirement="readOnly"/>
+        <parameter ref="MACKeySetNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Babel.InterfaceSetting.{i}."
+          requirement="present">
+        <parameter ref="MACEnabled" requirement="readWrite"/>
+        <parameter ref="InterfaceMACKeySets" requirement="readWrite"/>
+        <parameter ref="MACVerify" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Routing.Babel.MACKeySet.{i}."
+          requirement="createDelete">
+        <parameter ref="DefaultApply" requirement="readWrite"/>
+        <parameter ref="MACKeyNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Babel.MACKeySet.{i}.MACKey.{i}."
+          requirement="createDelete">
+        <parameter ref="KeyUseSend" requirement="readWrite"/>
+        <parameter ref="KeyUseVerify" requirement="readWrite"/>
+        <parameter ref="KeyValue" requirement="readOnly"/>
+        <parameter ref="MACKeyAlgorithm" requirement="readWrite"/>
+      </object>
+    </profile>
+    <profile name="BabelDTLS:1" extends="Babel:1" version="2.15">
+      <object ref="Device.Routing.Babel." requirement="present">
+        <parameter ref="SupportedDTLSCertTypes" requirement="readOnly"/>
+        <parameter ref="DTLSCertSetNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Babel.InterfaceSetting.{i}."
+          requirement="present">
+        <parameter ref="DTLSEnabled" requirement="readWrite"/>
+        <parameter ref="InterfaceDTLSCertSets" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Routing.Babel.DTLSCertSet.{i}."
+          requirement="createDelete">
+        <parameter ref="DefaultApply" requirement="readWrite"/>
+        <parameter ref="DTLSCertNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Routing.Babel.DTLSCertSet.{i}.DTLSCert.{i}."
+          requirement="createDelete">
+        <parameter ref="CertValue" requirement="readOnly"/>
+        <parameter ref="CertType" requirement="readWrite"/>
+        <parameter ref="CertPrivateKey" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Routing:2.15">
+    <component ref="Root"/>
+    <component ref="Routing"/>
+    <component ref="BabelRoutingProtocol"/>
+  </model>
+</dm:document>

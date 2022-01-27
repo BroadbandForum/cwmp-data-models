@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [LLDP]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-lldp"
+    file="tr-181-2-14-0-lldp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="MACAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="LLDP">
+
+    <object name="Device.LLDP." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.8">
+      <description>
+        This object contains Link Layer Discovery Protocol (LLDP)
+        {{bibref|802.1AB-2009}} related objects and parameters.
+      </description>
+    </object>
+
+    <object name="Device.LLDP.Discovery." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.8">
+      <description>
+        This object is used for managing the discovery of LLDP devices.
+
+        The CPE MAY, but need not, retain some or all of the information in
+        this object across reboot.
+      </description>
+
+      <parameter name="DeviceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LLDP.Discovery.Device.{i}." access="readOnly"
+        numEntriesParameter="DeviceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.8">
+      <description>
+        This table contains information about discovered LLDP devices.
+      </description>
+      <uniqueKey>
+        <parameter ref="ChassisIDSubtype"/>
+        <parameter ref="ChassisID"/>
+      </uniqueKey>
+
+      <parameter name="Interface" access="readOnly">
+        <description>
+          {{reference|the interface via which the LLDP device was discovered}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChassisIDSubtype" access="readOnly">
+        <description>
+          The chassis identifier subtype, which is included in the value of the
+          ''LLDPDU's'' Chassis ID TLV (TLV Type = 1). The following subtype
+          values are defined:
+
+          * ''0'' (Reserved)
+
+          * ''1'' (Chassis component)
+
+          * ''2'' (Interface alias)
+
+          * ''3'' (Port component)
+
+          * ''4'' (MAC address)
+
+          * ''5'' (Network address)
+
+          * ''6'' (Interface name)
+
+          * ''7'' (Locally assigned)
+
+          * ''8-255'' (Reserved)
+
+          Note: It is assumed that this integer might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. In this case, the Chassis ID is set to the
+          representative MAC address (chassis ID subtype = 4) for
+          ''HTIP-Ethernet Bridge''.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChassisID" access="readOnly">
+        <description>
+          The chassis identifier, which is included in the value of the
+          ''LLDPDU's'' Chassis ID TLV (TLV Type = 1).
+
+          Note: It is assumed that this string might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. In this case, the Chassis ID is set to the
+          representative MAC address. If ''LLDPDU''s are sent and received from
+          two or more LLDP agents of the same ''HTIP-Ethernet Bridge'', this
+          value is same in all ''LLDPDU''s.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="1" maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Host" access="readOnly">
+        <description>
+          {{list}}Indicates the full path names of all Host table entries,
+          whether active or inactive, that correspond to this device.
+
+          When the entries are added to or removed from the Host tables, the
+          value of this parameter MUST be updated accordingly.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".Hosts.Host."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LLDP.Discovery.Device.{i}.Port.{i}."
+        access="readOnly" numEntriesParameter="PortNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        This table contains information about ports on discovered LLDP devices.
+      </description>
+      <uniqueKey>
+        <parameter ref="PortIDSubtype"/>
+        <parameter ref="PortID"/>
+      </uniqueKey>
+
+      <parameter name="PortIDSubtype" access="readOnly">
+        <description>
+          The port identifier subtype, which is included in the value of the
+          ''LLDPDU's'' Port ID TLV (TLV Type = 2). The following subtype values
+          are defined:
+
+          * ''0'' (Reserved)
+
+          * ''1'' (Interface alias)
+
+          * ''2'' (Port component)
+
+          * ''3'' (MAC address)
+
+          * ''4'' (Network address)
+
+          * ''5'' (Interface name)
+
+          * ''6'' (Agent circuit ID)
+
+          * ''7'' (Locally assigned)
+
+          * ''8-255'' (Reserved)
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortID" access="readOnly">
+        <description>
+          The port identifier, which is included in the value of the
+          ''LLDPDU's'' Port ID TLV (TLV Type = 2).
+        </description>
+        <syntax>
+          <string>
+            <size minLength="1" maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TTL" access="readOnly">
+        <description>
+          The ''LLDPDU'' lifetime (in {{units}}), which is the value of the
+          latest TimeToLive TLV (TLV Type = 3).
+
+          If this value is 0, it means that the LLDP agent or the MAC service
+          function of the port is stopped.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortDescription" access="readOnly">
+        <description>
+          The port description, which is the value of the latest Port
+          Description TLV (TLV Type = 4), or {{empty}} if no Port Description
+          TLV has been received.
+
+          Note: It is assumed that this string might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. In this case, the parameter value is likely to be
+          one of the names defined in {{bibref|JJ-300.00|Appendix A (''List of
+          Interface Standard Names'')}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACAddressList" access="readOnly">
+        <description>
+          The device's MAC addresses, which are included in the value of the
+          ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127), or
+          {{empty}} if no list of MAC addresses has been received.
+
+          The parameter is relevant when there is a LLDP device which has a MAC
+          copy function and has two or more MAC addresses.
+
+          Note: It is assumed that it might be used for HTIP (Home-network
+          Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. In this case, the {{bibref|OUI}} in the third
+          octet is E0271A (''TTC-OUI'') and the organizationally defined
+          subtype in the sixth octet is 3 (''MAC Address List'').
+        </description>
+        <syntax>
+          <list maxItems="255">
+            <size/>
+          </list>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date and time at which the last LLDPDU was received for this
+          ({{object|#}},{{object}}).
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LLDP.Discovery.Device.{i}.Port.{i}.LinkInformation."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        The port's link information, which is included in the value of the
+        ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127).
+
+        Note: It is assumed that this object might be used for HTIP
+        (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+        {{bibref|G.9973}}. In this case, the {{bibref|OUI}} in the third octet
+        is E0271A (''TTC-OUI'') and the organizationally defined subtype in the
+        sixth octet is 2 (''Link Information'').
+      </description>
+
+      <parameter name="InterfaceType" access="readOnly">
+        <description>
+          The port's interface type, or 0 if no interface type has been
+          received.
+
+          Note: It is assumed that it might be used for HTIP (Home-network
+          Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. In this case, it's an IANA interface type
+          {{bibref|IANAifType}}.
+
+          For example, IANAifType defines the following interface types for
+          wired line (UTP cable), wireless line, power line, and coaxial cable:
+
+          * ''6'' (Wired line)
+
+          * ''71'' (Wireless)
+
+          * ''174'' (PLC)
+
+          * ''236'' (Coaxial cable)
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACForwardingTable" access="readOnly">
+        <description>
+          The port's MAC forwarding table, or the value is {{empty}} if no
+          forwarding table was supplied.
+        </description>
+        <syntax>
+          <list maxItems="255">
+            <size/>
+          </list>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LLDP.Discovery.Device.{i}.DeviceInformation."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        The device information, which is included in the value of the
+        ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127).
+
+        Note: It is assumed that this object might be used for HTIP
+        (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+        {{bibref|G.9973}}. In this case, this table contains the
+        Organizationally Specific TLV (TLV Type = 127) of ''LLDPDU'', in which
+        the {{bibref|OUI}} in the third octet is E0271A (''TTC-OUI'') and the
+        organizationally defined subtype in the sixth octet is 1 (''Device
+        Information'').
+      </description>
+
+      <parameter name="DeviceCategory" access="readOnly">
+        <description>
+          Each list item indicates a device category (e.g."AV_TV" and
+          "AV_Recorder"), or the value is {{empty}} if no device categories
+          were provided.
+
+          Note: It is assumed that this list might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. Standard HTIP device categories are defined in
+          {{bibref|JJ-300.01}}. In this case, the maximum length of the list is
+          127 and of each item is 31, and any non-HTIP device categories SHOULD
+          NOT conflict with standard HTIP device categories.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManufacturerOUI" access="readOnly">
+        <description>
+          The manufacturer OUI, which is included in the value of the
+          ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127), or
+          {{empty}} if no manufacturer OUI was provided.
+
+          {{pattern}}
+        </description>
+        <syntax>
+          <string>
+            <size minLength="0" maxLength="6"/>
+            <pattern value="">
+              <description>{{empty}}</description>
+            </pattern>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ModelName" access="readOnly">
+        <description>
+          The model name, which is included in the value of the ''LLDPDU's''
+          Organizationally Specific TLV (TLV Type = 127), or {{empty}} if no
+          model name was provided.
+
+          Note: It is assumed that this string might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="31"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ModelNumber" access="readOnly">
+        <description>
+          The model number, which is included in the value of the ''LLDPDU's''
+          Organizationally Specific TLV (TLV Type = 127), or {{empty}} if no
+          model number was provided.
+
+          Note: It is assumed that this string might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="31"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorSpecificNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.LLDP.Discovery.Device.{i}.DeviceInformation.VendorSpecific.{i}."
+        access="readOnly" numEntriesParameter="VendorSpecificNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        The vendor-specific device information, which is included in the value
+        of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127).
+
+        {{keys}}
+
+        Note: It is assumed that this object might be used for HTIP
+        (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+        {{bibref|G.9973}}. In this case, this table contains the
+        Organizationally Specific TLV (TLV Type = 127) of ''LLDPDU'', in which
+        the {{bibref|OUI}} in the third octet is E0271A (''TTC-OUI''), the
+        organizationally defined subtype in the sixth octet is 1 (''Device
+        Information''), and the device information ID in the seventh octet is
+        255 (''Vendor-specific extension field'').
+      </description>
+      <uniqueKey>
+        <parameter ref="OrganizationCode"/>
+        <parameter ref="InformationType"/>
+      </uniqueKey>
+
+      <parameter name="OrganizationCode" access="readOnly">
+        <description>
+          The vendor-specific organization code, which is included in the value
+          of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127).
+        </description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InformationType" access="readOnly">
+        <description>
+          The vendor-specific device information type, which is included in the
+          value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type =
+          127).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Information" access="readOnly">
+        <description>
+          The vendor-specific device information, which is included in the
+          value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type =
+          127).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="248"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="LLDPBaseline:1" version="2.8">
+      <object ref="Device.LLDP." requirement="present"/>
+      <object ref="Device.LLDP.Discovery." requirement="present">
+        <parameter ref="DeviceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LLDP.Discovery.Device.{i}." requirement="present">
+        <parameter ref="Interface" requirement="readOnly"/>
+        <parameter ref="ChassisIDSubtype" requirement="readOnly"/>
+        <parameter ref="ChassisID" requirement="readOnly"/>
+        <parameter ref="Host" requirement="readOnly"/>
+        <parameter ref="PortNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LLDP.Discovery.Device.{i}.Port.{i}."
+          requirement="present">
+        <parameter ref="PortIDSubtype" requirement="readOnly"/>
+        <parameter ref="PortID" requirement="readOnly"/>
+        <parameter ref="TTL" requirement="readOnly"/>
+        <parameter ref="PortDescription" requirement="readOnly"/>
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="MACAddressList" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="LLDPRemOrgDefInfo:1" version="2.8">
+      <object ref="Device.LLDP.Discovery.Device.{i}.Port.{i}.LinkInformation."
+          requirement="present">
+        <parameter ref="InterfaceType" requirement="readOnly"/>
+        <parameter ref="MACForwardingTable" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LLDP.Discovery.Device.{i}.DeviceInformation."
+          requirement="present">
+        <parameter ref="DeviceCategory" requirement="readOnly"/>
+        <parameter ref="ManufacturerOUI" requirement="readOnly"/>
+        <parameter ref="ModelName" requirement="readOnly"/>
+        <parameter ref="ModelNumber" requirement="readOnly"/>
+        <parameter ref="VendorSpecificNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object
+          ref="Device.LLDP.Discovery.Device.{i}.DeviceInformation.VendorSpecific.{i}."
+          requirement="present">
+        <parameter ref="OrganizationCode" requirement="readOnly"/>
+        <parameter ref="InformationType" requirement="readOnly"/>
+        <parameter ref="Information" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="LLDP:2.14">
+    <component ref="Root"/>
+    <component ref="LLDP"/>
+  </model>
+</dm:document>

@@ -1,0 +1,1808 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [HPNA]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-hpna"
+    file="tr-181-2-15-0-hpna.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="MACAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="HPNAPHYThroughputDiagnosticsInput">
+
+    <parameter name="Interface" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        {{reference}} This is the interface over which the test is to be
+        performed.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+          <pathRef refType="weak" targetParent=".HPNA.Interface."
+              targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="NumPacketsInBurst" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Number of test packet in burst to be send during PHY diagnostics test
+        from each HPNA device to other HPNA device in the HPNA network.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="BurstInterval" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Test packet burst interval length (expressed in {{units}}).
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="milliseconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="TestPacketPayloadLength" access="readWrite"
+        mandatory="true" version="2.0">
+      <description>
+        Payload length in the test packets.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="0" maxInclusive="1480"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="PayloadEncoding" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        HPNA payload encoding in PHY diagnostics. 0 is used for negotiated
+        payload between devices according to line conditions.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PayloadDataGen" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Test packets payload data generator value.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PayloadType" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Test packets payload type. {{enum}}
+
+        In Pattern mode the PayloadDataGen value is repeated pattern in the
+        payload.
+
+        In IncrementByte mode LSByte in PayloadDataGen is used as first payload
+        and next bytes in payload are incremented.
+      </description>
+      <syntax>
+        <string>
+          <enumeration value="Pattern"/>
+          <enumeration value="IncrementByte"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="PriorityLevel" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Priority level of PHY diagnostics packets (0 lowest -7 highest).
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="0" maxInclusive="7"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="HPNAPHYThroughputDiagnosticsOutputNumberOfEntries">
+    <parameter name="ResultNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}} This is the number of PHY diagnostics results.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="HPNAPHYThroughputDiagnosticsOutput">
+
+    <object name="Result.{i}." access="readOnly"
+        numEntriesParameter="ResultNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.0">
+      <description>
+        PHY throughput diagnostics results.
+
+        Each result object corresponds to unidirectional traffic between two
+        PHY diagnostics-enabled nodes (so there are two such objects for each
+        such pair).
+      </description>
+      <uniqueKey>
+        <parameter ref="SrcMACAddress"/>
+        <parameter ref="DestMACAddress"/>
+      </uniqueKey>
+
+      <parameter name="SrcMACAddress" access="readOnly">
+        <description>
+          HPNA source MAC address.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACAddress" access="readOnly">
+        <description>
+          HPNA destination MAC address.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PHYRate" access="readOnly">
+        <description>
+          PHY diagnostics HPNA PHY rate (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="BaudRate" access="readOnly">
+        <description>
+          PHY Baud rate (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbaud"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SNR" access="readOnly">
+        <description>
+          PHY diagnostics SNR (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="0.1dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          Number of received packets in PHY diagnostics mode.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Attenuation" access="readOnly">
+        <description>
+          Measured attenuation (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="0.1dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="HPNAPerformanceMonitoringDiagnosticsInput">
+
+    <parameter name="Interface" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        {{reference}} This is the interface over which the test is to be
+        performed.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+          <pathRef refType="weak" targetParent=".HPNA.Interface."
+              targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="SampleInterval" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Time in {{units}} between automatic collection of performance
+        monitoring data. A value of zero disables automatic collection of data.
+
+        The CPE MAY impose a minimum sample interval, in which case an attempt
+        to set a (non-zero) interval that is less than this minimum MUST set
+        the interval to the minimum and MUST NOT be regarded as an error.
+
+        If SampleInterval is a simple fraction of a day, e.g. 900 (a quarter of
+        an hour) or 3600 (an hour), the CPE MAY choose to align sample
+        intervals with time of day, but is not required to do so.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="seconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="HPNAPerformanceMonitoringDiagnosticsOutputNumberOfEntries">
+    <object base="Nodes." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="NodeNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}} This is the number of HPNA nodes for which performance
+          monitoring results were collected during the current sample interval.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Channels." access="readOnly" minEntries="1" maxEntries="1">
+      <parameter name="ChannelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}} This is the number of HPNA channels for which
+          performance monitoring results have been collected.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="HPNAPerformanceMonitoringDiagnosticsOutput">
+
+    <object name="Nodes." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.0">
+      <description>
+        Per-node HPNA performance monitoring results.
+
+        When automatic collection is enabled, i.e. {{param|#.SampleInterval}}
+        is non-zero, the "current" interval is defined by the most recent
+        automatic sample and the most recent subsequent manual sample, if any.
+
+        When automatic collection is disabled, i.e. SampleInterval is zero, the
+        "current" interval is defined by the three most recent manual samples.
+
+        Note: Packets in statistics counters are Ethernet packets.
+      </description>
+
+      <parameter name="CurrentStart" access="readOnly">
+        <description>
+          Start time for the current interval.
+
+          When automatic collection is enabled, i.e. SampleInterval is
+          non-zero, the current interval started at the most recent automatic
+          sample.
+
+          When automatic collection is disabled, i.e. SampleInterval is zero,
+          the current interval started two manual samples ago.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentEnd" access="readOnly">
+        <description>
+          End time for the current interval.
+
+          When automatic collection is enabled, i.e. SampleInterval is
+          non-zero, the current interval ended at the most recent manual sample
+          since the most recent automatic sample. If there has been no such
+          manual sample, the current interval is empty.
+
+          When automatic collection is disabled, i.e. SampleInterval is zero,
+          the current interval ended at the most recent manual sample.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Nodes.Node.{i}." access="readOnly"
+        numEntriesParameter="NodeNumberOfEntries" minEntries="1"
+        maxEntries="unbounded" version="2.0">
+      <description>
+        Per-node HPNA performance monitoring results during the current sample
+        interval. Each table entry contains the results collected between an
+        HPNA node (as indicated by {{param|MACAddress}}) and the local HPNA
+        interface (as indicated by {{param|##.Interface}}).
+
+        Note: Packet counters indicate the number of packets received between
+        {{param|#.CurrentStart}} and {{param|#.CurrentEnd}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="MACAddress"/>
+      </uniqueKey>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC address of the HPNA node.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of bytes sent by host equipment for transmission on
+          the HPNA interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of received bytes on the HPNA interface destined for
+          the host equipment.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of packets sent by host equipment for transmission
+          on the HPNA interface. Number includes also short error packets and
+          control packets.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of good packets received on the HPNA interface
+          destined for the host equipment.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly">
+        <description>
+          The number of broadcast packets transmitted on the HPNA interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly">
+        <description>
+          The number of broadcast packets received on the HPNA interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly">
+        <description>
+          The number of multicast packets transmitted on the HPNA interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly">
+        <description>
+          The number of multicast packets received on the HPNA interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsCrcErrored" access="readOnly">
+        <description>
+          The number of packets received on the HPNA interface with CRC errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsCrcErroredHost" access="readOnly">
+        <description>
+          The number of CRC error packets received on the HPNA interface
+          destined for the host equipment.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsShortErrored" access="readOnly">
+        <description>
+          The number of packets received on the HPNA interface that are too
+          short to be valid.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsShortErroredHost" access="readOnly">
+        <description>
+          The number packets sent by the host equipment that are too short to
+          be valid.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPacketsDropped" access="readOnly">
+        <description>
+          The number of received packets dropped due to lack of resources.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPacketsDropped" access="readOnly">
+        <description>
+          The number packets sent by the host equipment for transmission on the
+          HPNA interface but dropped due to lack of resources.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControlRequestLocal" access="readOnly">
+        <description>
+          The number of HPNA control request packets from local host.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControlReplyLocal" access="readOnly">
+        <description>
+          The number of HPNA control reply packets to local host.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControlRequestRemote" access="readOnly">
+        <description>
+          The number of HPNA control request packets from remote host.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControlReplyRemote" access="readOnly">
+        <description>
+          The number of HPNA control reply packets to remote host.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSentWire" access="readOnly">
+        <description>
+          The total number of packets transmitted to wire.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSentWire" access="readOnly">
+        <description>
+          The total number of broadcast packets transmitted to wire.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSentWire" access="readOnly">
+        <description>
+          The total number of multicast packets transmitted to wire.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsInternalControl" access="readOnly">
+        <description>
+          The number of HPNA control request packets from internal node.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsInternalControl" access="readOnly">
+        <description>
+          The number of HPNA broadcast control request packets from internal
+          node.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceivedQueued" access="readOnly">
+        <description>
+          The number of received packets queued on host output queues.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceivedForwardUnknown" access="readOnly">
+        <description>
+          The number of packets received and forwarded to unknown hosts.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeUtilization" access="readOnly">
+        <description>
+          The node utilization (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1000"/>
+            <units value="0.1%"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Channels." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.0">
+      <description>
+        Per-channel HPNA performance monitoring results.
+
+        Note: channels are unidirectional.
+      </description>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          Time at which channel data was last collected.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Channels.Channel.{i}." access="readOnly"
+        numEntriesParameter="ChannelNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.0">
+      <description>
+        Per-channel HPNA performance monitoring results.
+      </description>
+      <uniqueKey>
+        <parameter ref="HostSrcMACAddress"/>
+        <parameter ref="HostDestMACAddress"/>
+      </uniqueKey>
+
+      <parameter name="HostSrcMACAddress" access="readOnly">
+        <description>
+          The host source MAC address associated with the channel.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HostDestMACAddress" access="readOnly">
+        <description>
+          The host destination MAC address associated with the channel.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HPNASrcMACAddress" access="readOnly">
+        <description>
+          The HPNA source MAC address associated with the channel.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HPNADestMACAddress" access="readOnly">
+        <description>
+          The HPNA destination MAC address associated with the channel.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PHYRate" access="readOnly">
+        <description>
+          Channel PHY rate (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="BaudRate" access="readOnly">
+        <description>
+          PHY Baud rate (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Kbaud"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SNR" access="readOnly">
+        <description>
+          Channel actual SNR measured in receiver side (expressed in
+          {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="0.1dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          Number of packets sent in the channel.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          Pre-LARQ number of packets received in the channel.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LARQPacketsReceived" access="readOnly">
+        <description>
+          Post-LARQ number of packets received in the channel. Valid only if
+          LARQ is enabled.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FlowSpec" access="readOnly">
+        <description>
+          {{reference}} Identifies the ''FlowSpec'' associated with the
+          channel. This parameter is only used for channels that correspond to
+          egress traffic from the local HPNA interface.
+
+          {{null}} means that the channel is not associated with any specified
+          flow specification in the QoS object.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong"
+                targetParent=".HPNA.Interface.{i}.QoS.FlowSpec."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="HPNA">
+
+    <object name="Device.HPNA." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        HPNA object that contains the {{object|Interface}} and
+        {{object|Diagnostics}} objects. The HPNA (also known as HomePNA)
+        industry standard {{bibref|G.9954}} defines peer to peer communication
+        for home networking over existing coax cables and telephone wiring
+        within the home.
+      </description>
+
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.HPNA.Interface.{i}." access="readOnly"
+        numEntriesParameter="InterfaceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true" version="2.0">
+      <description>
+        HPNA interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). Each table entry models the PHY and
+        MAC levels of an HPNA interface {{bibref|G.9954}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since {{object}} is a layer 1 interface, it is expected that
+          {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC Address of the interface.
+
+          Note: This is not necessarily the same as the Ethernet header source
+          or destination MAC address, which is associated with the IP interface
+          and is modeled via the {{param|.Ethernet.Link.{i}.MACAddress}}
+          parameter.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FirmwareVersion" access="readOnly">
+        <description>
+          This interface's firmware version.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeID" access="readOnly">
+        <description>
+          The Node ID of this interface.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsMaster" access="readOnly">
+        <description>
+          Whether this interface is the HPNA network master.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Synced" access="readOnly">
+        <description>
+          Whether this interface is synchronized with the HPNA network master.
+          If this interface is the HPNA network master, {{param}} MUST be
+          {{true}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalSyncTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total time in {{units}} (since device reset) that this interface has
+          been up and synchronized to the HPNA network master.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxBitRate" access="readOnly">
+        <description>
+          The maximum HPNA PHY bit rate (expressed in {{units}}) of this
+          interface.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkUtilization" access="readOnly">
+        <description>
+          Current HPNA network utilization (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1000"/>
+            <units value="0.1%"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PossibleConnectionTypes" access="readOnly">
+        <description>
+          {{list}} List items indicate the types of connections possible for
+          this interface. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Phone"/>
+            <enumeration value="Coax"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionType" access="readWrite">
+        <description>
+          {{list}} Connection type(s) for which the HPNA protocol is active.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam="PossibleConnectionTypes"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PossibleSpectralModes" access="readOnly">
+        <description>
+          {{list}} List items indicate the spectral modes possible for this
+          interface. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="A">
+              <description>4-20MHz - Phone / Coax</description>
+            </enumeration>
+            <enumeration value="B">
+              <description>12-28MHz - Phone / Coax</description>
+            </enumeration>
+            <enumeration value="C">
+              <description>36-52MHz - Coax only</description>
+            </enumeration>
+            <enumeration value="D">
+              <description>4-36MHz - Coax only</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpectralMode" access="readWrite">
+        <description>
+          Spectral mode for which the HPNA protocol is active.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="PossibleSpectralModes"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MTU" access="readWrite">
+        <description>
+          Maximum Transmission Unit for this HPNA interface (expressed in
+          {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NoiseMargin" access="readWrite">
+        <description>
+          The desired noise margin for which the local HPNA interface has been
+          configured (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="0.1dB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DefaultNonLARQPER" access="readWrite">
+        <description>
+          The desired packet error rate for which the local HPNA interface has
+          been configured (expressed in 1E-8, e.g. PER of 1.27E-6 will be
+          presented as 127).
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LARQEnable" access="readWrite">
+        <description>
+          Enable or disable the Limited Automatic Repeat Request (LARQ)
+          mechanism.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinMulticastRate" access="readWrite">
+        <description>
+          The minimum multicast (and broadcast) rate that can be negotiated on
+          the HPNA network directly accessible via this interface (expressed in
+          {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NegMulticastRate" access="readOnly">
+        <description>
+          The negotiated multicast (and broadcast) rate on the HPNA network
+          directly accessible via this interface (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MasterSelectionMode" access="readWrite">
+        <description>
+          Master selection mode. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Automatic">
+              <description>Automatic master selection</description>
+            </enumeration>
+            <enumeration value="ForceEndpoint">
+              <description>
+                Force local HPNA interface to be end point
+              </description>
+            </enumeration>
+            <enumeration value="ForceMaster">
+              <description>
+                Force local HPNA interface to be master
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedDeviceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}} This is the number of HPNA nodes that are directly
+          accessible via this interface.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.HPNA.Interface.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.HPNA.Interface.{i}.QoS." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        QoS configuration object.
+      </description>
+
+      <parameter name="FlowSpecNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.HPNA.Interface.{i}.QoS.FlowSpec.{i}."
+        access="readWrite" numEntriesParameter="FlowSpecNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        Flow specification table.
+
+        The {{object|.QoS.Classification}} table is used to classify ingress
+        traffic, where {{param|.QoS.Classification.{i}.TrafficClass}} is one of
+        the classification result outputs. This ''TrafficClass'' value can be
+        used to look up the appropriate {{object}} entry (i.e. the {{object}}
+        entry whose {{param|TrafficClasses}} list contains a matching traffic
+        class).
+
+        For enabled table entries, if {{param|TrafficClasses}} is {{empty}}
+        then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TrafficClasses" access="readWrite">
+        <description>
+          {{list}} This list identifies the set of traffic classes associated
+          with this flow spec.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <unsignedInt/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FlowType" access="readWrite">
+        <description>
+          Flow type. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="CBR">
+              <description>Constant Bit Rate</description>
+            </enumeration>
+            <enumeration value="VBR">
+              <description>Variable Bit Rate</description>
+            </enumeration>
+            <enumeration value="VBR-NRT">
+              <description>Variable Bit Rate - Non Real Time</description>
+            </enumeration>
+            <enumeration value="BE">
+              <description>Best Effort</description>
+            </enumeration>
+          </string>
+          <default type="object" value="BE"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readWrite">
+        <description>
+          Flow queue network priority.
+
+          Priority 0 is the lowest priority.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Latency" access="readWrite">
+        <description>
+          Maximum latency of the flow (expressed in {{units}}).
+
+          Value 0 means no latency requirements.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="999"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Jitter" access="readWrite">
+        <description>
+          Maximum jitter of the flow (expressed in {{units}}).
+
+          Value 0 means no jitter requirements.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="999"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketSize" access="readWrite">
+        <description>
+          Typical packet size.
+
+          Value 0 means undefined packet size.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinRate" access="readWrite">
+        <description>
+          Minimum required rate in Kbps.
+
+          Value 0 means no MinRate requirements.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AvgRate" access="readWrite">
+        <description>
+          Average required rate in Kbps.
+
+          Value 0 means no AvgRate requirements.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRate" access="readWrite">
+        <description>
+          Maximum required rate in Kbps.
+
+          Value 0 means no MaxRate requirements.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PER" access="readWrite">
+        <description>
+          The desired packet error rate (expressed in 1E-8, e.g. PER of 1.27E-6
+          will be presented as 127).
+
+          Value 0 means no PER requirements.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Timeout" access="readWrite">
+        <description>
+          Flow inactivity tear down timeout (expressed in {{units}}).
+
+          Value 0 means unlimited timeout.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.HPNA.Interface.{i}.AssociatedDevice.{i}."
+        access="readOnly" numEntriesParameter="AssociatedDeviceNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        This table provides information about other HPNA devices that are
+        directly accessible via this HPNA interface.
+      </description>
+      <uniqueKey>
+        <parameter ref="MACAddress"/>
+      </uniqueKey>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The physical address of this node.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeID" access="readOnly">
+        <description>
+          The Node ID of this node.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsMaster" access="readOnly">
+        <description>
+          Whether this node is the HPNA network master.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Synced" access="readOnly">
+        <description>
+          Whether this node is synchronized with the HPNA network master. If
+          this node is the HPNA network master, {{param}} MUST be {{true}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalSyncTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total time in {{units}} (since device reset) that this node has been
+          up and synchronized to the HPNA network master.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxBitRate" access="readOnly">
+        <description>
+          This node's maximum HPNA PHY bit rate (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PHYDiagnosticsEnable" access="readWrite">
+        <description>
+          Enable / disable PHY throughput diagnostics mode on this node. All
+          devices that are enabled will participate in the HPNA network PHY
+          throughput diagnostics process.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Active" access="readOnly">
+        <description>
+          Whether or not this node is currently present in the HPNA network.
+
+          The ability to list inactive nodes is OPTIONAL. If the CPE includes
+          inactive nodes in this table, {{param}} MUST be set to {{false}} for
+          each inactive node. The length of time an inactive node remains
+          listed in this table is a local matter to the CPE.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.HPNA.Diagnostics." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        The HPNA Diagnostics object.
+      </description>
+    </object>
+
+    <profile name="HPNA:1" version="2.0">
+      <object ref="Device.HPNA." requirement="present">
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.HPNA.Interface.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="Upstream" requirement="readOnly"/>
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="FirmwareVersion" requirement="readOnly"/>
+        <parameter ref="MaxBitRate" requirement="readOnly"/>
+        <parameter ref="NetworkUtilization" requirement="readOnly"/>
+        <parameter ref="PossibleConnectionTypes" requirement="readOnly"/>
+        <parameter ref="ConnectionType" requirement="readOnly"/>
+        <parameter ref="PossibleSpectralModes" requirement="readOnly"/>
+        <parameter ref="SpectralMode" requirement="readOnly"/>
+        <parameter ref="MTU" requirement="readOnly"/>
+        <parameter ref="NoiseMargin" requirement="readOnly"/>
+        <parameter ref="MinMulticastRate" requirement="readOnly"/>
+        <parameter ref="NegMulticastRate" requirement="readOnly"/>
+        <parameter ref="MasterSelectionMode" requirement="readOnly"/>
+        <parameter ref="AssociatedDeviceNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.HPNA.Interface.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+      </object>
+      <object ref="Device.HPNA.Interface.{i}.AssociatedDevice.{i}."
+          requirement="present">
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="NodeID" requirement="readOnly"/>
+        <parameter ref="IsMaster" requirement="readOnly"/>
+        <parameter ref="Synced" requirement="readOnly"/>
+        <parameter ref="TotalSyncTime" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+        <parameter ref="MaxBitRate" requirement="readOnly"/>
+        <parameter ref="PHYDiagnosticsEnable" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="HPNA:2.14">
+    <component ref="Root"/>
+    <component ref="HPNA"/>
+  </model>
+</dm:document>

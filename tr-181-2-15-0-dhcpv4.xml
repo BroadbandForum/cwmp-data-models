@@ -1,0 +1,1647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [DHCPv4]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-dhcpv4"
+    file="tr-181-2-15-0-dhcpv4.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="MACAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="DHCPv4">
+
+    <object name="Device.DHCPv4." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        The Dynamic Host Configuration Protocol (DHCP) IPv4 object
+        {{bibref|RFC2131}}. This entire object applies to IPv4 only. It
+        contains the {{object|Client}}, {{object|Server}}, and {{object|Relay}}
+        objects.
+      </description>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Client.{i}." access="readWrite"
+        numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable"
+        minEntries="1" maxEntries="unbounded" version="2.0">
+      <description>
+        This object contains DHCP client settings for an associated ''IP
+        Interface'' indicated by {{param|Interface}}.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the DHCP Client entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} The IP Interface associated with the ''Client'' entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this table entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DHCPStatus" access="readOnly">
+        <description>
+          The DHCP Client status as defined in {{bibref|RFC2131}}. {{enum}}
+
+          Note: This value is only relevant when the DHCP Client is
+          operationally enabled (i.e. when {{param|Status}} is
+          {{enum|Enabled|Status}}).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Init"/>
+            <enumeration value="Selecting"/>
+            <enumeration value="Requesting"/>
+            <enumeration value="Rebinding"/>
+            <enumeration value="Bound"/>
+            <enumeration value="Renewing"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPAddress" access="readOnly">
+        <description>
+          IPv4 Address option received from the DHCP Server. {{empty}} when
+          {{param|Status}} is not equal to {{enum|Bound|DHCPStatus}}.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubnetMask" access="readOnly">
+        <description>
+          Subnet mask option received from the DHCP Server. {{empty}} when
+          {{param|Status}} is not equal to {{enum|Bound|DHCPStatus}}.
+
+          Value is information received via DHCP Option 1.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPRouters" access="readOnly">
+        <description>
+          {{list}} Items represent IP Router IPv4 Address(es) received from the
+          DHCP server. {{empty}} when {{param|Status}} is not equal to
+          {{enum|Bound|DHCPStatus}}.
+
+          Value is information received via DHCP Options 3, 33 or 121.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNSServers" access="readOnly">
+        <description>
+          {{list}} Items represent DNS Server IPv4 Address(es) received from
+          the DHCP server. {{empty}} when {{param|Status}} is not equal to
+          {{enum|Bound|DHCPStatus}}.
+
+          Value is information received via DHCP Option 6.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LeaseTimeRemaining" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          DHCP lease time remaining in {{units}}. A value of -1 indicates an
+          infinite lease.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DHCPServer" access="readOnly">
+        <description>
+          The IPv4 address of the current DHCP server.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PassthroughEnable" access="readWrite">
+        <description>
+          If {{false}}, the DHCP Client retrieved IP address information is
+          configured on the referenced {{param|Interface}} object.
+
+          If {{true}}, the DHCP Client retrieved information is propagated to
+          the parameters in the referenced {{param|PassthroughDHCPPool}}
+          object, replacing any existing configuration (including
+          ''MinAddress'', ''MaxAddress'', ''SubnetMask'', ''IPRouters'', and
+          ''DNSServers'').
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PassthroughDHCPPool" access="readWrite">
+        <description>
+          {{reference}}When {{param}} is set to {{empty}},
+          {{param|PassthroughEnable}} MUST be set to {{false}} (i.e.
+          passthrough can not be enabled without a pool reference specified).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.Server.Pool."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SentOptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReqOptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Client.{i}.SentOption.{i}." access="readWrite"
+        numEntriesParameter="SentOptionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        Each instance of this object represents a DHCP option that MUST, if
+        enabled, be sent in DHCP client requests. All sent DHCP options MUST be
+        listed.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this SentOption table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag as defined in {{bibref|RFC2132}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          A hexbinary encoded option value.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="255"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Client.{i}.ReqOption.{i}." access="readWrite"
+        numEntriesParameter="ReqOptionNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        Each instance of this object represents a DHCP option that MUST, if
+        enabled, be requested in DHCP client requests. All requested DHCP
+        options MUST be listed.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this ReqOption table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the option in the DHCP client request. A value of ''1''
+          indicates the first entry.
+
+          When this value is modified, if the value matches that of an existing
+          entry, the {{param}} value for the existing entry and all lower
+          {{param}} entries is incremented to ensure uniqueness of this value.
+          A deletion causes {{param}} values to be compacted. When a value is
+          changed, incrementing occurs before compaction.
+
+          The value of {{param}} on creation of a {{object}} table entry MUST
+          be one greater than the largest current value.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag as defined in {{bibref|RFC2132}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          A hexbinary encoded, most recently received DHCP option value.
+
+          If no option value has been received, then the value MUST represent
+          {{empty}}.
+
+          Received DHCP option values MAY, but need not, persist across CPE
+          reboots.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="255"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Server." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        DHCP server configuration.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the DHCP server.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PoolNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Server.Pool.{i}." access="readWrite"
+        numEntriesParameter="PoolNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        DHCP conditional serving pool table.
+
+        Each instance of this object defines a DHCP conditional serving pool.
+        Client requests are associated with pools based on criteria such as
+        source interface, supplied DHCP options, and MAC address.
+
+        Overlapping pool ranges MUST be supported.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference, or {{param|MinAddress}}, {{param|MaxAddress}}, or
+        {{param|SubnetMask}} is not a valid value, then the table entry is
+        inoperable and the CPE MUST set {{param|Status}} to
+        {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Order"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the Pool entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the {{object}} entry in the order of precedence. A value
+          of ''1'' indicates the first entry considered (highest precedence).
+          For each DHCP request, the highest ordered entry that matches the
+          association criteria is applied. All lower order entries are ignored.
+
+          When this value is modified, if the value matches that of an existing
+          entry, the {{param}} value for the existing entry and all lower
+          {{param}} entries is incremented (lowered in precedence) to ensure
+          uniqueness of this value. A deletion causes {{param}} values to be
+          compacted. When a value is changed, incrementing occurs before
+          compaction.
+
+          The value of {{param}} on creation of a {{object}} table entry MUST
+          be one greater than the largest current value (initially assigned the
+          lowest precedence).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} The IP Interface associated with the ''Pool'' entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          Used to identify one or more LAN devices, value of the DHCP Vendor
+          Class Identifier (Option 60) as defined in {{bibref|RFC2132}},
+          matched according to the criterion in {{param|VendorClassIDMode}}.
+          Case sensitive.
+
+          This is a normal string, e.g. "abc" is represented as "abc" and not
+          say "616263" hex. However, if the value includes non-printing
+          characters then such characters have to be represented using XML
+          escapes, e.g. #x0a for line-feed.
+
+          {{empty}} indicates this criterion is not used for conditional
+          serving.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|VendorClassID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|VendorClassID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassIDMode" access="readWrite">
+        <description>
+          {{param|VendorClassID}} pattern match criterion. {{enum}}
+
+          For example, if {{param|VendorClassID}} is "Example" then an Option
+          60 value of "Example device" will match with {{param}} values of
+          {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or
+          {{enum|Suffix}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Exact"/>
+            <enumeration value="Prefix"/>
+            <enumeration value="Suffix"/>
+            <enumeration value="Substring"/>
+          </string>
+          <default type="object" value="Exact"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          A hexbinary string used to identify one or more LAN devices, value of
+          the DHCP Client Identifier (Option 61) as defined in
+          {{bibref|RFC2132}}. The option value is binary, so an exact match is
+          REQUIRED.
+
+          {{empty}} indicates this criterion is not used for conditional
+          serving.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="255"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|ClientID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|ClientID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserClassID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          A hexbinary string used to identify one or more LAN devices, value of
+          the DHCP User Class Identifier (Option 77) as defined in
+          {{bibref|RFC3004}}.
+
+          {{empty}} indicates this criterion is not used for conditional
+          serving.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="255"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserClassIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|UserClassID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|UserClassID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Chaddr" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          Hardware address (MAC address) of the physical interface of the DHCP
+          client.
+
+          {{empty}} indicates this criterion is not used for conditional
+          serving.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChaddrMask" access="readWrite">
+        <description>
+          Bit-mask for the MAC address, where matching of a packet's MAC
+          address with the {{param|Chaddr}} is only to be done for bit
+          positions set to one in the mask. A mask of FF:FF:FF:FF:FF:FF or
+          {{empty}} indicates all bits of the {{param|Chaddr}} are to be used
+          for conditional serving classification.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChaddrExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the (masked)
+          {{param|Chaddr}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          (masked) {{param|Chaddr}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowedDevices" access="readWrite" version="2.13">
+        <description>
+          Pool association criterion. Determines which devices are allowed,
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="All">
+              <description>All clients are served.</description>
+            </enumeration>
+            <enumeration value="Known">
+              <description>
+                Only clients, whose MAC address is listed in the
+                {{object|Client.{i}.}} table (parameter
+                {{param|Client.{i}.Chaddr}}) or in the
+                {{object|StaticAddress.{i}.}} table (parameter
+                {{param|StaticAddress.{i}.Chaddr}}) are served.
+
+                The parameter {{param|#.Chaddr}} is not used, if this value is
+                set.
+              </description>
+            </enumeration>
+            <enumeration value="Unknown">
+              <description>
+                Only clients, whose MAC address is '''not''' listed in the
+                {{object|Client.{i}.}} table (parameter
+                {{param|Client.{i}.Chaddr}}) or in the
+                {{object|StaticAddress.{i}.}} table (parameter
+                {{param|StaticAddress.{i}.Chaddr}}) are served.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinAddress" access="readWrite">
+        <description>
+          Specifies first IPv4 address in the pool to be assigned by the DHCP
+          server on the LAN interface.
+
+          The parameter value can be overwritten by dynamic values retrieved
+          via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a
+          PPP interface with
+          {{param|.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to
+          {{true}}.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxAddress" access="readWrite">
+        <description>
+          Specifies last IPv4 address in the pool to be assigned by the DHCP
+          server on the LAN interface.
+
+          The parameter value can be overwritten by dynamic values retrieved
+          via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a
+          PPP interface with
+          {{param|.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to
+          {{true}}.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReservedAddresses" access="readWrite">
+        <description>
+          {{list}} List items represent addresses marked reserved from the
+          address allocation pool.
+        </description>
+        <syntax>
+          <list maxItems="32">
+            <size/>
+          </list>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubnetMask" access="readWrite">
+        <description>
+          Specifies the client's network subnet mask.
+
+          The parameter value can be overwritten by dynamic values retrieved
+          via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a
+          PPP interface with
+          {{param|.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to
+          {{true}}.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNSServers" access="readWrite">
+        <description>
+          {{list}} List items represent DNS servers offered to DHCP clients.
+          Support for more than three DNS Servers is OPTIONAL.
+
+          The parameter value can be overwritten by dynamic values retrieved
+          via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a
+          PPP interface with
+          {{param|.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to
+          {{true}}.
+        </description>
+        <syntax>
+          <list maxItems="4">
+            <size/>
+          </list>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DomainName" access="readWrite">
+        <description>
+          Sets the domain name to provide to clients on the LAN interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPRouters" access="readWrite">
+        <description>
+          {{list}} List items represent addresses of routers on this subnet.
+          Also known as default gateway. Support for more than one Router
+          address is OPTIONAL.
+
+          The parameter value can be overwritten by dynamic values retrieved
+          via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a
+          PPP interface with
+          {{param|.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to
+          {{true}}.
+        </description>
+        <syntax>
+          <list maxItems="4">
+            <size/>
+          </list>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LeaseTime" access="readWrite">
+        <description>
+          Specifies the lease time in {{units}} of client assigned addresses. A
+          value of -1 indicates an infinite lease.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+          <default type="object" value="86400"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StaticAddressNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly" version="2.2">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}."
+        access="readWrite" numEntriesParameter="StaticAddressNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        DHCP static address table.
+
+        Entries in this table correspond to what {{bibref|RFC2131}} calls
+        "manual allocation", where a client's IP address is assigned by the
+        network administrator, and DHCP is used simply to convey the assigned
+        address to the client.
+
+        Each instance of this object specifies a hardware address (MAC address)
+        and an IP address within the pool. When serving from this pool, this IP
+        address MUST, if available, be assigned to the DHCP client with this
+        hardware address, and MUST NOT be assigned to any other client.
+
+        Note that it is possible that an IP address in this table is present in
+        one or more of the other conditional serving pools, in which case it is
+        possible that such an address will be assigned to a different client.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Chaddr"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the StaticAddress table entry.
+
+          Disabling an entry does not return the IP address to the pool.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Chaddr" access="readWrite">
+        <description>
+          Hardware address (MAC address) of the physical interface of the DHCP
+          client.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Yiaddr" access="readWrite">
+        <description>
+          IPv4 address to be assigned by the DHCP server to the DHCP client
+          with the specified hardware address (MAC address).
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Server.Pool.{i}.Option.{i}."
+        access="readWrite" numEntriesParameter="OptionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        This object specifies the DHCP options that MUST, if enabled, be
+        returned to clients whose DHCP requests are associated with this pool.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this Option table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag as defined in {{bibref|RFC2132}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          A hexbinary encoded option value.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="255"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Server.Pool.{i}.Client.{i}." access="readOnly"
+        numEntriesParameter="ClientNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.2">
+      <description>
+        DHCPv4 client table.
+
+        This table lists details of DHCPv4 clients that matched the filter
+        criteria of this {{object|#}} entry.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Chaddr"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+
+          Note: There is no guarantee that the {{param}} value on
+          automatically-created {{object}} instances will be retained. This is
+          because automatically-created {{object}} instances can be transitory.
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Chaddr" access="readOnly">
+        <description>
+          MAC address of the DHCPv4 client.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Active" access="readOnly">
+        <description>
+          Whether or not the DHCPv4 client is currently present on the LAN. The
+          method of presence detection is a local matter to the CPE.
+
+          The ability to list inactive DHCPv4 clients is OPTIONAL. If the CPE
+          includes inactive DHCPv4 clients in this table, {{param}} MUST be set
+          to {{false}} for each inactive DHCPv4 client. The length of time an
+          inactive DHCPv4 client remains listed in this table is a local matter
+          to the CPE.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4AddressNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Server.Pool.{i}.Client.{i}.IPv4Address.{i}."
+        access="readOnly" numEntriesParameter="IPv4AddressNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.2">
+      <description>
+        IPv4 addresses assigned to this client.
+      </description>
+      <uniqueKey>
+        <parameter ref="IPAddress"/>
+      </uniqueKey>
+
+      <parameter name="IPAddress" access="readOnly">
+        <description>
+          IPv4 address.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LeaseTimeRemaining" access="readOnly">
+        <description>
+          The time at which the DHCP lease will expire or {{null}} if not
+          known. For an infinite lease, the parameter value MUST be
+          9999-12-31T23:59:59Z.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Server.Pool.{i}.Client.{i}.Option.{i}."
+        access="readOnly" numEntriesParameter="OptionNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true"
+        version="2.2">
+      <description>
+        DHCPv4 options supplied by this client, e.g. ''VendorClassID'' (Option
+        60), ''ClientID'' (option 61) or ''UserClassID'' (Option 77).
+      </description>
+
+      <parameter name="Tag" access="readOnly">
+        <description>
+          Option tag as defined in {{bibref|RFC2132}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          A hexbinary encoded option value.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="255"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Relay." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        DHCP Relay Agent (conditional relaying).
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the DHCP Relay Agent function.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the DHCP relay. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ForwardingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv4.Relay.Forwarding.{i}." access="readWrite"
+        numEntriesParameter="ForwardingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        DHCP Relay Agent Forwarding table.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the Forwarding entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the {{object}} entry in the order of precedence. A value
+          of ''1'' indicates the first entry considered (highest precedence).
+          For each DHCP request, the highest ordered entry that matches the
+          association criteria is applied. All lower order entries are ignored.
+
+          When this value is modified, if the value matches that of an existing
+          entry, the {{param}} value for the existing entry and all lower
+          {{param}} entries is incremented (lowered in precedence) to ensure
+          uniqueness of this value. A deletion causes {{param}} values to be
+          compacted. When a value is changed, incrementing occurs before
+          compaction.
+
+          The value of {{param}} on creation of a {{object}} table entry MUST
+          be one greater than the largest current value (initially assigned the
+          lowest precedence).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} The IP Interface associated with the ''Forwarding''
+          entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          Used to identify one or more LAN devices, value of the DHCP Vendor
+          Class Identifier (Option 60) as defined in {{bibref|RFC2132}},
+          matched according to the criterion in {{param|VendorClassIDMode}}.
+          Case sensitive.
+
+          This is a normal string, e.g. "abc" is represented as "abc" and not
+          say "616263" hex. However, if the value includes non-printing
+          characters then such characters have to be represented using XML
+          escapes, e.g. #x0a for line-feed.
+
+          {{empty}} indicates this criterion is not used as a relay
+          classification criterion.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|VendorClassID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|VendorClassID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassIDMode" access="readWrite">
+        <description>
+          {{param|VendorClassID}} pattern match criterion. {{enum}}
+
+          For example, if {{param|VendorClassID}} is "Example" then an Option
+          60 value of "Example device" will match with {{param}} values of
+          {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or
+          {{enum|Suffix}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Exact"/>
+            <enumeration value="Prefix"/>
+            <enumeration value="Suffix"/>
+            <enumeration value="Substring"/>
+          </string>
+          <default type="object" value="Exact"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          A hexbinary string used to identify one or more LAN devices, value of
+          the DHCP Client Identifier (Option 61) as defined in
+          {{bibref|RFC2132}}. The option value is binary, so an exact match is
+          REQUIRED.
+
+          {{empty}} indicates this criterion is not used as a relay
+          classification criterion.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="255"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|ClientID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|ClientID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserClassID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          A hexbinary string used to identify one or more LAN devices, value of
+          the DHCP User Class Identifier (Option 77) as defined in
+          {{bibref|RFC3004}}.
+
+          {{empty}} indicates this criterion is not used as a relay
+          classification criterion.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="255"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserClassIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|UserClassID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|UserClassID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Chaddr" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          Hardware address (MAC address) of the physical interface of the DHCP
+          client.
+
+          {{empty}} indicates this criterion is not used as a relay
+          classification criterion.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChaddrMask" access="readWrite">
+        <description>
+          Bit-mask for the MAC address, where matching of a packet's MAC
+          address with the {{param|Chaddr}} is only to be done for bit
+          positions set to one in the mask. A mask of FF:FF:FF:FF:FF:FF or
+          {{empty}} indicates all bits of the {{param|Chaddr}} are to be used
+          for relay classification.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChaddrExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the (masked)
+          {{param|Chaddr}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          (masked) {{param|Chaddr}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LocallyServed" access="readWrite">
+        <description>
+          If {{true}}, incoming DHCP requests will be forwarded to the CPE DHCP
+          Server. If {{false}}, incoming DHCP requests will be forwarded to the
+          {{param|DHCPServerIPAddress}} configured for this forwarding entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DHCPServerIPAddress" access="readWrite">
+        <description>
+          IPv4 address of the DHCP server, where the request has to be sent to
+          when there is a conditional match with this forwarding entry and
+          {{param|LocallyServed}} is {{false}}. If {{param|LocallyServed}} is
+          {{false}} and this parameter is not configured, then the DHCP request
+          is dropped.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="DHCPv4Server:1" version="2.0">
+      <object ref="Device.DHCPv4." requirement="present"/>
+      <object ref="Device.DHCPv4.Server." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="PoolNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv4.Server.Pool.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="MinAddress" requirement="readWrite"/>
+        <parameter ref="MaxAddress" requirement="readWrite"/>
+        <parameter ref="ReservedAddresses" requirement="readWrite"/>
+        <parameter ref="SubnetMask" requirement="readWrite"/>
+        <parameter ref="DNSServers" requirement="readWrite"/>
+        <parameter ref="DomainName" requirement="readWrite"/>
+        <parameter ref="IPRouters" requirement="readWrite"/>
+        <parameter ref="LeaseTime" requirement="readWrite"/>
+        <parameter ref="OptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv4.Server.Pool.{i}.Option.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Tag" requirement="readWrite"/>
+        <parameter ref="Value" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="DHCPv4CondServing:1" extends="DHCPv4Server:1" version="2.0">
+      <object ref="Device.DHCPv4.Server.Pool.{i}." requirement="createDelete">
+        <parameter ref="VendorClassID" requirement="readWrite"/>
+        <parameter ref="ClientID" requirement="readWrite"/>
+        <parameter ref="UserClassID" requirement="readWrite"/>
+        <parameter ref="Chaddr" requirement="readWrite"/>
+        <parameter ref="ChaddrMask" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="DHCPv4Relay:1" version="2.0">
+      <object ref="Device.DHCPv4." requirement="present"/>
+      <object ref="Device.DHCPv4.Relay." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ForwardingNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv4.Relay.Forwarding.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="LocallyServed" requirement="readWrite"/>
+        <parameter ref="DHCPServerIPAddress" requirement="readWrite"/>
+        <parameter ref="VendorClassID" requirement="readWrite"/>
+        <parameter ref="ClientID" requirement="readWrite"/>
+        <parameter ref="UserClassID" requirement="readWrite"/>
+        <parameter ref="Chaddr" requirement="readWrite"/>
+        <parameter ref="ChaddrMask" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="DHCPv4ServerClientInfo:1" version="2.2">
+      <object ref="Device.DHCPv4.Server.Pool.{i}." requirement="createDelete">
+        <parameter ref="ClientNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv4.Server.Pool.{i}.Client.{i}."
+          requirement="present">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Chaddr" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+        <parameter ref="IPv4AddressNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="OptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv4.Server.Pool.{i}.Client.{i}.IPv4Address.{i}."
+          requirement="present">
+        <parameter ref="IPAddress" requirement="readOnly"/>
+        <parameter ref="LeaseTimeRemaining" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv4.Server.Pool.{i}.Client.{i}.Option.{i}."
+          requirement="present">
+        <parameter ref="Tag" requirement="readOnly"/>
+        <parameter ref="Value" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="DHCPv4:2.14">
+    <component ref="Root"/>
+    <component ref="DHCPv4"/>
+  </model>
+</dm:document>

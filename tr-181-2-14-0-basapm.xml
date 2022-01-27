@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [BASAPM]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-basapm"
+    file="tr-181-2-14-0-basapm.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="BASAPM">
+
+    <object name="Device.BASAPM." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.12">
+      <description>
+        This object represents the objects necessary to manage and control the
+        functionality for tests that utilize the Broadband Access Service
+        Attributes and Performance Metrics measurement test framework as
+        defined in by {{bibref|TR-304}}.
+      </description>
+
+      <parameter name="MeasurementEndpointNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.BASAPM.MeasurementEndpoint.{i}." access="readWrite"
+        minEntries="0" maxEntries="unbounded" enableParameter="Enable"
+        numEntriesParameter="MeasurementEndpointNumberOfEntries" version="2.12">
+      <description>
+        This object represents the measurement endpoint that provides
+        additional contextual information regarding the measurement agent.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="MeasurementAgent"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MeasurementAgent" access="readWrite">
+        <description>
+          {{reference|a {{object|##.LMAP.MeasurementAgent}} object that is
+          associated with this measurement endpoint.}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="##.LMAP.MeasurementAgent."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceOwnership" access="readWrite">
+        <description>
+          This parameter describes the ownership of the device that hosts the
+          measurement endpoint.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ISP">
+              <description>ISP Owned Device</description>
+            </enumeration>
+            <enumeration value="Customer">
+              <description>Customer Owned Device</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperationalDomain" access="readWrite">
+        <description>
+          This parameter describes the operational domain for this measurement
+          endpoint
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InternetDomain" access="readWrite">
+        <description>
+          The top level Internet domain used to identify this measurement
+          endpoint.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseMeasurementEndpointInReports" access="readWrite">
+        <description>
+          If the value of this parameter is {{false}} then the Measurement
+          Endpoint MUST not be included in measurement reports.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.BASAPM.MeasurementEndpoint.{i}.ISPDevice."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This object represents the information necessary to utilize an ISP
+        owned device within the measurement endpoint.
+      </description>
+
+      <parameter name="ReferencePoint" access="readWrite">
+        <description>
+          This parameter describes the measurement reference point of the
+          measurement endpoint.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="STP">
+              <description>Internet Source Test Point</description>
+            </enumeration>
+            <enumeration value="IDTP">
+              <description>Internet Drain Test Point</description>
+            </enumeration>
+            <enumeration value="RNTP">
+              <description>Regional Network Test Point</description>
+            </enumeration>
+            <enumeration value="IRTP">
+              <description>Internal Regional Test Point</description>
+            </enumeration>
+            <enumeration value="MTP">
+              <description>Metro Test Point</description>
+            </enumeration>
+            <enumeration value="IATP">
+              <description>Internal Access Test Point</description>
+            </enumeration>
+            <enumeration value="UNITP">
+              <description>User Network Interface Test Point</description>
+            </enumeration>
+            <enumeration value="CEDTP">
+              <description>Customer End Device Test Point</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="GeographicalLocation" access="readWrite">
+        <description>
+          {{reference|a {{object|###.DeviceInfo.Location}} object that
+          describes the geographic location of the measurement endpoint}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="###.DeviceInfo.Location."/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.BASAPM.MeasurementEndpoint.{i}.CustomerDevice."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This object represents the information necessary to utilize customer
+        owned device within the measurement endpoint.
+      </description>
+
+      <parameter name="EquipmentIdentifier" access="readWrite">
+        <description>
+          This parameter describes the customer equipment identifier of the
+          measurement endpoint.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CustomerIdentifier" access="readWrite">
+        <description>
+          The unique customer identifier within the operational domain for this
+          measurement endpoint.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="BASAPM:1" version="2.12">
+      <object ref="Device.BASAPM." requirement="present">
+        <parameter ref="MeasurementEndpointNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.BASAPM.MeasurementEndpoint.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="MeasurementAgent" requirement="readWrite"/>
+        <parameter ref="DeviceOwnership" requirement="readWrite"/>
+        <parameter ref="OperationalDomain" requirement="readWrite"/>
+        <parameter ref="InternetDomain" requirement="readWrite"/>
+        <parameter ref="UseMeasurementEndpointInReports"
+            requirement="readWrite"/>
+      </object>
+      <object ref="Device.BASAPM.MeasurementEndpoint.{i}.ISPDevice."
+          requirement="present">
+        <parameter ref="ReferencePoint" requirement="readWrite"/>
+        <parameter ref="GeographicalLocation" requirement="readWrite"/>
+      </object>
+      <object ref="Device.BASAPM.MeasurementEndpoint.{i}.CustomerDevice."
+          requirement="present">
+        <parameter ref="EquipmentIdentifier" requirement="readWrite"/>
+        <parameter ref="CustomerIdentifier" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="BASAPM:2.14">
+    <component ref="Root"/>
+    <component ref="BASAPM"/>
+  </model>
+</dm:document>

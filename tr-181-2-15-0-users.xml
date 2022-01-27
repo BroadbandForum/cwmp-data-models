@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Users]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-users"
+    file="tr-181-2-15-0-users.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="CheckCredentialsInput">
+    <parameter name="Username" access="readWrite">
+      <description>
+        The user name for logging in to the user interface on the device.
+      </description>
+      <syntax>
+        <string/>
+      </syntax>
+    </parameter>
+
+    <parameter name="Password" access="readWrite">
+      <description>
+        The password for logging in to the user interface on the device.
+      </description>
+      <syntax>
+        <string/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="Users">
+
+    <object name="Device.Users." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        Users object that contains the {{object|User}}, {{object|Group}}, and
+        {{object|Role}} tables.
+      </description>
+
+      <parameter name="UserNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="GroupNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="RoleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="SupportedShellNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Users.User.{i}." access="readWrite"
+        numEntriesParameter="UserNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        This object contains parameters relating to the user characteristics.
+      </description>
+      <uniqueKey>
+        <parameter ref="Username"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+       <uniqueKey functional="true">
+         <parameter ref="UserID"/>
+       </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables/disables this user object instance.
+
+          If the User being configured is currently accessing the device then a
+          disable MUST apply to the next user session and the current user
+          session MUST NOT be abruptly terminated.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserID" access="readWrite" version="2.15">
+        <description>
+          Unique Identifier of the user. Depending on the implementation this
+          can be the unique identifier assigned by the underlying system.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemoteAccessCapable" access="readWrite">
+        <description>
+          Allows this user to remotely access the UserInterface via the
+          mechanism defined in {{object|.UserInterface.RemoteAccess.}}
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          Name of the current user. MUST NOT be {{empty}} for an enabled entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          The user's password.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupParticipation" access="readWrite">
+        <description>
+          The Groups of which this User is a member.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="weak" targetParent="#.Group." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoleParticipation" access="readWrite">
+        <description>
+          The Roles which are assigned to this User.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="weak" targetParent="#.Role." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StaticUser" access="readOnly">
+      <description>
+        A static user is a fixed user that is always available in the system.
+        When set to {{true}}, the user cannot be removed.
+      </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Language" access="readWrite">
+        <description>
+          String describing the default language for the local configuration
+          interface, specified according to {{bibref|RFC3066}}.
+
+          If {{empty}}, {{param|.UserInterface.CurrentLanguage}} is used.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="16"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Shell" access="readWrite">
+        <description>
+          {{null}} means Shell access disabled.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="weak" targetParent="#.SupportedShell."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Users.Group.{i}." access="readWrite"
+        numEntriesParameter="GroupNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object contains parameters relating to the characteristics of a
+        user group.
+      </description>
+      <uniqueKey>
+        <parameter ref="Groupname"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+       <uniqueKey functional="true">
+         <parameter ref="GroupID"/>
+       </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables/disables this group object instance.
+
+          If any User which belongs to a Group which becomes disabled is
+          currently accessing the device then the effect on that User should be
+          as if the Group were removed from that User's GroupParticipation
+          list.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupID" access="readWrite" version="2.15">
+        <description>
+          Unique Identifier of the group. Depending on the implementation this
+          can be the unique identifier assigned by the underlying system.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Groupname" access="readWrite">
+        <description>
+          Name of the Group. MUST NOT be {{empty}} for an enabled entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoleParticipation" access="readWrite">
+        <description>
+          These Roles are assigned to any User which is member of this Group,
+          for so long as they remain a member of the Group.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="weak" targetParent="#.Role." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StaticGroup" access="readOnly">
+      <description>
+        A static group is a fixed group that is always available in the
+        system. When set to {{true}}, the group cannot be removed.
+      </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Users.SupportedShell.{i}." access="readWrite"
+        enableParameter="Enable"
+        numEntriesParameter="SupportedShellNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.15">
+    <description>
+      This table provides a list of user accessible shells which can be used
+      as a reference in {{param|.Users.User.{i}.Shell}}
+    </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables/disables this SupportedShell object instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Name of the Shell
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+      <object name="Device.Users.Role.{i}." access="readWrite"
+        numEntriesParameter="RoleNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object contains parameters relating to the role characteristics.
+      </description>
+      <uniqueKey>
+        <parameter ref="RoleName"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="RoleID"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny"
+          version="2.15">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables/disables this role object instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoleID" access="readWrite">
+        <description>
+          Unique Identifier of the role. Depending on the implementation this
+          can be the unique identifier assigned by the underlying system.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoleName" access="readWrite">
+        <description>
+          Name of the current Role. MUST NOT be {{empty}} for an enabled entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StaticRole" access="readOnly">
+      <description>
+        A static role is a fixed role that is always available in the system.
+        When set to {{true}}, the role cannot be removed.
+      </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="User:1" version="2.0">
+      <object ref="Device.Users." requirement="present">
+        <parameter ref="UserNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Users.User.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Username" requirement="readWrite"/>
+        <parameter ref="Password" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Users.Role.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="RoleName" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Users:2.15">
+    <component ref="Root"/>
+    <component ref="Users"/>
+  </model>
+</dm:document>

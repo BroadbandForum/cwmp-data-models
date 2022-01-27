@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [ATM]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-atm"
+    file="tr-181-2-14-0-atm.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="ATMF5LoopbackDiagnosticsInput">
+
+    <parameter name="Interface" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        {{reference}} This is the interface over which the test is to be
+        performed.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+          <pathRef refType="weak" targetParent=".ATM.Link." targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="NumberOfRepetitions" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Number of repetitions of the ping test to perform before reporting the
+        results.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="1"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="Timeout" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Timeout in {{units}} for the ping test.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="1"/>
+          <units value="milliseconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="ATMF5LoopbackDiagnosticsOutput">
+
+    <parameter name="SuccessCount" access="readOnly" activeNotify="canDeny"
+        version="2.0">
+      <description>
+        Result parameter indicating the number of successful pings (those in
+        which a successful response was received prior to the timeout) in the
+        most recent ping test.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="FailureCount" access="readOnly" activeNotify="canDeny"
+        version="2.0">
+      <description>
+        Result parameter indicating the number of failed pings in the most
+        recent ping test.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="AverageResponseTime" access="readOnly"
+        activeNotify="canDeny" version="2.0">
+      <description>
+        Result parameter indicating the average response time in {{units}} over
+        all repetitions with successful responses of the most recent ping test.
+        If there were no successful responses, this value MUST be zero.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="milliseconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MinimumResponseTime" access="readOnly"
+        activeNotify="canDeny" version="2.0">
+      <description>
+        Result parameter indicating the minimum response time in {{units}} over
+        all repetitions with successful responses of the most recent ping test.
+        If there were no successful responses, this value MUST be zero.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="milliseconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaximumResponseTime" access="readOnly"
+        activeNotify="canDeny" version="2.0">
+      <description>
+        Result parameter indicating the maximum response time in {{units}} over
+        all repetitions with successful responses of the most recent ping test.
+        If there were no successful responses, this value MUST be zero.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="milliseconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="ATM">
+
+    <object name="Device.ATM." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.0">
+      <description>
+        Asynchronous Transfer Mode (ATM) object that contains the
+        {{object|Link}} interface and {{object|Diagnostics.F5Loopback}}
+        diagnostics.
+      </description>
+
+      <parameter name="LinkNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ATM.Link.{i}." access="readWrite"
+        numEntriesParameter="LinkNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        ATM link-layer table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). Models an ATM PVC virtual circuit and
+        the ATM Adaption Layer (AAL). An ATM Link entry is typically stacked on
+        top of either a {{object|.DSL.Channel.}} or a
+        {{object|.DSL.BondingGroup.}} object.
+
+        When an ''ATM Link'' interface is used, a lower-layer
+        {{object|.DSL.Channel}} interface MUST be configured with ATM
+        encapsulation (see {{param|.DSL.Channel.{i}.LinkEncapsulationUsed}}).
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the link.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the link (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Down"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the link as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the link entered its current
+          operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LinkType" access="readWrite">
+        <description>
+          Indicates the type of connection and refers to the complete stack of
+          protocol used for this connection.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="EoA">
+              <description>
+                {{bibref|RFC2684}} bridged Ethernet over ATM
+              </description>
+            </enumeration>
+            <enumeration value="IPoA">
+              <description>{{bibref|RFC2684}} routed IP over ATM</description>
+            </enumeration>
+            <enumeration value="PPPoA">
+              <description>{{bibref|RFC2364}} PPP over ATM</description>
+            </enumeration>
+            <enumeration value="CIP">
+              <description>
+                {{bibref|RFC2225}} Classical IP over ATM
+              </description>
+            </enumeration>
+            <enumeration value="Unconfigured"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoConfig" access="readOnly">
+        <description>
+          Indicates if the CPE is currently using some auto configuration
+          mechanisms for this connection. If this variable is {{true}}, all
+          writable variables in this connection instance become read-only. Any
+          attempt to change one of these variables SHOULD fail and an error
+          SHOULD be returned.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestinationAddress" access="readWrite">
+        <description>
+          Destination address of this link, in the form "VPI/VCI" (e.g. "8/23"
+          or "0/35").
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pattern value="\d+/\d+"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Encapsulation" access="readWrite">
+        <description>
+          Identifies the connection encapsulation that will be used.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="LLC"/>
+            <enumeration value="VCMUX"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="FCSPreserved" access="readWrite">
+        <description>
+          This flag tells if a checksum SHOULD be added in the ATM payload. It
+          does not refer to the checksum of one of the ATM cells or AALX
+          packets. In case of LLC or VCMUX encapsulation, this ATM checksum is
+          the FCS field described in {{bibref|RFC2684}}. It is only applicable
+          in the upstream direction.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VCSearchList" access="readWrite">
+        <description>
+          {{list}} Ordered list of VPI/VCI pairs to search if a link using the
+          {{param|DestinationAddress}} cannot be established. In the form
+          "VPI1/VCI1, VPI2/VCI2, ...". {{pattern}}
+
+          Example:
+
+          : ''0/35, 8/35, 1/35''
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string>
+            <pattern value="\d+/\d+"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AAL" access="readOnly">
+        <description>
+          Describes the ATM Adaptation Layer (AAL) currently in use on the PVC.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="AAL1"/>
+            <enumeration value="AAL2"/>
+            <enumeration value="AAL3"/>
+            <enumeration value="AAL4"/>
+            <enumeration value="AAL5"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ATM.Link.{i}.Stats." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedBlocks" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The current count of successfully transmitted cells.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceivedBlocks" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The current count of successfully received cells.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CRCErrors" access="readOnly" activeNotify="canDeny">
+        <description>
+          Count of the ATM layer cyclic redundancy check (CRC) errors.
+
+          This refers to CRC errors at the ATM adaptation layer (AAL). The AAL
+          in use is indicated by the {{param|#.AAL}} parameter. The value of
+          the {{param}} parameter MUST be 0 for AAL types that have no CRCs.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HECErrors" access="readOnly" activeNotify="canDeny">
+        <description>
+          Count of the number of Header Error Check related errors at the ATM
+          layer.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ATM.Link.{i}.QoS." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        The ATM Link QoS object.
+      </description>
+
+      <parameter name="QoSClass" access="readWrite">
+        <description>
+          Describes the ATM Quality Of Service (QoS) being used on the VC.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="UBR"/>
+            <enumeration value="CBR"/>
+            <enumeration value="GFR"/>
+            <enumeration value="VBR-nrt"/>
+            <enumeration value="VBR-rt"/>
+            <enumeration value="UBR+"/>
+            <enumeration value="ABR"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PeakCellRate" access="readWrite">
+        <description>
+          Specifies the upstream peak cell rate in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="cells per second"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumBurstSize" access="readWrite">
+        <description>
+          Specifies the upstream maximum burst size in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="cells"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SustainableCellRate" access="readWrite">
+        <description>
+          Specifies the upstream sustainable cell rate, in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="cells per second"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ATM.Diagnostics." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        The ATM Diagnostics object.
+      </description>
+    </object>
+
+    <profile name="ATMLink:1" version="2.0">
+      <object ref="Device.ATM." requirement="present">
+        <parameter ref="LinkNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ATM.Link.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="LowerLayers" requirement="readWrite"/>
+        <parameter ref="LinkType" requirement="readWrite"/>
+        <parameter ref="DestinationAddress" requirement="readWrite"/>
+        <parameter ref="Encapsulation" requirement="readWrite"/>
+        <parameter ref="FCSPreserved" requirement="readWrite"/>
+        <parameter ref="VCSearchList" requirement="readWrite"/>
+        <parameter ref="AAL" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ATM.Link.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsSent" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsSent" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsReceived" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsSent" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsSent" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="UnknownProtoPacketsReceived" requirement="readOnly"/>
+        <parameter ref="TransmittedBlocks" requirement="readOnly"/>
+        <parameter ref="ReceivedBlocks" requirement="readOnly"/>
+        <parameter ref="CRCErrors" requirement="readOnly"/>
+        <parameter ref="HECErrors" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="ATM:2.14">
+    <component ref="Root"/>
+    <component ref="ATM"/>
+  </model>
+</dm:document>

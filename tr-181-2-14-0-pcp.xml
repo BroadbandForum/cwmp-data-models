@@ -1,0 +1,1252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [PCP]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-pcp"
+    file="tr-181-2-14-0-pcp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="PCP">
+
+    <object name="Device.PCP." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.8">
+      <description>
+        Properties for Port Control Protocol (PCP) {{bibref|RFC6887}}.
+
+        See the PCP Theory of Operation {{bibref|TR-181i2|Appendix XIV}} for a
+        description of the working of this PCP data model.
+      </description>
+
+      <parameter name="SupportedVersions" access="readOnly">
+        <description>
+          {{list}} Each list item denotes a PCP version supported by the PCP
+          Client. Currently known versions are 0, 1 and 2.
+
+          This parameter is based on Version from {{bibref|RFC6887}}.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreferredVersion" access="readWrite">
+        <description>
+          This is the version to be used in the first exchange with a new PCP
+          Server.
+
+          The factory default MUST be the highest supported version, as
+          described in {{bibref|RFC6887|Section 9}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionList" access="readOnly">
+        <description>
+          {{list}} The list of the PCP Options supported by the PCP Client.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PCP.Client.{i}." access="readWrite"
+        numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        Client properties for Port Control Protocol (PCP). The PCP Client
+        interacts with a PCP Server as defined in {{bibref|RFC6887}} for
+        internal device applications or LAN device applications via
+        Interworking functions.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="WANInterface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the PCP Client.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="WANInterface" access="readOnly">
+        <description>
+          {{reference|the interface stack instance representing the WAN
+          interface this client operates on}} See {{object|.InterfaceStack.}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the PCP Client. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MAPEnable" access="readWrite">
+        <description>
+          Enables or disables the MAP OpCode.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PEEREnable" access="readWrite">
+        <description>
+          Enables or disables the PEER OpCode.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ANNOUNCEEnable" access="readWrite">
+        <description>
+          Enables or disables the ANNOUNCE OpCode.
+
+          When {{false}} the PCP Client does not support unsolicited ANNOUNCE
+          messages.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="THIRDPARTYEnable" access="readWrite">
+        <description>
+          Enables or disables the THIRD_PARTY Option.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="THIRDPARTYStatus" access="readOnly">
+        <description>
+          Indicates whether THIRD_PARTY Option is enabled or not. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="FILTEREnable" access="readWrite">
+        <description>
+          Enables or disables the FILTER option.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PCP.Client.{i}.PCPProxy." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        Properties for the Port Control Protocol (PCP) Proxy, as specified in
+        {{bibref|PCPProxy}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the PCP Proxy for this PCP Client.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighestVersion" access="readOnly">
+        <description>
+          A string identifying the highest version of PCP that the proxy
+          supports.
+
+          This parameter is based on Version from {{bibref|RFC6887}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the PCP Proxy for this PCP Client. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PCP.Client.{i}.UPnPIWF." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        Properties for the interworking function between UPnP IGD (Internet
+        Gateway Device) and PCP, as specified in {{bibref|RFC6970}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the UPnP IGD-PCP Interworking Function for this
+          PCP Client.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the UPnP IGD-PCP Interworking Function for this PCP
+          Client. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PCP.Client.{i}.Server.{i}." access="readWrite"
+        numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        This table contains the PCP Servers to be used by the PCP Client.
+        Entries are either statically configured or automatically created via
+        DHCP options OPTION_V4_PCP_SERVER and OPTION_V6_PCP_SERVER, as per
+        {{bibref|RFC7291}}.
+
+        Each OPTION_V4_PCP_SERVER or OPTION_V6_PCP_SERVER option corresponds to
+        a {{object}} instance. If an option returns multiple addresses then
+        that {{object}} instance has multiple addresses.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="ServerNameOrAddress"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this PCP Server.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the PCP Server. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="Error_Timeout"/>
+            <enumeration value="Error_HostNameNotResolved"/>
+            <enumeration value="Error_NetworkFailure"/>
+            <enumeration value="Error_NotAuthorized"/>
+            <enumeration value="Error_Unsupported"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Origin" access="readOnly">
+        <description>
+          Method used to assign {{param|ServerNameOrAddress}} and create this
+          table entry. {{enum}}
+
+          Note: In the {{enum|DHCPv4}} and {{enum|DHCPv6}} cases, if more than
+          one IP address is received {{param|ServerNameOrAddress}} will be the
+          first address and {{param|AdditionalServerAddresses}} will be the
+          remaining addresses.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCPv4">
+              <description>
+                {{param|ServerNameOrAddress}} is an IPv4 address that was
+                received via OPTION_V4_PCP_SERVER
+              </description>
+            </enumeration>
+            <enumeration value="DHCPv6">
+              <description>
+                {{param|ServerNameOrAddress}} is an IPv6 address that was
+                received via OPTION_V6_PCP_SERVER
+              </description>
+            </enumeration>
+            <enumeration value="Static">
+              <description>
+                {{param|ServerNameOrAddress}} is an FQDN, IPv4 address or IPv6
+                address that was created by the Controller, by some other
+                management entity (e.g. via a GUI), or is present in the
+                factory default configuration
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Static"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNameOrAddress" access="readWrite">
+        <description>
+          The FQDN or IP address of the PCP Server, assigned as described under
+          {{param|Origin}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerAddressInUse" access="readOnly">
+        <description>
+          The IP address currently in use for the PCP Server, derived from the
+          value of {{param|ServerNameOrAddress}}.
+
+          {{empty}} indicates that no PCP Server address is currently known.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalServerAddresses" access="readOnly">
+        <description>
+          PCP Server addresses in addition to {{param|ServerNameOrAddress}}.
+          This can be non-empty only if {{param|Origin}} is
+          {{enum|DHCPv4|Origin}} or {{enum|DHCPv6|Origin}} and if more than one
+          PCP Server address was received.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExternalIPAddress" access="readOnly">
+        <description>
+          The external IP address of the PCP-controlled device hosting this
+          server.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentVersion" access="readOnly">
+        <description>
+          This is the version of PCP resulting from client-server Version
+          Negotiation.
+
+          This parameter is based on Version from {{bibref|RFC6887}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumFilters" access="readWrite">
+        <description>
+          Indicates the maximum number of inbound filters allowed to be
+          associated with a mapping entry on this server.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortQuota" access="readWrite">
+        <description>
+          Indicates the maximum number of ports allocated to this PCP Client on
+          this server.
+
+          A value of 0 means that there is no limitation.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreferredLifetime" access="readWrite">
+        <description>
+          Indicates the preferred lifetime (in {{units}}) to be used for
+          mappings with this server when no preference is selected by an
+          application/user.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Capabilities" access="readOnly">
+        <description>
+          Indicates the capabilities supported by the PCP Server. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="NAT44"/>
+            <enumeration value="StatelessNAT64"/>
+            <enumeration value="StatefulNAT64"/>
+            <enumeration value="A+PPortRangeRouter"/>
+            <enumeration value="SupportsPORTSETOption"/>
+            <enumeration value="IPv4Firewall"/>
+            <enumeration value="IPv6Firewall"/>
+            <enumeration value="NPTv6"/>
+            <enumeration value="DSCPReMarkingFunction"/>
+            <enumeration value="FLOWDATAAwareFunction"/>
+            <enumeration value="ILNPTranslator"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InboundMappingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutboundMappingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}."
+        access="readWrite" numEntriesParameter="InboundMappingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.8">
+      <description>
+        Inbound Mapping table.
+
+        This table contains all Inbound Mappings requested by this PCP Client
+        on this PCP Server. Such a mapping is created by a PCP request with
+        OpCode MAP, as described in {{bibref|RFC6887|Section 11}}.
+
+        These requests can be issued from internal device applications, from
+        static configuration or from other LAN device applications via
+        interworking functions such as UPnP IGD or PCP proxies. The
+        {{param|Origin}} parameter indicates which mechanism requested the
+        mapping.
+
+        For non-{{enum|Static|Origin}} mappings (here ''Static'' refers to the
+        mechanism that created the mapping, not to the {{param|Lifetime}}), the
+        Controller MAY modify the {{param|Enable}} parameter but MUST NOT
+        modify any other parameters in the mapping or its sub-objects.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="InternalPort"/>
+        <parameter ref="ProtocolNumber"/>
+        <parameter ref="ThirdPartyAddress"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_PCPErrorCodeReceived}} value indicates that the PCP
+          Client received an error code from the PCP Server.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_PCPErrorCodeReceived"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorCode" access="readOnly">
+        <description>
+          Provides the PCP error code when {{param|Status}} is
+          {{enum|Error_PCPErrorCodeReceived|Status}}. Error code values are
+          defined in {{bibref|RFC6887|Section 7.4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Origin" access="readOnly">
+        <description>
+          Mechanism via which the mapping was requested. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Internal">
+              <description>
+                Requested via internal device application
+              </description>
+            </enumeration>
+            <enumeration value="UPnP_IWF">
+              <description>
+                Requested via UPnP IGD interworking function
+              </description>
+            </enumeration>
+            <enumeration value="PCP_Proxy">
+              <description>Requested via PCP proxy</description>
+            </enumeration>
+            <enumeration value="Static">
+              <description>
+                Requested via static configuration, i.e. created by the
+                Controller, by some other management entity (e.g. via a GUI),
+                or is present in the factory default configuration
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Lifetime" access="readWrite" activeNotify="canDeny">
+        <description>
+          Determines the time to live, in {{units}}, of this Inbound Mapping
+          lease, i.e. the remaining time before this port mapping expires.
+
+          A value of 0 means that the port mapping is permanent (referred to as
+          a static mapping in {{bibref|RFC6887}}).
+
+          When a dynamic Inbound Mapping lease expires, the CPE MUST
+          automatically delete the corresponding {{object}} table entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuggestedExternalIPAddress" access="readWrite">
+        <description>
+          The external IPv4 or IPv6 Address that the PCP-controlled device will
+          listen on for incoming packets to be forwarded to the PCP Client.
+
+          This is useful for refreshing an Inbound Mapping, especially after
+          the PCP Server loses state. If the PCP client does not know the
+          external address, or does not have a preference, it MUST use
+          {{empty}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuggestedExternalPort" access="readWrite">
+        <description>
+          The external port (or the first port of a range of external ports)
+          that the PCP-controlled device will listen on for incoming packets.
+          Those inbound packets will be forwarded to {{param|InternalPort}}. If
+          the PCP client does not know the external port, or does not have a
+          preference, it MUST use 0.
+
+          This is useful for refreshing an Inbound Mapping, especially after
+          the PCP Server loses state. If the PCP Client does not know the
+          external port, or does not have a preference, it MUST use 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuggestedExternalPortEndRange" access="readWrite">
+        <description>
+          Indicates the last port of the external port range that starts with
+          {{param|SuggestedExternalPort}}.
+
+          If an external port range is specified, then the behavior described
+          for {{param|SuggestedExternalPort}} applies to all ports within the
+          range.
+
+          A value of zero (0) indicates that no external port range is
+          specified, i.e. that the range consists only of
+          {{param|SuggestedExternalPort}}.
+
+          If {{param|SuggestedExternalPort}} is zero (wildcard), the value of
+          {{param}} MUST be ignored.
+
+          If specified, the value of this parameter MUST be zero or be greater
+          than or equal to the value of {{param|SuggestedExternalPort}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InternalPort" access="readWrite">
+        <description>
+          The port on this PCP Client's {{param|##.WANInterface}} that the
+          PCP-controlled device forwards incoming packets to.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtocolNumber" access="readWrite">
+        <description>
+          The protocol number of the {{object}}. Values are taken from
+          {{bibref|IANA-protocolnumbers}}.
+
+          The value -1 means ''all protocols''.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="255"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="ThirdPartyAddress" access="readWrite">
+        <description>
+          Under certain conditions, the PCP Client can create a PCP mapping on
+          behalf of another device, by using the THIRD_PARTY option, as
+          specified in {{bibref|RFC6887|Section 7.3}}. In that case, {{param}}
+          is the IP address of the device for which the PCP operation is
+          requested.
+
+          For non-third-party mappings, {{param}} SHOULD be {{empty}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readWrite">
+        <description>
+          User-readable description of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssignedExternalIPAddress" access="readOnly">
+        <description>
+          The external IPAddress returned by the PCP Server. The IP address
+          that the PCP-controlled device is listening on for incoming packets
+          to a corresponding PCP Client.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssignedExternalPort" access="readOnly">
+        <description>
+          The external port returned by the PCP Server. The external port (or
+          the first port of a range of external ports) that the PCP-controlled
+          device is listening on for incoming packets to a corresponding
+          {{param|InternalPort}}. Inbound packets to this external port on the
+          External interface of the PCP-controlled device is forwarded to the
+          on the {{param|InternalPort}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssignedExternalPortEndRange" access="readOnly">
+        <description>
+          Indicates the last port of the external port range that starts with
+          {{param|AssignedExternalPort}}.
+
+          If an external port range is specified, then the behavior described
+          for {{param|AssignedExternalPort}} applies to all ports within the
+          range.
+
+          A value of zero (0) indicates that no external port range is
+          specified, i.e. that the range consists only of
+          {{param|AssignedExternalPort}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FilterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}.Filter.{i}."
+        access="readWrite" numEntriesParameter="FilterNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        Filter table.
+
+        This table contains all Filters restricting this Inbound Mapping, as
+        defined in {{bibref|RFC6887|}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemoteHostIPAddress" access="readWrite">
+        <description>
+          Permitted remote peer IP address for this filter.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PrefixLength" access="readWrite">
+        <description>
+          Indicates how many bits of {{param|RemoteHostIPAddress}} are relevant
+          for this filter.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="128"/>
+          </unsignedInt>
+          <default type="object" value="128"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemotePort" access="readWrite">
+        <description>
+          Permitted remote peer port number for this filter.
+
+          The value 0 indicates ''all ports''.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemotePortEndRange" access="readOnly">
+        <description>
+          Indicates the last port of the remote port range that starts with
+          {{param|RemotePort}}.
+
+          If an external port range is specified, then the behavior described
+          for {{param|RemotePort}} applies to all ports within the range.
+
+          A value of zero (0) indicates that no remote port range is specified,
+          i.e. that the range consists only of {{param|RemotePort}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PCP.Client.{i}.Server.{i}.OutboundMapping.{i}."
+        access="readWrite" numEntriesParameter="OutboundMappingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.8">
+      <description>
+        Outbound Mapping table.
+
+        This table contains all Outbound Mappings requested by this PCP Client
+        on this PCP Server. Such a mapping is created by a PCP request with
+        OpCode PEER, as described in {{bibref|RFC6887|Section 12}}.
+
+        These requests can be issued from internal device applications, from
+        static configuration or from other LAN device applications via
+        interworking functions such as UPnP IGD or PCP proxies. The
+        {{param|Origin}} parameter indicates which mechanism requested the
+        mapping.
+
+        For non-{{enum|Static|Origin}} mappings (here ''Static'' refers to the
+        mechanism that created the mapping, not to the {{param|Lifetime}}), the
+        Controller MAY modify the {{param|Enable}} parameter but MUST NOT
+        modify any other parameters in the mapping or its sub-objects.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="InternalPort"/>
+        <parameter ref="ProtocolNumber"/>
+        <parameter ref="ThirdPartyAddress"/>
+        <parameter ref="RemoteHostIPAddress"/>
+        <parameter ref="RemotePort"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_PCPErrorCodeReceived}} value indicates that the PCP
+          Client received an error code from the PCP Server.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_PCPErrorCodeReceived"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorCode" access="readOnly">
+        <description>
+          Provides the PCP Error code when {{param|Status}} is
+          {{enum|Error_PCPErrorCodeReceived|Status}}. Error code values are
+          defined in {{bibref|RFC6887|Section 7.4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Origin" access="readOnly">
+        <description>
+          Mechanism via which the mapping was requested. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Internal">
+              <description>
+                Requested via internal device application
+              </description>
+            </enumeration>
+            <enumeration value="UPnP_IWF">
+              <description>
+                Requested via UPnP IGD interworking function
+              </description>
+            </enumeration>
+            <enumeration value="PCP_Proxy">
+              <description>Requested via PCP proxy</description>
+            </enumeration>
+            <enumeration value="Static">
+              <description>
+                Requested via static configuration, i.e. created by the
+                Controller, by some other management entity (e.g. via a GUI),
+                or is present in the factory default configuration
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Lifetime" access="readWrite">
+        <description>
+          Determines the time to live, in {{units}}, of this Outbound Mapping
+          lease, i.e. the remaining time before this port mapping expires.
+
+          A value of 0 means that the port mapping is permanent (referred to as
+          a static mapping in {{bibref|RFC6887}}).
+
+          When a dynamic Outbound Mapping lease expires, the CPE MUST
+          automatically delete the corresponding {{object}} table entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuggestedExternalIPAddress" access="readWrite">
+        <description>
+          The external IPv4 or IPv6 Address that the PCP-controlled device will
+          use to send outgoing packets covered by this mapping.
+
+          This is useful for refreshing a mapping, especially after the PCP
+          Server has lost state. If the PCP Client does not know the external
+          address, or does not have a preference, it MUST use {{empty}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuggestedExternalPort" access="readWrite">
+        <description>
+          The external port that the PCP-controlled device will use to send
+          outgoing packets covered by this mapping.
+
+          This is useful for refreshing a mapping, especially after the PCP
+          Server has lost state. If the PCP Client does not know the external
+          port, or does not have a preference, it MUST use 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemoteHostIPAddress" access="readWrite">
+        <description>
+          The remote peer's IP address, as seen from the PCP Client, for this
+          Outbound Mapping.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InternalPort" access="readWrite">
+        <description>
+          The port on PCP Client WAN Interface that the PCP-controlled device
+          SHOULD listen to for this mapping.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemotePort" access="readWrite">
+        <description>
+          The remote peer's port, as seen from the PCP Client, for this
+          Outbound Mapping.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtocolNumber" access="readWrite">
+        <description>
+          The protocol number of the {{object}}. Values are taken from the
+          {{bibref|IANA-protocolnumbers}}.
+
+          The value -1 means ''all protocols''.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="255"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="ThirdPartyAddress" access="readWrite">
+        <description>
+          Under certain conditions, the PCP Client can create a PCP mapping on
+          behalf of another device, by using the THIRD_PARTY option, as
+          specified in {{bibref|RFC6887|Section 7.3}}. In that case, {{param}}
+          is the IP address of the device for which the PCP operation is
+          requested.
+
+          For non-third-party mappings, {{param}} SHOULD be {{empty}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readWrite">
+        <description>
+          User-readable description of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssignedExternalIPAddress" access="readOnly">
+        <description>
+          The external IP address returned by the PCP Server. The IP address
+          that the PCP-controlled device uses to send outgoing packets
+          corresponding to this mapping.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssignedExternalPort" access="readOnly">
+        <description>
+          The external port returned by the PCP Server. The port that the
+          PCP-controlled device uses to send outgoing packets corresponding to
+          this mapping.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="PCP:2.14">
+    <component ref="Root"/>
+    <component ref="PCP"/>
+  </model>
+</dm:document>

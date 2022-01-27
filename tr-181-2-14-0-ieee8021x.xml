@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [IEEE8021x]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-ieee8021x"
+    file="tr-181-2-14-0-ieee8021x.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="MACAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="IEEE8021x">
+
+    <object name="Device.IEEE8021x." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        IEEE 802.1x object {{bibref|802.1x-2004}}, where {{object|Supplicant}}
+        models authentication supplicants.
+      </description>
+
+      <parameter name="SupplicantNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IEEE8021x.Supplicant.{i}." access="readWrite"
+        numEntriesParameter="SupplicantNumberOfEntries"
+        enableParameter="Enable" minEntries="1" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        802.1x supplicant authentication provisioning and status information
+        associated with an interface to be authenticated (e.g. an
+        {{object|.Ethernet.Link}} instance).
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          This parameter controls whether this resource will utilize the 802.1x
+          protocol as a supplicant for device authentication purposes.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational status of this 802.1x supplicant. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} The interface on which authentication is to be
+          performed. Example: Device.Ethernet.Link.1
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PAEState" access="readOnly">
+        <description>
+          The current supplicant state machine as defined in
+          {{bibref|802.1x-2004|9.5.1}}, Supplicant PAE (Port Access Entity)
+          State. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disconnected"/>
+            <enumeration value="Logoff"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="Authenticating"/>
+            <enumeration value="Authenticated"/>
+            <enumeration value="Held"/>
+            <enumeration value="Restart"/>
+            <enumeration value="ForceAuth"/>
+            <enumeration value="ForceUnauth"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EAPIdentity" access="readWrite">
+        <description>
+          The identity to be exchanged between the supplicant and
+          authenticator.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxStart" access="readWrite">
+        <description>
+          The maximum number of times the device will attempt to send an EAP
+          start message before authentication fails as defined in
+          {{bibref|802.1x-2004|9.5.1}}, maxStart.
+
+          This is in support of {{bibref|802.1x-2004|Section 8.4.6}}, Migration
+          Considerations.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="10"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="StartPeriod" access="readWrite">
+        <description>
+          The period in {{units}} a supplicant will wait before the device will
+          attempt to re-send an EAP start message as defined in
+          {{bibref|802.1x-2004|9.5.1}}, startPeriod.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HeldPeriod" access="readWrite">
+        <description>
+          The hold-off period in {{units}} a supplicant will wait before
+          re-attempting authentication as defined in
+          {{bibref|802.1x-2004|9.5.1}}, heldPeriod.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AuthPeriod" access="readWrite">
+        <description>
+          The period in {{units}} after which a request will be considered
+          timed out as defined in {{bibref|802.1x-2004|9.5.1}}, authPeriod.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AuthenticationCapabilities" access="readOnly">
+        <description>
+          {{list}} Indicates the authentication methods supported by the
+          device. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="EAP-TLS"/>
+            <enumeration value="EAP-MD5"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="StartFailurePolicy" access="readWrite">
+        <description>
+          The action to be taken when authentication has failed, when the
+          network fails to respond to the supplicant's start message, and the
+          retries have been exceeded (since network does not yet support
+          802.1x). {{enum}}
+
+          This is in support of {{bibref|802.1x-2004|Section 8.4.6}}, Migration
+          Considerations.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="FailAuthentication"/>
+            <enumeration value="AssumeAuthentication"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AuthenticationSuccessPolicy" access="readWrite">
+        <description>
+          The action to be taken when authentication succeeds and a connection
+          has already received an address and/or policy settings. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NoAction"/>
+            <enumeration value="RenewConnection"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IEEE8021x.Supplicant.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        802.1x Authentication Supplicant EAP statistics information for this
+        resource.
+      </description>
+
+      <parameter name="ReceivedFrames" access="readOnly">
+        <description>
+          The number of EAPOL frames of any type that have been received by
+          this Supplicant; {{bibref|802.1x-2004|9.5.2}}, EAPOL frames received.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedFrames" access="readOnly">
+        <description>
+          The number of EAPOL frames of any type that have been transmitted by
+          this Supplicant; {{bibref|802.1x-2004|9.5.2}}, EAPOL frames
+          transmitted.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedStartFrames" access="readOnly">
+        <description>
+          The number of EAPOL Start frames that have been transmitted by this
+          Supplicant; {{bibref|802.1x-2004|9.5.2}}, EAPOL Start frames
+          transmitted.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedLogoffFrames" access="readOnly">
+        <description>
+          The number of EAPOL Logoff frames that have been transmitted by this
+          Supplicant; {{bibref|802.1x-2004|9.5.2}}, EAPOL Logoff frames
+          transmitted.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedResponseIdFrames" access="readOnly">
+        <description>
+          The number of EAP Resp/Id frames that have been transmitted;
+          {{bibref|802.1x-2004|9.5.2}}, EAP Resp/Id frames transmitted.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedResponseFrames" access="readOnly">
+        <description>
+          The number of valid EAP Response frames (other than Resp/Id frames)
+          that have been transmitted by this Supplicant;
+          {{bibref|802.1x-2004|9.5.2}}, EAP Resp frames transmitted.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceivedRequestIdFrames" access="readOnly">
+        <description>
+          The number of EAP Req/Id frames that have been received by this
+          Supplicant; {{bibref|802.1x-2004|9.5.2}}, EAP Req/Id frames received.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceivedRequestFrames" access="readOnly">
+        <description>
+          The number of EAP Request frames (other than Rq/Id frames) that have
+          been received by this Supplicant; {{bibref|802.1x-2004|9.5.2}}, EAP
+          Req frames received.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceivedInvalidFrames" access="readOnly">
+        <description>
+          The number of EAPOL frames that have been received by this Supplicant
+          in which the frame type is not recognized;
+          {{bibref|802.1x-2004|9.5.2}}, EAP Req frames received.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceivedLengthErrorFrames" access="readOnly">
+        <description>
+          The number of EAPOL frames that have been received by this Supplicant
+          in which the Packet Body Length field is invalid;
+          {{bibref|802.1x-2004|9.5.2}}, EAP length error frames received.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastFrameVersion" access="readOnly">
+        <description>
+          The protocol version number carried in the most recently received
+          EAPOL frame; {{bibref|802.1x-2004|9.5.2}}, Last EAPOL frame version
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastFrameSourceMACAddress" access="readOnly">
+        <description>
+          The source MAC address carried in the most recently received EAPOL
+          frame; {{bibref|802.1x-2004|9.5.2}}, Last EAPOL frame source.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IEEE8021x.Supplicant.{i}.EAPMD5." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        802.1x Authentication Supplicant provisioning information used for MD5
+        shared secret exchange. This object will not exist if EAP-MD5 is not a
+        supported authentication type.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          This parameter enables or disables the supplicant's support for
+          EAP-MD5.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SharedSecret" access="readWrite">
+        <description>
+          The shared secret to be exchanged between the supplicant and
+          authenticator.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.IEEE8021x.Supplicant.{i}.EAPTLS." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        802.1x Authentication Supplicant provisioning information used for TLS
+        certificate authentication. This object will not exist if the EAP-TLS
+        is not a supported authentication type.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          This parameter enables or disables the supplicant's support for
+          EAP-TLS.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MutualAuthenticationEnable" access="readWrite">
+        <description>
+          The parameter controls if the supplicant will authenticate the
+          authenticator.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="IEEE8021xAuthentication:1" version="2.0">
+      <object ref="Device.IEEE8021x." requirement="present">
+        <parameter ref="SupplicantNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE8021x.Supplicant.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="PAEState" requirement="readOnly"/>
+        <parameter ref="EAPIdentity" requirement="readWrite"/>
+        <parameter ref="MaxStart" requirement="readWrite"/>
+        <parameter ref="StartPeriod" requirement="readWrite"/>
+        <parameter ref="HeldPeriod" requirement="readWrite"/>
+        <parameter ref="AuthPeriod" requirement="readWrite"/>
+        <parameter ref="AuthenticationCapabilities" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE8021x.Supplicant.{i}.Stats."
+          requirement="present">
+        <parameter ref="ReceivedFrames" requirement="readOnly"/>
+        <parameter ref="TransmittedFrames" requirement="readOnly"/>
+        <parameter ref="TransmittedStartFrames" requirement="readOnly"/>
+        <parameter ref="TransmittedLogoffFrames" requirement="readOnly"/>
+        <parameter ref="TransmittedResponseIdFrames" requirement="readOnly"/>
+        <parameter ref="TransmittedResponseFrames" requirement="readOnly"/>
+        <parameter ref="ReceivedRequestIdFrames" requirement="readOnly"/>
+        <parameter ref="ReceivedRequestFrames" requirement="readOnly"/>
+        <parameter ref="ReceivedInvalidFrames" requirement="readOnly"/>
+        <parameter ref="ReceivedLengthErrorFrames" requirement="readOnly"/>
+        <parameter ref="LastFrameVersion" requirement="readOnly"/>
+        <parameter ref="LastFrameSourceMACAddress" requirement="readOnly"/>
+      </object>
+      <object ref="Device.IEEE8021x.Supplicant.{i}.EAPMD5."
+          requirement="present">
+        <description>
+          802.1x Authentication provisioning information used for MD5 shared
+          secret exchange. This object will not exist if EAP-MD5 is not a
+          supported authentication type.
+        </description>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="SharedSecret" requirement="readWrite"/>
+      </object>
+      <object ref="Device.IEEE8021x.Supplicant.{i}.EAPTLS."
+          requirement="present">
+        <description>
+          802.1x Authentication provisioning information used for TLS
+          certificate authentication. This object will not exist if the EAP-TLS
+          is not a supported authentication type.
+        </description>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="MutualAuthenticationEnable" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="IEEE8021xAuthentication:2" base="IEEE8021xAuthentication:1"
+        version="2.7">
+      <object ref="Device.IEEE8021x.Supplicant.{i}." requirement="present">
+        <parameter ref="Interface" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="IEEE8021x:2.14">
+    <component ref="Root"/>
+    <component ref="IEEE8021x"/>
+  </model>
+</dm:document>

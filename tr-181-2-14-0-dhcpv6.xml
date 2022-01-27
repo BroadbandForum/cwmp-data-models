@@ -1,0 +1,1310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [DHCPv6]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-dhcpv6"
+    file="tr-181-2-14-0-dhcpv6.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="IPv6Prefix"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="DHCPv6">
+
+    <object name="Device.DHCPv6." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.2">
+      <description>
+        The Dynamic Host Configuration Protocol (DHCP) IPv6 object
+        {{bibref|RFC3315}}. This entire object applies to IPv6 only. It
+        contains the {{object|Client}} and {{object|Server}} objects.
+      </description>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Client.{i}." access="readWrite"
+        numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable"
+        minEntries="1" maxEntries="unbounded" version="2.2">
+      <description>
+        This object contains DHCPv6 client settings for an associated ''IP
+        Interface'' indicated by {{param|Interface}}.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference to an IPv6-capable interface (that is attached to the IPv6
+        stack), then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} The IP Interface associated with the {{object}} entry.
+          This will reference an IPv6-capable interface (that is attached to
+          the IPv6 stack), otherwise the table entry will be inoperable.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this table entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DUID" access="readOnly">
+        <description>
+          The client's DHCP Unique Identifier (DUID) {{bibref|RFC3315|Section
+          9}}. {{param}} is set by the CPE.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="130"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequestAddresses" access="readWrite">
+        <description>
+          Enables or disables inclusion of the ''Identity Association (IA) for
+          Non-Temporary Address'' option OPTION_IA_NA(3)
+          {{bibref|RFC3315|Section 22.4}} in Solicit messages.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequestPrefixes" access="readWrite">
+        <description>
+          Enables or disables inclusion of the ''Identity Association (IA) for
+          Prefix Delegation'' option OPTION_IA_PD(25) {{bibref|RFC3633|Section
+          10}} in Solicit messages.
+
+          Note that this is only appropriate for an upstream interface on a
+          requesting router, e.g. for an RG WAN interface.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RapidCommit" access="readWrite">
+        <description>
+          Enables or disables inclusion of the ''Rapid Commit'' option
+          OPTION_RAPID_COMMIT(14) {{bibref|RFC3315|Section 22.14}} in Solicit
+          messages.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuggestedT1" access="readWrite">
+        <description>
+          T1 value, in {{units}}, that the client SHOULD use when sending IA
+          options, e.g. OPTION_IA_NA {{bibref|RFC3315|Section 22.4}} and
+          OPTION_IA_PD {{bibref|RFC3633|Section 10}}.
+
+          A value of -1 indicates that no T1 value is specified.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuggestedT2" access="readWrite">
+        <description>
+          T2 value, in {{units}}, that the client SHOULD use when sending IA
+          options, e.g. OPTION_IA_NA {{bibref|RFC3315|Section 22.4}} and
+          OPTION_IA_PD {{bibref|RFC3633|Section 10}}.
+
+          A value of -1 indicates that no T2 value is specified.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedOptions" access="readOnly">
+        <description>
+          {{list}} The options that the client is able to process in server
+          responses. This list MUST include both top-level and encapsulated
+          options, e.g. if the client is able to process OPTION_IA_NA (3) with
+          an encapsulated OPTION_IAADDR (5), the list would be expected to
+          include both 3 and 5.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequestedOptions" access="readWrite">
+        <description>
+          {{list}} An ordered list of the top-level options (i.e. not
+          encapsulated options) that the client will explicitly request from
+          the server.
+
+          This parameter is intended only for options that are not necessary
+          for the basic operation of the protocol, and are not modeled
+          elsewhere. For example, it is appropriate for OPTION_DNS_SERVERS
+          {{bibref|RFC3646}} but is not appropriate for OPTION_SERVERID (which
+          is part of the protocol), OPTION_IA_NA (which is modeled via
+          {{param|RequestAddresses}}) or OPTION_IA_PD (which is modeled via
+          {{param|RequestPrefixes}}). However, the CPE MUST NOT reject an
+          attempt to set this parameter to a value that includes options that
+          it regards as inappropriate; instead, it MUST accept the requested
+          options and handle them as best it can.
+
+          Loosely speaking, these are the options that the client will include
+          in OPTION_ORO {{bibref|RFC3315}} but the client is free to decide (in
+          accordance with {{bibref|RFC3315}}) in which messages to request
+          which option, whether also to request additional options, whether not
+          to request inappropriate options, and in which order to request any
+          options that are also in {{param|SupportedOptions}}.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SentOptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceivedOptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Client.{i}.Server.{i}." access="readOnly"
+        numEntriesParameter="ServerNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.2">
+      <description>
+        This is a transitory table that lists the discovered DHCPv6 servers (it
+        does ''not'' model a local DHCP server). Table entries are
+        automatically created to correspond with these servers. However, it is
+        a local matter to the CPE when to delete old table entries.
+      </description>
+      <uniqueKey>
+        <parameter ref="SourceAddress"/>
+      </uniqueKey>
+
+      <parameter name="SourceAddress" access="readOnly">
+        <description>
+          The IP address from which the message most recently received from
+          this server was sent.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DUID" access="readOnly">
+        <description>
+          The server's DHCP Unique Identifier (DUID) {{bibref|RFC3315|Section
+          9}} as received via OPTION_SERVERID.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="130"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="InformationRefreshTime" access="readOnly">
+        <description>
+          The OPTION_INFORMATION_REFRESH_TIME value {{bibref|RFC4242}} that was
+          most recently received from this server, converted to the
+          ''dateTime'' at which the associated information will expire. If no
+          such option has been received, the parameter value MUST be the
+          "Unknown Time" {{null}}. If the information will never expire, the
+          parameter value MUST be infinite time 9999-12-31T23:59:59Z.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Client.{i}.SentOption.{i}." access="readWrite"
+        numEntriesParameter="SentOptionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.2">
+      <description>
+        The top-level options and option values (including any encapsulated
+        options) that the client will send to the server.
+
+        This table is intended only for options that are not part of the basic
+        operation of the protocol, and whose values are simple, do not often
+        change and are not modeled elsewhere. For example, it is appropriate
+        for OPTION_USER_CLASS (whose value is a list of user classes) but is
+        not appropriate for OPTION_RECONF_MSG (which is part of the protocol),
+        OPTION_IA_NA (which is modeled via {{param|#.RequestAddresses}}) or
+        OPTION_RAPID_COMMIT (which is modeled via {{param|#.RapidCommit}}).
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag (code) {{bibref|RFC3315|Section 22.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          A hexbinary encoded option data {{bibref|RFC3315|Section 22.1}}.
+
+          Note: The length of the option data is ''option-len'' octets, as
+          specified in {{bibref|RFC3315|Section 22.1}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Client.{i}.ReceivedOption.{i}."
+        access="readOnly" numEntriesParameter="ReceivedOptionNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true"
+        version="2.2">
+      <description>
+        This is a transitory table that lists all the options received from all
+        servers. Table entries are automatically created to correspond with
+        received options. However, it is a local matter to the CPE when to
+        delete old table entries.
+
+        If the same option is received multiple times, whether from one or more
+        servers, it is up to the CPE to decide which entries to include (i.e.
+        whether the same option will be present multiple times). In order to
+        allow for the same option to be present multiple times within the
+        table, this table has no unique key defined.
+      </description>
+
+      <parameter name="Tag" access="readOnly">
+        <description>
+          Option tag (code) {{bibref|RFC3315|Section 22.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          A hexbinary encoded option data {{bibref|RFC3315|Section 22.1}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="Server" access="readOnly">
+        <description>
+          {{reference}} This is the server that sent the option to the client.
+          Each {{object}} entry MUST have an associated server.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.Server."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Server." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.2">
+      <description>
+        DHCPv6 server configuration.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the DHCPv6 server function.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PoolNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Server.Pool.{i}." access="readWrite"
+        numEntriesParameter="PoolNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.2">
+      <description>
+        DHCPv6 server pool table.
+
+        Each instance of this object defines a DHCPv6 server pool. Client
+        requests are associated with pools based on criteria such as source
+        interface, supplied DHCPv6 options, and source address.
+
+        Overlapping pool ranges MUST be supported.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference to an IPv6-capable interface (that is attached to the IPv6
+        stack) then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Order"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the {{object}} entry in the order of precedence. A value
+          of ''1'' indicates the first entry considered (highest precedence).
+          For each DHCPv6 request, the highest ordered entry that matches the
+          association criteria is applied. All lower order entries are ignored.
+
+          When this value is modified, if the value matches that of an existing
+          entry, the {{param}} value for the existing entry and all lower
+          {{param}} entries is incremented (lowered in precedence) to ensure
+          uniqueness of this value. A deletion causes {{param}} values to be
+          compacted. When a value is changed, incrementing occurs before
+          compaction.
+
+          The value of {{param}} on creation of a {{object}} table entry MUST
+          be one greater than the largest current value (initially assigned the
+          lowest precedence).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} The IP Interface associated with the {{object}} entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DUID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          A hexbinary string used to identify one or more LAN devices, value of
+          the DHCPv6 Client Identifier (Option 1) {{bibref|RFC3315|Section
+          22.2}}. The option value is binary, so an exact match is REQUIRED.
+
+          {{empty}} indicates this criterion is not used.
+
+          Note: DHCPv6 Option 1 (DUID) is sometimes referred to as ''Client
+          Identifier''.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="130"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DUIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|DUID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|DUID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          A hexbinary string used to identify one or more LAN devices, value of
+          the DHCPv6 Vendor Class Identifier (Option 16)
+          {{bibref|RFC3315|Section 22.16}}. The option value is binary, so an
+          exact match is REQUIRED.
+
+          {{empty}} indicates this criterion is not used.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|VendorClassID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|VendorClassID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserClassID" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          A hexbinary string used to identify one or more LAN devices, value of
+          the DHCPv6 User Class Identifier (Option 15) {{bibref|RFC3315|Section
+          22.15}}.
+
+          {{empty}} indicates this criterion is not used.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserClassIDExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the
+          {{param|UserClassID}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          {{param|UserClassID}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceAddress" access="readWrite">
+        <description>
+          Pool association criterion.
+
+          Source address (link-layer address) of DHCPv6 messages sent from the
+          DHCPv6 client. This criterion is only likely to be useful if this is
+          a link-layer address.
+
+          {{empty}} indicates this criterion is not used for serving.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceAddressMask" access="readWrite">
+        <description>
+          Bit-mask for the source address, where matching of a packet's source
+          address with the {{param|SourceAddress}} is only to be done for bit
+          positions set to one in the mask. A mask of {{empty}} indicates all
+          bits of the {{param|SourceAddress}} are to be used.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceAddressExclude" access="readWrite">
+        <description>
+          If {{false}}, matching packets are those that match the (masked)
+          {{param|SourceAddress}} entry, if specified.
+
+          If {{true}}, matching packets are those that do not match the
+          (masked) {{param|SourceAddress}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IANAEnable" access="readWrite">
+        <description>
+          Enables or disables IANA offers.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IANAManualPrefixes" access="readWrite">
+        <description>
+          {{list}} {{reference}}
+
+          Manually-configured prefixes from which IA_NA addresses will be
+          assigned. Each referenced prefix MUST have a
+          {{param|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} of
+          {{enum|Static|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} or
+          {{enum|Child|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}}. All
+          clients that request IA_NA and match filter criteria on this
+          {{param|Interface}} MUST be offered IA_NA addresses from all of the
+          ''Valid'' ({{param|.IP.Interface.{i}.IPv6Prefix.{i}.ValidLifetime}}
+          is infinite or in the future) /64 prefixes in this list.
+
+          Prefixes MUST be associated with the interface instance referenced by
+          {{param|Interface}}.
+        </description>
+        <syntax>
+          <list maxItems="8">
+            <size/>
+          </list>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv6Prefix." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IANAPrefixes" access="readOnly">
+        <description>
+          {{list}} {{reference}}
+
+          All prefixes from which IA_NA addresses will be assigned. This list
+          can include:
+
+          * Prefixes from {{param|IANAManualPrefixes}} that are used for IA_NA
+            offers.
+
+          * Prefixes with {{param|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} =
+            {{enum|Child|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or
+            {{enum|AutoConfigured|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}
+            associated with the interface instance referenced by
+            {{param|Interface}}.
+        </description>
+        <syntax>
+          <list maxItems="8">
+            <size/>
+          </list>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv6Prefix." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IAPDEnable" access="readWrite">
+        <description>
+          Enables or disables IAPD offers.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IAPDManualPrefixes" access="readWrite">
+        <description>
+          {{list}} {{reference}}
+
+          Manually-configured prefixes from which IA_PD prefixes will be
+          derived. This list can include:
+
+          * Prefixes with {{param|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} =
+            {{enum|Static|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or
+            {{enum|PrefixDelegation|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}
+            associated with upstream interfaces (i.e. interfaces for which the
+            physical layer interface object has ''Upstream'' = {{true}}).
+
+          * Prefixes with {{param|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}}
+            = {{enum|Static|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} or
+            {{enum|Child|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}}
+            associated with with the interface instance referenced by
+            {{param|Interface}}.
+
+          All clients that request IA_PD and match filter criteria on this
+          {{param|Interface}} MUST be offered IA_PD prefixes derived from all
+          of the ''Valid''
+          ({{param|.IP.Interface.{i}.IPv6Prefix.{i}.ValidLifetime}} is infinite
+          or in the future) prefixes in this list.
+        </description>
+        <syntax>
+          <list maxItems="8">
+            <size/>
+          </list>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv6Prefix." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IAPDPrefixes" access="readOnly">
+        <description>
+          {{list}} {{reference}}
+
+          All prefixes for which IA_PD prefixes will be assigned. This list can
+          include:
+
+          * Prefixes from {{param|IAPDManualPrefixes}} that are used for IA_PD
+            offers.
+
+          * Prefixes with {{param|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} =
+            {{enum|PrefixDelegation|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}
+            or {{enum|AutoConfigured|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}
+            associated with upstream interfaces (i.e. interfaces for which the
+            physical layer interface object has ''Upstream'' = {{true}}).
+
+          * Prefixes with {{param|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} =
+            {{enum|Child|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or
+            {{enum|AutoConfigured|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}
+            associated with the interface instance referenced by
+            {{param|Interface}}.
+        </description>
+        <syntax>
+          <list maxItems="8">
+            <size/>
+          </list>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv6Prefix." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IAPDAddLength" access="readWrite">
+        <description>
+          The RECOMMENDED minimum number of bits to add to
+          {{param|IAPDManualPrefixes}} or {{param|IAPDPrefixes}} in order to
+          determine the length of prefixes that are offered in an IA_PD. The
+          device is responsible for ensuring that it does not delegate a prefix
+          longer than /64. The device can have additional logic that is used
+          (in conjunction with this parameter) to determine the actual length
+          of prefixes offered in an IA_PD.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="64"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Server.Pool.{i}.Client.{i}." access="readOnly"
+        numEntriesParameter="ClientNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.2">
+      <description>
+        DHCPv6 client table.
+
+        This table lists details of DHCPv6 clients that matched the filter
+        criteria of this {{object|#}} entry.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="SourceAddress"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+
+          Note: There is no guarantee that the {{param}} value on
+          automatically-created {{object}} instances will be retained. This is
+          because automatically-created {{object}} instances can be transitory.
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceAddress" access="readOnly">
+        <description>
+          Source address of the DHCPv6 client.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Active" access="readOnly">
+        <description>
+          Whether or not the DHCPv6 client is currently present on the LAN. The
+          method of presence detection is a local matter to the CPE.
+
+          The ability to list inactive DHCPv6 clients is OPTIONAL. If the CPE
+          includes inactive DHCPv6 clients in this table, {{param}} MUST be set
+          to {{false}} for each inactive DHCPv6 client. The length of time an
+          inactive DHCPv6 client remains listed in this table is a local matter
+          to the CPE.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6AddressNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6PrefixNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Address.{i}."
+        access="readOnly" numEntriesParameter="IPv6AddressNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.2">
+      <description>
+        IPv6 addresses assigned to this client via IA_NA.
+      </description>
+      <uniqueKey>
+        <parameter ref="IPAddress"/>
+      </uniqueKey>
+
+      <parameter name="IPAddress" access="readOnly">
+        <description>
+          IPv6 address.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreferredLifetime" access="readOnly">
+        <description>
+          The time at which this address will cease to be preferred (i.e. will
+          become deprecated), or {{null}} if not known. For an infinite
+          lifetime, the parameter value MUST be 9999-12-31T23:59:59Z.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ValidLifetime" access="readOnly">
+        <description>
+          The time at which this address will cease to be valid (i.e. will
+          become invalid), or {{null}} if unknown. For an infinite lifetime,
+          the parameter value MUST be 9999-12-31T23:59:59Z.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Prefix.{i}."
+        access="readOnly" numEntriesParameter="IPv6PrefixNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.2">
+      <description>
+        IPv6 prefixes delegated to this client via IA_PD.
+      </description>
+      <uniqueKey>
+        <parameter ref="Prefix"/>
+      </uniqueKey>
+
+      <parameter name="Prefix" access="readOnly">
+        <description>
+          IPv6 address prefix.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreferredLifetime" access="readOnly">
+        <description>
+          The time at which this prefix will cease to be preferred (i.e. will
+          become deprecated), or {{null}} if not known. For an infinite
+          lifetime, the parameter value MUST be 9999-12-31T23:59:59Z.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ValidLifetime" access="readOnly">
+        <description>
+          The time at which this prefix will cease to be valid (i.e. will
+          become invalid), or {{null}} if unknown. For an infinite lifetime,
+          the parameter value MUST be 9999-12-31T23:59:59Z.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Server.Pool.{i}.Client.{i}.Option.{i}."
+        access="readOnly" numEntriesParameter="OptionNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true"
+        version="2.2">
+      <description>
+        DHCPv6 options supplied by this client, e.g. ''DUID'' (Option 1),
+        ''UserClassID'' (Option 15) or ''VendorClassID'' (option 16).
+      </description>
+
+      <parameter name="Tag" access="readOnly">
+        <description>
+          Option tag (code) {{bibref|RFC3315|Section 22.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          A hexbinary encoded option value.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DHCPv6.Server.Pool.{i}.Option.{i}."
+        access="readWrite" numEntriesParameter="OptionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.2">
+      <description>
+        This object specifies the DHCPv6 options that MUST, if enabled, be
+        offered to clients whose DHCPv6 requests are associated with this pool.
+        If {{param|PassthroughClient}} is specified, and the referenced client
+        has a value for a given option then the {{param|PassthroughClient}}
+        option value will be sent instead of {{param|Value}}. Otherwise,
+        {{param|Value}} will be sent.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag (code) {{bibref|RFC3315|Section 22.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          A hexbinary encoded option value.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PassthroughClient" access="readWrite">
+        <description>
+          {{reference}} Indicates whether this {{object}} entry is configured
+          for passthrough.
+
+          If {{param}} is specified, and the referenced client (since boot) has
+          received a value from an associated upstream DHCPv6 server for the
+          given {{param|Tag}} option, then the referenced client's option value
+          will be sent instead of {{param|Value}}. Otherwise, {{param|Value}}
+          will be sent.
+
+          {{empty}} indicates that passthrough is not configured for this
+          {{object}} entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="###.Client."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="DHCPv6Server:1" version="2.2">
+      <object ref="Device.DHCPv6." requirement="present"/>
+      <object ref="Device.DHCPv6.Server." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="PoolNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv6.Server.Pool.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="IANAEnable" requirement="readWrite"/>
+        <parameter ref="IAPDEnable" requirement="readWrite"/>
+        <parameter ref="IANAPrefixes" requirement="readOnly"/>
+        <parameter ref="IAPDAddLength" requirement="readWrite"/>
+        <parameter ref="OptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv6.Server.Pool.{i}.Option.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Tag" requirement="readWrite"/>
+        <parameter ref="Value" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="DHCPv6ServerAdv:1" extends="DHCPv6Server:1" version="2.2">
+      <object ref="Device.DHCPv6.Server.Pool.{i}." requirement="createDelete">
+        <parameter ref="DUID" requirement="readWrite"/>
+        <parameter ref="VendorClassID" requirement="readWrite"/>
+        <parameter ref="UserClassID" requirement="readWrite"/>
+        <parameter ref="SourceAddress" requirement="readWrite"/>
+        <parameter ref="SourceAddressMask" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="DHCPv6ServerClientInfo:1" version="2.2">
+      <object ref="Device.DHCPv6.Server.Pool.{i}." requirement="createDelete">
+        <parameter ref="ClientNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv6.Server.Pool.{i}.Client.{i}."
+          requirement="present">
+        <parameter ref="SourceAddress" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+        <parameter ref="IPv6AddressNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="IPv6PrefixNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="OptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Address.{i}."
+          requirement="present">
+        <parameter ref="IPAddress" requirement="readOnly"/>
+        <parameter ref="PreferredLifetime" requirement="readOnly"/>
+        <parameter ref="ValidLifetime" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Prefix.{i}."
+          requirement="present">
+        <parameter ref="Prefix" requirement="readOnly"/>
+        <parameter ref="PreferredLifetime" requirement="readOnly"/>
+        <parameter ref="ValidLifetime" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DHCPv6.Server.Pool.{i}.Client.{i}.Option.{i}."
+          requirement="present">
+        <parameter ref="Tag" requirement="readOnly"/>
+        <parameter ref="Value" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="DHCPv6:2.14">
+    <component ref="Root"/>
+    <component ref="DHCPv6"/>
+  </model>
+</dm:document>

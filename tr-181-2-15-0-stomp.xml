@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [STOMP]
+
+  Copyright (c) 2021, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2021 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-stomp"
+    file="tr-181-2-15-0-stomp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="URL"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="STOMP">
+    <object name="Device.STOMP." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.12">
+      <description>
+        The {{object}} represents the STOMP capabilities of the device as
+        described in {{bibref|TR-369}}.
+      </description>
+
+      <parameter name="ConnectionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.STOMP.Connection.{i}." access="readWrite"
+        minEntries="0" maxEntries="unbounded" enableParameter="Enable"
+        numEntriesParameter="ConnectionNumberOfEntries">
+      <description>
+        The {{object}} represents a STOMP connection between the Agent and a
+        STOMP server.
+      </description>
+      <uniqueKey>
+        <parameter ref="Host"/>
+        <parameter ref="Username"/>
+        <parameter ref="VirtualHost"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of this {{object}} (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Disabled}} or {{enum|Error}} if there is a fault condition on
+          the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Enabled}} if and only if the interface is able to
+          transmit and receive PDUs; it SHOULD change to {{enum|Unknown}} if
+          the state of the interface can not be determined for some reason.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="ServerNotPresent"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error_AuthenticationFailure"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChangeDate" access="readOnly">
+        <description>
+          The date and time at which this {{object}} entered into its current
+          operational state.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Host" access="readWrite">
+        <description>
+          The hostname or IP Address of the STOMP Server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          The port number of the STOMP Server.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="61613"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          The username part of the credentials to be used when authenticating
+          this {{object}} during connection establishment with the STOMP
+          Server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          The password part of the credentials to be used when authenticating
+          this {{object}} during connection establishment with the STOMP
+          Server.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VirtualHost" access="readWrite">
+        <description>
+          The Virtual Host to use when establishing the connection.
+
+          Some STOMP Server implementations utilize virtual hosts to place a
+          context around credentials, permissions, and internal resources.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableHeartbeats" access="readWrite">
+        <description>
+          Enable or disable the STOMP Heart-beating mechanism as described in
+          STOMP (for this {{object}}).
+
+          When the STOMP Heart-beat mechanism is enabled,
+          {{param|OutgoingHeartbeat}} and {{param|IncomingHeartbeat}} determine
+          how the heart-beat header within the CONNECT frame is formatted.
+
+          When the STOMP Heart-beat mechanism is disabled,
+          {{param|OutgoingHeartbeat}} and {{param|IncomingHeartbeat}} are
+          ignored and the CONNECT frame MUST NOT contain a heart-beat header
+          element.
+
+          Any changes to this parameter will not take effect until the next
+          connection.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutgoingHeartbeat" access="readWrite">
+        <description>
+          Represents the Outgoing heart-beat timing (in {{units}}) of the STOMP
+          Heart-beating mechanism as described in STOMP (for this {{object}}).
+
+          The Outgoing heart-beat represents what the sender of the frame can
+          do. A value of 0 means that it cannot send heart-beats.
+
+          Any changes to this parameter will not take effect until the next
+          connection.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IncomingHeartbeat" access="readWrite">
+        <description>
+          Represents the Incoming heart-beat timing (in {{units}}) of the STOMP
+          Heart-beating mechanism as described in STOMP (for this {{object}}).
+
+          The Incoming heart-beat represents what the sender of the frame would
+          like to get. A value of 0 means that it does not want to receive
+          heart-beats.
+
+          Any changes to this parameter will not take effect until the next
+          connection.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerRetryInitialInterval" access="readWrite">
+        <description>
+          The maximum first reconnection wait interval, in {{units}}, as
+          specified in {{bibref|TR-369}}.
+
+          The Device MUST use a random value between ''0'' and {{param}} as the
+          first reconnection wait interval.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerRetryIntervalMultiplier" access="readWrite">
+        <description>
+          The reconnection interval multiplier as specified in
+          {{bibref|TR-369}}. This value is expressed in units of 0.001. Hence
+          the values of the multiplier range between 1.000 and 65.535.
+
+          For the ''n''th reconnection wait interval, the Device MUST use a
+          random value, in ''seconds'', between ''0'' and
+          {{param|ServerRetryInitialInterval}} * ({{param}} / 1000) ** (''n'' -
+          ''1'').
+
+          The server retry mechanism reaches its upper limit at 10 reconnection
+          attempts. Meaning, that if the number of reconnection attempts
+          exceeds 10, then the Device MUST use a random value, in seconds,
+          between 0 and ServerRetryInitialInterval *
+          (ServerRetryIntervalMultiplier / 1000) ** (10 - 1).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="2000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerRetryMaxInterval" access="readWrite">
+        <description>
+          The maximum reconnection wait interval, in {{units}}.
+
+          If the ''n''th reconnection wait interval calculated from
+          {{param|ServerRetryInitialInterval}} and
+          {{param|ServerRetryIntervalMultiplier}} exceeds the value of this
+          parameter, then the Agent MUST use the value of this parameter as the
+          next reconnection wait interval.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="30720"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsEncrypted" status="deprecated" access="readOnly">
+        <description>
+          This parameter represents whether or not communications that utilize
+          this {{object}} object instance are encrypted.
+
+          {{deprecated|2.14|because the {{param|EnableEncryption}} parameter
+          will dictate whether all connections for this STOMP instance are or
+          are not encrypted}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableEncryption" access="readWrite" version="2.14">
+        <description>
+          When {{true}}, encryption MUST be used for this STOMP Connection
+          {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="LocalAgent:2.15">
+    <component ref="Root"/>
+    <component ref="STOMP"/>
+  </model>
+</dm:document>

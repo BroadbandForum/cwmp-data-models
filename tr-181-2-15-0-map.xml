@@ -1,0 +1,965 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [MAP]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-map"
+    file="tr-181-2-15-0-map.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPv4Prefix"/>
+    <dataType name="IPv6Prefix"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="MAP">
+
+    <object name="Device.MAP." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.8">
+      <description>
+        The Mapping of Address and Port (MAP) object {{bibref|RFC7597}}
+        {{bibref|RFC7599}} {{bibref|RFC7598}}. This object applies only to
+        gateway devices that support IPv4 on the LAN side, include a
+        {{object|#.NAT}}, and typically have only IPv6 connectivity on the WAN
+        side.
+
+        See the MAP Theory of Operation {{bibref|TR-181i2|Appendix XV}} for a
+        description of the working of this MAP data model.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables MAP.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DomainNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MAP.Domain.{i}." access="readWrite"
+        numEntriesParameter="DomainNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        MAP domain settings {{bibref|RFC7597}} {{bibref|RFC7599}}. Each
+        instance models a MAP domain.
+
+        MAP supports two transport modes, both of which use NAPT44 (modified to
+        use a restricted port range):
+
+        * MAP-E ({{param|TransportMode}} =
+          {{enum|Encapsulation|TransportMode}}) uses an IPv4-in-IPv6 tunnel.
+
+        * MAP-T ({{param|TransportMode}} = {{enum|Translation|TransportMode}})
+          uses stateless NAT64.
+
+        Note: There is an n:1 relationship between a MAP domain and the
+        associated {{param|WANInterface}}, i.e. in theory multiple MAP domains
+        can be associated with a single WAN IP interface (each domain would
+        have its own ''End-user IPv6 prefix'' and ''MAP IPv6 address'').
+
+        Note: The {{object}} table includes unique key parameters that are
+        strong references. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="WANInterface"/>
+        <parameter ref="IPv6Prefix"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the MAP domain.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the MAP domain.
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured" optional="true"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransportMode" access="readWrite">
+        <description>
+          The transport mode to use.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_CONT_MAPE'' and
+          ''S46_CONT_MAPT'' container options.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Encapsulation">
+              <description>MAP-E {{bibref|RFC7597}}</description>
+            </enumeration>
+            <enumeration value="Translation">
+              <description>MAP-T {{bibref|RFC7599}}</description>
+            </enumeration>
+          </string>
+          <default type="object" value="Translation"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="WANInterface" access="readWrite">
+        <description>
+          The IP interface with which this MAP domain is associated. This will
+          always be a NAT-ted upstream (WAN) interface.
+
+          The ''End-user IPv6 prefix'' {{param|IPv6Prefix}} is one of this IP
+          interface's prefixes.
+
+          The ''MAP IPv6 address'' is derived from the ''End-user IPv6 prefix''
+          and is one of this IP interface's IP addresses, with an
+          {{param|##.IP.Interface.{i}.IPv6Address.{i}.Origin}} of
+          {{enum|MAP|##.IP.Interface.{i}.IPv6Address.{i}.Origin}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6Prefix" access="readWrite">
+        <description>
+          The MAP domain's ''End-user IPv6 prefix''. This MUST reference one of
+          {{param|WANInterface}}'s prefixes.
+
+          If the Controller configures this prefix directly, the CPE MUST use
+          the Controller-configured prefix. Otherwise, the CPE MUST select one
+          of {{param|WANInterface}}'s prefixes; the selected prefix will
+          typically have {{param|##.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} =
+          {{enum|PrefixDelegation|##.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv6Prefix." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BRIPv6Prefix" access="readWrite">
+        <description>
+          The MAP Border Relay (BR) address or prefix.
+
+          * For MAP-E this is the BR address and therefore MUST be a /128
+            {{bibref|RFC7597}}. Note this address can be an IPv6 anycast
+            address. This address corresponds to the {{bibref|RFC7598}}
+            ''OPTION_S46_BR'' (Border Relay) option.
+
+          * For MAP-T this is the BR prefix {{bibref|RFC7599}}. This address
+            prefix corresponds to the {{bibref|RFC7598}} ''OPTION_S46_DMR''
+            (Default Mapping Rule) option.
+
+          Note: There will be a corresponding
+          {{object|.Routing.Router.{i}.IPv4Forwarding}} default rule.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DSCPMarkPolicy" access="readWrite">
+        <description>
+          DSCP with which to mark the outer IP header for traffic that is
+          associated with this MAP domain.
+
+          Downstream packets are never re-marked.
+
+          Automatic DSCP marking behavior is a local matter to the device,
+          possibly influenced by other Broadband Forum standards that it
+          supports.
+
+          * A value of -1 indicates copy from the incoming packet.
+
+          * A value of -2 indicates automatic marking of DSCP.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-2" maxInclusive="63"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSIDOffset" access="readWrite" status="obsoleted">
+        <description>
+          ''Port-set ID'' (PSID) offset in {{units}}. The number of Port-sets
+          is 2^{{param}}.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port
+          Parameters) option's ''offset'' field.
+
+          {{deprecated|2.12|because details changed between drafting this data
+          model and the RFC being published. This parameter has been moved to
+          the proper location within the {{object|Rule.{i}.}} object}}
+
+          {{obsoleted|2.14-2.15}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="15"/>
+            <units value="bits"/>
+          </unsignedInt>
+          <default type="object" value="6"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSIDLength" access="readWrite" status="obsoleted">
+        <description>
+          The length in {{units}} of the ''Port-set id'' (PSID) configured in
+          the {{param|PSID}} parameter.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port
+          Parameters) option's ''PSID-len'' field.
+
+          {{deprecated|2.12|because details changed between drafting this data
+          model and the RFC being published. This parameter has been moved to
+          the proper location within the {{object|Rule.{i}.}} object}}
+
+          {{obsoleted|2.14-2.15}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="16"/>
+            <units value="bits"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSID" access="readWrite" status="obsoleted">
+        <description>
+          ''Port-set ID'' (PSID) to use in preference to the value extracted
+          from the ''Embedded Address'' (EA) bits.
+
+          Only the high order {{param|PSIDLength}} bits of the {{param}} value
+          are used, so the parameter is ignored when {{param|PSIDLength}} is
+          zero.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port
+          Parameters) option's ''PSID'' field.
+
+          {{deprecated|2.12|because details changed between drafting this data
+          model and the RFC being published. This parameter has been moved to
+          the proper location within the {{object|Rule.{i}.}} object}}
+
+          {{obsoleted|2.14-2.15}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IncludeSystemPorts" access="readWrite"
+          status="deprecated">
+        <description>
+          Whether to include low-numbered (system) ports in the Port-sets.
+          Normally ports in the range
+          [0:2^(16-{{param|PSIDOffset|obsoleted}})-1] are excluded, e.g. for
+          the default {{param|PSIDOffset|obsoleted}} value of 6, ports [0:1023]
+          are not included in the Port-sets.
+
+          This parameter is related to {{bibref|RFC7597}}'s ''N'', which is
+          defined as ''the number of ports (e.g., 1024) excluded from the lower
+          end of the range''. The parameter is relevant only when
+          {{param|PSIDOffset|obsoleted}} is 0; {{false}} corresponds to
+          ''N=1024'' and {{true}} corresponds to ''N=0''.
+
+          {{deprecated|2.15|because details changed between drafting this data
+          model and the RFC being published. This parameter has been moved to
+          the proper location within the {{object|Rule.{i}.}} object}}
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RuleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MAP.Domain.{i}.Rule.{i}." access="readWrite"
+        numEntriesParameter="RuleNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.8">
+      <description>
+        The MAP domain's Mapping Rules {{bibref|RFC7597}}. The rule with the
+        longest match between its {{param|IPv6Prefix}} and the end-user
+        {{param|#.IPv6Prefix}} is the Basic Mapping Rule (BMR). Any of the
+        rules (including the BMR) can be a Forwarding Mapping Rule.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="IPv6Prefix"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="IPv4Prefix"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable or disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this {{object}} instance. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Origin" access="readOnly">
+        <description>
+          The mechanism via which the {{object}} was created.
+
+          If the CPE supports MAP configuration via both DHCPv6 and CWMP, it is
+          up to the implementation to determine how the two mechanisms will
+          interact.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCPv6">
+              <description>
+                Created via a {{bibref|RFC7598}} ''S46_RULE'' option.
+              </description>
+            </enumeration>
+            <enumeration value="Static">
+              <description>
+                Present in the factory default configuration, created by the
+                Controller, or created by some other management entity (e.g.
+                via a GUI)
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Static"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6Prefix" access="readWrite">
+        <description>
+          The ''Rule IPv6 prefix''.
+
+          The Rule IPv6 prefix is a leading part of the end-user
+          {{param|#.IPv6Prefix}}, i.e. its length MUST be less than or equal to
+          the length of the end-user ''IPv6Prefix'', and it MUST match the
+          end-user ''IPv6Prefix''.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's
+          ''ipv6-prefix'' field.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+          <default type="object" value="/0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4Prefix" access="readWrite">
+        <description>
+          The ''Rule IPv4 prefix''.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's
+          ''ipv4-prefix'' field.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Prefix"/>
+          <default type="object" value="/0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EABitsLength" access="readWrite">
+        <description>
+          The length in {{units}} of the ''Embedded Address (EA) bits'' in the
+          end-user {{param|#.IPv6Prefix}}.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's
+          ''ea-len'' field.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="48"/>
+            <units value="bits"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsFMR" access="readWrite">
+        <description>
+          Indicates whether this rule is a ''Forwarding Mapping Rule'' (FMR),
+          i.e. can be used for forwarding.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''flags''
+          field's ''F-Flag''.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSIDOffset" access="readWrite" version="2.12">
+        <description>
+          ''Port-set ID'' (PSID) offset in {{units}}. The number of Port-sets
+          is 2^{{param}}.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port
+          Parameters) option's ''offset'' field.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="15"/>
+            <units value="bits"/>
+          </unsignedInt>
+          <default type="object" value="6"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSIDLength" access="readWrite" version="2.12">
+        <description>
+          The length in {{units}} of the ''Port-set id'' (PSID) configured in
+          the {{param|PSID}} parameter.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port
+          Parameters) option's ''PSID-len'' field.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="16"/>
+            <units value="bits"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSID" access="readWrite" version="2.12">
+        <description>
+          ''Port-set ID'' (PSID) to use in preference to the value extracted
+          from the ''Embedded Address'' (EA) bits.
+
+          Only the high order {{param|PSIDLength}} bits of the {{param}} value
+          are used, so the parameter is ignored when {{param|PSIDLength}} is
+          zero.
+
+          Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port
+          Parameters) option's ''PSID'' field.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IncludeSystemPorts" access="readWrite" version="2.15">
+        <description>
+          Whether to include low-numbered (system) ports in the Port-sets.
+          Normally ports in the range [0:2^(16-{{param|PSIDOffset}})-1] are
+          excluded, e.g. for the default {{param|PSIDOffset}} value of 6, ports
+          [0:1023] are not included in the Port-sets.
+
+          This parameter is related to {{bibref|RFC7597}}'s ''N'', which is
+          defined as ''the number of ports (e.g., 1024) excluded from the lower
+          end of the range''. The parameter is relevant only when
+          {{param|PSIDOffset}} is 0; {{false}} corresponds to ''N=1024'' and
+          {{true}} corresponds to ''N=0''.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MAP.Domain.{i}.Interface." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        MAP interface (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). This models the LAN side MAP domain
+        interface.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since this interface object is a MAP domain interface, it is
+          expected that {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.MAP.Domain.{i}.Interface.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        Throughput statistics for this MAP domain interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+
+          Note that IPv6 does not define broadcast addresses, so IPv6 packets
+          will never cause this counter to increment.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+
+          Note that IPv6 does not define broadcast addresses, so IPv6 packets
+          will never cause this counter to increment.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="MAPBasic:1" version="2.8">
+      <object ref="Device.MAP." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="DomainNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MAP.Domain.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="TransportMode" requirement="readOnly"/>
+        <parameter ref="WANInterface" requirement="readOnly"/>
+        <parameter ref="IPv6Prefix" requirement="readWrite"/>
+        <parameter ref="BRIPv6Prefix" requirement="readWrite"/>
+        <parameter ref="RuleNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.MAP.Domain.{i}.Rule.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="IPv6Prefix" requirement="readWrite"/>
+        <parameter ref="IPv4Prefix" requirement="readWrite"/>
+        <parameter ref="IsFMR" requirement="readWrite"/>
+      </object>
+      <object ref="Device.MAP.Domain.{i}.Interface." requirement="present"/>
+    </profile>
+
+    <profile name="MAPAdv:1" extends="MAPBasic:1" version="2.8"
+        status="obsoleted">
+      <object ref="Device.MAP.Domain.{i}." requirement="present">
+        <parameter ref="PSIDOffset" requirement="readWrite" status="obsoleted"/>
+        <parameter ref="PSIDLength" requirement="readWrite" status="obsoleted"/>
+        <parameter ref="PSID" requirement="readWrite" status="obsoleted"/>
+        <parameter ref="IncludeSystemPorts" requirement="readWrite"
+            status="deprecated"/>
+      </object>
+      <object ref="Device.MAP.Domain.{i}.Rule.{i}." requirement="createDelete">
+        <parameter ref="EABitsLength" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="MAPAdv:2" extends="MAPBasic:1" version="2.15">
+      <object ref="Device.MAP.Domain.{i}.Rule.{i}." requirement="createDelete">
+        <parameter ref="EABitsLength" requirement="readWrite"/>
+        <parameter ref="PSIDOffset" requirement="readWrite"/>
+        <parameter ref="PSIDLength" requirement="readWrite"/>
+        <parameter ref="PSID" requirement="readWrite"/>
+        <parameter ref="IncludeSystemPorts" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="MAP:2.15">
+    <component ref="Root"/>
+    <component ref="MAP"/>
+  </model>
+</dm:document>

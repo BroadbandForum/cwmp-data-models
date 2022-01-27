@@ -1,0 +1,2614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [LMAP]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-lmap"
+    file="tr-181-2-15-0-lmap.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="URL"/>
+    <dataType name="UUID"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="LMAP">
+
+    <object name="Device.LMAP." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.12">
+      <description>
+        This object represents the objects necessary to manage and control the
+        functionality for Large-Scale Measurement of Broadband
+        Performance{{bibref|RFC7594}} as defined in by {{bibref|LMAPIFM}}.
+      </description>
+
+      <parameter name="MeasurementAgentNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EventNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}." access="readWrite"
+        minEntries="0" maxEntries="unbounded" enableParameter="Enable"
+        numEntriesParameter="MeasurementAgentNumberOfEntries" version="2.12">
+      <description>
+        This object represents the measurement agent that performs measurement
+        tasks and reporting functions defined in {{bibref|RFC7594}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Identifier"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          Version of the measurement agent.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastStarted" access="readOnly">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, in UTC that the
+          measurement agent was successfully started.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CapabilityTags" access="readOnly">
+        <description>
+          Capabilities of the measurement agent that cannot be expressed
+          elsewhere in the data model.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Identifier" access="readWrite">
+        <description>
+          Identifier of the {{object}} instance.
+        </description>
+        <syntax>
+          <dataType ref="UUID"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupIdentifier" access="readWrite">
+        <description>
+          Identifier of the measurement group of interest to which the
+          measurement agent belongs.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MeasurementPoint" access="readWrite">
+        <description>
+          Identifier of the measurement point indicating where the measurement
+          agent is located on a path as defined in [bibref|RFC7398}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseAgentIdentifierInReports" access="readWrite">
+        <description>
+          If the value of the {{param|Identifier}} parameter is not {{empty}}
+          and the value of this parameter is {{false}} then the value of the
+          {{param|Identifier}} parameter MUST not be included in measurement
+          reports.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseGroupIdentifierInReports" access="readWrite">
+        <description>
+          If the value of the {{param|GroupIdentifier}} parameter is not
+          {{empty}} and the value of this parameter is {{false}} then the value
+          of the {{param|GroupIdentifier}} parameter MUST not be included in
+          measurement reports.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseMeasurementPointInReports" access="readWrite">
+        <description>
+          If the value of the {{param|MeasurementPoint}} parameter is not
+          {{empty}} and the value of this parameter is {{false}} then the value
+          of the {{param|MeasurementPoint}} parameter MUST not be included in
+          measurement reports.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublicCredential" access="readWrite">
+        <description>
+          {{reference|a {{object|##.Security.Certificate}} object that is used
+          to identify this measurement agent}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="##.Security.Certificate."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PrivateCredential" access="readWrite">
+        <description>
+          {{reference|a {{object|##.Security.Certificate}} object that is used
+          to contain the private keys for this measurement agent}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="##.Security.Certificate."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EventLog" access="readOnly">
+        <description>
+          {{reference|a {{object|##.DeviceInfo.VendorLogFile}} object that is
+          used to record events for this measurement agent}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="##.DeviceInfo.VendorLogFile."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TaskCapabilityNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TaskNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CommunicationChannelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InstructionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="TaskCapabilityNumberOfEntries" version="2.12">
+      <description>
+        This object represents a capabilities, in the context of a task, that
+        are supported by the measurement agent. Types of capabilities include:
+        Report tasks, Configuration Tasks and Instruction Tasks.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Name of the supported task.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          Version of the task.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TaskCapabilityRegistryNumberOfEntries"
+          access="readOnly" dmr:customNumEntriesParameter="true">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.Registry.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="TaskCapabilityRegistryNumberOfEntries"
+        version="2.12">
+      <description>
+        This object represents a registry function and an associated list of
+        roles supported by this measurement agent
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="RegistryEntry"/>
+      </uniqueKey>
+
+      <parameter name="RegistryEntry" access="readOnly">
+        <description>
+          A URI ({{bibref|RFC3986}}) that is the value of the task registry
+          entry as defined in {{bibref|LMAPREG}} or a value for a task that is
+          understood by the measurement agent, measurement controller and
+          measurement collector.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Roles" access="readOnly">
+        <description>
+          {{list| representing the roles of the function}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Controller."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This objects represents the measurement controller that is assigned to
+        a measurement agent.
+      </description>
+
+      <parameter name="ControllerTimeout" access="readWrite">
+        <description>
+          The timer, in {{units}}, that is started after each successful
+          contact with a measurement controller.
+
+          When the timer reaches the timeout en event is raised indicating that
+          connectivity to the controller has been lost.
+        </description>
+        <syntax>
+          <int>
+            <units value="seconds"/>
+            <range minInclusive="0"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControlSchedules" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|#.Schedule}} object}}
+
+          This parameter lists the available control schedules for invoking
+          control tasks by the measurement agent.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="#.Schedule."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControlTasks" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|#.Task}} object}}
+
+          This parameter lists the available control tasks that can be invoked
+          by the measurement agent.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row" targetParent="#.Task."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControlChannels" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|#.CommunicationChannel}} object}}
+
+          The measurement agent to measurement controller channel is used for
+          conveying results of communication sessions with the configuration,
+          instruction status and logging information elements defined in
+          defined in {{bibref|LMAPIFM}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="#.CommunicationChannel."/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable" numEntriesParameter="ScheduleNumberOfEntries"
+        version="2.12">
+      <description>
+        This object represents a schedule that is associated with a set of
+        scheduled actions to be performed by a measurement agent.
+
+        Note: Actions of an occurrence of this {{object}} are gracefully
+        terminated by the defining either the {{param|End}} or
+        {{param|Duration}} parameters. Only one of these parameters may be
+        defined at a time.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the schedule.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="State" access="readOnly">
+        <description>
+          The current operational state of the Schedule. Only one instance of
+          the schedule is active. An active schedule is defined where the
+          {{param}} parameter has a value of {{enum|Running|State}}.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Suppressed"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Running"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Start" access="readWrite">
+        <description>
+          {{reference|a {{object|##.Event}} object that is used define the
+          event to start an occurrence of this {{object}}}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="##.Event."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="End" access="readWrite">
+        <description>
+          {{reference|a {{object|##.Event}} object that is used define the
+          event to gracefully terminate all actions associated with an
+          occurrence of this {{object}}}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="##.Event."/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Duration" access="readWrite">
+        <description>
+          When the {{param}} value is not 0, this parameter is used define the
+          duration, in {{units}}, where after this duration all actions
+          associated with an occurrence of this {{object}} are gracefully
+          terminated.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tags" access="readWrite">
+        <description>
+          {{list|each entry represents tags that are to be reported together
+          with the measurement results.}}
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuppressionTags" access="readWrite">
+        <description>
+          {{list|representing the suppression tags to be matched}}
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionMode" access="readWrite">
+        <description>
+          This parameter describes the execution method to apply to this
+          schedule for the associated Actions.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Sequential">
+              <description>
+                 Actions are executed in sequence as defined by the value of
+                 the {{param|Action.{i}.Order}} parameter.
+
+                The first Scheduled Action of the DestinationOutput is provided
+                the input.
+              </description>
+            </enumeration>
+            <enumeration value="Parallel">
+              <description>
+                Actions are executed in parallel.
+
+                The all Scheduled Actions of the DestinationOutput are provided
+                the input.
+              </description>
+            </enumeration>
+            <enumeration value="Pipelined">
+              <description>
+                Actions are executed in sequence where the output of one Action
+                is used as the input of subsequent Action.
+
+                The first Scheduled Action of the DestinationOutput is provided
+                the input.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Pipelined"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastInvocation" access="readOnly">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, in UTC that the
+          {{object}} was invoked by the measurement agent.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Storage" access="readOnly" activeNotify="canDeny">
+        <description>
+          The amount of secondary storage, in {{units}}, allocated to an
+          instance of this {{object}}.
+
+          The value of this parameter reflects the amount of allocated physical
+          storage and not the storage used by logical data records.
+
+          For example the secondary storage can be the storage allocated in a
+          file system holding temporary data.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bytes"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Stats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This object represents the statistics associated with this object.
+      </description>
+
+      <parameter name="Invocations" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of invocations of this schedule. This counter does not include
+          suppressed invocations or invocations that were prevented due to an
+          overlap with a previous invocation of this schedule.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Suppressions" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of suppressed executions of this schedule.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Overlaps" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of executions prevented due to overlaps with a previous
+          invocation of this schedule.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Failures" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of failed executions of this schedule. A failed execution is
+          an execution where at least one action failed.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable" numEntriesParameter="ActionNumberOfEntries"
+        version="2.12">
+      <description>
+        This object represents an action that is associated with the this
+        {{object|##.Schedule}} object.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object|##.Schedule.{i}.Action}} object.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="State" access="readOnly">
+        <description>
+          The current operational state of the {{object}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Suppressed"/>
+            <enumeration value="Disabled"/>
+            <enumeration value="Running"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          The order of the scheduled action.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Task" access="readWrite">
+        <description>
+          {{reference|a {{object|##.Task}} object used in this scheduled
+          action}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row" targetParent="##.Task."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutputDestination" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|##.Schedule}} object used to receive
+          the output(s) of this scheduled action}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="##.Schedule."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuppressionTags" access="readWrite">
+        <description>
+          {{list|representing the suppression tags to be matched}}
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tags" access="readWrite">
+        <description>
+          {{list|each entry represents tags that are to be reported together
+          with the measurement results.}}
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Storage" access="readOnly" activeNotify="canDeny">
+        <description>
+          The amount of secondary storage, in {{units}}, allocated to an
+          instance of this {{object}}.
+
+          The value of this parameter reflects the amount of allocated physical
+          storage and not the storage used by logical data records.
+
+          For example the secondary storage can be the storage allocated in a
+          file system holding temporary data.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bytes"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastInvocation" access="readOnly">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, in UTC that the
+          {{object}} was invoked by the measurement agent.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastSuccessfulCompletion" access="readOnly">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, in UTC of a successful
+          completion of the {{object}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastSuccessfulStatusCode" access="readOnly">
+        <description>
+          The status code returned by successful execution of the {{object}}. A
+          value of 0 indicates successful completion.
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastSuccessfulMessage" access="readOnly">
+        <description>
+          The message associated with the successful completion of the
+          {{object}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastFailedCompletion" access="readOnly">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, in UTC of a failure to
+          complete the {{object}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastFailedStatusCode" access="readOnly">
+        <description>
+          The status code returned by failed execution of the {{object}}. A
+          value of 0 indicates successful completion.
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastFailedMessage" access="readOnly">
+        <description>
+          The message associated with the failure to complete the task.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Stats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This object represents the statistics associated with this object.
+      </description>
+
+      <parameter name="Invocations" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of invocations of this action. This counter does not include
+          suppressed invocations or invocations that were prevented due to an
+          overlap with a previous invocation of this schedule.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Suppressions" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of suppressed executions of this action.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Overlaps" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of executions prevented due to overlaps with a previous
+          invocation of this action.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Failures" access="readOnly" activeNotify="canDeny">
+        <description>
+          Number of failed executions of this action. A failed execution is an
+          execution where at least one action failed.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Option.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable" numEntriesParameter="OptionNumberOfEntries"
+        version="2.12">
+      <description>
+        This object represents an option associated with the Scheduled Action.
+        When an option with the same Name exists between the Seheduled Action's
+        Option and The Task's option, the option of the Scheduled Action takes
+        precedence over the option associated with the Task.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          The order of the Option.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The name of the option.
+
+          When the value of this parameter is equal to "channel", the option
+          value specifies the Communication Channel used for this scheduled
+          task.
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          The value associated with the Option.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Task.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable" numEntriesParameter="TaskNumberOfEntries"
+        version="2.12">
+      <description>
+        The {{object}} object defines the configuration for a task that can be
+        performed by {{object|##.MeasurementAgent}} objects.
+
+        Tasks are performed by {{object|##.MeasurementAgent}} objects when a
+        {{object|#.Schedule}} object invokes the Task.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the task.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tags" access="readWrite">
+        <description>
+          {{list|each entry represents tags that are to be reported together
+          with the measurement results.}}
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RegistryNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Task.{i}.Registry.{i}."
+        access="readWrite" enableParameter="Enable" minEntries="0"
+        maxEntries="unbounded" numEntriesParameter="RegistryNumberOfEntries"
+        version="2.12">
+      <description>
+        This object represents a registry function and an associated list of
+        roles for this task
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="RegistryEntry"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RegistryEntry" access="readWrite">
+        <description>
+          A URI ({{bibref|RFC3986}}) that is the value of the task registry
+          entry as defined in {{bibref|LMAPREG}} or a value for a task that is
+          understood by the measurement agent, measurement controller and
+          measurement collector.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Roles" access="readWrite">
+        <description>
+          {{list| representing the roles of the function}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Task.{i}.Option.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable" numEntriesParameter="OptionNumberOfEntries"
+        version="2.12">
+      <description>
+        This object represents an option associated with the task.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          The order of the Option.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The name of the option.
+
+          When the value of this parameter is equal to "channel", the option
+          value specifies the Communication Channel used for this task.
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          The value associated with the Option.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.CommunicationChannel.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable"
+        numEntriesParameter="CommunicationChannelNumberOfEntries"
+        version="2.12">
+      <description>
+        This object represents the properties communication channel used to
+        establish communication between a measurement agent and other elements
+        of the LMAP framework (e.g., measurement controller, measurement
+        collector). The value of the {{param|Name}} parameter used for
+        conveying information is defined as an option in the Task's or
+        scheduled Task's option parameter.
+
+        When this object uses the BulkData capability, a
+        {{object|###.BulkData.Profile.{i}}} object instance referred to by this
+        object.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the channel.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseBulkDataProfile" access="readWrite">
+        <description>
+          Enables or disables the ability to use a bulk data profile for this
+          communication channel
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BulkDataProfile" access="readWrite">
+        <description>
+          {{reference|a {{object|###.BulkData.Profile}} object that is used to
+          represent communication channel}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="###.BulkData.Profile."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Target" access="readWrite">
+        <description>
+          The {{datatype}} of the LMAP component that is the target of this
+          communication channel.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TargetPublicCredential" access="readWrite">
+        <description>
+          {{reference|a {{object|###.Security.Certificate}} object that is used
+          to identify the target of this channel}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="###.Security.Certificate."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference|an interface object used to restrict the data transmitted
+          or received using this channel to a specific interface}} If the value
+          of this parameter is {{empty}} the data that is transmitted or
+          received using this channel is able to use any available interface.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.MeasurementAgent.{i}.Instruction.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable"
+        numEntriesParameter="InstructionNumberOfEntries" version="2.12">
+      <description>
+        The {{object}} object defines the instruction to the measurement agent
+        by the measurement controller. At most one {{object}} object for the
+        {{object|##.MeasurementAgent}} instance is enabled at a time. .
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, in UTC that the
+          {{object}} object or its sub-object's configuration was changed by a
+          measurement agent's controller.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InstructionSchedules" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|#.Schedule}} object}}
+
+          This parameter lists the available instruction schedules for invoking
+          control tasks by the measurement agent.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="#.Schedule."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InstructionTasks" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|#.Task}} object}}
+
+          This parameter lists the available instruction tasks that can be
+          invoked by the measurement agent.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row" targetParent="#.Task."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportChannels" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|#.CommunicationChannel}} object}}
+
+          This parameter defines the corresponding report channels to be used
+          when reporting results of tasks to a measurement collector.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="#.CommunicationChannel."/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MeasurementSuppressionNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.MeasurementSuppression.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        enableParameter="Enable"
+        numEntriesParameter="MeasurementSuppressionNumberOfEntries"
+        version="2.12">
+      <description>
+        This object defines the schedules and actions that are suppressed based
+        on criteria defined in the {{param|SuppressionMatch}} parameter.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the suppression object.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="State" access="readOnly">
+        <description>
+          The current operational state of the {{object}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Enabled"/>
+            <enumeration value="Active"/>
+            <enumeration value="Disabled"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="StopRunning" access="readWrite">
+        <description>
+          When {{true}}, the measurement agent is instructed to stop running
+          schedules or actions that have been matched by this object.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Start" access="readWrite">
+        <description>
+          {{reference|a {{object|###.Event}} object that is used define the
+          event that to start an occurrence of this {{object}}}} When {{empty}}
+          the default behavior is to perform the suspension event immediately.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="###.Event."/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="End" access="readWrite">
+        <description>
+          {{reference|a {{object|###.Event}} object that is used define the
+          event to gracefully suspend all actions associated with an occurrence
+          of this {{object}}}} When {{empty}} the default behavior is for the
+          suspension period to be indefinite.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetType="row"
+                targetParent="###.Event."/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuppressionMatch" access="readWrite">
+        <description>
+          {{list|representing the match patterns to be used for applying
+          suppression to {{object|##.Schedule.{i}}} (and their actions) and all
+          {{object|##.Schedule.{i}.Action.{i}}} object instances that have a
+          matched using their SuppressionTags parameters}} The match pattern
+          syntax is defined in {{bibref|LMAPIFM}}.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Report.{i}." access="readOnly" minEntries="0"
+        maxEntries="unbounded" numEntriesParameter="ReportNumberOfEntries"
+        dmr:noUniqueKeys="true" version="2.12">
+      <description>
+        This {{object}} object instance represents a report that is generated
+        by a reporting task where the reporting task is defined as a
+        {{object|#.MeasurementAgent.{i}.Task.{i}}} and executed as a scheduled
+        action ({{object|#.MeasurementAgent.{i}.Schedule.{i}.Action.{i}}}).
+
+        The {{object}} replicates the {{object|#.MeasurementAgent.{i}}} object
+        instance's data at the time of the action exection.
+
+        When a {{object|##.BulkData.Profile.{i}}} object instance is used to
+        communicate a {{object}} instance, the CPE adds a
+        {{object|##.BulkData.Profile.{i}.Parameter.{i}}} object instance
+        referring to this {{object}} object instance.
+      </description>
+
+      <parameter name="ReportDate" access="readOnly">
+        <description>
+          The report date and time, based on {{bibref|RFC3339}}, that the
+          report was sent to the collector.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AgentIdentifier" access="readOnly">
+        <description>
+          Identifier of the measurement agent at the time the measurement was
+          run.
+        </description>
+        <syntax>
+          <dataType ref="UUID"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupIdentifier" access="readOnly">
+        <description>
+          Identifier of the measurement group of interest to which the MA
+          belongs.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MeasurementPoint" access="readOnly">
+        <description>
+          Identifier of the measurement point indicating where the measurement
+          agent is located on a path as defined in {{bibref|RFC7398}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResultNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Report.{i}.Result.{i}." access="readOnly"
+        minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="ResultNumberOfEntries" dmr:noUniqueKeys="true"
+        version="2.12">
+      <description>
+        The {{object}} object provides the meta-data of the result report of a
+        single executed action that produced the result.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="ScheduleName"/>
+        <parameter ref="ActionName"/>
+        <parameter ref="StartTime"/>
+      </uniqueKey>
+
+      <parameter name="TaskName" access="readOnly">
+        <description>
+          Name of the task that produced the result.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleName" access="readOnly">
+        <description>
+          Name of the schedule that produced the result.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActionName" access="readOnly">
+        <description>
+          Name of the action that produced the result.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EventTime" access="readOnly">
+        <description>
+          The date and time, based on {{bibref|RFC3339}}, that the event that
+          triggered the schedule of the action that produced the reported
+          result values in UTC.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StartTime" access="readOnly">
+        <description>
+          The date and time, based on {{bibref|RFC3339}}, that the action
+          started in UTC.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndTime" access="readOnly">
+        <description>
+          The date and time, based on {{bibref|RFC3339}}, that the action was
+          completed in UTC.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CycleNumber" access="readOnly">
+        <description>
+          The cycle number derived from the {{param|EventTime}}.
+
+          The cycle number is the time, in UTC, closest to the
+          {{param|EventTime}} that is a multiple of the cycle interval of the
+          event that triggered the execution of the schedule.
+
+          The value is valid if the event that triggered the execution of the
+          schedule has a defined cycle interval. {{empty}} represents an
+          invalid CycleNumber.
+
+          {{pattern}}
+        </description>
+        <syntax>
+          <string>
+            <pattern value="YYYYMMDD.HHMMSS"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status code returned by the execution of the action.
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tags" access="readOnly">
+        <description>
+          {{list|each entry represents tags defined for the schedule, task and
+          action objects that produced this result}}
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResultConflictNumberOfEntries" access="readOnly"
+          dmr:customNumEntriesParameter="true">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResultReportTableNumberOfEntries" access="readOnly"
+          dmr:customNumEntriesParameter="true">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Report.{i}.Result.{i}.Option.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="OptionNumberOfEntries" version="2.12">
+      <description>
+        This object represents an option associated with the task or action
+        object that produced the result.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Order" access="readOnly">
+        <description>
+          The order of the Option.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The name of the Option.
+
+          When the value of this parameter is equal to "channel", the option
+          value specifies the Communication Channel used for this task.
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          The value associated with the Option.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Report.{i}.Result.{i}.Conflict.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="ResultConflictNumberOfEntries" version="2.12">
+      <description>
+        This object represents actions that might have impacted the results
+        being reported.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="ScheduleName"/>
+        <parameter ref="ActionName"/>
+        <parameter ref="TaskName"/>
+      </uniqueKey>
+
+      <parameter name="TaskName" access="readOnly">
+        <description>
+          Name of the task.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleName" access="readOnly">
+        <description>
+          Name of the schedule.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActionName" access="readOnly">
+        <description>
+          Name of the action.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="ResultReportTableNumberOfEntries"
+        dmr:noUniqueKeys="true" version="2.12">
+      <description>
+        This {{object}} object instances represents a row of results.
+      </description>
+
+      <parameter name="ColumnLabels" access="readOnly">
+        <description>
+          {{list}} This parameter contains the column labels used for the
+          result.
+
+          The column labels are ordered with the corresponding entries in the
+          {{object|ResultRow}} table.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResultReportRowNumberOfEntries" access="readOnly"
+          dmr:customNumEntriesParameter="true">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RegistryNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.ResultRow.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="ResultReportRowNumberOfEntries"
+        dmr:noUniqueKeys="true" version="2.12">
+      <description>
+        This {{object}} object instances represents a row of results for the
+        report.
+      </description>
+
+      <parameter name="Values" access="readOnly">
+        <description>
+          {{list}} This parameter contains an ordered set of values that align
+          to the columns defined in the {{param|#.ColumnLabels}} parameter.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.Registry.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="RegistryNumberOfEntries" version="2.12">
+      <description>
+        This object represents a registry function and an associated list of
+        roles for this result report.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="RegistryEntry"/>
+      </uniqueKey>
+
+      <parameter name="RegistryEntry" access="readOnly">
+        <description>
+          A URI ({{bibref|RFC3986}}) that is the value of the registry entry as
+          defined in {{bibref|LMAPREG}} or a value for a task that is
+          understood by the measurement agent, measurement controller and
+          measurement collector.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Roles" access="readOnly">
+        <description>
+          {{list| representing the roles of the function}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Event.{i}." access="readWrite" minEntries="0"
+        maxEntries="unbounded" enableParameter="Enable"
+        numEntriesParameter="EventNumberOfEntries" version="2.12">
+      <description>
+        This object defines the information associated with an event used
+        within the measurement agent. Event instances may be referenced by
+        various objects within the LMAP model.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} instance.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the Event.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readWrite">
+        <description>
+          This parameter describes the type of {{object}} for this object
+          instance. The timing of the event occurrence is adjusted based on the
+          value of the {{param|RandomnessSpread}} parameter.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="PeriodicTiming">
+              <description>
+                Periodic Timing Event. When selected one or more event
+                occurrences are emitted based on the parameters defined in the
+                {{object|PeriodicTimer}} object.
+              </description>
+            </enumeration>
+            <enumeration value="CalendarTiming">
+              <description>
+                Calendar Timing Event. When selected one or more event
+                occurrences are emitted based on the parameters defined in the
+                {{object|CalendarTimer}} object.
+              </description>
+            </enumeration>
+            <enumeration value="OneOffTiming">
+              <description>
+                One-off Timing Event. When selected a single event occurrence
+                is emitted based on the parameters defined in the
+                {{object|OneOff}} object.
+              </description>
+            </enumeration>
+            <enumeration value="Immediate">
+              <description>
+                Immediate Timing Event. When selected a single event occurrence
+                is emitted as soon as possible.
+              </description>
+            </enumeration>
+            <enumeration value="Startup">
+              <description>
+                Startup Timing Event. When selected a single event occurrence
+                is emitted when the corresponding measurement agent starts up.
+              </description>
+            </enumeration>
+            <enumeration value="ControllerLost">
+              <description>
+                Controller Lost Event. When selected a single event occurrence
+                is emitted when the connectivity to the controller is lost.
+              </description>
+            </enumeration>
+            <enumeration value="ControllerConnected">
+              <description>
+                Controller Connected Event. When selected a single event
+                occurrence is emitted when the connectivity to the controller
+                is established.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Immediate"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RandomnessSpread" access="readWrite">
+        <description>
+          The spread, in {{units}}, of the Uniform Discrete random distribution
+          algorithm. A value of 0 means that the random algorithm is not
+          applied.
+        </description>
+        <syntax>
+          <int>
+            <units value="seconds"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="CycleInterval" access="readWrite">
+        <description>
+          The duration of the time interval, in {{units}}, that used to
+          calculate cycle numbers.
+        </description>
+        <syntax>
+          <int>
+            <units value="seconds"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Event.{i}.PeriodicTimer." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This object defines a periodic timer instance. The periodic timer
+        instance has attributes for when the timer is to begin
+        ({{param|StartTime}}) and end ({{param|EndTime}}) as well as the
+        interval to use.
+      </description>
+
+      <parameter name="StartTime" access="readWrite">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, that the {{object}}
+          instance is to begin operation.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndTime" access="readWrite">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, that the {{object}}
+          instance is to end operation.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interval" access="readWrite">
+        <description>
+          The tolerable duration, in {{units}}, of the interval for this
+          {{object}} instance.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Event.{i}.CalendarTimer." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This object defines a calendar timer instance.
+
+        The calendar timer instance has attributes for when the timer is to
+        begin ({{param|StartTime}}) and end ({{param|EndTime}}) as well as the
+        schedule of the recurrence.
+
+        The algrorithm that defines how the schedule elements are evaluated is
+        defined in {{bibref|LMAPIFM}}.
+
+        If the value of any of the {{param|ScheduleMonths}},
+        {{param|ScheduleDaysOfMonth}}, {{param|ScheduleDaysOfWeek}},
+        {{param|ScheduleHoursOfDay}}, {{param|ScheduleMinutesOfHour}} or
+        {{param|ScheduleSecondsOfMinute}} is {{empty}} then any actions that
+        use this object will not be invoked.
+      </description>
+
+      <parameter name="StartTime" access="readWrite">
+        <description>
+          Date and time that the {{object}} instance is to begin this
+          operation.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndTime" access="readWrite">
+        <description>
+          Date and time that the {{object}} instance is to end this operation.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleMonths" access="readWrite">
+        <description>
+          This parameter represents either a list of the months of year that
+          are applied to the schedule or an asterisk (*) that represents all
+          the elements of the list.
+
+          Each entry in the months of the year list can be a numeric value or
+          the name of the month (january (1), february (2), march (3), april
+          (4), may (5), june (6), july (7), august (8), september (9), october
+          (10), november (11), december (12)).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleDaysOfMonth" access="readWrite">
+        <description>
+          This parameter represents either a list of the days of the month
+          (1-31) that are applied to the schedule or an asterisk (*) that
+          represents all the elements of the list.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleDaysOfWeek" access="readWrite">
+        <description>
+          This parameter represents either a list of the days of the week that
+          are applied to the schedule or an asterisk (*) that represents all
+          the elements of the list.
+
+          Each entry in the days of the week list can be a numeric value or the
+          name of the day (sunday (1), monday (2), tuesday (3), wednesday (4),
+          thursday (5), friday (6), saturday (7)).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleHoursOfDay" access="readWrite">
+        <description>
+          This parameter represents either a list of the hours of the day
+          (0-23) that are applied to the schedule or an asterisk (*) that
+          represents all the elements of the list.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleMinutesOfHour" access="readWrite">
+        <description>
+          This parameter represents either a list of the minutes of the hour
+          (0-59) that are applied to the schedule or an asterisk (*) that
+          represents all the elements of the list.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleSecondsOfMinute" access="readWrite">
+        <description>
+          This parameter represents either a list of the minutes of the hour
+          (0-59) that are applied to the schedule or an asterisk (*) that
+          represents all the elements of the list.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableScheduleTimezoneOffset" access="readWrite">
+        <description>
+          When {{true}}, the value of the {{param|ScheduleTimezoneOffset}}
+          parameter is applied to the schedule elements.
+
+          When {{false}}, the device's system timezone offset is applied to the
+          schedule elements.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleTimezoneOffset" access="readWrite">
+        <description>
+          The timezone offset, in {{units}}, to be applied to the schedule
+          elements.
+        </description>
+        <syntax>
+          <int>
+            <units value="hours"/>
+            <range minInclusive="-23" maxInclusive="23"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.LMAP.Event.{i}.OneOff." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        This object defines a one off timer instance.
+      </description>
+
+      <parameter name="StartTime" access="readWrite">
+        <description>
+          Date and time, based on {{bibref|RFC3339}}, that the {{object}}
+          instance is to begin operation.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="LMAPPreconfiguration:1" version="2.12">
+      <object ref="Device.LMAP." requirement="present">
+        <parameter ref="MeasurementAgentNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Version" requirement="readOnly"/>
+        <parameter ref="CapabilityTags" requirement="readOnly"/>
+        <parameter ref="Identifier" requirement="readWrite"/>
+        <parameter ref="PublicCredential" requirement="readWrite"/>
+        <parameter ref="PrivateCredential" requirement="readWrite"/>
+        <parameter ref="EventLog" requirement="readOnly"/>
+        <parameter ref="TaskCapabilityNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ScheduleNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="TaskNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="CommunicationChannelNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Controller."
+          requirement="present">
+        <parameter ref="ControllerTimeout" requirement="readWrite"/>
+        <parameter ref="ControlSchedules" requirement="readWrite"/>
+        <parameter ref="ControlTasks" requirement="readWrite"/>
+        <parameter ref="ControlChannels" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}."
+          requirement="present">
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="Version" requirement="readOnly"/>
+        <parameter ref="TaskCapabilityRegistryNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object
+          ref="Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.Registry.{i}."
+          requirement="present">
+        <parameter ref="RegistryEntry" requirement="readOnly"/>
+        <parameter ref="Roles" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Start" requirement="readWrite"/>
+        <parameter ref="End" requirement="readWrite"/>
+        <parameter ref="Duration" requirement="readWrite"/>
+        <parameter ref="Tags" requirement="readWrite"/>
+        <parameter ref="SuppressionTags" requirement="readWrite"/>
+        <parameter ref="ExecutionMode" requirement="readWrite"/>
+        <parameter ref="ActionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Task" requirement="readWrite"/>
+        <parameter ref="SuppressionTags" requirement="readWrite"/>
+        <parameter ref="Tags" requirement="readWrite"/>
+      </object>
+      <object
+          ref="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Option.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Value" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Task.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Tags" requirement="readWrite"/>
+        <parameter ref="OptionNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="RegistryNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Task.{i}.Registry.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="RegistryEntry" requirement="readWrite"/>
+        <parameter ref="Roles" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Task.{i}.Option.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Value" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.CommunicationChannel.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="UseBulkDataProfile" requirement="readWrite"/>
+        <parameter ref="Target" requirement="readWrite"/>
+        <parameter ref="TargetPublicCredential" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.Event.{i}." requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="Type" requirement="readWrite"/>
+        <parameter ref="RandomnessSpread" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.Event.{i}.PeriodicTimer." requirement="present">
+        <parameter ref="StartTime" requirement="readWrite"/>
+        <parameter ref="EndTime" requirement="readWrite"/>
+        <parameter ref="Interval" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.Event.{i}.CalendarTimer." requirement="present">
+        <parameter ref="StartTime" requirement="readWrite"/>
+        <parameter ref="EndTime" requirement="readWrite"/>
+        <parameter ref="ScheduleMonths" requirement="readWrite"/>
+        <parameter ref="ScheduleDaysOfMonth" requirement="readWrite"/>
+        <parameter ref="ScheduleDaysOfWeek" requirement="readWrite"/>
+        <parameter ref="ScheduleHoursOfDay" requirement="readWrite"/>
+        <parameter ref="ScheduleMinutesOfHour" requirement="readWrite"/>
+        <parameter ref="ScheduleSecondsOfMinute" requirement="readWrite"/>
+        <parameter ref="EnableScheduleTimezoneOffset" requirement="readWrite"/>
+        <parameter ref="ScheduleTimezoneOffset" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.Event.{i}.OneOff." requirement="present">
+        <parameter ref="StartTime" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="LMAPController:1" extends="LMAPPreconfiguration:1"
+        version="2.12">
+      <object ref="Device.LMAP.MeasurementAgent.{i}."
+          requirement="createDelete">
+        <parameter ref="LastStarted" requirement="readOnly"/>
+        <parameter ref="GroupIdentifier" requirement="readWrite"/>
+        <parameter ref="MeasurementPoint" requirement="readWrite"/>
+        <parameter ref="UseAgentIdentifierInReports" requirement="readWrite"/>
+        <parameter ref="UseGroupIdentifierInReports" requirement="readWrite"/>
+        <parameter ref="UseMeasurementPointInReports" requirement="readWrite"/>
+        <parameter ref="InstructionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Controller."
+          requirement="present">
+        <parameter ref="ControllerTimeout" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}."
+          requirement="createDelete">
+        <parameter ref="State" requirement="readOnly"/>
+        <parameter ref="LastInvocation" requirement="readOnly"/>
+        <parameter ref="Storage" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Stats."
+          requirement="present">
+        <parameter ref="Invocations" requirement="readOnly"/>
+        <parameter ref="Suppressions" requirement="readOnly"/>
+        <parameter ref="Overlaps" requirement="readOnly"/>
+        <parameter ref="Failures" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}."
+          requirement="createDelete">
+        <parameter ref="State" requirement="readOnly"/>
+        <parameter ref="LastInvocation" requirement="readOnly"/>
+        <parameter ref="Storage" requirement="readOnly"/>
+        <parameter ref="LastSuccessfulCompletion" requirement="readOnly"/>
+        <parameter ref="LastSuccessfulStatusCode" requirement="readOnly"/>
+        <parameter ref="LastSuccessfulMessage" requirement="readOnly"/>
+        <parameter ref="LastFailedCompletion" requirement="readOnly"/>
+        <parameter ref="LastFailedStatusCode" requirement="readOnly"/>
+        <parameter ref="LastFailedMessage" requirement="readOnly"/>
+      </object>
+      <object
+          ref="Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Stats."
+          requirement="present">
+        <parameter ref="Invocations" requirement="readOnly"/>
+        <parameter ref="Suppressions" requirement="readOnly"/>
+        <parameter ref="Overlaps" requirement="readOnly"/>
+        <parameter ref="Failures" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.MeasurementAgent.{i}.Instruction.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="InstructionSchedules" requirement="readWrite"/>
+        <parameter ref="InstructionTasks" requirement="readWrite"/>
+        <parameter ref="ReportChannels" requirement="readWrite"/>
+        <parameter ref="MeasurementSuppressionNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object
+          ref="Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.MeasurementSuppression.{i}."
+          requirement="createDelete">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="State" requirement="readOnly"/>
+        <parameter ref="StopRunning" requirement="readWrite"/>
+        <parameter ref="Start" requirement="readWrite"/>
+        <parameter ref="End" requirement="readWrite"/>
+        <parameter ref="SuppressionMatch" requirement="readWrite"/>
+      </object>
+      <object ref="Device.LMAP.Event.{i}." requirement="createDelete">
+        <parameter ref="CycleInterval" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="LMAPCollector:1" version="2.12">
+      <object ref="Device.LMAP.Report.{i}." requirement="present">
+        <parameter ref="ReportDate" requirement="readOnly"/>
+        <parameter ref="AgentIdentifier" requirement="readOnly"/>
+        <parameter ref="GroupIdentifier" requirement="readOnly"/>
+        <parameter ref="MeasurementPoint" requirement="readOnly"/>
+        <parameter ref="ResultNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.Report.{i}.Result.{i}." requirement="present">
+        <parameter ref="TaskName" requirement="readOnly"/>
+        <parameter ref="ScheduleName" requirement="readOnly"/>
+        <parameter ref="ActionName" requirement="readOnly"/>
+        <parameter ref="EventTime" requirement="readOnly"/>
+        <parameter ref="CycleNumber" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Tags" requirement="readOnly"/>
+        <parameter ref="OptionNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ResultConflictNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ResultReportTableNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.Report.{i}.Result.{i}.Option.{i}."
+          requirement="present">
+        <parameter ref="Order" requirement="readOnly"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="Value" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.Report.{i}.Result.{i}.Conflict.{i}."
+          requirement="present">
+        <parameter ref="TaskName" requirement="readOnly"/>
+        <parameter ref="ScheduleName" requirement="readOnly"/>
+        <parameter ref="ActionName" requirement="readOnly"/>
+      </object>
+      <object ref="Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}."
+          requirement="present">
+        <parameter ref="ColumnLabels" requirement="readOnly"/>
+        <parameter ref="ResultReportRowNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="RegistryNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object
+          ref="Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.ResultRow.{i}."
+          requirement="present">
+        <parameter ref="Values" requirement="readOnly"/>
+      </object>
+      <object
+          ref="Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.Registry.{i}."
+          requirement="present">
+        <parameter ref="RegistryEntry" requirement="readOnly"/>
+        <parameter ref="Roles" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="LMAP:2.15">
+    <component ref="Root"/>
+    <component ref="LMAP"/>
+  </model>
+</dm:document>

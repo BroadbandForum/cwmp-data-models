@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [DSLite]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-dslite"
+    file="tr-181-2-14-0-dslite.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPv6Address"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="DSLite">
+
+    <object name="Device.DSLite." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.2">
+      <description>
+        Settings allowing a CPE to configure and route IPv6 Dual-Stack Lite
+        (DSLite) as specified in {{bibref|DSLite}}. The DS-Lite mechanism is
+        intended to be implemented only on gateway devices that support IPv4 on
+        the LAN side and only have IPv6 connectivity on the WAN side.
+
+        See the Dual-Stack Lite Theory of Operation {{bibref|TR-181i2|Appendix
+        VII}} for a description of the working of this DS-Lite data model.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables DSLite.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DSLite.InterfaceSetting.{i}." access="readOnly"
+        numEntriesParameter="InterfaceSettingNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.2">
+      <description>
+        DSLite {{bibref|DSLite}} settings.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable or disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointAssignmentPrecedence" access="readWrite">
+        <description>
+          Indicates the preferred method to be used in assigning values to
+          {{param|EndpointName}} when both static and dynamic values are
+          available. See {{param|EndpointName}} for further clarification.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCPv6"/>
+            <enumeration value="Static"/>
+          </string>
+          <default type="factory" value="DHCPv6"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointAddressTypePrecedence" access="readWrite"
+          version="2.5">
+        <description>
+          Indicates the preferred method to be used to assign the address of
+          the DS-Lite Endpoint when both {{param|EndpointName}} and
+          {{param|EndpointAddress}} values are available and the
+          {{enum|Static|EndpointAssignmentPrecedence}} method is used. See
+          {{param|EndpointName}} and {{param|EndpointAddress}} for further
+          clarification.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="FQDN">
+              <description>
+                Derive from {{param|EndpointName}} via a DNS lookup.
+              </description>
+            </enumeration>
+            <enumeration value="IPv6Address">
+              <description>
+                Use {{param|EndpointAddress}} directly.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointAddressInUse" access="readOnly" version="2.5">
+        <description>
+          Indicates the address currently in use for the tunnel concentrator
+          (remote endpoint). It is derived from the values of the
+          {{param|EndpointAssignmentPrecedence}},
+          {{param|EndpointAddressTypePrecedence}}, {{param|EndpointName}} and
+          {{param|EndpointAddress}} parameters.
+
+          It is {{empty}} if no endpoint address is currently known.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointName" access="readWrite">
+        <description>
+          The Fully Qualified Domain Name (FQDN) of the tunnel concentrator
+          (remote endpoint).
+
+          This parameter is based on ''OPTION_DS_LITE_NAME'' from
+          {{bibref|DSLite-options|Section 4}} and can be assigned statically
+          (e.g. present in the factory default configuration or set by the
+          Controller) or can be updated dynamically (via DHCPv6). If both
+          statically and dynamically assigned, then
+          {{param|EndpointAssignmentPrecedence}} indicates whether it is the
+          static configuration or the DHCPv6 configuration that is actually
+          applied to {{param}}.
+
+          Note: {{param}} is only writable when
+          {{param|EndpointAssignmentPrecedence}} is
+          {{enum|Static|EndpointAssignmentPrecedence}}; otherwise, {{param}} is
+          automatically configured via the DHCPv6 received option.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointAddress" access="readWrite">
+        <description>
+          The address of the tunnel concentrator (remote endpoint).
+
+          This parameter can only be assigned statically (e.g. present in the
+          factory default configuration or set by the Controller).
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Origin" access="readOnly">
+        <description>
+          Method used to assign {{param|EndpointAddressInUse}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCPv6">
+              <description>Assigned by DHCPv6 {{bibref|RFC3315}}.</description>
+            </enumeration>
+            <enumeration value="Static">
+              <description>
+                For example, present in the factory default configuration, set
+                by the Controller, or set by some other management entity (e.g.
+                via a GUI).
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TunnelInterface" access="readOnly">
+        <description>
+          {{reference}} This is an IP interface of ''Type''
+          {{enum|Tunnel|.IP.Interface.{i}.Type}} that is logically the tunnel
+          entry point for upstream IPv4 traffic and is also logically the
+          tunnel exit point for downstream IPv4 traffic (i.e. the entry point
+          for non-tunneled upstream IPv4 traffic to enter a tunnel and become
+          tunneled, or conversely, the exit point for downstream IPv4 traffic
+          leaving a tunnel after being un-tunneled).
+
+          IPv4 traffic that enters {{param}} is expected to continue on through
+          {{param|TunneledInterface}} from the LAN, and traffic from the WAN is
+          expected to come from TunneledInterface into TunnelInterface.
+          TunnelInterface is a logical interface that can allow for
+          classification, marking (of IPv4 headers), and policing of IPv4
+          traffic that will be going over a DS-Lite tunnel. These functions are
+          modeled in the Device.QoS object.
+
+          Note: In DS-Lite, IPv4 packets arriving over one or more device LAN
+          IP interfaces are logically fed into this {{param}}. Likewise,
+          DS-Lite traffic from the WAN gets logically sent from this {{param}}
+          to LAN IP interfaces.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TunneledInterface" access="readOnly">
+        <description>
+          {{reference}} This is an IP interface of ''Type''
+          {{enum|Tunneled|.IP.Interface.{i}.Type}} that provides information
+          about the IPv6 headers used to encapsulate the IPv4 packets.
+
+          Encapsulated IPv4 traffic that enters {{param}} from the WAN is
+          expected to continue on through {{param|TunnelInterface}}, and
+          traffic from the LAN is expected to come from
+          {{param|TunnelInterface}} into {{param}}. {{param}} is a logical
+          interface that can allow for classification, marking (of IPv6 headers
+          and VLAN tags), and policing of IPv6 packets that encapsulate IPv4
+          packets in DS-Lite traffic. These functions are modeled in the
+          {{object|.QoS.}} object.
+
+          Note: In DS-Lite, {{param}} traffic originating from the LAN
+          logically feeds into a WAN-side IPv6 capable IP interface that the
+          "DSLite IPv4-in-IPv6 tunnel" goes over. DS-Lite traffic that enters
+          over this IPv6 WAN interface gets logically sent to this {{param}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="DSLite:1" version="2.2">
+      <object ref="Device.DSLite." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.DSLite.InterfaceSetting.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="EndpointAssignmentPrecedence" requirement="readWrite"/>
+        <parameter ref="EndpointName" requirement="readWrite"/>
+        <parameter ref="EndpointAddress" requirement="readWrite"/>
+        <parameter ref="Origin" requirement="readOnly"/>
+        <parameter ref="TunnelInterface" requirement="readOnly"/>
+        <parameter ref="TunneledInterface" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="DSLite:2" base="DSLite:1" version="2.5">
+      <object ref="Device.DSLite.InterfaceSetting.{i}." requirement="present">
+        <parameter ref="EndpointAddressTypePrecedence" requirement="readWrite"/>
+        <parameter ref="EndpointAddressInUse" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="DSLite:2.14">
+    <component ref="Root"/>
+    <component ref="DSLite"/>
+  </model>
+</dm:document>

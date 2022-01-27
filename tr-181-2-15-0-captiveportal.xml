@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [CaptivePortal]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-captiveportal"
+    file="tr-181-2-15-0-captiveportal.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="URL"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="CaptivePortal">
+
+    <object name="Device.CaptivePortal." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        This object contains parameters relating to the captive portal
+        configuration on the CPE.
+
+        The captive portal configuration defines the CPE's upstream HTTP (port
+        80) traffic redirect behavior.
+
+        When the captive portal is disabled, upstream HTTP (port 80) traffic
+        MUST be permitted to all destinations.
+
+        When the captive portal is enabled, upstream HTTP (port 80) traffic
+        MUST be permitted only to destinations listed in the
+        {{param|AllowedList}}; traffic to all other destinations MUST be
+        redirected to the {{param|URL}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the captive portal.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of the captive portal. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_URLEmpty">
+              <description>{{param|URL}} is {{empty}}</description>
+            </enumeration>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowedList" access="readWrite">
+        <description>
+          {{list}} List items represent Fully Qualified Domain Names (FQDNs) or
+          IP addresses to which HTTP (port 80) traffic MUST always be
+          permitted, regardless of whether the captive portal is enabled.
+
+          Each entry in the list MUST be either an FQDN, IP address, or an IP
+          prefix specified using Classless Inter-Domain Routing (CIDR) notation
+          {{bibref|RFC4632}}.
+
+          An IP prefix is specified as an IP address followed (with no
+          intervening white space) by "/n", where ''n'' (the prefix size) is an
+          integer in the range 0-32 (for IPv4) or 0-128 (for IPv6) that
+          indicates the number of (leftmost) '1' bits of the prefix.
+
+          IPv4 example:
+
+          * 1.2.3.4 specifies a single IPv4 address, and 1.2.3.4/24 specifies a
+            class C subnet with subnet mask 255.255.255.0.
+
+          * 1.2.0.0/22 represents the 1024 IPv4 addresses from 1.2.0.0 to
+            1.2.3.255.
+
+          IPv6 example:
+
+          * fec0::220:edff:fe6a:f76 specifies a single IPv6 address.
+
+          * 2001:edff:fe6a:f76::/64 represents the IPv6 addresses from
+            2001:edff:fe6a:f76:0:0:0:0 to
+            2001:edff:fe6a:f76:ffff:ffff:ffff:ffff.
+        </description>
+        <syntax>
+          <list maxItems="10000">
+            <size/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="URL" access="readWrite">
+        <description>
+          Captive portal {{datatype}} to which upstream HTTP (port 80) traffic
+          to destinations not listed in the {{param|AllowedList}} will be
+          redirected.
+
+          The captive portal URL MUST be an HTTP (not HTTPS) URL.
+
+          The CPE MUST permit the captive portal URL to be set to {{empty}},
+          which has the effect of disabling the captive portal (if
+          {{param|Enable}} is {{true}} and the captive portal URL is {{empty}},
+          {{param|Status}} MUST be {{enum|Error_URLEmpty|Status}}).
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="CaptivePortal:1" version="2.0">
+      <object ref="Device.CaptivePortal." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="AllowedList" requirement="readWrite"/>
+        <parameter ref="URL" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="CaptivePortal:2.15">
+    <component ref="Root"/>
+    <component ref="CaptivePortal"/>
+  </model>
+</dm:document>

@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [WWC]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-wwc"
+    file="tr-181-2-14-0-wwc.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <dataType name="SST">
+    <description>
+      Service Slice Type (SST). {{enum}}
+
+      See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}.
+    </description>
+    <string>
+      <enumeration value="eMBB">
+        <description>5G Enhanced Mobile Broadband</description>
+      </enumeration>
+      <enumeration value="URLLC">
+        <description>Ultra-Reliable Low Latency Communications</description>
+      </enumeration>
+      <enumeration value="MIoT">
+        <description>Massive IoT</description>
+      </enumeration>
+      <enumeration value="V2X">
+        <description>Vehicle to Everything</description>
+      </enumeration>
+    </string>
+  </dataType>
+  <!-- Templates used in object and/or parameter descriptions -->
+
+  <component name="guti">
+
+    <parameter name="PLMN" access="readOnly" version="2.14">
+      <description>
+        The Public Land Mobile Network (PLMN) globally identifies the service
+        provider. A PLMN consists of a country code (MCC) and a network code
+        (MNC).
+
+        See {{bibref|3GPP-TS.23.003|Clause 12.1}}.
+
+        For example, a PLMN of 50101 refers to MCC 501 (Australia) and MNC 01
+        (Telstra).
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="AMFId" access="readOnly" version="2.14">
+      <description>
+        The AMFId identifies an AMF instance within a service provider's
+        network. In conjunction with the PLMN, it forms a Globally Unique AMF
+        Id (GUAMI) which globally uniquely identifes an AMF.
+
+        See {{bibref|3GPP-TS.23.003|Clause 2.10}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="TMSI" access="readOnly" version="2.14">
+      <description>
+        The Temporary Mobile Subscriber Identity (TMSI) is allocatred by the
+        AMF at the time of registration and uniquely identifies the CPE.
+
+        See {{bibref|3GPP-TS.23.003|Clause 2.4}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="s-nssai">
+    <description>
+      The components necessary to uniquely describe a S-NSSAI. {{enum}}
+
+      For example
+
+      * The most common usage where network slicing is not used:
+
+      * ServiceSliceType=eMBB
+
+      * When network slicng is used
+
+      * ServiceSliceType=eMBB
+
+      * SliceDifferentiator=3
+    </description>
+
+    <parameter name="SliceServiceType" access="readOnly" version="2.14">
+      <description>
+        The Slice Service Type (SST). {{enum}}
+
+        See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}.
+      </description>
+      <syntax>
+        <dataType ref="SST"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SliceDifferentiator" access="readOnly" version="2.14">
+      <description>
+        The Slice differentiator is an optional number used to differentiate
+        network slices with the same SST.
+
+        See {{bibref|3GPP-TS.23.501|Clause 5.15.2.1}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="WWC">
+
+    <object name="Device.WWC." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.14">
+      <description>
+        Base object for Wireline Wireless Convergence. The controller can use
+        this object to learn the supported 5G features and whether the 5G-RG is
+        operating in 5G mode.
+      </description>
+
+      <parameter name="HwCapabilities" access="readOnly">
+        <description>
+          {{list}} Wireline Wireless Convergence hardware capabilities
+          supported by the CPE. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="NG-RAN">
+              <description>
+                Able to use the 5G Radio Access Network
+              </description>
+            </enumeration>
+            <enumeration value="E-UTRAN">
+              <description>
+                Able to use the 4G (LTE) Radio Access Network
+              </description>
+            </enumeration>
+            <enumeration value="W-5GAN">
+              <description>Able to use fixed access networks</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SwCapabilities" access="readOnly">
+        <description>
+          {{list}} Wireline Wireless Convergence software capabilities
+          supported by the CPE. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="FN-RG">
+              <description>
+                Able to use PPPoE or IPoE as specified in {{bibref|TR-124i5}}
+                or earlier
+              </description>
+            </enumeration>
+            <enumeration value="5G-RG">
+              <description>
+                Able to use 5G capabilities such as specified in
+                {{bibref|TR-124i6}}
+              </description>
+            </enumeration>
+            <enumeration value="ATSSS">
+              <description>
+                Able to support multi access PDUs using Access Traffic Steering
+                Switching Splitting (ATSSS)
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Mode" access="readWrite">
+        <description>
+          Sets the mode the CPE is operating in. Whilst the CPE is expected to
+          auto-negotiate, a service provider may need to lock the CPE in
+          {{enum|FN-RG}} or {{enum|5G-RG}} mode for stability. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="FN-RG">
+              <description>
+                The CPE only attempts to authenticate using PPPoE or IPoE
+              </description>
+            </enumeration>
+            <enumeration value="5G-RG">
+              <description>
+                The CPE only attempts to register using 5G NAS
+              </description>
+            </enumeration>
+            <enumeration value="Auto">
+              <description>The CPE may operate in either mode</description>
+            </enumeration>
+          </string>
+          <default value="Auto" type="factory"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The mode the CPE is operating in. A CPE in {{enum|Negotiating}} is
+          deemed to be auto-negotiating its operational mode. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="FN-RG"/>
+            <enumeration value="5G-RG"/>
+            <enumeration value="Negotiating"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessNetworkNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="URSPNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WWC.AccessNetwork.{i}." access="readOnly"
+        numEntriesParameter="AccessNetworkNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.14">
+      <description>
+        Each table entry describes a single access network. The entire table is
+        built by the 5G-RG upon startup. The primary purpose is to show the
+        registration and connectivity status of each access network. Typically
+        a 5G-RG would register on each available access network. A minimum of
+        one access network must be in the CM-CONNECTED state in order to
+        support N1 messaging.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the Access Network entry as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} Specifies the egress interface associated with this
+          "AccessNetwork" entry. This MUST be a layer 1 interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RegistrationStatus" access="readOnly">
+        <description>
+          The registration status of this entry. See
+          {{bibref|3GPP-TS.23.501|Clause 5.3.2}}. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="RM_REGISTERED">
+              <description>
+                The 5G-RG has sucessfully authenticated and has been assigned
+                an AMF to manage it.
+              </description>
+            </enumeration>
+            <enumeration value="RM_DEREGISTERED">
+              <description>
+                The 5G-RG is no longer managed by an AMF.
+              </description>
+            </enumeration>
+            <enumeration value="RM_UNDEFINED">
+              <description>
+                The access network will always start in this state and
+                indicates that the 5G-RG has never registered to the access
+                network. This state is only used by the 5G-RG and is never
+                present in the AMF.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                The {{param|LastError}} parameter is updated with the detail of
+                this error.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionStatus" access="readOnly">
+        <description>
+          The connection status of this entry. A 5G-RG is deemed in the
+          {{enum|CM_CONNECTED|ConnectionStatus}} state if there is a NAS
+          signalling connection established between the 5G-RG and AMF. If
+          {{param|RegistrationStatus}} transitions from
+          {{enum|RM_REGISTERED|RegistrationStatus}} to
+          {{enum|RM_DEREGISTERED|RegistrationStatus}}, the status of {{param}}
+          must change to {{enum|CM_UNDEFINED||ConnectionStatus}}. See
+          {{bibref|3GPP-TS.23.501|Clause 5.3.3}}. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="CM_IDLE">
+              <description>
+                The 5G-RG does not have a NAS connection over N1 to the AMF.
+              </description>
+            </enumeration>
+            <enumeration value="CM_CONNECTED">
+              <description>
+                The 5G-RG does have a NAS connection over N1 to the AMF.
+              </description>
+            </enumeration>
+            <enumeration value="CM_UNDEFINED">
+              <description>
+                The access network will always start in this state and
+                indicates that the 5G-RG is not registered to the access
+                network. This state is only used by the 5G-RG and is never
+                present in the AMF.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                The {{param|LastError}} parameter is updated with the detail of
+                this error.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessNetworkType" access="readOnly">
+        <description>
+          The access network type of this entry. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NG-RAN"/>
+            <enumeration value="E-UTRAN"/>
+            <enumeration value="W-5GAN"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastError" access="readOnly">
+        <description>
+          Error code. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.2}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WWC.AccessNetwork.{i}.GUTI." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.14">
+      <description>
+        A 5G Globally Unique Temparary Identity (GUTI) securely identifes an
+        CPE by keeping the permanent User Equipment (UE identifier (IMSI)
+        hidden. This identity is globally unique and assigned by the AMF at the
+        time of registration.
+
+        See {{bibref|3GPP-TS.23.003|.Clause 2.10}}.
+      </description>
+      <component ref="guti"/>
+    </object>
+
+    <object name="Device.WWC.URSP.{i}." access="readOnly"
+        numEntriesParameter="URSPNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.14">
+      <description>
+        User equipment Router Selection Policy (URSP) is a table of rules used
+        to determine which network slice and data network to route a PDU over.
+        Typically a 5G-RG would search the URSP table in precedence order
+        matching the traffic descriptor types against the service it was
+        setting up. For example a 5G-RG would search for 'connection
+        capabilities' matching 'ims' in order to establish a dedicated PDU
+        session for telephony.
+
+        See {{bibref|3GPP-TS.24.526|Clause 5.2}} for a full descrption of the
+        URSP data elements.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Precedence"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Precedence" access="readOnly">
+        <description>
+          The precedence value of URSP rule field is used to specify the
+          precedence of the URSP rule among all URSP rules in the URSP. The
+          precedence value in the range from 0 to 255 (decimal). The higher the
+          value of the precedence value field, the lower the precedence of the
+          URP rule is. Multiple URSP rules in the URSP shall not have the same
+          precedence value.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TrafficDescriptorNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WWC.URSP.{i}.TrafficDescriptor.{i}."
+        access="readOnly"
+        numEntriesParameter="TrafficDescriptorNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.14">
+      <description>
+        A set of rules for a given precedence that must be matched in order to
+        select a router in the form of data network and slice. Selection
+        criteria range from destination IP addresses to connection
+        capabilities.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readOnly">
+        <description>
+          Traffic Descriptor Type. See {{bibref|3GPP-TS.24.526|Clause 5.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          Traffic descriptor value. See {{bibref|3GPP-TS.24.526|Clause 5.2}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RouteSelectionDescriptorNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}."
+        access="readOnly"
+        numEntriesParameter="RouteSelectionDescriptorNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.14">
+      <description>
+        This object describes the URSP Route Selection Descriptor table which
+        provides a table of data networks and network slices used in PDU
+        establishment. Table entries are used in precedence order until a
+        successful PDU session is established.
+
+        See ((bibref|3GPP-TS.23.503|Annex A}} for an example URSP rule
+        traversal.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Precedence"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Precedence" access="readOnly">
+        <description>
+          The precedence value of route selection descriptor field is used to
+          specify the precedence of the route selection descriptor among all
+          route selection descriptors in the URSP rule. The precedence value in
+          the range from 0 to 255 (decimal). The higher the value of the
+          precedence value field, the lower the precedence of the route
+          selection descriptor is.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSC" access="readOnly">
+        <description>
+          Session and Service Continuity (SSC) Mode: Indicates that the traffic
+          of the matching application shall be routed via a PDU Session
+          supporting the included SSC Mode. See {{bibref|3GPP-TS.24.501|Clause
+          9.11.4.16}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="3"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNN" access="readOnly">
+        <description>
+          The DNN value contains an APN as defined in
+          {{bibref|3GPP-TS.23.003|Clause 9.1.1}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="100"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PDUSessionType" access="readOnly">
+        <description>
+          PDU session type. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.11}}.
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="IPv4"/>
+            <enumeration value="IPv6"/>
+            <enumeration value="IPv4v6"/>
+            <enumeration value="Unstructured"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessType" access="readOnly">
+        <description>
+          The preferred access type for the PDU session. For a 5G-RG non-3GPP
+          refers to any fixed access technology.
+
+          See {{bibref|3GPP-TS.24.501|Clause 9.11.3.11}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="3GPP access"/>
+            <enumeration value="Non-3GPP access"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.NetworkSlice."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.14">
+      <description>
+        Describes a S-NSSAI Information element providing network slice
+        specification.
+
+        See {{bibref|3GPP-TS.24.501|Clause 9.11.2.8}}
+      </description>
+      <component ref="s-nssai"/>
+    </object>
+  </component>
+
+  <model name="WWC:2.14">
+    <component ref="Root"/>
+    <component ref="WWC"/>
+  </model>
+</dm:document>

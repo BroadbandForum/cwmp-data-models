@@ -1,0 +1,2758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [DOCSIS]
+
+  Copyright (c) 2021, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2021 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-9"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-9
+        http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-9.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-docsis"
+    file="tr-181-2-15-0-docsis.xml">
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <!-- Data Types from DOCS-IF-MIB -->
+  <dataType name="TenthdBmV">
+    <description>
+      This data type represents power levels that are normally expressed in
+      dBmV. Units are in tenths of a dBmV; for example, 5.1 dBmV will be
+      represented as 51.
+    </description>
+    <int/>
+  </dataType>
+  <dataType name="TenthdB">
+    <description>
+      This data type represents power levels that are normally expressed in dB.
+      Units are in tenths of a dB; for example, 5.1 dB will be represented as
+      51.
+    </description>
+    <int/>
+  </dataType>
+  <dataType name="DocsisUpstreamType">
+    <description>
+      Indicates the DOCSIS Upstream Channel Type.
+    </description>
+    <string>
+      <enumeration value="Unknown" code="0">
+        <description>Information not available</description>
+      </enumeration>
+      <enumeration value="TDMA" code="1">
+        <description>Time Division Multiple Access</description>
+      </enumeration>
+      <enumeration value="ATDMA" code="2">
+        <description>Advanced Time Division Multiple Access</description>
+      </enumeration>
+      <enumeration value="SCDMA" code="3">
+        <description>Synchronous Code Division Multiple Access</description>
+      </enumeration>
+      <enumeration value="TDMAAndATDMA" code="4">
+        <description>
+          Simultaneous support of TDMA and A-TDMA modes
+        </description>
+      </enumeration>
+    </string>
+  </dataType>
+  <dataType name="DocsEqualizerData">
+    <description>
+      This data type represents the equalizer data as measured at the receiver
+      interface. The format of the equalizer follows the structure of the
+      Transmit Equalization Adjust RNG-RSP TLV of DOCSIS RFI v2.0.
+
+      The equalizer coefficients are considered signed 16-bit integers in the
+      range from -32768 (0x8000) to 32767 (0x7FFF).
+
+      DOCSIS specifications require up to a maximum of 64 equalizer taps (n +
+      m); therefore, this object size can be up to 260 bytes (4 + 4x64). The
+      minimum object size (other than zero) for a t-spaced tap with a minimum
+      of 8 symbols will be 36 (4 + 4x8).
+
+      See {{bibref|CM-SP-RFIv2.0|Figure 8-23}}.
+    </description>
+    <hexBinary>
+      <size minLength="0" maxLength="0"/>
+      <size minLength="36" maxLength="260"/>
+    </hexBinary>
+  </dataType>
+
+  <dataType name="CmRegState">
+    <description>
+      This data type defines the CM connectivity state as reported by the CM.
+
+      {{enum}}
+
+      See {{bibref|CM-SP-MULPIv3.0}}, Cable Modem - CMTS Interaction.
+    </description>
+    <string>
+      <enumeration value="Other" code="1">
+        <description>indicates any state not described below</description>
+      </enumeration>
+      <enumeration value="NotReady" code="2">
+        <description>
+          indicates that the CM has not started the registration process yet
+        </description>
+      </enumeration>
+      <enumeration value="NotSynchronized" code="3">
+        <description>
+          indicates that the CM has not initiated or completed the
+          synchronization of the downstream physical layer
+        </description>
+      </enumeration>
+      <enumeration value="PhySynchronized" code="4">
+        <description>
+          indicates that the CM has completed the synchronization of the
+          downstream physical layer
+        </description>
+      </enumeration>
+      <enumeration value="UsParametersAcquired" code="5">
+        <description>
+          indicates that the CM has completed the upstream parameters
+          acquisition or have completed the downstream and upstream service
+          groups resolution, whether the CM is registering in a pre-3.0 or a
+          3.0 CMTS
+        </description>
+      </enumeration>
+      <enumeration value="RangingComplete" code="6">
+        <description>
+          indicates that the CM has completed initial ranging and received a
+          Ranging Status of success from the CMTS in the RNG-RSP message
+        </description>
+      </enumeration>
+      <enumeration value="DHCPv4Complete" code="7">
+        <description>
+          indicates that the CM has received a DHCPv4 ACK message from the CMTS
+        </description>
+      </enumeration>
+      <enumeration value="ToDEstablished" code="8">
+        <description>
+          indicates that the CM has successfully acquired time of day. If the
+          ToD is acquired after the CM is operational, this value should not be
+          reported
+        </description>
+      </enumeration>
+      <enumeration value="SecurityEstablished" code="9">
+        <description>
+          indicates that the CM has successfully completed the BPI
+          initialization process
+        </description>
+      </enumeration>
+      <enumeration value="ConfigFileDownloadComplete" code="10">
+        <description>
+          indicates that the CM has completed the config file download process
+        </description>
+      </enumeration>
+      <enumeration value="RegistrationComplete" code="11">
+        <description>
+          indicates that the CM has successfully completed the Registration
+          process with the CMTS
+        </description>
+      </enumeration>
+      <enumeration value="Operational" code="12">
+        <description>
+          indicates that the CM has completed all necessary initialization
+          steps and is operational
+        </description>
+      </enumeration>
+      <enumeration value="AccessDenied" code="13">
+        <description>
+          indicates that the CM has received a registration aborted
+          notification from the CMTS
+        </description>
+      </enumeration>
+      <enumeration value="EAEInProgress" code="14">
+        <description>
+          indicates that the CM has sent an Auth Info message for EAE
+        </description>
+      </enumeration>
+      <enumeration value="DHCPv4InProgress" code="15">
+        <description>
+          indicates that the CM has sent a DHCPv4 DISCOVER to gain IP
+          connectivity
+        </description>
+      </enumeration>
+      <enumeration value="DHCPv6InProgress" code="16">
+        <description>
+          indicates that the CM has sent an DHCPv6 Solicit message
+        </description>
+      </enumeration>
+      <enumeration value="DHCPv6Complete" code="17">
+        <description>
+          indicates that the CM has received a DHCPv6 Reply message from the
+          CMTS
+        </description>
+      </enumeration>
+      <enumeration value="RegistrationInProgress" code="18">
+        <description>
+          indicates that the CM has sent a Registration Request (REG-REQ or
+          REG-REQ-MP)
+        </description>
+      </enumeration>
+      <enumeration value="BPIInit" code="19">
+        <description>
+          indicates that the CM has started the BPI initialization process as
+          indicated in the CM config file. If the CM already performed EAE,
+          this state is skipped by the CM
+        </description>
+      </enumeration>
+      <enumeration value="ForwardingDisabled" code="20">
+        <description>
+          indicates that the registration process was completed, but the
+          network access option in the received configuration file prohibits
+          forwarding
+        </description>
+      </enumeration>
+      <enumeration value="DsTopologyResolutionInProgress" code="21">
+        <description>
+          indicates that the CM is attempting to determine its MD-DS-SG
+        </description>
+      </enumeration>
+      <enumeration value="RangingInProgress" code="22">
+        <description>
+          indicates that the CM has initiated the ranging process
+        </description>
+      </enumeration>
+      <enumeration value="RFMuteAll" code="23">
+        <description>
+          indicates that the CM is instructed to mute all channels in the
+          CM-CTRL-REQ message from CMTS
+        </description>
+      </enumeration>
+    </string>
+  </dataType>
+  <dataType name="AmplitudeData">
+    <description>
+      This data type represents a sequence of spectral amplitudes. Each
+      spectral amplitude value corresponds to a bin. The format of the bin
+      measurement is as follows.
+
+      Sequence of:
+
+      : 4 bytes: ChCenterFreq
+
+      :: The center frequency of the upstream channel.
+
+      : 4 bytes: FreqSpan
+
+      :: The width in Hz of the band across which the spectral amplitudes
+         characterizing the channel are measured.
+
+      : 4 bytes: NumberOfBins
+
+      :: The number of data points or bins that compose the spectral data. The
+         leftmost bin corresponds to the lower band edge, the rightmost bin
+         corresponds to the upper band edge, and the middle bin center is
+         aligned with the center frequency of the analysis span.
+
+      : 4 bytes:
+
+      :: BinSpacing The frequency separation between adjacent bin centers. It
+         is derived from the frequency span and the number of bins or data
+         points. The bin spacing is computed as:
+
+      ::: BinSpacing = FrequencySpan/(NumberOfBins -1)
+
+      ::The larger the number of bins the finer the resolution.
+
+      : 4 bytes: ResolutionBW
+
+      :: The resolution bandwidth or equivalent noise bandwidth of each bin. If
+         spectral windowing is used (based on vendor implementation), the bin
+         spacing and resolution bandwidth would not generally be the same.
+
+      : n bytes: Amplitude (2 bytes * NumberOfBins)
+
+      :: A sequence of two byte elements. Each element represents the spectral
+         amplitudes in relation to the expected received signal power of a bin,
+         in units of 0.01dB. That is, a test CMTS input signal with square-root
+         raised-cosine spectrum, bandwidth equal to the expected received
+         signal bandwidth, and power equal to the expected received signal
+         power, which is present for the entire spectrum sampling period, will
+         exhibit a spectrum measurement of 0 dB average power in each bin of
+         the signal passband. Each bin element amplitude value format is 2's
+         complement which provides a range of -327.68 dB to 327.67 dB amplitude
+         value for the bin measurement.
+    </description>
+    <hexBinary>
+      <size minLength="0" maxLength="0"/>
+      <size minLength="2" maxLength="4116"/>
+    </hexBinary>
+  </dataType>
+  <dataType name="SpectrumAnalysisWindowFunction">
+    <description>
+      This object controls the windowing function which will be used when
+      performing the discrete Fourier transform for the analysis. Note that all
+      window functions may not be supported by all devices. If an attempt is
+      made to set the object to an unsupported window function, an error of
+      inconsistentValue will be returned.
+    </description>
+    <string>
+      <enumeration value="Other" code="0"/>
+      <enumeration value="Hann" code="1"/>
+      <enumeration value="BlackmanHarris" code="2"/>
+      <enumeration value="Rectangular" code="3"/>
+      <enumeration value="Hamming" code="4"/>
+      <enumeration value="FlatTop" code="5"/>
+      <enumeration value="Gaussian" code="6"/>
+      <enumeration value="Chebyshev" code="7"/>
+    </string>
+  </dataType>
+  <dataType name="TLV8">
+    <description>
+      This data type represents a single TLV encoding. This first octet
+      represents the Type of the TLV. The second octet represents an unsigned
+      8-bit Length of the subsequent Value part of the TLV. The remaining
+      octets represent the value. The Value could be an atomic value or a
+      sequence of one or more sub-TLVs.
+
+      See {{bibref|CM-SP-MULPIv3.0}}, Common Radio Frequency Interface
+      Encodings Annex.
+    </description>
+    <hexBinary>
+      <size minLength="0" maxLength="0"/>
+      <size minLength="2" maxLength="255"/>
+    </hexBinary>
+  </dataType>
+  <dataType name="RangingState">
+    <description>
+      This data type defines the CM ranging state as reported by the CMTS. The
+      enumerated values associated with the RangingState are:
+
+      {{enum}}
+
+      See {{bibref|CM-SP-MULPIv3.0}}, Cable Modem - CMTS Interaction.
+    </description>
+    <string>
+      <enumeration value="Other" code="1">
+        <description>indicates any state not described below</description>
+      </enumeration>
+      <enumeration value="Aborted" code="2">
+        <description>
+          indicates that the CMTS has sent a ranging abort
+        </description>
+      </enumeration>
+      <enumeration value="RetriesExceeded" code="3">
+        <description>
+          indicates that the CM ranging retry limit has exceeded
+        </description>
+      </enumeration>
+      <enumeration value="Success" code="4">
+        <description>
+          indicates that the CMTS has sent a ranging success in the ranging
+          response
+        </description>
+      </enumeration>
+      <enumeration value="Continue" code="5">
+        <description>
+          indicates that the CMTS has sent a ranging continue in the ranging
+          response
+        </description>
+      </enumeration>
+      <enumeration value="TimeoutT4" code="6">
+        <description>
+          indicates that the T4 timer expired on the CM
+        </description>
+      </enumeration>
+    </string>
+  </dataType>
+
+  <component name="DOCSISRoot">
+    <object name="Device.DOCSIS." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.15">
+      <description>
+        DOCSIS object. This object models the DOCSIS 3.x cable interface
+        objects.
+      </description>
+
+      <parameter name="CapabilitiesReq"
+          id="docsIf3CmCapabilitiesReq/1.3.6.1.4.1.4491.2.1.20.1.21.1"
+          access="readOnly">
+        <description>
+          This attribute contains the TLV encoding for TLV-5 sent in a REG-REQ.
+          The first byte of this encoding is expected to be 0x05.
+
+          See {{bibref|CM-SP-MULPIv3.0}}, Modem Capabilities Encoding in the
+          Common Radio Frequency Interface Encodings Annex.
+        </description>
+        <syntax>
+          <dataType ref="TLV8"/>
+        </syntax>
+      </parameter>
+      <parameter name="CapabilitiesRsp"
+          id="docsIf3CmCapabilitiesRsp/1.3.6.1.4.1.4491.2.1.20.1.21.2"
+          access="readOnly">
+        <description>
+          This attribute contains the TLV encoding for TLV-5 received in a
+          REG-RSP. The first byte of this encoding is expected to be 0x05.
+
+          See {{bibref|CM-SP-MULPIv3.0}}, Modem Capabilities Encoding in the
+          Common Radio Frequency Interface Encodings Annex.
+        </description>
+        <syntax>
+          <dataType ref="TLV8"/>
+        </syntax>
+      </parameter>
+      <parameter name="DownstreamNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="DownstreamChannelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamChannelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="DOCSISLayer1">
+    <object name="Device.DOCSIS.Downstream.{i}." access="readOnly"
+        numEntriesParameter="DownstreamNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true">
+      <description>
+        DOCSIS Downstream interface table (a stackable interface object as
+        described in {{bibref|TR-181i2|Section 4.2}}). This table models the
+        PHY DOCSIS Downstream interface.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since {{object}} is a layer 1 interface, it is expected that
+          {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="MaxBitRate" access="readWrite">
+        <description>
+          The maximum upstream and downstream PHY bit rate supported by this
+          interface (expressed in {{units}}).
+
+          A value of -1 indicates automatic selection of the maximum bit rate.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="Mbps"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="CurrentBitRate" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The current upstream and downstream PHY bit rate on this interface
+          (expressed in {{units}}).
+
+          A value of 0 indicates that the current bit rate is unknown.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="DownstreamChannelList" access="readWrite">
+        <description>
+          Downstream Channels associated with this {{object}} interface.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".DOCSIS.DownstreamChannel." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.Downstream.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DOCSIS.Upstream.{i}." access="readOnly"
+        numEntriesParameter="UpstreamNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true">
+      <description>
+        DOCSIS Upstream interface table (a stackable interface object as
+        described in {{bibref|TR-181i2|Section 4.2}}). This table models the
+        PHY DOCSIS Upstream interface.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since {{object}} is a layer 1 interface, it is expected that
+          {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="MaxBitRate" access="readWrite">
+        <description>
+          The maximum upstream and downstream PHY bit rate supported by this
+          interface (expressed in {{units}}).
+
+          A value of -1 indicates automatic selection of the maximum bit rate.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="Mbps"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="CurrentBitRate" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The current upstream and downstream PHY bit rate on this interface
+          (expressed in {{units}}).
+
+          A value of 0 indicates that the current bit rate is unknown.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="UpstreamChannelList" access="readWrite">
+        <description>
+          Upstream Channels associated with this {{object}} interface.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetParent=".DOCSIS.UpstreamChannel."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.Upstream.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DOCSIS.DownstreamChannel.{i}."
+        id="docsIfDownstreamChannelTable/1.3.6.1.2.1.10.127.1.1.1.1"
+        access="readOnly"
+        numEntriesParameter="DownstreamChannelNumberOfEntries" minEntries="0"
+        maxEntries="unbounded">
+      <description>
+        This table describes the attributes of downstream channels (frequency
+        bands).
+
+        See {{bibref|CM-SP-RFIv2.0|Tables 6-16, and 6-17}}.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="ID"
+          id="docsIfDownChannelId/1.3.6.1.2.1.10.127.1.1.1.1.1"
+          access="readOnly">
+        <description>
+          The Cable Modem Termination System identification of the downstream
+          channel within this particular MAC interface. if the interface is
+          down, the object returns the most current value. If the downstream
+          channel ID is unknown, this object returns a value of 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Frequency"
+          id="docsIfDownChannelFrequency/1.3.6.1.2.1.10.127.1.1.1.1.2"
+          access="readOnly">
+        <description>
+          The center of the downstream frequency associated with this channel.
+          This object will return the current tuner frequency.
+
+          See {{bibref|CM-SP-RFIv2.0|Section 6.3.3}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="1000000000"/>
+            <units value="Hz"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="Width"
+          id="docsIfDownChannelWidth/1.3.6.1.2.1.10.127.1.1.1.1.3"
+          access="readOnly">
+        <description>
+          The bandwidth of this downstream channel. Most implementations are
+          expected to support a channel width of 6 MHz (North America) and/or 8
+          MHz (Europe).
+
+          See {{bibref|CM-SP-RFIv2.0|Table 6-17}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="16000000"/>
+            <units value="Hz"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="Modulation"
+          id="docsIfDownChannelModulation/1.3.6.1.2.1.10.127.1.1.1.1.4"
+          access="readOnly">
+        <description>
+          The modulation type associated with this downstream channel. If the
+          interface is down, this object either returns the configured value
+          (from the CMTS), the most current value (from the CM), or the value
+          of {{enum|Unknown}}. See the reference for specifics on the
+          modulation profiles implied by {{enum|QAM64}} and {{enum|QAM256}}.
+
+          {{enum}}
+
+          See {{bibref|CM-SP-RFIv2.0|Table 6-17.}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown" code="1"/>
+            <enumeration value="Other" code="2"/>
+            <enumeration value="QAM64" code="3"/>
+            <enumeration value="QAM256" code="4"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Interleave"
+          id="docsIfDownChannelInterleave/1.3.6.1.2.1.10.127.1.1.1.1.5"
+          access="readOnly">
+        <description>
+          The Forward Error Correction (FEC) interleaving used for this
+          downstream channel.
+
+          The value {{enum|Taps12increment17}} is supported by EuroDOCSIS cable
+          systems only, and the others by DOCSIS cable systems.
+
+          If the interface is down, this object either returns the configured
+          value (from the CMTS), the most current value (from the CM), or the
+          value of {{enum|Unknown}}. The value of {{enum|Other}} is returned if
+          the interleave is known but not defined in the above list. See the
+          reference for the FEC configuration described by the setting of this
+          object.
+
+          {{enum}}
+
+          See {{bibref|CM-SP-RFIv2.0|Table 6-15}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown" code="1"/>
+            <enumeration value="Other" code="2"/>
+            <enumeration value="Taps8Increment16" code="3">
+              <description>
+                Protection 5.9/4.1 usec, latency .22/.15 msec
+              </description>
+            </enumeration>
+            <enumeration value="Taps16Increment8" code="4">
+              <description>
+                Protection 12/8.2 usec, latency .48/.33 msec
+              </description>
+            </enumeration>
+            <enumeration value="Taps32Increment4" code="5">
+              <description>
+                Protection 24/16 usec, latency .98/.68 msec
+              </description>
+            </enumeration>
+            <enumeration value="Taps64Increment2" code="6">
+              <description>
+                Protection 47/33 usec, latency 2/1.4 msec
+              </description>
+            </enumeration>
+            <enumeration value="Taps128Increment1" code="7">
+              <description>
+                Protection 95/66 usec, latency 4/2.8 msec
+              </description>
+            </enumeration>
+            <enumeration value="Taps12increment17" code="8">
+              <description>
+                Protection 18/14 usec, latency 0.43/0.32 msec
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Power"
+          id="docsIfDownChannelPower/1.3.6.1.2.1.10.127.1.1.1.1.6"
+          access="readOnly">
+        <description>
+          The received power level. If the interface is down, this object
+          either returns the configured value (from the CMTS), the most current
+          value (from the CM) or the value of 0. See the reference for
+          recommended and required power levels.
+
+          See {{bibref|CM-SP-RFIv2.0|Tables 6-16, 6-17}}.
+        </description>
+        <syntax>
+          <dataType ref="TenthdBmV"/>
+        </syntax>
+      </parameter>
+      <parameter name="Annex"
+          id="docsIfDownChannelAnnex/1.3.6.1.2.1.10.127.1.1.1.1.7"
+          access="readOnly">
+        <description>
+          The value of this object indicates the conformance of the
+          implementation to important regional cable standards.
+
+          {{enum}}
+
+          See {{bibref|CM-SP-RFIv2.0|Sections 6.3.1, and H.3.1}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown" code="1"/>
+            <enumeration value="Other" code="2"/>
+            <enumeration value="AnnexA" code="3">
+              <description>
+                Annex A from ITU-T J.83 is used (equivalent to EN 300 429)
+              </description>
+            </enumeration>
+            <enumeration value="AnnexB" code="4">
+              <description>Annex B from ITU-T J.83 is used</description>
+            </enumeration>
+            <enumeration value="AnnexC" code="5">
+              <description>Annex C from ITU-T J.83 is used</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.DownstreamChannel.{i}.SignalQuality."
+        id="docsIfSignalQualityTable/1.3.6.1.2.1.10.127.1.1.4.1"
+        access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Describes the PHY signal quality of downstream channels.
+      </description>
+      <parameter name="SignalNoise"
+          id="docsIfSigQSignalNoise/1.3.6.1.2.1.10.127.1.1.4.1.5"
+          access="readOnly">
+        <description>
+          Signal/Noise ratio as perceived for this channel. Describes the
+          Signal/Noise of the downstream channel.
+
+          See {{bibref|CM-SP-RFIv2.0|Tables 4-1 and 4-2}}.
+        </description>
+        <syntax>
+          <dataType base="TenthdB">
+            <units value="TenthdB"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="Microreflections"
+          id="docsIfSigQMicroreflections/1.3.6.1.2.1.10.127.1.1.4.1.6"
+          access="readOnly">
+        <description>
+          Microreflections, including in-channel response as perceived on this
+          interface, measured in dBc below the signal level. This object is not
+          assumed to return an absolutely accurate value, but it gives a rough
+          indication of microreflections received on this interface. It is up
+          to the implementer to provide information as accurately as possible.
+
+          See {{bibref|CM-SP-RFIv2.0|Tables 4-1 and 4-2}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="-dBc"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="EqualizationData"
+          id="docsIfSigQEqualizationData/1.3.6.1.2.1.10.127.1.1.4.1.7"
+          access="readOnly">
+        <description>
+          Returns the equalization data for the downstream channel.
+
+          * An equalization value indicating an equalization average for the
+            upstream channel. Those values have vendor-dependent
+            interpretations.
+
+          * Return a zero-length OCTET STRING to indicate that the value is
+            unknown or if there is no equalization data available or defined.
+
+          See {{bibref|CM-SP-RFIv2.0|Figure 6-23}}.
+        </description>
+        <syntax>
+          <dataType ref="DocsEqualizerData"/>
+        </syntax>
+      </parameter>
+      <parameter name="ExtUnerroreds"
+          id="docsIfSigQExtUnerroreds/1.3.6.1.2.1.10.127.1.1.4.1.8"
+          access="readOnly">
+        <description>
+          Codewords received on this channel without error. This includes all
+          codewords, whether or not they were part of frames destined for this
+          device. Discontinuities in the value of this counter can occur at
+          reinitialization of the managed system.
+
+          See {{bibref|CM-SP-RFIv2.0|Sections 6.2.4, and 6.3.6}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ExtCorrecteds"
+          id="docsIfSigQExtCorrecteds/1.3.6.1.2.1.10.127.1.1.4.1.9"
+          access="readOnly">
+        <description>
+          Codewords received on this channel with correctable errors. This
+          includes all codewords, whether or not they were part of frames
+          destined for this device. Discontinuities in the value of this
+          counter can occur at reinitialization of the managed system.
+
+          See {{bibref|CM-SP-RFIv2.0|Sections 6.2.4, and 6.3.6}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ExtUncorrectables"
+          id="docsIfSigQExtUncorrectables/1.3.6.1.2.1.10.127.1.1.4.1.10"
+          access="readOnly">
+        <description>
+          Codewords received on this channel with uncorrectable errors. This
+          includes all codewords, whether or not they were part of frames
+          destined for this device. Discontinuities in the value of this
+          counter can occur at reinitialization of the managed system.
+
+          See {{bibref|CM-SP-RFIv2.0|Sections 6.2.4, 6.3.6}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.DownstreamChannel.{i}.SignalQualityExt."
+        id="docsIf3SignalQualityExtTable/1.3.6.1.4.1.4491.2.1.20.1.24.1"
+        access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        Describes the received modulation error ratio of each downstream
+        channel.
+      </description>
+      <parameter name="RxMER"
+          id="docsIf3SignalQualityExtRxMER/1.3.6.1.4.1.4491.2.1.20.1.24.1.1"
+          access="readOnly">
+        <description>
+          {{param}} provides an in-channel received Modulation Error Ratio
+          (MER). {{param}} is defined as an estimate, provided by the
+          demodulator, of the ratio: (average constellation energy with equally
+          likely symbols) / (average squared magnitude of error vector)
+
+          {{param}} is measured just prior to FEC (trellis/Reed-Solomon)
+          decoding. {{param}} includes the effects of the HFC channel as well
+          as implementation effects of the modulator and demodulator. Error
+          vector estimation may vary among demodulator implementations. In the
+          case of S-CDMA mode, RxMER is measured on the de-spread signal.
+        </description>
+        <syntax>
+          <dataType base="TenthdB">
+            <units value="TenthdB"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="RxMerSamples"
+          id="docsIf3SignalQualityExtRxMerSamples/1.3.6.1.4.1.4491.2.1.20.1.24.1.2"
+          access="readOnly">
+        <description>
+          {{param}} is a statistically significant number of symbols processed
+          to arrive at the RxMER value.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="FbeNormalizationCoefficient"
+          id="docsIf3SignalQualityExtFbeNormalizationCoefficient/1.3.6.1.4.1.4491.2.1.20.1.24.1.3"
+          access="readOnly">
+        <description>
+          The Downstream Adaptive Decision Feedback Equalizer (DFE) is
+          implemented as a Feedforward Equalizer (FFE) and a Feedback Equalizer
+          (FBE). In order to evaluate the composite DFE response it is
+          necessary to normalize the FBE coefficients to 1 and then evaluate
+          the FFT(hffe)/FFT(1,hfbe), where the hfbe coefficients have been
+          normalized to 1 using FbeNormalizationCoefficient. The complex data
+          representing the hffe and hfbe coefficients is contained in the
+          EqualizationData MIB. It is possible to implement the DFE such that
+          the response is evaluated as FFT(hffe)/FFT(1,-hfbe). In this case the
+          FbeNormalizationCoefficient will be reported as a negative number and
+          the response will be evaluated as FFT(hffe)/FFT(1,hfbe).
+        </description>
+        <syntax>
+          <int/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DOCSIS.UpstreamChannel.{i}."
+        id="docsIfUpstreamChannelTable/1.3.6.1.2.1.10.127.1.1.2.1"
+        access="readWrite" numEntriesParameter="UpstreamChannelNumberOfEntries"
+        minEntries="0" maxEntries="unbounded">
+      <description>
+        This table describes the attributes of attached upstream channels.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="ID" id="docsIfUpChannelId/1.3.6.1.2.1.10.127.1.1.2.1.1"
+          access="readOnly">
+        <description>
+          The CMTS identification of the upstream channel.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="255"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="Frequency"
+          id="docsIfUpChannelFrequency/1.3.6.1.2.1.10.127.1.1.2.1.2"
+          access="readOnly">
+        <description>
+          The center of the frequency band associated with this upstream
+          interface. This object returns 0 if the frequency is undefined or
+          unknown. Minimum permitted upstream frequency is 5,000,000 Hz for
+          current technology.
+
+          See {{bibref|CM-SP-RFIv2.0|Table 4-2}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="1000000000"/>
+            <units value="Hz"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="Width"
+          id="docsIfUpChannelWidth/1.3.6.1.2.1.10.127.1.1.2.1.3"
+          access="readOnly">
+        <description>
+          The bandwidth of this upstream interface. This object returns 0 if
+          the interface width is undefined or unknown. Minimum permitted
+          interface width is currently 200,000 Hz.
+
+          See {{bibref|CM-SP-RFIv2.0|Table 6-5}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="64000000"/>
+            <units value="Hz"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="SlotSize"
+          id="docsIfUpChannelSlotSize/1.3.6.1.2.1.10.127.1.1.2.1.5"
+          access="readOnly">
+        <description>
+          Applicable to TDMA and ATDMA channel types only. The number of 6.25
+          microsecond ticks in each upstream mini-slot. Returns zero if the
+          value is undefined or unknown or in case of an SCDMA channel.
+
+          See {{bibref|CM-SP-RFIv2.0|Section 8.1.2.4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="ticks"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="TxTimingOffset"
+          id="docsIfUpChannelTxTimingOffset/1.3.6.1.2.1.10.127.1.1.2.1.6"
+          access="readOnly">
+        <description>
+          A measure of the current round trip time obtained from the ranging
+          offset (initial ranging offset + ranging offset adjustments). Used
+          for timing of CM upstream transmissions to ensure synchronized
+          arrivals at the CMTS. Units are one 64th fraction of 6.25
+          microseconds.
+
+          See {{bibref|CM-SP-RFIv2.0|Section 6.2.19}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <parameter name="RangingBackoffStart"
+          id="docsIfUpChannelRangingBackoffStart/1.3.6.1.2.1.10.127.1.1.2.1.7"
+          access="readOnly">
+        <description>
+          The initial random backoff window to use when retrying Ranging
+          Requests. Expressed as a power of 2. A value of 16 at the CMTS
+          indicates that a proprietary adaptive retry mechanism is to be used.
+
+          See {{bibref|CM-SP-RFIv2.0|Sections 8.3.4, and 9.4}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="16"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="RangingBackoffEnd"
+          id="docsIfUpChannelRangingBackoffEnd/1.3.6.1.2.1.10.127.1.1.2.1.8"
+          access="readOnly">
+        <description>
+          The final random backoff window to use when retrying Ranging
+          Requests. Expressed as a power of 2. A value of 16 at the CMTS
+          indicates that a proprietary adaptive retry mechanism is to be used.
+
+          See {{bibref|CM-SP-RFIv2.0|Section 8.3.4, and 9.4}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="16"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="TxBackoffStart"
+          id="docsIfUpChannelTxBackoffStart/1.3.6.1.2.1.10.127.1.1.2.1.9"
+          access="readOnly">
+        <description>
+          The initial random backoff window to use when retrying transmissions.
+          Expressed as a power of 2. A value of 16 at the CMTS indicates that a
+          proprietary adaptive retry mechanism is to be used.
+
+          See {{bibref|CM-SP-RFIv2.0|Section 8.3.4, and 9.4}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="16"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="TxBackoffEnd"
+          id="docsIfUpChannelTxBackoffEnd/1.3.6.1.2.1.10.127.1.1.2.1.10"
+          access="readOnly">
+        <description>
+          The final random backoff window to use when retrying transmissions.
+          Expressed as a power of 2. A value of 16 at the CMTS indicates that a
+          proprietary adaptive retry mechanism is to be used.
+
+          See {{bibref|CM-SP-RFIv2.0|Section 8.3.4, and 9.4}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="16"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.UpstreamChannel.{i}.Status."
+        id="docsIf3CmStatusUsTable/1.3.6.1.4.1.4491.2.1.20.1.2.1"
+        access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object provides Upstream channel information previously available
+        in the SNMP table docsIfCmStatusTable.
+      </description>
+      <parameter name="TxPower"
+          id="docsIf3CmStatusUsTxPower/1.3.6.1.4.1.4491.2.1.20.1.2.1.1"
+          access="readOnly">
+        <description>
+          This attribute represents the operational CM transmit power for this
+          SC-QAM upstream channel. In order for this attribute to provide
+          consistent information under all circumstances, a 3.1 CM will report
+          the average total power for the SC-QAM channel the same as was done
+          for DOCSIS 3.0, regardless of whether it is operating with a 3.1 or a
+          3.0 CMTS. The value that is reported was referred to as Pr in the
+          DOCSIS 3.0 PHY Spec.
+        </description>
+        <syntax>
+          <dataType base="TenthdBmV">
+            <units value="TenthdBmV"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <parameter name="T3Timeouts"
+          id="docsIf3CmStatusUsT3Timeouts/1.3.6.1.4.1.4491.2.1.20.1.2.1.2"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times counter T3 expired in the
+          CM for this upstream channel. Discontinuities in the value of this
+          counter can occur at re-initialization of the managed system.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="T4Timeouts"
+          id="docsIf3CmStatusUsT4Timeouts/1.3.6.1.4.1.4491.2.1.20.1.2.1.3"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times counter T4 expired in the
+          CM for this upstream channel. Discontinuities in the value of this
+          counter can occur at re-initialization of the managed system.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="RangingAborteds"
+          id="docsIf3CmStatusUsRangingAborteds/1.3.6.1.4.1.4491.2.1.20.1.2.1.4"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times the ranging process was
+          aborted by the CMTS. Discontinuities in the value of this counter can
+          occur at re-initialization of the managed system.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="ModulationType"
+          id="docsIf3CmStatusUsModulationType/1.3.6.1.4.1.4491.2.1.20.1.2.1.5"
+          access="readOnly">
+        <description>
+          This attribute indicates modulation type status currently used by the
+          CM for this upstream channel. Since this object specifically
+          identifies PHY Layer mode, the shared upstream channel type
+          "tdmaAndAtdma" is not permitted.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="DocsisUpstreamType"/>
+        </syntax>
+      </parameter>
+      <parameter name="EqData"
+          id="docsIf3CmStatusUsEqData/1.3.6.1.4.1.4491.2.1.20.1.2.1.6"
+          access="readOnly">
+        <description>
+          This attribute indicates the pre-equalization data for the specified
+          upstream Channel on this CM after convolution with data indicated in
+          the RNG-RSP. This data is valid when docsIfUpChannelPreEqEnable RFC
+          4546 is set to {{true}}.
+
+          See {{bibref|RFC2863}} and {{bibref|RFC4546}}.
+        </description>
+        <syntax>
+          <dataType ref="DocsEqualizerData"/>
+        </syntax>
+      </parameter>
+      <parameter name="T3Exceededs"
+          id="docsIf3CmStatusUsT3Exceededs/1.3.6.1.4.1.4491.2.1.20.1.2.1.7"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times for excessive T3 timeouts.
+          Discontinuities in the value of this counter can occur at
+          re-initialization of the managed system.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="IsMuted"
+          id="docsIf3CmStatusUsIsMuted/1.3.6.1.4.1.4491.2.1.20.1.2.1.8"
+          access="readOnly">
+        <description>
+          This attribute denotes whether the upstream channel is muted.
+
+          See {{bibref|CM-SP-MULPIv3.0}}, Media Access Control specification.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="RangingStatus"
+          id="docsIf3CmStatusUsRangingStatus/1.3.6.1.4.1.4491.2.1.20.1.2.1.9"
+          access="readOnly">
+        <description>
+          This attribute denotes the ranging state of the CM.
+
+          See {{bibref|CM-SP-MULPIv3.0}}, Media Access Control specification.
+        </description>
+        <syntax>
+          <dataType ref="RangingState"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="DOCSISLayer2">
+    <object name="Device.DOCSIS.Interface.{i}." access="readOnly"
+        numEntriesParameter="InterfaceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true">
+      <description>
+        DOCSIS Layer 2 (MAC) interface table (a stackable interface object as
+        described in {{bibref|TR-181i2|Section 4.2}}). This table models the
+        MAC level DOCSIS interface.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC Address of the interface.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="CMTSAddress"
+          id="docsIfCmCmtsAddress/1.3.6.1.2.1.10.127.1.2.1.1.1"
+          access="readOnly">
+        <description>
+          Identifies the CMTS that is believed to control this MAC domain. This
+          will be the source address from SYNC, MAP, and other MAC-layer
+          messages. If the CMTS is unknown, returns 00-00-00-00-00-00.
+
+          See {{bibref|CM-SP-RFIv2.0|Section 8.2.2}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="Capabilities"
+          id="docsIfCmCapabilities/1.3.6.1.2.1.10.127.1.2.1.1.2"
+          access="readOnly">
+        <description>
+          Identifies the capabilities of the MAC implementation at this
+          interface. Note that packet transmission is always supported.
+          Therefore, there is no specific bit required to explicitly indicate
+          this capability.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="ATMCells" code="0"/>
+            <enumeration value="Concatenation" code="1"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="FirmwareVersion" access="readOnly">
+        <description>
+          A string identifying the version of the modem firmware currently
+          installed for this interface. This is applicable only when the modem
+          firmware is separable from the overall CPE software.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="DOCSISVersion"
+          id="docsIfDocsisBaseCapability/1.3.6.1.2.1.10.127.1.1.5"
+          access="readOnly">
+        <description>
+          Indication of the DOCSIS capability of the device.
+
+          See {{bibref|CM-SP-RFIv2.0|Annex G}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DOCSIS10"/>
+            <enumeration value="DOCSIS11"/>
+            <enumeration value="DOCSIS20"/>
+            <enumeration value="DOCSIS30"/>
+            <enumeration value="DOCSIS31"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="MdCfgIpProvMode"
+          id="docsIf3CmMdCfgIpProvMode/1.3.6.1.4.1.4491.2.1.20.1.31.1.1"
+          access="readOnly">
+        <description>
+          {{param}} specifies how the IP provisioning mode is configured. The
+          CM relies upon the CMTS to facilitate the successful IP address
+          acquisition independently of the MDD.
+
+          {{enum}}
+
+          See {{bibref|CM-SP-MULPIv3.0}}, IP Initialization Parameters TLV
+          Section.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="IPv4Only" code="0">
+              <description>
+                The Cable Modem will initiate the acquisition of a single IPv4
+                address for the Cable Modem management stack.
+              </description>
+            </enumeration>
+            <enumeration value="IPv6Only" code="1">
+              <description>
+                The Cable Modem will initiate the acquisition of a single IPv6
+                address for the Cable Modem management stack.
+              </description>
+            </enumeration>
+            <enumeration value="HonorMDD" code="4">
+              <description>
+                The Cable Modem will initiate the acquisition of an IPv6 or
+                IPv4 address as directed by the MDD message for provisioning
+                and operation.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.Interface.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.Interface.{i}.ConnectivityStatus."
+        id="docsIf3CmStatusTable/1.3.6.1.4.1.4491.2.1.20.1.1.1"
+        access="readOnly" minEntries="1" maxEntries="1">
+      <description>
+        This object defines attributes of the CM connectivity status. This
+        object provides CM connectivity status information of the CM previously
+        available in the SNMP table docsIfCmStatusTable.
+
+        See {{bibref|RFC4546}}.
+      </description>
+      <parameter name="Value"
+          id="docsIf3CmStatusValue/1.3.6.1.4.1.4491.2.1.20.1.1.1.1"
+          access="readOnly">
+        <description>
+          This attribute denotes the current CM connectivity state. For the
+          case of IP acquisition related states, this attribute reflects states
+          for the current CM provisioning mode, not the {{enum|Other}} DHCP
+          process associated with dual stack operation.
+
+          See {{bibref|CM-SP-MULPIv3.0}}, Establishing IP Connectivity.
+        </description>
+        <syntax>
+          <dataType ref="CmRegState"/>
+        </syntax>
+      </parameter>
+      <parameter name="StatusCode"
+          id="docsIf3CmStatusCode/1.3.6.1.4.1.4491.2.1.20.1.1.1.2"
+          access="readOnly">
+        <description>
+          This attribute denotes the status code for CM as defined in the OSSI
+          Specification. The status code consists of a single character
+          indicating error groups, followed by a two-or three-digit number
+          indicating the status condition, followed by a decimal. An example of
+          a returned value could be "T101.0". The zero-length hex string
+          indicates no status code yet registered.
+
+          See {{bibref|CM-SP-OSSIv3.0}}, Format and Content for Event, Syslog,
+          and SNMP Notification Annex.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="0" maxLength="0"/>
+            <size minLength="5" maxLength="7"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Resets"
+          id="docsIf3CmStatusResets/1.3.6.1.4.1.4491.2.1.20.1.1.1.3"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times the CM reset or
+          initialized this interface. Discontinuities in the value of this
+          counter can occur at re-initialization of the managed system, and at
+          other times as indicated by the value of ifCounterDiscontinuityTime
+          for the CM MAC Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="LostSyncs"
+          id="docsIf3CmStatusLostSyncs/1.3.6.1.4.1.4491.2.1.20.1.1.1.4"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times the CM lost
+          synchronization with the downstream channel. Discontinuities in the
+          value of this counter can occur at re-initialization of the managed
+          system, and at other times as indicated by the value of
+          ifCounterDiscontinuityTime for the CM MAC Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="InvalidMaps"
+          id="docsIf3CmStatusInvalidMaps/1.3.6.1.4.1.4491.2.1.20.1.1.1.5"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times the CM received invalid
+          MAP messages. Discontinuities in the value of this counter can occur
+          at re-initialization of the managed system, and at other times as
+          indicated by the value of ifCounterDiscontinuityTime for the CM MAC
+          Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="InvalidUcds"
+          id="docsIf3CmStatusInvalidUcds/1.3.6.1.4.1.4491.2.1.20.1.1.1.6"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times the CM received invalid
+          UCD messages. Discontinuities in the value of this counter can occur
+          at re-initialization of the managed system, and at other times as
+          indicated by the value of ifCounterDiscontinuityTime for the CM MAC
+          Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="InvalidRangingRsps"
+          id="docsIf3CmStatusInvalidRangingRsps/1.3.6.1.4.1.4491.2.1.20.1.1.1.7"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times the CM received invalid
+          ranging response messages. Discontinuities in the value of this
+          counter can occur at re-initialization of the managed system, and at
+          other times as indicated by the value of ifCounterDiscontinuityTime
+          for the CM MAC Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="InvalidRegRsps"
+          id="docsIf3CmStatusInvalidRegRsps/1.3.6.1.4.1.4491.2.1.20.1.1.1.8"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times the CM received invalid
+          registration response messages. Discontinuities in the value of this
+          counter can occur at re-initialization of the managed system, and at
+          other times as indicated by the value of ifCounterDiscontinuityTime
+          for the CM MAC Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="T1Timeouts"
+          id="docsIf3CmStatusT1Timeouts/1.3.6.1.4.1.4491.2.1.20.1.1.1.9"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times counter T1 expired in the
+          CM. Discontinuities in the value of this counter can occur at
+          re-initialization of the managed system, and at other times as
+          indicated by the value of ifCounterDiscontinuityTime for the CM MAC
+          Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+      <parameter name="T2Timeouts"
+          id="docsIf3CmStatusT2Timeouts/1.3.6.1.4.1.4491.2.1.20.1.1.1.10"
+          access="readOnly">
+        <description>
+          This attribute denotes the number of times counter T2 expired in the
+          CM. Discontinuities in the value of this counter can occur at
+          re-initialization of the managed system, and at other times as
+          indicated by the value of ifCounterDiscontinuityTime for the CM MAC
+          Domain interface.
+
+          See {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DOCSIS.SpectrumAnalysis." access="readOnly"
+        minEntries="1" maxEntries="1">
+      <parameter name="Enable"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdEnable/1.3.6.1.4.1.4491.2.1.20.1.34.1"
+          access="readWrite">
+        <description>
+          This attribute is used to enable or disable the spectrum analyzer
+          feature. Setting this attribute to {{true}} triggers the CM to
+          initiate measurements for the spectrum analyzer feature based on the
+          other configuration attributes for the feature. By default, the
+          feature is disabled unless explicitly enabled.
+
+          Note that the feature may be disabled by the system under certain
+          circumstances if the spectrum analyzer would affect critical
+          services. In such a case, the attribute will return {{false}} when
+          read, and will reject sets to {{true}} with an error. Once the
+          feature is enabled, any change to this object's configuration might
+          not be effective until the feature is re-enabled again.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="factory" value="false"/>
+        </syntax>
+      </parameter>
+      <parameter name="InactivityTimeout"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdInactivityTimeout/1.3.6.1.4.1.4491.2.1.20.1.34.2"
+          access="readWrite">
+        <description>
+          This attribute controls the length of time after the last spectrum
+          analysis measurement before the feature is automatically disabled. If
+          set to a value of 0, the feature will remain enabled until it is
+          explicitly disabled.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="0" maxInclusive="86400"/>
+            <units value="seconds"/>
+          </int>
+          <default type="factory" value="300"/>
+        </syntax>
+      </parameter>
+      <parameter name="FirstSegmentCenterFrequency"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdFirstSegmentCenterFrequency/1.3.6.1.4.1.4491.2.1.20.1.34.3"
+          access="readWrite">
+        <description>
+          This attribute controls the center frequency of the first segment for
+          the spectrum analysis measurement. The frequency bins for this
+          segment lie symmetrically to the left and right of this center
+          frequency.
+
+          If the number of bins in a segment is odd, the segment center
+          frequency lies directly on the center bin.
+
+          If the number of bins in a segment is even, the segment center
+          frequency lies halfway between two bins.
+
+          Changing the value of this attribute may result in changes to the
+          {{object|Result}} table. Note that if this parameter is set to an
+          invalid value, the device may return an error, or may adjust the
+          value of the parameter to the closest valid value.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Hz"/>
+          </unsignedInt>
+          <default type="factory" value="93000000"/>
+        </syntax>
+      </parameter>
+      <parameter name="LastSegmentCenterFrequency"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdLastSegmentCenterFrequency/1.3.6.1.4.1.4491.2.1.20.1.34.4"
+          access="readWrite">
+        <description>
+          This attribute controls the center frequency of the last segment of
+          the spectrum analysis measurement.
+
+          The frequency bins for this segment lie symmetrically to the left and
+          right of this center frequency. If the number of bins in a segment is
+          odd, the segment center frequency lies directly on the center bin. If
+          the number of bins in a segment is even, the segment center frequency
+          lies halfway between two bins.
+
+          The value of the {{param}} should be equal to the
+          {{param|FirstSegmentCenterFrequency}} plus and integer number of
+          segment spans as determined by the {{param|SegmentFrequencySpan}}.
+
+          Changing the value of this attribute may result in changes to the
+          {{object|Result}} table.
+
+          Note that if this parameter is set to an invalid value, the device
+          may return an error, or may adjust the value of the parameter to the
+          closest valid value.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Hz"/>
+          </unsignedInt>
+          <default type="factory" value="993000000"/>
+        </syntax>
+      </parameter>
+      <parameter name="SegmentFrequencySpan"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdSegmentFrequencySpan/1.3.6.1.4.1.4491.2.1.20.1.34.5"
+          access="readWrite">
+        <description>
+          This attribute controls the frequency span of each segment (instance)
+          of the {{object|Result.{i}}} table.
+
+          If set to a value of 0, then a default span will be chosen based on
+          the hardware capabilities of the device. Segments are contiguous from
+          the {{param|FirstSegmentCenterFrequency}} to the
+          {{param|LastSegmentCenterFrequency}} and the center frequency for
+          each successive segment is incremented by the {{param}}. The number
+          of segments is ({{param|LastSegmentCenterFrequency}} -
+          {{param|FirstSegmentCenterFrequency}})/{{param}} + 1. A segment is
+          equivalent to an instance in the {{object|Result}} table. The chosen
+          {{param}} affects the number of entries in {{object|Result}} table. A
+          more granular {{param}} may adversely affect the amount of time
+          needed to query the table entries in addition to possibly increasing
+          the acquisition time.
+
+          Changing the value of this attribute may result in changes to
+          {{object|Result}} table.
+
+          Note that if this parameter is set to an invalid value, the device
+          may return an error, or may adjust the value of the parameter to the
+          closest valid value.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000000" maxInclusive="900000000"/>
+            <units value="Hz"/>
+          </unsignedInt>
+          <default type="factory" value="7500000"/>
+        </syntax>
+      </parameter>
+      <parameter name="NumBinsPerSegment"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdNumBinsPerSegment/1.3.6.1.4.1.4491.2.1.20.1.34.6"
+          access="readWrite">
+        <description>
+          This parameter controls the number of bins collected by the
+          measurement performed for each segment (instance) in the
+          {{object|Result}} table.
+
+          Note that if this parameter is set to an invalid value, the device
+          may return an error, or may adjust the value of the parameter to the
+          closest valid value.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="2" maxInclusive="2048"/>
+          </unsignedInt>
+          <default type="factory" value="256"/>
+        </syntax>
+      </parameter>
+      <parameter name="EquivalentNoiseBandwidth"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdEquivalentNoiseBandwidth/1.3.6.1.4.1.4491.2.1.20.1.34.7"
+          access="readWrite">
+        <description>
+          This parameter allows the user to request an equivalent noise
+          bandwidth for the resolution bandwidth filter used in the spectrum
+          analysis. This corresponds to the spectral width of the window
+          function used when performing a discrete Fourier transform for the
+          analysis.
+
+          The window function which corresponds to a value written to this
+          parameter may be obtained by reading the value of
+          {{param|WindowFunction}}.
+
+          If an unsupported value is requested, the device may return an error,
+          or choose the closest valid value to the one which is requested. If
+          the closest value is chosen, then a subsequent read of this parameter
+          will return the actual value which is in use.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="50" maxInclusive="500"/>
+            <units value="hundredthsbin"/>
+          </unsignedInt>
+          <default type="factory" value="150"/>
+        </syntax>
+      </parameter>
+      <parameter name="WindowFunction"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdWindowFunction/1.3.6.1.4.1.4491.2.1.20.1.34.8"
+          access="readWrite">
+        <description>
+          This parameter controls or indicates the windowing function which
+          will be used when performing the discrete Fourier transform for the
+          analysis. The {{param}} and the Equivalent Noise Bandwidth are
+          related. If a particular {{param}} is selected, then the
+          {{param|EquivalentNoiseBandwidth}} for the function which is in use,
+          will be reported by the {{param|EquivalentNoiseBandwidth}} parameter.
+          Alternatively if an {{param|EquivalentNoiseBandwidth}} value is
+          chosen then if a {{param}} function representing that
+          {{param|EquivalentNoiseBandwidth}} is defined in the CM, that value
+          will be reported in {{param}}, or a value of {{enum|Other}} will be
+          reported. Use of "modern" windowing functions not yet defined will
+          likely be reported as {{enum|Other}}.
+
+          {{enum}}
+
+          Note that all window functions may not be supported by all devices.
+          If an attempt is made to set the object to an unsupported window
+          function, or if writing of the WindowFunction is not supported, an
+          error will be returned.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <dataType ref="SpectrumAnalysisWindowFunction"/>
+        </syntax>
+      </parameter>
+      <parameter name="NumberOfAverages"
+          id="docsIf3CmSpectrumAnalysisCtrlCmdNumberOfAverages/1.3.6.1.4.1.4491.2.1.20.1.34.9"
+          access="readWrite">
+        <description>
+          This parameter controls the number of averages that will be performed
+          on spectral bins. The average will be computed using the 'leaky
+          integrator' method, where: reported bin value = alpha*accumulated bin
+          values + (1-alpha)*current bin value.
+
+          Alpha is one minus the reciprocal of the number of averages. For
+          example, if N=25, then alpha = 0.96. A value of 1 indicates no
+          averaging. Re-writing the number of averages will restart the
+          averaging process. If there are no accumulated values, the
+          accumulators are made equal to the first measured bin amplitudes.
+
+          If an attempt is made to set the parameter to an unsupported number
+          of averages, an error will be returned.
+
+          See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance
+          Information Model.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="1000"/>
+          </unsignedInt>
+          <default type="factory" value="1"/>
+        </syntax>
+      </parameter>
+      <parameter name="ResultNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.DOCSIS.SpectrumAnalysis.Result.{i}."
+        id="docsIf3CmSpectrumAnalysisMeasTable/1.3.6.1.4.1.4491.2.1.20.1.35.1"
+        access="readOnly" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="ResultNumberOfEntries">
+      <description>
+        {{section|table}}This table provides a list of spectral analysis
+        measurements as performed across a range of center frequencies. The
+        table is capable of representing a full scan of the spectrum.
+
+        {{section|row}}Each {{object}} instance represents the spectral
+        analysis around a single center frequency point in the spectrum.
+      </description>
+      <uniqueKey>
+        <parameter ref="Frequency"/>
+      </uniqueKey>
+
+      <parameter name="Frequency"
+          id="docsIf3CmSpectrumAnalysisMeasFrequency/1.3.6.1.4.1.4491.2.1.20.1.35.1.1"
+          access="readOnly">
+        <description>
+          The center frequency of the spectral analysis span which is
+          represented by this instance.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-2147483648" maxInclusive="2147483647"/>
+            <units value="Hz"/>
+          </int>
+        </syntax>
+      </parameter>
+      <parameter name="AmplitudeData"
+          id="docsIf3CmSpectrumAnalysisMeasAmplitudeData/1.3.6.1.4.1.4491.2.1.20.1.35.1.2"
+          access="readOnly">
+        <description>
+          This parameter provides a list of the spectral amplitudes as measured
+          at the center frequency specified by the {{param|Frequency}}.
+
+          The frequency bins are ordered from lowest to highest frequencies
+          covering the frequency span. Information about the center frequency,
+          frequency span, number of bins and resolution bandwidth are included
+          to provide context to the measurement point.
+        </description>
+        <syntax>
+          <dataType ref="AmplitudeData"/>
+        </syntax>
+      </parameter>
+      <parameter name="TotalSegmentPower"
+          id="docsIf3CmSpectrumAnalysisMeasTotalSegmentPower/1.3.6.1.4.1.4491.2.1.20.1.35.1.3"
+          access="readOnly">
+        <description>
+          This parameter provides the total RF power present in the segment
+          with the center frequency equal to the {{param|Frequency}} and the
+          span equal to the {{param|#.SegmentFrequencySpan}}. The value
+          represents the sum of the spectrum power in all of the associated
+          bins. The value is computed by summing power (not dB) values and
+          converting the final sum to {{units}}.
+        </description>
+        <syntax>
+          <dataType base="TenthdB">
+            <units value="TenthdB"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="DOCSIS">
+    <component ref="DOCSISRoot"/>
+    <component ref="DOCSISLayer1"/>
+    <component ref="DOCSISLayer2"/>
+  </component>
+
+  <model name="DOCSIS:2.15">
+    <component ref="Root"/>
+    <component ref="DOCSIS"/>
+  </model>
+
+</dm:document>

@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Hosts]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-hosts"
+    file="tr-181-2-15-0-hosts.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Hosts">
+
+    <object name="Device.Hosts." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        This object provides information about each of the hosts on the LAN,
+        including those whose IP address was allocated by the CPE using DHCP as
+        well as hosts with statically allocated IP addresses. It can also
+        include non-IP hosts.
+      </description>
+
+      <parameter name="HostNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessControlNumberOfEntries" access="readOnly"
+          version="2.14">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Hosts.Host.{i}." access="readOnly"
+        numEntriesParameter="HostNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.0">
+      <description>
+        Host table.
+      </description>
+      <uniqueKey>
+        <parameter ref="PhysAddress"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" status="deleted">
+        <description>
+          {{datatype|expand}}
+
+          {{deprecated|2.11|because {{object}} is a transient object}}
+
+          {{obsoleted|2.14}}
+
+          {{deleted|2.15}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PhysAddress" access="readOnly">
+        <description>
+          Unique physical identifier of the host. For many layer 2 technologies
+          this is typically a MAC address.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPAddress" access="readOnly">
+        <description>
+          Current IP Address of the host. {{empty}} if no address is available.
+
+          If more than one IP address for this host is known, the CPE will
+          choose a ''primary'' address. All known IP addresses can be listed in
+          the {{object|IPv4Address}} and {{object|IPv6Address}} tables.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AddressSource" access="readOnly" status="deleted">
+        <description>
+          Indicates whether the IP address of the host was allocated by the CPE
+          using DHCP, was assigned to the host statically, or was assigned
+          using automatic IP address allocation. {{enum}}
+
+          {{deprecated|2.11|because only {{enum|None}} and {{enum|DHCP}} made
+          sense (the CPE doesn't know whether the address is {{enum|Static}} or
+          {{enum|AutoIP}}). The {{enum|DHCP}} case is now handled via the
+          {{param|DHCPClient}} reference}}
+
+          {{obsoleted|2.14}}
+
+          {{deleted|2.15}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCP"/>
+            <enumeration value="Static"/>
+            <enumeration value="AutoIP"/>
+            <enumeration value="None"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DHCPClient" access="readOnly" version="2.2">
+        <description>
+          {{reference}} Each list item is the DHCPv4 or DHCPv6 server's client
+          entry that corresponds to the host.
+        </description>
+        <syntax>
+          <list maxItems="2">
+            <size/>
+          </list>
+          <string>
+            <pathRef
+                refType="strong"
+                targetParent="
+                  .DHCPv4.Server.Pool.{i}.Client.
+                  .DHCPv6.Server.Pool.{i}.Client."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LeaseTimeRemaining" access="readOnly" status="deleted">
+        <description>
+          DHCP lease time remaining in {{units}}. A value of -1 indicates an
+          infinite lease. The value MUST be 0 (zero) if the
+          {{param|AddressSource}} is not {{enum|DHCP|AddressSource}}.
+
+          {{deprecated|2.11|because DHCP lease/lifetime information can be
+          accessed via the {{param|DHCPClient}} reference}}
+
+          {{obsoleted|2.14}}
+
+          {{deleted|2.15}}
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="seconds"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedDevice" access="readOnly" version="2.2">
+        <description>
+          {{noreference}}The value MUST be the path name of the
+          ''AssociatedDevice'' (or equivalent) table row that models the host,
+          or {{null}} if either there is no such table or the host isn't
+          directly connected to this device (e.g. the host is connected to a
+          Wi-Fi Access Point).
+
+          For example: ''Device.WiFi.AccessPoint.1.AssociatedDevice.2''
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Layer1Interface" access="readOnly">
+        <description>
+          {{noreference}}The value MUST be the path name of a row in a layer 1
+          interface table. If either the layer 1 interface isn't known or the
+          host isn't directly connected to this device (e.g. the host is
+          connected to a Wi-Fi Access Point), then {{param}} will be {{null}}.
+
+          For example: ''Device.Ethernet.Interface.2''
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Layer3Interface" access="readOnly">
+        <description>
+          {{reference}} If either the layer 3 interface isn't known or the host
+          isn't directly connected to this device (e.g. the host is connected
+          to a Wi-Fi Access Point), then {{param}} will be {{null}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceType" access="readOnly" version="2.13">
+        <description>
+          Type of physical interface through which this host is connected.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Ethernet"/>
+            <enumeration value="G.hn"/>
+            <enumeration value="HPNA"/>
+            <enumeration value="HomePlug"/>
+            <enumeration value="MoCA"/>
+            <enumeration value="UPA"/>
+            <enumeration value="Wi-Fi"/>
+            <enumeration value="Other"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorClassID" access="readOnly" status="deleted">
+        <description>
+          Vendor Class Identifier DHCP option (Option 60) of the host.
+
+          This is a normal string, e.g. "abc" is represented as "abc" and not
+          say "616263" hex. However, if the value includes non-printing
+          characters then such characters have to be represented using XML
+          escapes, e.g. #x0a for line-feed.
+
+          It MAY be defined when {{param|AddressSource}} is
+          {{enum|DHCP|AddressSource}}. {{empty}} indicates this option is not
+          used.
+
+          Note: DHCPv4 Option values are limited to a length of 255, while
+          DHCPv6 Option values can have a maximum length of 65535.
+
+          {{deprecated|2.11|because host-supplied DHCP options can be accessed
+          via the {{param|DHCPClient}} reference}}
+
+          {{obsoleted|2.14}}
+
+          {{deleted|2.15}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientID" access="readOnly" status="deleted">
+        <description>
+          A hexbinary string, Client Identifier DHCP option (Option 61) for the
+          specific IP connection of the client. The option value is binary, so
+          an exact match is REQUIRED.
+
+          It MAY be defined when {{param|AddressSource}} is
+          {{enum|DHCP|AddressSource}}. {{empty}} indicates this option is not
+          used.
+
+          Note: DHCPv4 Option values are limited to a length of 255, while
+          DHCPv6 Option values can have a maximum length of 65535.
+
+          {{deprecated|2.11|because host-supplied DHCP options can be accessed
+          via the {{param|DHCPClient}} reference}}
+
+          {{obsoleted|2.14}}
+
+          {{deleted|2.15}}
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserClassID" access="readOnly" status="obsoleted">
+        <description>
+          A hexbinary string, User Class Identifier DHCP option (Option 77) of
+          the host.
+
+          It MAY be defined when {{param|AddressSource|deleted}} is
+          {{enum|DHCP|AddressSource}}. {{empty}} indicates this option is not
+          used.
+
+          Note: DHCPv4 Option values are limited to a length of 255, while
+          DHCPv6 Option values can have a maximum length of 65535.
+
+          {{deprecated|2.11|because host-supplied DHCP options can be accessed
+          via the {{param|DHCPClient}} reference}}
+
+          {{obsoleted|2.15}}
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="HostName" access="readOnly">
+        <description>
+          The device's host name or {{empty}} if unknown.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Active" access="readOnly">
+        <description>
+          Whether or not the host is currently present on the LAN. The method
+          of presence detection is a local matter to the CPE.
+
+          The ability to list inactive hosts is OPTIONAL. If the CPE includes
+          inactive hosts in this table, {{param}} MUST be set to {{false}} for
+          each inactive host. The length of time an inactive host remains
+          listed in this table is a local matter to the CPE.
+
+          Entries in Device.Hosts.Host SHOULD NOT be removed when they become
+          inactive if there are {{object|WANStats}} statistics collected for
+          the entry in the past seven days.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActiveLastChange" access="readOnly" version="2.10">
+        <description>
+          The datetime when {{param|Active}} last changed from {{true}} to
+          {{false}} or from {{false}} to {{true}}. The initial detection of a
+          host SHOULD be treated as a transition from {{false}} to {{true}},
+          showing the datetime when the host was first detected.
+
+          The ability to list inactive hosts is OPTIONAL. The length of time an
+          inactive host remains listed in this table is a local matter to the
+          CPE.
+
+          Entries in Device.Hosts.Host SHOULD NOT be removed when they become
+          inactive if there are {{object|WANStats}} statistics collected for
+          the entry in the past seven days.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4AddressNumberOfEntries" access="readOnly"
+          version="2.2">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6AddressNumberOfEntries" access="readOnly"
+          version="2.2">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Hosts.Host.{i}.IPv4Address.{i}." access="readOnly"
+        numEntriesParameter="IPv4AddressNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.2">
+      <description>
+        The host's known IPv4 addresses. This includes any addresses assigned
+        via DHCP, which can also be accessed via the {{param|#.DHCPClient}}
+        reference.
+      </description>
+      <uniqueKey>
+        <parameter ref="IPAddress"/>
+      </uniqueKey>
+
+      <parameter name="IPAddress" access="readOnly">
+        <description>
+          IPv4 address.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Hosts.Host.{i}.IPv6Address.{i}." access="readOnly"
+        numEntriesParameter="IPv6AddressNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.2">
+      <description>
+        The host's known IPv6 addresses. This includes any addresses assigned
+        via DHCP, which can also be accessed via the {{param|#.DHCPClient}}
+        reference.
+      </description>
+      <uniqueKey>
+        <parameter ref="IPAddress"/>
+      </uniqueKey>
+
+      <parameter name="IPAddress" access="readOnly">
+        <description>
+          IPv6 address.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Hosts.Host.{i}.WANStats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.12">
+      <description>
+        These count bytes or packets at the IP layer sent to the WAN, or
+        received from the WAN.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of bytes transmitted to the WAN from the Host device
+          at the IP layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of bytes received from the WAN and sent to the Host
+          device at the IP layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of IP packets transmitted to the WAN from the Host
+          device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of IP packets received from the WAN and sent to the
+          Host device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound IP packets to the WAN from the Host
+          device that could not be transmitted because of errors. These may be
+          due to the number of retransmissions exceeding the retry limit, or
+          from other causes.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransCount" access="readOnly">
+        <description>
+          The total number of transmitted IP packets to the WAN from the Host
+          device which were retransmissions. Two retransmissions of the same
+          packet results in this counter incrementing by two.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound IP packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Hosts.AccessControl.{i}." access="readWrite"
+        numEntriesParameter="AccessControlNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.14">
+      <description>
+        Every instance of this object provides access control for a LAN device.
+
+        Access is allowed if no instance of {{object}} is defined for a device.
+
+        If access is not allowed, then the LAN device cannot access the
+        broadband network.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="PhysAddress"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PhysAddress" access="readWrite">
+        <description>
+          Unique physical identifier of the device. For many layer 2
+          technologies this is typically a MAC address.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HostName" access="readWrite">
+        <description>
+          Any user defined name for the device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessPolicy" access="readWrite">
+        <description>
+          Allows or denies access for a device.
+
+          If {{param}} is set to "Allow", device access is allowed based on the
+          {{object|Schedule}} objects. Access is enabled if there is no
+          {{object|Schedule}} object defined.
+
+          If {{param}} is set to "Deny", defined {{object|Schedule}} objects
+          are ignored and no access is allowed for the device.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Allow"/>
+            <enumeration value="Deny"/>
+          </string>
+          <default type="object" value="Allow"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Hosts.AccessControl.{i}.Schedule.{i}."
+        access="readWrite" numEntriesParameter="ScheduleNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.14">
+      <description>
+        Each instance of this object provides a schedule where access is
+        enabled.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Day" access="readWrite">
+        <description>
+          {{list|the days for which access is enabled}} {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Monday"/>
+            <enumeration value="Tuesday"/>
+            <enumeration value="Wednesday"/>
+            <enumeration value="Thursday"/>
+            <enumeration value="Friday"/>
+            <enumeration value="Saturday"/>
+            <enumeration value="Sunday"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="StartTime" access="readWrite">
+        <description>
+          Start time of the enable schedule in hh:mm format. [hh] refers to a
+          zero-padded hour between 00 and 23. [mm] refers to a zero-padded
+          minute between 00 and 59.
+
+          Start time is in local time zone.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="5"/>
+            <pattern value=""/>
+            <pattern value="([01][0-9]|2[0-3]):[0-5][0-9]"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Duration" access="readWrite">
+        <description>
+          The duration, in {{units}}, which the access is enabled.
+
+          If the {{param|StartTime}} is not defined, duration is the total time
+          access is allowed during a calendar day.
+
+          If a {{param|StartTime}} is defined, access is allowed for the
+          {{param}} period starting from {{param|StartTime}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="Hosts:1" version="2.0" status="deleted">
+      <object ref="Device.Hosts." requirement="present">
+        <parameter ref="HostNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Hosts.Host.{i}." requirement="present">
+        <parameter ref="IPAddress" requirement="readOnly"/>
+        <parameter ref="AddressSource" requirement="readOnly" status="deleted"/>
+        <parameter ref="LeaseTimeRemaining" requirement="readOnly"
+            status="deleted"/>
+        <parameter ref="PhysAddress" requirement="readOnly"/>
+        <parameter ref="HostName" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+        <parameter ref="Layer1Interface" requirement="readOnly"/>
+        <parameter ref="Layer3Interface" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="Hosts:2" base="Hosts:1" version="2.2" status="deleted">
+      <object ref="Device.Hosts.Host.{i}." requirement="present">
+        <parameter ref="DHCPClient" requirement="readOnly"/>
+        <parameter ref="AssociatedDevice" requirement="readOnly"/>
+        <parameter ref="IPv4AddressNumberOfEntries" requirement="readOnly">
+          <description>
+            REQUIRED only for IPv4 capable devices.
+          </description>
+        </parameter>
+        <parameter ref="IPv6AddressNumberOfEntries" requirement="readOnly">
+          <description>
+            REQUIRED only for IPv6 capable devices.
+          </description>
+        </parameter>
+      </object>
+      <object ref="Device.Hosts.Host.{i}.IPv4Address.{i}."
+          requirement="present">
+        <description>
+          REQUIRED only for IPv4 capable devices.
+        </description>
+        <parameter ref="IPAddress" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Hosts.Host.{i}.IPv6Address.{i}."
+          requirement="present">
+        <description>
+          REQUIRED only for IPv6 capable devices.
+        </description>
+        <parameter ref="IPAddress" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="Hosts:3" version="2.15">
+      <object ref="Device.Hosts." requirement="present">
+        <parameter ref="HostNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Hosts.Host.{i}." requirement="present">
+        <parameter ref="IPAddress" requirement="readOnly"/>
+        <parameter ref="PhysAddress" requirement="readOnly"/>
+        <parameter ref="HostName" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+        <parameter ref="Layer1Interface" requirement="readOnly"/>
+        <parameter ref="Layer3Interface" requirement="readOnly"/>
+      
+        <parameter ref="DHCPClient" requirement="readOnly"/>
+        <parameter ref="AssociatedDevice" requirement="readOnly"/>
+        <parameter ref="IPv4AddressNumberOfEntries" requirement="readOnly">
+          <description>
+            REQUIRED only for IPv4 capable devices.
+          </description>
+        </parameter>
+        <parameter ref="IPv6AddressNumberOfEntries" requirement="readOnly">
+          <description>
+            REQUIRED only for IPv6 capable devices.
+          </description>
+        </parameter>
+      </object>
+      
+      <object ref="Device.Hosts.Host.{i}.IPv4Address.{i}."
+          requirement="present">
+        <description>
+          REQUIRED only for IPv4 capable devices.
+        </description>
+        <parameter ref="IPAddress" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Hosts.Host.{i}.IPv6Address.{i}."
+          requirement="present">
+        <description>
+          REQUIRED only for IPv6 capable devices.
+        </description>
+        <parameter ref="IPAddress" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="AccessControl:1" version="2.14">
+      <object ref="Device.Hosts." requirement="present">
+        <parameter ref="AccessControlNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Hosts.AccessControl.{i}." requirement="present">
+        <parameter ref="PhysAddress" requirement="readWrite"/>
+        <parameter ref="AccessPolicy" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ScheduleNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Hosts.AccessControl.{i}.Schedule.{i}."
+          requirement="present">
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Day" requirement="readWrite"/>
+        <parameter ref="StartTime" requirement="readWrite"/>
+        <parameter ref="Duration" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Hosts:2.15">
+    <component ref="Root"/>
+    <component ref="Hosts"/>
+  </model>
+</dm:document>

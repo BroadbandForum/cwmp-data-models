@@ -2,6 +2,48 @@
 
 *The latest [CPE WAN Management Protocol (CWMP)](https://www.broadband-forum.org/technical/download/TR-069.pdf) data models can be found at <https://cwmp-data-models.broadband-forum.org>.*
 
+## 2022-01-27: [TR-106 Amendment 11](https://data-model-template.broadband-forum.org) and [TR-181 Issue 2 Amendment 15](https://cwmp-data-models.broadband-forum.org/#Device:2.15)
+
+*Tag: [v1.6.4](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.4)*
+
+TR-106
+
+* Allowed the version attribute in component references
+* Allowed minEntries and maxEntries in command and event argument objects
+* Allowed status attribute in profile command/event arguments
+* Added secured attribute
+
+TR-181
+
+* Split the XML into multiple smaller files (this is just housekeeping; it
+  doesn't affect how the model is used)
+* Added Device.USPAgent to the CWMP model to allow a CWMP ACS to configure a
+  device for USP communications
+* Added Device.Routing.Babel for the RFC 8966 Babel routing protocol
+* Added Device.DOCSIS for modeling DOCSIS 3.0 and 3.1 interfaces
+* Added Device.Users.Group, Device.Users.Role and Device.Users.SupportedShell
+  tables for modeling system users
+* Improved the Wi-Fi data model by adding Data Elements R2 parameters, moving
+  MultiAP parameters into the Data Elements structure, and by deprecating
+  AIFSN, ECWMin, ECWMax and TxOpMax
+* Clarified that Device.Optical is intended for generic optical interfaces and
+  is not intended to model anything specific to IEEE or ITU-T PON technologies
+  (objects specific to such technologies may be added in future versions of
+  the data model)
+* Clarified the meaning and usage of the Device.Ethernet.Interface and
+  Device.Ethernet.Link objects (also allowed the Ethernet Link MACAddress
+  parameter to be written)
+* Improved (and made more consistent) the marking of (and explanation of)
+  deprecated items, and how such items should progress from being deprecated
+  to obsoleted to deleted
+* Added a Baseline:4 profile that doesn't include Device.LANConfigSecurity (it
+  relates to the now-deprecated TR-064 LAN management protocol)
+* Many minor improvements to object and parameter descriptions
+* Replaced the non-standard dmr:version attribute with the version attribute
+  (which supports three levels of version)
+* Switched to DMR (data model report) schema v1.0, which supports multi-line
+  paragraphs, and wrapped all lines to 80 characters maximum
+
 ## 2020-11-17: [TR-181 Issue 2 Amendment 14 Corrigendum 1](https://cwmp-data-models.broadband-forum.org/#Device:2.14)
 
 *Tag: [v1.6.3](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.3)*

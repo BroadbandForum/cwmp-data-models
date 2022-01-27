@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Optical]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-optical"
+    file="tr-181-2-15-0-optical.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="Dbm1000"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Optical">
+
+    <object name="Device.Optical." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.4">
+      <description>
+        This object models a generic optical interface. It defines an
+        {{object|Interface}} object that models a layer 1 optical interface
+        that is capable of transporting Ethernet packets. For historical
+        reasons, the data model definition is based on parts of
+        {{bibref|G.988}}. However, it is not intended to model anything
+        specific to IEEE PON or ITU-T PON technologies.
+
+        Note that this object is not intended to model the optical transceiver
+        either.
+      </description>
+
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Optical.Interface.{i}." access="readOnly"
+        numEntriesParameter="InterfaceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true" version="2.4">
+      <description>
+        Optical interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). This table models physical optical
+        interfaces.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the optical interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the optical interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the optical interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the optical interface entered
+          its current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since {{object}} is a layer 1 interface, it is expected that
+          {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OpticalSignalLevel" access="readOnly">
+        <description>
+          Current measurement of total downstream optical signal level.
+
+          {{datatype|expand}}
+
+          Valid values are -65.536 dBm (coded as -65536), to 65.534 dBm (coded
+          as 65534) in 0.002 dB increments.
+
+          This parameter is based on ''Optical signal level'' from
+          {{bibref|G.988|Section 9.2.1}}.
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-65536" maxInclusive="65534" step="2"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerOpticalThreshold" access="readOnly"
+          status="deprecated">
+        <description>
+          Optical level that is used to declare the downstream low received
+          optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -127.5 dBm (coded as -127500) to 0 dBm (coded as 0)
+          in 0.5 dB increments. The value -127500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Lower optical threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-127000" maxInclusive="0" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpperOpticalThreshold" access="readOnly"
+          status="deprecated">
+        <description>
+          Optical level that is used to declare the downstream high received
+          optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -127.5 dBm (coded as -127500) to 0 dBm (coded as 0)
+          in 0.5 dB increments. The value -127500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Upper optical threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-127000" maxInclusive="0" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitOpticalLevel" access="readOnly">
+        <description>
+          Current measurement of mean optical launch power.
+
+          {{datatype|expand}}
+
+          Valid values are -65.536 dBm (coded as -65536), to 65.534 dBm (coded
+          as 65534) in 0.002 dB increments.
+
+          This parameter is based on ''Transmit optical level'' from
+          {{bibref|G.988|section 9.2.1}}.
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-65536" maxInclusive="65534" step="2"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerTransmitPowerThreshold" access="readOnly"
+          status="deprecated">
+        <description>
+          Minimum mean optical launch power that is used to declare the low
+          transmit optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -63.5 dBm (coded as -63500) to +63.5 dBm (coded as
+          63500) in 0.5 dB increments. The value -63500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Lower transmit power threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-63500" maxInclusive="63500" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpperTransmitPowerThreshold" access="readOnly"
+          status="deprecated">
+        <description>
+          Maximum mean optical launch power that is used to declare the high
+          transmit optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -63.5 dBm (coded as -63500) to +63.5 dBm (coded as
+          63500) in 0.5 dB increments. The value -63500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Upper transmit power threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-63500" maxInclusive="63500" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Optical.Interface.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.4">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="Optical:1" version="2.4">
+      <object ref="Device.Optical." requirement="present">
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Optical.Interface.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="Upstream" requirement="readOnly"/>
+        <parameter ref="OpticalSignalLevel" requirement="readOnly"/>
+        <parameter ref="TransmitOpticalLevel" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Optical.Interface.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Optical:2.14">
+    <component ref="Root"/>
+    <component ref="Optical"/>
+  </model>
+</dm:document>

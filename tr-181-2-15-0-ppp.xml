@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [PPP]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-ppp"
+    file="tr-181-2-15-0-ppp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="PPP">
+
+    <object name="Device.PPP." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.0">
+      <description>
+        Point-to-Point Protocol {{bibref|RFC1661}}. This object contains the
+        {{object|Interface}} table.
+      </description>
+
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedNCPs" access="readOnly" version="2.2">
+        <description>
+          The Network Control Protocols (NCPs) that are supported by the
+          device. {{enum}}
+
+          Note that {{enum|IPv6CP}} is an IPv6 capability.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="ATCP">
+              <description>
+                AppleTalk Control Protocol {{bibref|RFC1378}}
+              </description>
+            </enumeration>
+            <enumeration value="IPCP">
+              <description>{{bibref|RFC1332}}</description>
+            </enumeration>
+            <enumeration value="IPXCP">
+              <description>{{bibref|RFC1552}}</description>
+            </enumeration>
+            <enumeration value="NBFCP">
+              <description>{{bibref|RFC2097}}</description>
+            </enumeration>
+            <enumeration value="IPv6CP">
+              <description>{{bibref|RFC5072}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PPP.Interface.{i}." access="readWrite"
+        numEntriesParameter="InterfaceNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        PPP interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}).
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Down"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionStatus" access="readOnly">
+        <description>
+          Current status of the connection.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unconfigured"/>
+            <enumeration value="Connecting"/>
+            <enumeration value="Authenticating"/>
+            <enumeration value="Connected"/>
+            <enumeration value="PendingDisconnect"/>
+            <enumeration value="Disconnecting"/>
+            <enumeration value="Disconnected"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastConnectionError" access="readOnly">
+        <description>
+          The cause of failure for the last connection setup attempt.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ERROR_NONE"/>
+            <enumeration value="ERROR_ISP_TIME_OUT"/>
+            <enumeration value="ERROR_COMMAND_ABORTED"/>
+            <enumeration value="ERROR_NOT_ENABLED_FOR_INTERNET"/>
+            <enumeration value="ERROR_BAD_PHONE_NUMBER"/>
+            <enumeration value="ERROR_USER_DISCONNECT"/>
+            <enumeration value="ERROR_ISP_DISCONNECT"/>
+            <enumeration value="ERROR_IDLE_DISCONNECT"/>
+            <enumeration value="ERROR_FORCED_DISCONNECT"/>
+            <enumeration value="ERROR_SERVER_OUT_OF_RESOURCES"/>
+            <enumeration value="ERROR_RESTRICTED_LOGON_HOURS"/>
+            <enumeration value="ERROR_ACCOUNT_DISABLED"/>
+            <enumeration value="ERROR_ACCOUNT_EXPIRED"/>
+            <enumeration value="ERROR_PASSWORD_EXPIRED"/>
+            <enumeration value="ERROR_AUTHENTICATION_FAILURE"/>
+            <enumeration value="ERROR_NO_DIALTONE"/>
+            <enumeration value="ERROR_NO_CARRIER"/>
+            <enumeration value="ERROR_NO_ANSWER"/>
+            <enumeration value="ERROR_LINE_BUSY"/>
+            <enumeration value="ERROR_UNSUPPORTED_BITSPERSECOND"/>
+            <enumeration value="ERROR_TOO_MANY_LINE_ERRORS"/>
+            <enumeration value="ERROR_IP_CONFIGURATION"/>
+            <enumeration value="ERROR_UNKNOWN"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoDisconnectTime" access="readWrite">
+        <description>
+          The time in {{units}} since the establishment of the connection after
+          which connection termination is automatically initiated by the CPE.
+          This occurs irrespective of whether the connection is being used or
+          not. A value of 0 (zero) indicates that the connection is not to be
+          shut down automatically.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="IdleDisconnectTime" access="readWrite">
+        <description>
+          The time in {{units}} that if the connection remains idle, the CPE
+          automatically terminates the connection. A value of 0 (zero)
+          indicates that the connection is not to be shut down automatically.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="WarnDisconnectDelay" access="readWrite">
+        <description>
+          Time in {{units}} the {{param|ConnectionStatus}} remains in the
+          {{enum|PendingDisconnect|ConnectionStatus}} state before
+          transitioning to disconnecting state to drop the connection.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username to be used for authentication.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password to be used for authentication.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EncryptionProtocol" access="readOnly">
+        <description>
+          Describes the PPP encryption protocol.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="MPPE"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CompressionProtocol" access="readOnly">
+        <description>
+          Describes the PPP compression protocol.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="Van Jacobson">
+              <description>{{bibref|RFC1332}}</description>
+            </enumeration>
+            <enumeration value="STAC LZS">
+              <description>{{bibref|RFC1974}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AuthenticationProtocol" access="readOnly">
+        <description>
+          Describes the PPP authentication protocol.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="PAP"/>
+            <enumeration value="CHAP"/>
+            <enumeration value="MS-CHAP"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxMRUSize" access="readWrite">
+        <description>
+          The maximum allowed size of frames sent from the remote peer.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="64" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="1500"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentMRUSize" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The current MRU in use over this connection.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="64" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionTrigger" access="readWrite">
+        <description>
+          Trigger used to establish the PPP connection. {{enum}}
+
+          Note that the reason for a PPP connection becoming disconnected to
+          begin with might be either external to the CPE, such as termination
+          by the BRAS or momentary disconnection of the physical interface, or
+          internal to the CPE, such as use of the {{param|IdleDisconnectTime}}
+          and/or {{param|AutoDisconnectTime}} parameters in this object.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="OnDemand">
+              <description>
+                If this PPP connection is disconnected for any reason, it is to
+                remain disconnected until the CPE has one or more packets to
+                communicate over this connection, at which time the CPE
+                automatically attempts to reestablish the connection.
+              </description>
+            </enumeration>
+            <enumeration value="AlwaysOn">
+              <description>
+                If this PPP connection is disconnected for any reason, the CPE
+                automatically attempts to reestablish the connection (and
+                continues to attempt to reestablish the connection as long it
+                remains disconnected).
+              </description>
+            </enumeration>
+            <enumeration value="Manual">
+              <description>
+                If this PPP connection is disconnected for any reason, it is to
+                remain disconnected until the user of the CPE explicitly
+                instructs the CPE to reestablish the connection.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LCPEcho" access="readOnly">
+        <description>
+          PPP LCP Echo period in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LCPEchoRetry" access="readOnly">
+        <description>
+          Number of PPP LCP Echo retries within an echo period.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPCPEnable" access="readWrite" version="2.2">
+        <description>
+          Enables or disables IPCP ({{bibref|RFC1332}}) on this interface. If
+          this parameter is present, {{enum|IPCP|#.SupportedNCPs}} MUST be
+          included in {{param|#.SupportedNCPs}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6CPEnable" access="readWrite" version="2.2">
+        <description>
+          Enables or disables IPv6CP ({{bibref|RFC5072}}) on this interface. If
+          this parameter is present, {{enum|IPv6CP|#.SupportedNCPs}} MUST be
+          included in {{param|#.SupportedNCPs}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PPP.Interface.{i}.PPPoE." access="readOnly"
+        minEntries="0" maxEntries="1" version="2.0"
+        dmr:noDiscriminatorParameter="true">
+      <description>
+        PPPoE object that functionally groups PPPoE related parameters.
+
+        PPPoE is only applicable when the lower layer provides Ethernet frames,
+        e.g. ATM with EoA, PTM, or anything else that supports an Ethernet MAC.
+      </description>
+
+      <parameter name="SessionID" access="readOnly">
+        <description>
+          Represents the PPPoE Session ID.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ACName" access="readWrite">
+        <description>
+          PPPoE Access Concentrator.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServiceName" access="readWrite">
+        <description>
+          PPPoE Service Name.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PPP.Interface.{i}.IPCP." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        IP Control Protocol (IPCP) client object for this PPP interface
+        {{bibref|RFC1332}}. {{object}} only applies to IPv4.
+      </description>
+
+      <parameter name="LocalIPAddress" access="readOnly">
+        <description>
+          The local IPv4 address for this connection received via IPCP.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemoteIPAddress" access="readOnly">
+        <description>
+          The remote IPv4 address for this connection received via IPCP.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNSServers" access="readOnly">
+        <description>
+          {{list}} Items represent DNS Server IPv4 address(es) received via
+          IPCP {{bibref|RFC1877}}.
+        </description>
+        <syntax>
+          <list maxItems="2">
+            <size/>
+          </list>
+          <dataType ref="IPv4Address"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PassthroughEnable" access="readWrite">
+        <description>
+          If {{false}}, the PPP Interface retrieved information is configured
+          on the IP Interface stacked on top of this PPP Interface.
+
+          If {{true}}, the PPP Interface retrieved information is propagated to
+          the parameters in the referenced {{param|PassthroughDHCPPool}}
+          object, replacing any existing configuration (including
+          ''MinAddress'', ''MaxAddress'', ''SubnetMask'', ''IPRouters'', and
+          ''DNSServers'').
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PassthroughDHCPPool" access="readWrite">
+        <description>
+          {{reference}}When {{param}} is set to {{empty}},
+          {{param|PassthroughEnable}} MUST be set to {{false}} (i.e.
+          passthrough can not be enabled without a pool reference specified).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".DHCPv4.Server.Pool."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PPP.Interface.{i}.IPv6CP." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.2">
+      <description>
+        IPv6 Control Protocol (IPv6CP) client object for this PPP interface
+        {{bibref|RFC5072}}. {{object}} only applies to IPv6.
+      </description>
+
+      <parameter name="LocalInterfaceIdentifier" access="readOnly">
+        <description>
+          The interface identifier for the local end of the PPP link,
+          negotiated using the IPv6CP ''Interface-Identifier'' option
+          {{bibref|RFC5072|Section 4.1}}.
+
+          The identifier is represented as the rightmost 64 bits of an IPv6
+          address (the leftmost 64 bits MUST be zero and MUST be ignored by the
+          recipient).
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RemoteInterfaceIdentifier" access="readOnly">
+        <description>
+          The interface identifier for the remote end of the PPP link,
+          negotiated using the IPv6CP ''Interface-Identifier'' option
+          {{bibref|RFC5072|Section 4.1}}.
+
+          The identifier is represented as the rightmost 64 bits of an IPv6
+          address (the leftmost 64 bits MUST be zero and MUST be ignored by the
+          recipient).
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PPP.Interface.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PPP.Interface.{i}.PPPoA." access="readOnly"
+        minEntries="0" maxEntries="1" status="deleted" version="2.2">
+      <description>
+        PPPoA object that functionally groups PPPoA related parameters.
+
+        {{deprecated|2.12|because it contains no standard parameters and its
+        existence causes confusion}}
+
+        {{obsoleted|2.12}}
+
+        {{deleted|2.15}}
+      </description>
+    </object>
+  </component>
+
+  <model name="PPP:2.15">
+    <component ref="Root"/>
+    <component ref="PPP"/>
+  </model>
+</dm:document>

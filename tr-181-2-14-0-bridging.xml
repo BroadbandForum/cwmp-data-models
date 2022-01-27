@@ -1,0 +1,2435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Bridging]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-bridging"
+    file="tr-181-2-14-0-bridging.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPAddress"/>
+    <dataType name="IPPrefix"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Bridging">
+
+    <object name="Device.Bridging." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        Layer 2 bridging configuration. Specifies bridges between different
+        layer 2 interfaces. Bridges can be defined to include layer 2 filter
+        criteria to selectively bridge traffic between interfaces.
+
+        This object can be used to configure both 802.1D {{bibref|802.1D-2004}}
+        and 802.1Q {{bibref|802.1Q-2011}} bridges.
+
+        Not all 802.1D and 802.1Q features are modeled, and some additional
+        features not present in either 802.1D or 802.1Q are modeled.
+
+        802.1Q {{bibref|802.1Q-2011}} bridges incorporate 802.1Q
+        {{bibref|802.1Q-2005}} customer and 802.1ad {{bibref|802.1ad-2005}}
+        provider bridges.
+      </description>
+
+      <parameter name="MaxBridgeEntries" access="readOnly">
+        <description>
+          The maximum number of entries available in the
+          {{object|.Bridging.Bridge}} table.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxDBridgeEntries" access="readOnly">
+        <description>
+          The maximum number of 802.1D {{bibref|802.1D-2004}} entries available
+          in the {{object|.Bridging.Bridge}} table. A positive value for this
+          parameter implies support for 802.1D.
+
+          There is no guarantee that this many 802.1D Bridges can be
+          configured. For example, the CPE might not be able simultaneously to
+          support both 802.1D and 802.1Q Bridges.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxQBridgeEntries" access="readOnly">
+        <description>
+          The maximum number of 802.1Q {{bibref|802.1Q-2011}} entries available
+          in the {{object|.Bridging.Bridge}} table. A non-zero value for this
+          parameter implies support for 802.1Q.
+
+          There is no guarantee that this many 802.1Q Bridges can be
+          configured. For example, the CPE might not be able simultaneously to
+          support both 802.1D and 802.1Q Bridges.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxVLANEntries" access="readOnly">
+        <description>
+          The maximum number of 802.1Q {{bibref|802.1Q-2011}} VLANs supported
+          per {{object|.Bridging.Bridge}} table entry.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxProviderBridgeEntries" access="readOnly"
+          version="2.7">
+        <description>
+          The maximum number of entries available in the
+          {{object|.Bridging.ProviderBridge}} table. A non-zero value for this
+          parameter implies support for 802.1Q Provider Bridges.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProviderBridgeNumberOfEntries" access="readOnly"
+          version="2.7">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxFilterEntries" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The maximum number of entries available in the {{object|Filter}}
+          table.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BridgeNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FilterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.Bridge.{i}." access="readWrite"
+        numEntriesParameter="BridgeNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        Bridge table.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this {{object}}. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Standard" access="readWrite">
+        <description>
+          Selects the standard supported by this Bridge table entry.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="802.1D-2004">
+              <description>{{bibref|802.1D-2004}}</description>
+            </enumeration>
+            <enumeration value="802.1Q-2005">
+              <description>{{bibref|802.1Q-2005}}</description>
+            </enumeration>
+            <enumeration value="802.1Q-2011">
+              <description>
+                The {{object}} provides support for at least one feature
+                defined in {{bibref|802.1Q-2011}} that was not defined in
+                {{bibref|802.1Q-2005}}.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VLANNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VLANPortNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.Bridge.{i}.Port.{i}." access="readWrite"
+        numEntriesParameter="PortNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        Bridge Port table, which MUST contain an entry for each bridge port (a
+        stackable interface object as described in {{bibref|TR-181i2|Section
+        4.2}}).
+
+        There are two types of bridge ports: management (upward facing) and
+        non-management (downward facing). This is determined by configuring the
+        Boolean {{param|ManagementPort}} parameter. The CPE will automatically
+        configure each management bridge port to appear in the interface stack
+        above all non-management bridge ports that share the same
+        {{object|##.Bridge}} instance.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the bridge port.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the bridge port (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then this parameter SHOULD
+          normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}}
+          if there is a fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then this parameter
+          SHOULD change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Down"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the bridge port as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the bridge port entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          When {{param|ManagementPort}} is set to {{true}} the CPE MUST set
+          {{param}} to reference all non-management bridge ports that are
+          within the same {{object|##.Bridge}} instance (and update {{param}}
+          when subsequent non-management bridge ports are added or deleted on
+          that ''Bridge''). The Controller SHOULD NOT set {{param}} in this
+          case.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManagementPort" access="readWrite">
+        <description>
+          If {{true}} then the entry is a management (upward facing) bridge
+          port rather than a non-management (downward facing) bridge port. For
+          a given {{object|##.Bridge}} instance, each management bridge port
+          appears in the interface stack above all non-management bridge ports.
+          The concept of Management Port is discussed in
+          {{bibref|802.1Q-2005|chapter 8}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readWrite" version="2.7">
+        <description>
+          The type of bridge port as defined in 802.1Q
+          {{bibref|802.1Q-2011|Section 17 IEEE8021BridgePortType}}.
+
+          Enumeration of:
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ProviderNetworkPort">
+              <description>
+                Indicates this {{object}} is an S-TAG aware port of a
+                {{object|##.ProviderBridge}}.
+              </description>
+            </enumeration>
+            <enumeration value="CustomerNetworkPort">
+              <description>
+                Indicates this {{object}} is an S-TAG aware port of a
+                {{object|##.ProviderBridge}}.
+              </description>
+            </enumeration>
+            <enumeration value="CustomerEdgePort">
+              <description>
+                Indicates this {{object}} is an C-TAG aware port of a
+                {{object|##.ProviderBridge}}.
+              </description>
+            </enumeration>
+            <enumeration value="CustomerVLANPort">
+              <description>
+                Indicates this {{object}} is an C-TAG aware port of a Customer
+                Bridge.
+              </description>
+            </enumeration>
+            <enumeration value="VLANUnawarePort">
+              <description>
+                Indicates this {{object}} is a VLAN unaware member of an
+                {{enum|802.1D-2004|#.Standard}} bridge.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DefaultUserPriority" access="readWrite">
+        <description>
+          Bridge Port Default User Priority.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PriorityRegeneration" access="readWrite">
+        <description>
+          {{list}} List items represent user priority regeneration values for
+          each ingress user priority on this Bridge Port.
+        </description>
+        <syntax>
+          <list minItems="8" maxItems="8">
+            <size/>
+          </list>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"/>
+          </unsignedInt>
+          <default type="object" value="0,1,2,3,4,5,6,7"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortState" access="readOnly">
+        <description>
+          Bridge Port state as defined in 802.1D {{bibref|802.1D-2004}} and
+          802.1Q {{bibref|802.1Q-2011}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Blocking"/>
+            <enumeration value="Listening"/>
+            <enumeration value="Learning"/>
+            <enumeration value="Forwarding"/>
+            <enumeration value="Broken"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PVID" access="readWrite">
+        <description>
+          PVID (or Port VID) is the VLAN ID with which an untagged or priority
+          tagged frame that arrives on this port will be associated (i.e.
+          default Port VLAN ID as defined in 802.1Q {{bibref|802.1Q-2011}}).
+
+          For an 802.1D Bridge {{bibref|802.1D-2004}}, this parameter MUST be
+          ignored.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="1" maxInclusive="4094"/>
+          </int>
+          <default type="object" value="1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TPID" access="readWrite" version="2.7">
+        <description>
+          The Tag Protocol Identifier (TPID) assigned to this {{object}}. The
+          TPID is an EtherType value used to identify the frame as a tagged
+          frame.
+
+          Standard {{bibref|802.1Q-2011|Table 9.1}} TPID values are:
+
+          *S-TAG 0x88A8 = 34984
+
+          *C-TAG 0x8100 = 33024
+
+          Non-Standard TPID values are:
+
+          *S-TAG 0x9100 = 37120
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="33024"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AcceptableFrameTypes" access="readWrite">
+        <description>
+          Indicates which types of frame arriving on this port will be admitted
+          to the bridge (i.e. Bridge Port acceptable frame types as defined in
+          802.1Q {{bibref|802.1Q-2011}}). {{enum}}
+
+          For an 802.1D {{bibref|802.1D-2004}} Bridge, the value of this
+          parameter MUST be {{enum|AdmitAll}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="AdmitAll"/>
+            <enumeration value="AdmitOnlyVLANTagged" optional="true"/>
+            <enumeration value="AdmitOnlyPrioUntagged" optional="true"/>
+          </string>
+          <default type="object" value="AdmitAll"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IngressFiltering" access="readWrite">
+        <description>
+          Enables or disables Ingress Filtering as defined in 802.1Q
+          {{bibref|802.1Q-2011}}. If enabled ({{true}}), causes frames arriving
+          on this port to be discarded if the port is not in the VLAN ID's
+          member set (which is configured via the {{object|#.VLANPort}} table).
+
+          For an 802.1D {{bibref|802.1D-2004}} Bridge, the value of this
+          parameter MUST be {{false}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServiceAccessPrioritySelection" access="readWrite"
+          version="2.7">
+        <description>
+          This parameter controls the Service Access Priority selection
+          function as described in {{bibref|802.1Q-2011|section 6.13}}.
+
+          The parameter is applicable to deployments of {{object|##.Bridge}}
+          instances that are referenced by
+          {{param|###.Bridging.ProviderBridge.{i}.SVLANcomponent}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServiceAccessPriorityTranslation" access="readWrite"
+          version="2.7">
+        <description>
+          {{list}} List items represent service access priority translation
+          values for each ingress priority on this {{object}} as described in
+          {{bibref|802.1Q-2011|section 6.13}}.
+
+          The parameter is applicable to deployments of {{object|##.Bridge}}
+          instances that are referenced by
+          {{param|###.Bridging.ProviderBridge.{i}.SVLANcomponent}}.
+        </description>
+        <syntax>
+          <list minItems="8" maxItems="8">
+            <size/>
+          </list>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"/>
+          </unsignedInt>
+          <default type="object" value="0,1,2,3,4,5,6,7"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PriorityTagging" access="readWrite">
+        <description>
+          Enables or disables priority tagging on this Bridge Port.
+
+          When {{true}}, egress frames leaving this interface will be priority
+          tagged with the frame's associated priority value, which will either
+          be derived directly from the ingress frame or else set via
+          {{param|.QoS.Classification.{i}.EthernetPriorityMark}}.
+
+          When {{false}}, egress frames leaving this interface will be
+          untagged.
+
+          The parameter does not affect reception of ingress frames.
+
+          Only applies on bridge ports that are untagged member of one or more
+          VLAN's.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.Bridge.{i}.Port.{i}.Stats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.Bridge.{i}.Port.{i}.PriorityCodePoint."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        {{object}} provides the management control for the processing of the
+        Priority Code Point (PCP) field for the 802.1Q header as defined in
+        {{bibref|802.1Q-2011|section 6.9.3 Priority Code Point Encoding}}.
+
+        The object is applicable to deployments of
+        {{object|####.Bridging.ProviderBridge}} where the {{object|###.Bridge}}
+        instance is referenced by
+        {{param|####.Bridging.ProviderBridge.{i}.SVLANcomponent}} or
+        {{param|####.Bridging.ProviderBridge.{i}.CVLANcomponents}} parameters.
+      </description>
+
+      <parameter name="PCPSelection" access="readWrite">
+        <description>
+          This parameter identifies the row in the {{param|PCPEncoding}} and
+          {{param|PCPDecoding}} parameter lists. The value of 1 points to the
+          8P0D row in the corresponding parameter lists.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="4"/>
+          </unsignedInt>
+          <default type="object" value="1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseDEI" access="readWrite">
+        <description>
+          This parameter controls the processing of the drop_eligible field and
+          is described in {{bibref|802.1Q-2011|section 6.9.3}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequireDropEncoding" access="readWrite">
+        <description>
+          This parameter controls the processing of the encoding or decoding of
+          the drop_eligible component in the PCP field and is described in
+          {{bibref|802.1Q-2011|section 8.6.7}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PCPEncoding" access="readWrite">
+        <description>
+          This parameter provides the management control for the processing of
+          the encoding of the Priority Code Point (PCP) field for the 802.1Q
+          header as defined in {{bibref|802.1Q-2011|section 6.9.3 Priority Code
+          Point Encoding}} and {{bibref|802.1Q-2011|Table 6-3}}.
+
+          The list is an ordered list that contains entries for the following 4
+          PCP Values: "8P0D","7P1D", "6P2D" "5P3D". Each list entry matches the
+          following pattern:
+
+          {{pattern}}
+
+          The value of this parameter MUST use square brackets to protect comma
+          separators within nested lists. For example, this corresponds to
+          Table 6-3 (mentioned above):
+
+          :
+            [7,7,6,6,5,5,4,4,3,3,2,2,1,1,0,0],[7,7,6,6,5,4,5,4,3,3,2,2,1,1,0,0],[7,7,6,6,5,4,5,4,3,2,3,2,1,1,0,0],[7,7,6,6,5,4,5,4,3,2,3,2,1,0,1,0]
+        </description>
+        <syntax>
+          <list minItems="4" maxItems="4">
+            <size/>
+          </list>
+          <string>
+            <size minLength="31" maxLength="31"/>
+            <pattern value="([0-7],){15}[0-7]">
+              <description>
+                PCP for each priority and drop_eligible field (7, 7DE, 6, 6DE,
+                ..., 1, 1DE, 0, 0DE)
+              </description>
+            </pattern>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PCPDecoding" access="readWrite">
+        <description>
+          This parameter provides the management control for the processing of
+          the decoding of the Priority Code Point (PCP) field for the 802.1Q
+          header as defined in {{bibref|802.1Q-2011|section 6.9.3 Priority Code
+          Point Encoding}} and {{bibref|802.1Q-2011|Table 6-4}}.
+
+          The list is an ordered list that contains entries for the following 4
+          PCP Values: "8P0D","7P1D", "6P2D" "5P3D". Each list entry matches the
+          following pattern:
+
+          {{pattern}}
+
+          The value of this parameter MUST use square brackets to protect comma
+          separators within nested lists. For example, this corresponds to
+          Table 6-4 (mentioned above):
+
+          :
+            [7,0,6,0,5,0,4,0,3,0,2,0,1,0,0,0],[7,0,6,0,4,0,4,1,3,0,2,0,1,0,0,0],[7,0,6,0,4,0,4,1,2,0,2,1,1,0,0,0],[7,0,6,0,4,0,4,1,2,0,2,1,0,0,0,1]
+        </description>
+        <syntax>
+          <list minItems="4" maxItems="4">
+            <size/>
+          </list>
+          <string>
+            <size minLength="15" maxLength="15"/>
+            <pattern value="([0-7],[0-1],){7}[0-7],[0-1]">
+              <description>
+                Priority (0-7) and drop_eligible field (0-1) for each PCP value
+                (7, 6, ..., 1, 0).
+              </description>
+            </pattern>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.Bridge.{i}.VLAN.{i}." access="readWrite"
+        numEntriesParameter="VLANNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        Bridge VLAN table. If this table is supported, if MUST contain an entry
+        for each VLAN known to the Bridge.
+
+        This table only applies to an 802.1Q {{bibref|802.1Q-2011}} Bridge.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="VLANID"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this VLAN table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Human-readable name for this VLAN table entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VLANID" access="readWrite">
+        <description>
+          VLAN ID of the entry.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="1" maxInclusive="4094"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.Bridge.{i}.VLANPort.{i}." access="readWrite"
+        numEntriesParameter="VLANPortNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        Bridge VLAN egress port and untagged port membership table.
+
+        This table only applies to an 802.1Q {{bibref|802.1Q-2011}} Bridge.
+
+        Note: The {{object}} table includes unique key parameters that are
+        strong references. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="VLAN"/>
+        <parameter ref="Port"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VLAN" access="readWrite">
+        <description>
+          {{reference}} Specifies the VLAN for which port membership is
+          expressed.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.VLAN." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          {{reference}} Specifies the bridge port that is member of the VLAN.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.Port." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Untagged" access="readWrite">
+        <description>
+          Enables or disables untagged port membership to the VLAN and
+          determines whether egress frames for this VLAN are sent untagged or
+          tagged.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.Filter.{i}." access="readWrite"
+        numEntriesParameter="FilterNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        Filter table containing classification filter entries, each of which
+        expresses a set of classification criterion to classify ingress frames
+        as member of a {{object|#.Bridge}} instance or a
+        {{object|#.Bridge.{i}.VLAN}} instance.
+
+        Bridge VLAN classification only applies for 802.1Q
+        {{bibref|802.1Q-2011}} Bridges.
+
+        For enabled table entries, if {{param|Bridge}} or {{param|Interface}}
+        is {{empty}} then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Several of this object's parameters specify DHCP option values. Some
+        cases are version neutral (the parameter can apply to both DHCPv4 and
+        DHCPv6), but in other cases the representation of the option is
+        different for DHCPv4 and DHCPv6, so it is necessary to define separate
+        DHCPv4-specific and DHCPv6-specific parameters. Therefore, an instance
+        of this object that uses DHCP option values as filter criteria will be
+        associated with either DHCPv4 or DHCPv6, as indicated by the
+        {{param|DHCPType}} parameter.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this Filter table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this Filter table entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+
+          If the Bridge Port table is supported, but none of its entries
+          correspond to {{param|Interface}}, or if such an entry exists but is
+          disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.
+
+          If the Bridge VLAN table is supported, but none of its entries
+          correspond to {{param|VLANIDFilter}}, or if such an entry exists but
+          is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Bridge" access="readWrite">
+        <description>
+          {{reference|a {{object|.Bridging.Bridge}} object in case of a 802.1D
+          bridge or a {{object|.Bridging.Bridge.{i}.VLAN}} object in case of a
+          802.1Q bridge}} Note: either way, this identifies the bridge (because
+          each bridge has a VLAN table).
+
+          Defines the Bridge or Bridge VLAN to which ingress frames will be
+          classified based upon matches of the classification criteria.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef
+                refType="strong"
+                targetParent="
+                  #.Bridge.
+                  #.Bridge.{i}.VLAN."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the {{object}} entry in the order of precedence. A value
+          of ''1'' indicates the first entry considered (highest precedence).
+          For each ingress frame on the {{param|Interface}}, the highest
+          ordered entry that matches the filter criteria is applied. All lower
+          order entries are ignored.
+
+          When this value is modified, if the value matches that of an existing
+          entry, the {{param}} value for the existing entry and all lower
+          {{param}} entries is incremented (lowered in precedence) to ensure
+          uniqueness of this value. A deletion causes {{param}} values to be
+          compacted. When a value is changed, incrementing occurs before
+          compaction.
+
+          The value of {{param}} on creation of a {{object}} table entry MUST
+          be one greater than the largest current value (initially assigned the
+          lowest precedence).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} This MUST relate to the same bridge as does
+          {{param|Bridge}}.
+
+          Defines the Bridge Port on which ingress frame classification will
+          occur.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.Bridge.{i}.Port."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DHCPType" access="readWrite" version="2.2">
+        <description>
+          The DHCP protocol associated with the {{object}} instance. Affects
+          only parameters that specify DHCP option values as filter criteria
+          (all such parameter descriptions note this fact). {{enum}}
+
+          If {{param}} is {{enum|DHCPv4}}, then {{object}} parameters that are
+          DHCPv6-specific are ignored. If {{param}} is {{enum|DHCPv6}}, then
+          {{object}} parameters that are DHCPv4-specific are ignored.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCPv4"/>
+            <enumeration value="DHCPv6"/>
+          </string>
+          <default type="object" value="DHCPv4"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VLANIDFilter" access="readWrite">
+        <description>
+          Classification criterion.
+
+          The 802.1Q {{bibref|802.1Q-2011}} VLAN ID.
+
+          For an 802.1D {{bibref|802.1D-2004}} Bridge, which has no concept of
+          VLANs, the VLAN ID MUST be ''0''.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="4094"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EthertypeFilterList" access="readWrite">
+        <description>
+          Classification criterion.
+
+          {{list}} Each list item represents an Ethertype value.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on Ethertype.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <unsignedInt/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EthertypeFilterExclude" access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge is defined to admit only those packets that match
+          one of the {{param|EthertypeFilterList}} entries (in either the
+          Ethernet or SNAP Type header). If the {{param|EthertypeFilterList}}
+          is empty, no packets are admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge is defined to admit all packets except those
+          packets that match one of the {{param|EthertypeFilterList}} entries
+          (in either the Ethernet or SNAP Type header). If the
+          {{param|EthertypeFilterList}} is empty, packets are admitted
+          regardless of Ethertype.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on Ethertype.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACAddressFilterList" access="readWrite">
+        <description>
+          Classification criterion.
+
+          {{list|each representing a MAC Address}}
+
+          Each list entry MAY optionally specify a bit-mask, where matching of
+          a packet's MAC address is only to be done for bit positions set to
+          one in the mask. If no mask is specified, all bits of the MAC Address
+          are to be used for matching.
+
+          For example, the list might be: ''01:02:03:04:05:06,
+          1:22:33:00:00:00/FF:FF:FF:00:00:00, 88:77:66:55:44:33''
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="512"/>
+          </list>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACAddressFilterExclude" access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose source MAC Address
+          matches one of the {{param|SourceMACAddressFilterList}} entries. If
+          the {{param|SourceMACAddressFilterList}} is empty, no packets are
+          admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          source MAC Address matches one of the
+          {{param|SourceMACAddressFilterList}} entries. If the
+          {{param|SourceMACAddressFilterList}} is empty, packets are admitted
+          regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACAddressFilterList" access="readWrite">
+        <description>
+          Classification criterion.
+
+          {{list}} Each list item specifies a MAC Address. List items MAY
+          optionally specify a bit-mask after the MAC Address, where matching
+          of a packet's MAC address is only to be done for bit positions set to
+          one in the mask. If no mask is specified, all bits of the MAC Address
+          are to be used for matching.
+
+          For example, the list might be: ''01:02:03:04:05:06,
+          1:22:33:00:00:00/FF:FF:FF:00:00:00, 88:77:66:55:44:33''
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="512"/>
+          </list>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACAddressFilterExclude" access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose destination MAC
+          Address matches one of the {{param|DestMACAddressFilterList}}
+          entries. If the {{param|DestMACAddressFilterList}} is empty, no
+          packets are admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          destination MAC Address matches one of the
+          {{param|DestMACAddressFilterList}} entries. If the
+          {{param|DestMACAddressFilterList}} is empty, packets are admitted
+          regardless of MAC address.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromVendorClassIDFilter" access="readWrite">
+        <description>
+          Classification criterion.
+
+          A string used to identify one or more devices via DHCP for which MAC
+          address filtering would subsequently apply. A device is considered
+          matching if its DHCPv4 Vendor Class Identifier (Option 60 as defined
+          in {{bibref|RFC2132}}) in the most recent DHCP lease acquisition or
+          renewal matches the specified value according to the match criterion
+          in {{param|SourceMACFromVendorClassIDMode}}. Case sensitive.
+
+          This is a normal string, e.g. "abc" is represented as "abc" and not
+          "616263" hex. However, if the value includes non-printing characters
+          then such characters have to be represented using XML escapes, e.g.
+
+          #x0a for line-feed.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+
+          Note: This parameter is DHCPv4-specific. It only applies when
+          {{param|DHCPType}} is {{enum|DHCPv4|DHCPType}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromVendorClassIDFilterv6" access="readWrite"
+          version="2.2">
+        <description>
+          Classification criterion.
+
+          A hexbinary string used to identify one or more devices via DHCP for
+          which MAC address filtering would subsequently apply. A device is
+          considered matching if the most recent DHCPv6 Vendor Class Identifier
+          (Option 16 as defined in {{bibref|RFC3315}}) was equal to the
+          specified value. The option value is binary, so an exact match is
+          REQUIRED.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+
+          Note: This parameter is DHCPv6-specific. It only applies when
+          {{param|DHCPType}} is {{enum|DHCPv6|DHCPType}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromVendorClassIDFilterExclude"
+          access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose source MAC Address
+          matches that of a LAN device previously identified as described in
+          {{param|SourceMACFromVendorClassIDFilter}} (for
+          {{enum|DHCPv4|DHCPType}}) or
+          {{param|SourceMACFromVendorClassIDFilterv6}} (for
+          {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is
+          {{empty}}, no packets are admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          source MAC Address matches that of a LAN device previously identified
+          as described in {{param|SourceMACFromVendorClassIDFilter}} (for
+          {{enum|DHCPv4|DHCPType}}) or
+          {{param|SourceMACFromVendorClassIDFilterv6}} (for
+          {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is
+          {{empty}}, packets are admitted regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromVendorClassIDMode" access="readWrite">
+        <description>
+          {{param|SourceMACFromVendorClassIDFilter}} pattern match criterion.
+          {{enum}}
+
+          For example, if {{param|SourceMACFromVendorClassIDFilter}} is
+          "Example" then an Option 60 value of "Example device" will match with
+          this parameter values of {{enum|Prefix}} or {{enum|Substring}}, but
+          not with {{enum|Exact}} or {{enum|Suffix}}.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Exact"/>
+            <enumeration value="Prefix"/>
+            <enumeration value="Suffix"/>
+            <enumeration value="Substring"/>
+          </string>
+          <default type="object" value="Exact"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromVendorClassIDFilter" access="readWrite">
+        <description>
+          Classification criterion.
+
+          A string used to identify one or more devices via DHCP for which MAC
+          address filtering would subsequently apply. A device is considered
+          matching if its DHCPv4 Vendor Class Identifier (Option 60 as defined
+          in {{bibref|RFC2132}}) in the most recent DHCP lease acquisition or
+          renewal matches the specified value according to the match criterion
+          in {{param|DestMACFromVendorClassIDMode}}. Case sensitive.
+
+          This is a normal string, e.g. "abc" is represented as "abc" and not
+          say "616263" hex. However, if the value includes non-printing
+          characters then such characters have to be represented using XML
+          escapes, e.g. #x0a for line-feed.
+
+          Note: This parameter is DHCPv4-specific. It only applies when
+          {{param|DHCPType}} is {{enum|DHCPv4|DHCPType}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromVendorClassIDFilterv6" access="readWrite"
+          version="2.2">
+        <description>
+          Classification criterion.
+
+          A hexbinary string used to identify one or more devices via DHCP for
+          which MAC address filtering would subsequently apply. A device is
+          considered matching if the most recent DHCPv6 Vendor Class Identifier
+          (Option 16 as defined in {{bibref|RFC3315}}) was equal to the
+          specified value. The option value is binary, so an exact match is
+          REQUIRED.
+
+          Note: This parameter is DHCPv6-specific. It only applies when
+          {{param|DHCPType}} is {{enum|DHCPv6|DHCPType}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromVendorClassIDFilterExclude"
+          access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose destination MAC
+          Address matches that of a LAN device previously identified as
+          described in {{param|DestMACFromVendorClassIDFilter}} (for
+          {{enum|DHCPv4|DHCPType}}) or
+          {{param|DestMACFromVendorClassIDFilterv6}} (for
+          {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is
+          {{empty}}, no packets are admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          destination MAC Address matches that of a LAN device previously
+          identified as described in {{param|DestMACFromVendorClassIDFilter}}
+          (for {{enum|DHCPv4|DHCPType}}) or
+          {{param|DestMACFromVendorClassIDFilterv6}} (for
+          {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is
+          {{empty}}, packets are admitted regardless of MAC address.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromVendorClassIDMode" access="readWrite">
+        <description>
+          {{param|DestMACFromVendorClassIDFilter}} pattern match criterion.
+          {{enum}}
+
+          For example, if {{param|DestMACFromVendorClassIDFilter}} is
+          ''Example'' then an Option 60 value of "Example device" will match
+          with {{param}} values of {{enum|Prefix}} or {{enum|Substring}}, but
+          not with {{enum|Exact}} or {{enum|Suffix}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Exact"/>
+            <enumeration value="Prefix"/>
+            <enumeration value="Suffix"/>
+            <enumeration value="Substring"/>
+          </string>
+          <default type="object" value="Exact"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromClientIDFilter" access="readWrite">
+        <description>
+          Classification criterion.
+
+          A hexbinary string used to identify one or more devices via DHCP for
+          which MAC address filtering would subsequently apply. A device is
+          considered matching if the most recent DHCP Client Identifier (via
+          DHCP lease acquisition or renewal for DHCPv4) was equal to the
+          specified value. The DHCP Client Identifier is Option 61 (as defined
+          in {{bibref|RFC2132}}) for {{enum|DHCPv4|DHCPType}}, or is Option 1
+          (as defined in {{bibref|RFC3315}}) for {{enum|DHCPv6|DHCPType}}. The
+          option value is binary, so an exact match is REQUIRED.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+
+          Note: DHCPv4 Option values are limited to a length of 255, while
+          DHCPv6 Option values can have a maximum length of 65535.
+
+          Note: This parameter is DHCP version neutral. The specific DHCP
+          version in use with this parameter is indicated by
+          {{param|DHCPType}}.
+
+          Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as
+          ''DUID''.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromClientIDFilterExclude" access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose source MAC Address
+          matches that of a LAN device previously identified as described in
+          {{param|SourceMACFromClientIDFilter}}. If
+          {{param|SourceMACFromClientIDFilter}} is {{empty}}, no packets are
+          admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          source MAC Address matches that of a LAN device previously identified
+          as described in {{param|SourceMACFromClientIDFilter}}. If the
+          {{param|SourceMACFromClientIDFilter}} is {{empty}}, packets are
+          admitted regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromClientIDFilter" access="readWrite">
+        <description>
+          Classification criterion.
+
+          A hexbinary string used to identify one or more devices via DHCP for
+          which MAC address filtering would subsequently apply. A device is
+          considered matching if the most recent DHCP Client Identifier (via
+          DHCP lease acquisition or renewal for DHCPv4) was equal to the
+          specified value. The DHCP Client Identifier is Option 61 (as defined
+          in {{bibref|RFC2132}}) for {{enum|DHCPv4|DHCPType}}, or is Option 1
+          (as defined in {{bibref|RFC3315}}) for {{enum|DHCPv6|DHCPType}}. The
+          option value is binary, so an exact match is REQUIRED.
+
+          Note: DHCPv4 Option values are limited to a length of 255, while
+          DHCPv6 Option values can have a maximum length of 65535.
+
+          Note: This parameter is DHCP version neutral. The specific DHCP
+          version in use with this parameter is indicated by
+          {{param|DHCPType}}.
+
+          Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as
+          ''DUID''.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromClientIDFilterExclude" access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose destination MAC
+          Address matches that of a LAN device previously identified as
+          described in {{param|DestMACFromClientIDFilter}}. If
+          {{param|DestMACFromClientIDFilter}} is {{empty}}, no packets are
+          admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          destination MAC Address matches that of a LAN device previously
+          identified as described in {{param|DestMACFromClientIDFilter}}. If
+          the {{param|DestMACFromClientIDFilter}} is {{empty}}, packets are
+          admitted regardless of MAC address.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromUserClassIDFilter" access="readWrite">
+        <description>
+          Classification criterion.
+
+          A hexbinary string used to identify one or more devices via DHCP for
+          which MAC address filtering would subsequently apply. A device is
+          considered matching if the most recent DHCP User Class Identifier
+          (via DHCP lease acquisition or renewal for DHCPv4) was equal to the
+          specified value. The DHCP User Class Identifier is Option 77 (as
+          defined in {{bibref|RFC3004}}) for {{enum|DHCPv4|DHCPType}}, or is
+          Option 15 (as defined in {{bibref|RFC3315}}) for
+          {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact
+          match is REQUIRED.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+
+          Note: DHCPv4 Option values are limited to a length of 255, while
+          DHCPv6 Option values can have a maximum length of 65535.
+
+          Note: This parameter is DHCP version neutral. The specific DHCP
+          version in use with this parameter is indicated by
+          {{param|DHCPType}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMACFromUserClassIDFilterExclude"
+          access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose source MAC Address
+          matches that of a LAN device previously identified as described in
+          {{param|SourceMACFromUserClassIDFilter}}. If
+          {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, no packets are
+          admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          source MAC Address matches that of a LAN device previously identified
+          as described in {{param|SourceMACFromUserClassIDFilter}}. If the
+          {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, packets are
+          admitted regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q
+          {{bibref|802.1Q-2011}} support classification based on source MAC
+          address.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromUserClassIDFilter" access="readWrite">
+        <description>
+          Classification criterion.
+
+          A hexbinary string used to identify one or more devices via DHCP for
+          which MAC address filtering would subsequently apply. A device is
+          considered matching if the most recent DHCP User Class Identifier
+          (via DHCP lease acquisition or renewal for DHCPv4) was equal to the
+          specified value. The DHCP User Class Identifier is Option 77 (as
+          defined in {{bibref|RFC3004}}) for {{enum|DHCPv4|DHCPType}}, or is
+          Option 15 (as defined in {{bibref|RFC3315}}) for
+          {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact
+          match is REQUIRED.
+
+          Note: DHCPv4 Option values are limited to a length of 255, while
+          DHCPv6 Option values can have a maximum length of 65535.
+
+          Note: This parameter is DHCP version neutral. The specific DHCP
+          version in use with this parameter is indicated by
+          {{param|DHCPType}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMACFromUserClassIDFilterExclude" access="readWrite">
+        <description>
+          If {{false}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits only those packets whose destination MAC
+          Address matches that of a LAN device previously identified as
+          described in {{param|DestMACFromUserClassIDFilter}}. If
+          {{param|DestMACFromUserClassIDFilter}} is {{empty}}, no packets are
+          admitted.
+
+          If {{true}}, on ingress to the interfaces associated with this
+          Filter, the Bridge admits all packets except those packets whose
+          destination MAC Address matches that of a LAN device previously
+          identified as described in {{param|DestMACFromUserClassIDFilter}}. If
+          the {{param|DestMACFromUserClassIDFilter}} is {{empty}}, packets are
+          admitted regardless of MAC address.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestIP" access="readWrite" version="2.6">
+        <description>
+          Classification criterion.
+
+          Destination IP address. {{empty}} indicates this criterion is not
+          used for classification.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestMask" access="readWrite" version="2.6">
+        <description>
+          Destination IP address mask, represented as an IP routing prefix
+          using CIDR notation [RFC4632]. The IP address part MUST be {{empty}}
+          (and, if specified, MUST be ignored).
+        </description>
+        <syntax>
+          <dataType ref="IPPrefix"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestIPExclude" access="readWrite" version="2.6">
+        <description>
+          If {{false}}, the class includes only those packets that match the
+          (masked) DestIP entry, if specified.
+
+          If {{true}}, the class includes all packets except those that match
+          the (masked) DestIP entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceIP" access="readWrite" version="2.6">
+        <description>
+          Classification criterion.
+
+          Source IP address. {{empty}} indicates this criterion is not used for
+          classification.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceMask" access="readWrite" version="2.6">
+        <description>
+          Source IP address mask, represented as an IP routing prefix using
+          CIDR notation [RFC4632]. The IP address part MUST be an empty string
+          (and, if specified, MUST be ignored).
+        </description>
+        <syntax>
+          <dataType ref="IPPrefix"/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceIPExclude" access="readWrite" version="2.6">
+        <description>
+          If {{false}}, the class includes only those packets that match the
+          (masked) {{param|SourceIP}} entry, if specified.
+
+          If {{true}}, the class includes all packets except those that match
+          the (masked) {{param|SourceIP}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite" version="2.6">
+        <description>
+          Classification criterion.
+
+          Protocol number. A value of -1 indicates this criterion is not used
+          for classification.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="255"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtocolExclude" access="readWrite" version="2.6">
+        <description>
+          If {{false}}, the class includes only those packets that match the
+          {{param|Protocol}} entry, if specified.
+
+          If {{true}}, the class includes all packets except those that match
+          the {{param|Protocol}} entry, if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestPort" access="readWrite" version="2.6">
+        <description>
+          Classification criterion.
+
+          Destination port number. A value of -1 indicates this criterion is
+          not used for classification.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestPortRangeMax" access="readWrite" version="2.6">
+        <description>
+          Classification criterion.
+
+          If specified, indicates the classification criterion is to include
+          the port range from {{param|DestPort}} through {{param}} (inclusive).
+          If specified, {{param}} MUST be greater than or equal to
+          {{param|DestPort}}.
+
+          A value of -1 indicates that no port range is specified.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestPortExclude" access="readWrite" version="2.6">
+        <description>
+          If {{false}}, the class includes only those packets that match the
+          {{param|DestPort}} entry (or port range), if specified.
+
+          If {{true}}, the class includes all packets except those that match
+          the {{param|DestPort}} entry (or port range), if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourcePort" access="readWrite" version="2.6">
+        <description>
+          Classification criterion.
+
+          Source port number. A value of -1 indicates this criterion is not
+          used for classification.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourcePortRangeMax" access="readWrite" version="2.6">
+        <description>
+          Classification criterion.
+
+          If specified, indicates the classification criterion is to include
+          the port range from {{param|SourcePort}} through {{param}}
+          (inclusive). If specified, {{param}} MUST be greater than or equal to
+          SourcePort.
+
+          A value of -1 indicates that no port range is specified.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+          <default type="object" value="-1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourcePortExclude" access="readWrite" version="2.6">
+        <description>
+          If {{false}}, the class includes only those packets that match the
+          {{param|SourcePort}} entry (or port range), if specified.
+
+          If {{true}}, the class includes all packets except those that match
+          the {{param|SourcePort}} entry (or port range), if specified.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Bridging.ProviderBridge.{i}." access="readWrite"
+        numEntriesParameter="ProviderBridgeNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.7">
+      <description>
+        Provider Bridge table.
+
+        A Provider Bridge is described in {{bibref|802.1Q-2011|section 5.10
+        Provider Bridge conformance}} as an entity that is comprised of one
+        S-VLAN component and zero or more C-VLAN components. S-VLAN and C-VLAN
+        components are modelled as instances of {{object|#.Bridge}} objects.
+
+        When {{param|Type}} is configured with value of {{enum|PE|Type}} VLAN
+        tags from the S-VLAN component (outer of 2 VLAN tags) are stacked on
+        top of the VLAN tag from the C-VLAN component (inner of 2 VLAN tags).
+
+        When {{param|Type}} is configured with value of {{enum|S-VLAN|Type}}
+        only VLAN tags from the S-VLAN component are utilized.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this {{object}}. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid. For example when the
+          {{param|Type}} is configured with value of {{enum|PE|Type}} but
+          {{param|CVLANcomponents}} is {{empty}}.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readWrite">
+        <description>
+          Selects the standard supported by this {{object}} table entry.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="S-VLAN">
+              <description>
+                Provider Bridge conforming to {{bibref|802.1Q-2011|5.10.1
+                S-VLAN Bridge conformance}}
+              </description>
+            </enumeration>
+            <enumeration value="PE">
+              <description>
+                Provider Bridge conforming to {{bibref|802.1Q-2011|5.10.2
+                Provider Edge Bridge conformance}}
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SVLANcomponent" access="readWrite">
+        <description>
+          {{reference|a {{object|#.Bridge}} instance that specifies the S-VLAN
+          component for the {{object}}}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.Bridge."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CVLANcomponents" access="readWrite">
+        <description>
+          {{list}} {{reference|a {{object|#.Bridge}} instance that specifies a
+          C-VLAN component for the {{object}}}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.Bridge."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="Bridge:1" version="2.0">
+      <object ref="Device.Bridging." requirement="present">
+        <parameter ref="MaxBridgeEntries" requirement="readOnly"/>
+        <parameter ref="MaxDBridgeEntries" requirement="readOnly"/>
+        <parameter ref="BridgeNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="PortNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="LowerLayers" requirement="readWrite"/>
+        <parameter ref="ManagementPort" requirement="readWrite"/>
+        <parameter ref="PortState" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}.Stats."
+          requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsSent" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsSent" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsReceived" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsSent" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsSent" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="UnknownProtoPacketsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="VLANBridge:1" version="2.0">
+      <object ref="Device.Bridging." requirement="present">
+        <parameter ref="MaxBridgeEntries" requirement="readOnly"/>
+        <parameter ref="MaxDBridgeEntries" requirement="readOnly"/>
+        <parameter ref="MaxQBridgeEntries" requirement="readOnly"/>
+        <parameter ref="MaxVLANEntries" requirement="readOnly"/>
+        <parameter ref="BridgeNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Standard" requirement="readWrite"/>
+        <parameter ref="PortNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="VLANNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="VLANPortNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="LowerLayers" requirement="readWrite"/>
+        <parameter ref="ManagementPort" requirement="readWrite"/>
+        <parameter ref="DefaultUserPriority" requirement="readWrite"/>
+        <parameter ref="PriorityRegeneration" requirement="readWrite"/>
+        <parameter ref="PortState" requirement="readOnly"/>
+        <parameter ref="PVID" requirement="readWrite"/>
+        <parameter ref="AcceptableFrameTypes" requirement="readWrite"/>
+        <parameter ref="IngressFiltering" requirement="readWrite"/>
+        <parameter ref="PriorityTagging" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}.Stats."
+          requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsSent" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsSent" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsReceived" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsSent" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsSent" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="UnknownProtoPacketsReceived" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.VLAN.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readWrite"/>
+        <parameter ref="VLANID" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.VLANPort.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="VLAN" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+        <parameter ref="Untagged" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="BridgeFilter:1" version="2.0">
+      <object ref="Device.Bridging." requirement="present">
+        <parameter ref="MaxFilterEntries" requirement="readOnly"/>
+        <parameter ref="FilterNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Filter.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Bridge" requirement="readWrite"/>
+        <parameter ref="Order" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="VLANIDFilter" requirement="readWrite"/>
+        <parameter ref="EthertypeFilterList" requirement="readWrite"/>
+        <parameter ref="EthertypeFilterExclude" requirement="readWrite"/>
+        <parameter ref="SourceMACAddressFilterList" requirement="readWrite"/>
+        <parameter ref="SourceMACAddressFilterExclude" requirement="readWrite"/>
+        <parameter ref="DestMACAddressFilterList" requirement="readWrite"/>
+        <parameter ref="DestMACAddressFilterExclude" requirement="readWrite"/>
+        <parameter ref="SourceMACFromVendorClassIDFilter"
+            requirement="readWrite"/>
+        <parameter ref="SourceMACFromVendorClassIDFilterExclude"
+            requirement="readWrite"/>
+        <parameter ref="SourceMACFromVendorClassIDMode"
+            requirement="readWrite"/>
+        <parameter ref="DestMACFromVendorClassIDFilter"
+            requirement="readWrite"/>
+        <parameter ref="DestMACFromVendorClassIDFilterExclude"
+            requirement="readWrite"/>
+        <parameter ref="DestMACFromVendorClassIDMode" requirement="readWrite"/>
+        <parameter ref="SourceMACFromClientIDFilter" requirement="readWrite"/>
+        <parameter ref="SourceMACFromClientIDFilterExclude"
+            requirement="readWrite"/>
+        <parameter ref="DestMACFromClientIDFilter" requirement="readWrite"/>
+        <parameter ref="DestMACFromClientIDFilterExclude"
+            requirement="readWrite"/>
+        <parameter ref="SourceMACFromUserClassIDFilter"
+            requirement="readWrite"/>
+        <parameter ref="SourceMACFromUserClassIDFilterExclude"
+            requirement="readWrite"/>
+        <parameter ref="DestMACFromUserClassIDFilter" requirement="readWrite"/>
+        <parameter ref="DestMACFromUserClassIDFilterExclude"
+            requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="BridgeFilter:2" base="BridgeFilter:1" version="2.2">
+      <object ref="Device.Bridging.Filter.{i}." requirement="createDelete">
+        <parameter ref="DHCPType" requirement="readWrite"/>
+        <parameter ref="SourceMACFromVendorClassIDFilter"
+            requirement="readWrite">
+          <description>
+            REQUIRED only for IPv4 capable devices.
+          </description>
+        </parameter>
+        <parameter ref="DestMACFromVendorClassIDFilter"
+            requirement="readWrite">
+          <description>
+            REQUIRED only for IPv4 capable devices.
+          </description>
+        </parameter>
+        <parameter ref="SourceMACFromVendorClassIDFilterv6"
+            requirement="readWrite">
+          <description>
+            REQUIRED only for IPv6 capable devices.
+          </description>
+        </parameter>
+        <parameter ref="DestMACFromVendorClassIDFilterv6"
+            requirement="readWrite">
+          <description>
+            REQUIRED only for IPv6 capable devices.
+          </description>
+        </parameter>
+      </object>
+    </profile>
+
+    <profile name="BridgeL3L4Filter:1" extends="BridgeFilter:2" version="2.6">
+      <object ref="Device.Bridging.Filter.{i}." requirement="createDelete">
+        <parameter ref="DestIP" requirement="readWrite"/>
+        <parameter ref="DestMask" requirement="readWrite"/>
+        <parameter ref="DestIPExclude" requirement="readWrite"/>
+        <parameter ref="SourcePort" requirement="readWrite"/>
+        <parameter ref="SourcePortRangeMax" requirement="readWrite"/>
+        <parameter ref="SourceIP" requirement="readWrite"/>
+        <parameter ref="SourceMask" requirement="readWrite"/>
+        <parameter ref="SourceIPExclude" requirement="readWrite"/>
+        <parameter ref="SourcePortExclude" requirement="readWrite"/>
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="ProtocolExclude" requirement="readWrite"/>
+        <parameter ref="DestPort" requirement="readWrite"/>
+        <parameter ref="DestPortExclude" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="ProviderBridge:1" version="2.7">
+      <object ref="Device.Bridging." requirement="present">
+        <parameter ref="MaxProviderBridgeEntries" requirement="readOnly"/>
+        <parameter ref="ProviderBridgeNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}."
+          requirement="createDelete">
+        <parameter ref="ServiceAccessPrioritySelection"
+            requirement="readWrite"/>
+        <parameter ref="ServiceAccessPriorityTranslation"
+            requirement="readWrite"/>
+        <parameter ref="Type" requirement="readWrite"/>
+        <parameter ref="TPID" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Bridging.Bridge.{i}.Port.{i}.PriorityCodePoint."
+          requirement="present">
+        <parameter ref="PCPSelection" requirement="readWrite"/>
+        <parameter ref="UseDEI" requirement="readWrite"/>
+        <parameter ref="RequireDropEncoding" requirement="readWrite"/>
+        <parameter ref="PCPEncoding" requirement="readWrite"/>
+        <parameter ref="PCPDecoding" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Bridging.ProviderBridge.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Type" requirement="readWrite"/>
+        <parameter ref="SVLANcomponent" requirement="readWrite"/>
+        <parameter ref="CVLANcomponents" requirement="readWrite"/>
+      </object>
+      <object ref="Device.Ethernet.VLANTermination.{i}."
+          requirement="createDelete">
+        <parameter ref="TPID" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Bridging:2.14">
+    <component ref="Root"/>
+    <component ref="Bridging"/>
+  </model>
+</dm:document>

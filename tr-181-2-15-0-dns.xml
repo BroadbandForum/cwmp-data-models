@@ -1,0 +1,1018 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [DNS]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-dns"
+    file="tr-181-2-15-0-dns.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="DNSLookupDiagnosticsInput">
+
+    <parameter name="Interface" access="readWrite" version="2.0">
+      <description>
+        {{reference}} The layer 2 or layer 3 interface over which the test is
+        to be performed. Example: ''Device.IP.Interface.1'',
+        ''Device.Bridge.1.Port.2''
+
+        If {{empty}} is specified, the CPE MUST use the interface as directed
+        by its bridging or routing policy (''Forwarding'' table entries) to
+        determine the appropriate interface.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+          <pathRef refType="weak" targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="HostName" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Specifies the Host Name that NS Lookup is to look for. The current
+        domain name MUST be used unless the name is a fully qualified name.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="DNSServer" access="readWrite" version="2.0">
+      <description>
+        Specifies the DNS Server name or IP address that NS Lookup is to use
+        for the lookup. The name of this server will be resolved using the
+        default DNS server unless an IP address is provided.
+
+        If {{empty}} is specified, the device's default DNS server will be
+        used.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="Timeout" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        Timeout in {{units}} that indicates that a request has failed.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="milliseconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="NumberOfRepetitions" access="readWrite" mandatory="true"
+        version="2.0">
+      <description>
+        The number of times the device SHOULD repeat the execution of the
+        NSLookup using the same input parameters. If the diagnostics test fails
+        the CPE MAY terminate the test without completing the full number of
+        repetitions.
+
+        Each repetition will use a Result instance to hold the NSLookup result
+        data.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="DNSLookupDiagnosticsOutputNumberOfEntries">
+    <parameter name="ResultNumberOfEntries" access="readOnly"
+        activeNotify="canDeny">
+      <description>
+        {{numentries}}
+
+        Total number of Result entries from the most recent invocation of the
+        test.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="DNSLookupDiagnosticsOutput">
+
+    <parameter name="SuccessCount" access="readOnly" activeNotify="canDeny"
+        version="2.0">
+      <description>
+        Number of successfully executed repetitions.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <object name="Result.{i}." access="readOnly"
+        numEntriesParameter="ResultNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:noUniqueKeys="true" version="2.0">
+      <description>
+        Results from the most recent invocation of the test, one instance per
+        repetition.
+      </description>
+
+      <parameter name="Status" access="readOnly" activeNotify="canDeny">
+        <description>
+          Result Parameter to represent whether the NS Lookup was successful or
+          not.
+
+          Errors for individual Result instances do not get bubbled up to
+          {{param|#.DiagnosticsState}}.
+
+          A failure on a specific attempt does not mean that the overall test
+          failed, but a failure on all attempts means that
+          {{param|#.DiagnosticsState}} SHOULD be
+          {{enum|Error_Other|#.DiagnosticsState}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Success"/>
+            <enumeration value="Error_DNSServerNotAvailable"/>
+            <enumeration value="Error_HostNameNotResolved"/>
+            <enumeration value="Error_Timeout"/>
+            <enumeration value="Error_Other"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AnswerType" access="readOnly" activeNotify="canDeny">
+        <description>
+          Result parameter to represent whether the answer is Authoritative or
+          not.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None">
+              <description>
+                Indicates that the NS Lookup failed to find the host.
+              </description>
+            </enumeration>
+            <enumeration value="Authoritative"/>
+            <enumeration value="NonAuthoritative"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HostNameReturned" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Result parameter to represent the fully qualified name for the Host
+          Name in the calling parameter (e.g. HostName.DomainName); if no
+          response was provided, then this parameter is {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPAddresses" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} Indicates the IP Address results returned by the NS Lookup;
+          if no response was provided, then this parameter is {{empty}}.
+        </description>
+        <syntax>
+          <list maxItems="10">
+            <size/>
+          </list>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNSServerIP" access="readOnly" activeNotify="canDeny">
+        <description>
+          Result parameter to represent the actual DNS Server IP address that
+          the NS Lookup used.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResponseTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Response time (for the first response packet) in {{units}}, or 0 if
+          no response was received.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="DNS">
+
+    <object name="Device.DNS." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.0">
+      <description>
+        Properties for Domain Name Service (DNS).
+      </description>
+
+      <parameter name="SupportedRecordTypes" access="readOnly" version="2.2">
+        <description>
+          The DNS record types that are supported by the device. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="A">
+              <description>{{bibref|RFC1035}}</description>
+            </enumeration>
+            <enumeration value="AAAA">
+              <description>{{bibref|RFC3596}}</description>
+            </enumeration>
+            <enumeration value="SRV">
+              <description>{{bibref|RFC2782}}</description>
+            </enumeration>
+            <enumeration value="PTR">
+              <description>{{bibref|RFC1035}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DNS.Client." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        Client properties for Domain Name Service (DNS). The DNS client
+        resolves FQDN on behalf of device internal (client) applications.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the DNS client.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the DNS client. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DNS.Client.Server.{i}." access="readWrite"
+        numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        This table contains the DNS Server IP address to be used by the DNS
+        Client (it does ''not'' model a DNS Server). Entries are either
+        automatically created as result of DHCP (v4 or v6), IPCP, or RA
+        received DNS server information, or are statically configured by the
+        Controller.
+      </description>
+      <uniqueKey>
+        <parameter ref="DNSServer"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNSServer" access="readWrite">
+        <description>
+          DNS server IP address.
+
+          Note: {{param}} is only writable when {{param|Type}} is
+          {{enum|Static|Type}}; otherwise, {{param}} is automatically
+          configured as result of DHCP, IPCP, or RA received DNS server
+          information.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} This parameter specifies the IP interface over which
+          the DNS query is sent.
+
+          If {{empty}} is specified, the CPE MUST use its routing policy
+          (Forwarding table entries), if necessary, to determine the
+          appropriate interface.
+
+          Note: {{param}} is only writable when {{param|Type}} is
+          {{enum|Static|Type}}; otherwise, {{param}} is automatically
+          configured as result of DHCP, IPCP, or RA received DNS server
+          information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readOnly">
+        <description>
+          Method used to assign the {{param|DNSServer}} address. {{enum}}
+
+          Table entries that are automatically created as result of DHCP, IPCP,
+          or RA received DNS server information will have {{param}} set to
+          {{enum|DHCPv4}}, {{enum|DHCPv6}}, {{enum|IPCP}}, or
+          {{enum|RouterAdvertisement}}, as the case may be. Manually created
+          table entires will have their {{param}} set to {{enum|Static}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCP" status="obsoleted">
+              <description>
+                {{obsoleted|2.14|because it's been replaced by
+                {{enum|DHCPv4}}}}
+              </description>
+            </enumeration>
+            <enumeration value="DHCPv4"/>
+            <enumeration value="DHCPv6"/>
+            <enumeration value="RouterAdvertisement"/>
+            <enumeration value="IPCP"/>
+            <enumeration value="Static"/>
+          </string>
+          <default type="object" value="Static"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DNS.Relay." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        DNS Relay object. The DNS proxy (or relay) function allows the
+        forwarding of local network DNS queries to local or external DNS
+        server(s) {{bibref|RFC5625}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the DNS Relay function.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the DNS relay. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ForwardNumberOfEntries" access="readOnly"
+          dmr:customNumEntriesParameter="true">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DNS.Relay.Forwarding.{i}." access="readWrite"
+        numEntriesParameter="ForwardNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        DNS Server forwarding policy to be used by the DNS Relay. Entries are
+        either automatically created as result of DHCP (v4 or v6), IPCP, or RA
+        received DNS server information, or are statically configured by the
+        Controller.
+
+        Note: Management of re-directing queries to the device embedded DNS
+        server is not defined in this version of the specification.
+      </description>
+      <uniqueKey>
+        <parameter ref="DNSServer"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNSServer" access="readWrite">
+        <description>
+          DNS server IP address.
+
+          Note: {{param}} is only writable when {{param|Type}} is
+          {{enum|Static|Type}}; otherwise, {{param}} is automatically
+          configured as result of DHCP, IPCP, or RA received DNS server
+          information.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          {{reference}} Specifies the IP interface over which the DNS query is
+          sent.
+
+          If {{empty}} is specified, the CPE MUST use its routing policy (IP
+          Forwarding table entries), if necessary, to determine the appropriate
+          interface.
+
+          Note: {{param}} is only writable when {{param|Type}} is
+          {{enum|Static|Type}}; otherwise, {{param}} is automatically
+          configured as result of DHCP, IPCP, or RA received DNS server
+          information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readOnly">
+        <description>
+          Method used to assign the {{param|DNSServer}} address. {{enum}}
+
+          Table entries that are automatically created as result of DHCP, IPCP,
+          or RA received DNS server information will have {{param}} set to
+          {{enum|DHCPv4}}, {{enum|DHCPv6}}, {{enum|IPCP}}, or
+          {{enum|RouterAdvertisement}}, as the case may be. Manually created
+          table entires will have their {{param}} set to {{enum|Static}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DHCP" status="obsoleted">
+              <description>
+                {{obsoleted|2.14|because it's been replaced by
+                {{enum|DHCPv4}}}}
+              </description>
+            </enumeration>
+            <enumeration value="DHCPv4"/>
+            <enumeration value="DHCPv6"/>
+            <enumeration value="RouterAdvertisement"/>
+            <enumeration value="IPCP"/>
+            <enumeration value="Static"/>
+          </string>
+          <default type="object" value="Static"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DNS.Diagnostics." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        The DNS Diagnostics object containing the
+        {{object|NSLookupDiagnostics}} test.
+      </description>
+    </object>
+
+    <object name="Device.DNS.SD." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.6">
+      <description>
+        This object contains the DNS Service Discovery {{bibref|DNS-SD}} object
+        and parameters necessary to discover services and their associated
+        devices.
+
+        Upon reboot the the contents of the service table are repopulated. When
+        the DNS.SD service is disabled, the contents of the service table is
+        implementation specific.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          The parameter, when {{true}}, enables the discovery of DNS-SD
+          services hosted by other devices.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServiceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvertisedInterfaces" access="readWrite" version="2.12">
+        <description>
+          {{reference|the {{object|##.IP.Interface}} object instance from which
+          DNS-SD services are advertised}}
+
+          If this parameter is not supported by an implementation then DNS-SD
+          services are advertised on all LAN interfaces.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="##.IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DNS.SD.Service.{i}." access="readOnly"
+        numEntriesParameter="ServiceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.6">
+      <description>
+        The {{object}} table contains discovered DNS-SD services. DNS.SD
+        service information is provided in DNS RR SRV records
+        {{bibref|RFC2782}}. The Service Instance Name {{bibref|DNS-SD|Section
+        4.1 Structured Instance Names}} further specifies information about the
+        service name (RFC2782 Service field) and domain name (RFC2782 Name
+        field) in the form:
+
+        Service Instance Name = &lt;InstanceName&gt; . &lt;Service&gt; .
+        &lt;Domain&gt;
+
+        &lt;Service&gt; = _&lt;ApplicationProtocol&gt; .
+        _&lt;TransportProtocol&gt;
+
+        RFC2782 Service field will always be equal to &lt;InstanceName&gt;.
+        &lt;Service&gt;
+
+        RFC2782 Name field will always be equal to &lt;Domain&gt;
+
+        For example, an SSH service might have:
+
+        *{{param|InstanceName}} = "Secure Shell (SSH))"
+
+        *{{param|ApplicationProtocol}} = "ssh"
+
+        *{{param|TransportProtocol}} = "TCP"
+
+        *{{param|Domain}} = "example.com"
+
+        *{{param|Port}} = 22
+
+        *{{param|Target}} = "ssh.example.com."
+      </description>
+      <uniqueKey>
+        <parameter ref="InstanceName"/>
+        <parameter ref="ApplicationProtocol"/>
+        <parameter ref="TransportProtocol"/>
+        <parameter ref="Domain"/>
+      </uniqueKey>
+
+      <parameter name="InstanceName" access="readOnly">
+        <description>
+          Human-readable instance name {{bibref|DNS-SD|Section 4.1.1 Instance
+          Names}} (i.e. The "&lt;{{param}}&gt;" portion of the '"Service
+          Instance Name'").
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="63"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ApplicationProtocol" access="readOnly">
+        <description>
+          The Application Protocol, without the leading underscore, associated
+          with the service (e.g., daap) as defined by the DNS-SD service
+          {{bibref|DNS-SD|Section 7 Application Protocol Names}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="15"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransportProtocol" access="readOnly">
+        <description>
+          The Transport Protocol associated with the service as defined by the
+          DNS-SD service {{bibref|DNS-SD|Section 4.1.2 Service Names}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="TCP"/>
+            <enumeration value="UDP"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Domain" access="readOnly">
+        <description>
+          The value extracted from the Name field of the DNS SRV record
+          {{bibref|RFC2782}} which represents the fully qualified domain name
+          (FQDN) associated with the service as defined by the DNS-SD service
+          {{bibref|DNS-SD|Section 4.1.3 Domain Names}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readOnly">
+        <description>
+          The value extracted from the Port field of the DNS SRV record
+          {{bibref|RFC2782}} that is used to contact the service.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Target" access="readOnly">
+        <description>
+          The fully qualified domain name (FQDN) with the trailing dot "." of
+          the target host implementing the service as in the DNS SRV record
+          {{bibref|RFC2782}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the discovered {{object}} at {{param|LastUpdate}} time.
+          {{enum}}
+
+          The ability to instantiate an inactive {{object}} is OPTIONAL.
+
+          The time an inactive {{object}} remains listed in this table is a
+          local matter to the device.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="LeaseActive">
+              <description>
+                The {{object}} has received a response record with TTL &gt; 0
+                and the {{param|#.Service.{i}.TimeToLive}} has not expired yet.
+                The {{object}} is considered active.
+              </description>
+            </enumeration>
+            <enumeration value="GoodbyeReceived">
+              <description>
+                The device has received a response record containing TTL=0
+                indicating a goodbye message and the
+                {{param|#.Service.{i}.TimeToLive}} has not expired yet. The
+                {{object}} is considered inactive.
+              </description>
+            </enumeration>
+            <enumeration value="LeaseExpired">
+              <description>
+                The {{param|#.Service.{i}.TimeToLive}} has expired. The
+                {{object}} is considered inactive
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date and time at which the last advertisement for this {{object}}
+          was received.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Host" access="readOnly">
+        <description>
+          {{list}} {{reference|all Host table entries, active or inactive, that
+          correspond to this discovered DNS.SD service. As such, when entries
+          are added or removed from the Host tables the value of this parameter
+          MUST be updated accordingly|ignore}}
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <size maxLength="256"/>
+            <pathRef
+                refType="strong"
+                targetParent="
+                  .LANDevice.{i}.Hosts.Host.
+                  .Hosts.Host."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeToLive" access="readOnly">
+        <description>
+          The value extracted from the TTL field of the DNS SRV record
+          {{bibref|RFC2782}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="2147483647"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readOnly">
+        <description>
+          The value extracted from the Priority field of the DNS SRV record
+          {{bibref|RFC2782}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Weight" access="readOnly">
+        <description>
+          A server selection mechanism. The value extracted from the Weight
+          field of the DNS SRV record {{bibref|RFC2782}} that specifies the
+          relative weight for entries with the same {{param|Priority}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TextRecordNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DNS.SD.Service.{i}.TextRecord.{i}." access="readOnly"
+        numEntriesParameter="TextRecordNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:noUniqueKeys="true" version="2.6">
+      <description>
+        This object maintains an instance of a (key/value pairs) of the
+        service. The information is extracted from DNS TXT records
+        {{bibref|RFC1035}} of the discovered service.
+
+        When multiple instances of the {{object}} table have the same value for
+        the {{param|Key}} parameter, the implementation is CPE specific.
+      </description>
+
+      <parameter name="Key" access="readOnly">
+        <description>
+          The key that identifies the text record
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          The value of the text record.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="255"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="DNSRelay:1" version="2.0">
+      <object ref="Device.DNS." requirement="present"/>
+      <object ref="Device.DNS.Relay." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ForwardNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DNS.Relay.Forwarding.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="DNSServer" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="Type" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="DNS_SD:1" version="2.6">
+      <object ref="Device.DNS.SD." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ServiceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DNS.SD.Service.{i}." requirement="present">
+        <parameter ref="InstanceName" requirement="readOnly"/>
+        <parameter ref="ApplicationProtocol" requirement="readOnly"/>
+        <parameter ref="TransportProtocol" requirement="readOnly"/>
+        <parameter ref="Domain" requirement="readOnly"/>
+        <parameter ref="Port" requirement="readOnly"/>
+        <parameter ref="Target" requirement="readOnly"/>
+        <parameter ref="Priority" requirement="readOnly"/>
+        <parameter ref="Weight" requirement="readOnly"/>
+        <parameter ref="TimeToLive" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="Host" requirement="readOnly"/>
+        <parameter ref="TextRecordNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DNS.SD.Service.{i}.TextRecord.{i}."
+          requirement="present">
+        <parameter ref="Key" requirement="readOnly"/>
+        <parameter ref="Value" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="DNS:2.14">
+    <component ref="Root"/>
+    <component ref="DNS"/>
+  </model>
+</dm:document>

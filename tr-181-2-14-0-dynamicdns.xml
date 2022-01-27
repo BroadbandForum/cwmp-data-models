@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [DynamicDNS]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-dynamicdns"
+    file="tr-181-2-14-0-dynamicdns.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="DynamicDNS">
+
+    <object name="Device.DynamicDNS." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.10">
+      <description>
+        Properties for Dynamic DNS.
+      </description>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedServices" access="readOnly">
+        <description>
+          List of Dynamic DNS service names that are supported by the CPE.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DynamicDNS.Client.{i}." access="readWrite"
+        numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.10">
+      <description>
+        Client properties for Dynamic DNS.
+
+        A dynamic DNS client is responsible for verifying IP address changes
+        and updating information from a subscribed account on a Dynamic DNS
+        Server.
+
+        For enabled table entries, if {{param|Server}} is not a valid reference
+        then the table entry is inoperable and the CPE MUST set the
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="Server"/>
+        <parameter ref="Username"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this Dynamic DNS Client.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Status of this Dynamic DNS Client.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Connecting">
+              <description>
+                The Dynamic DNS Client is trying to connect to the Server.
+              </description>
+            </enumeration>
+            <enumeration value="Authenticating">
+              <description>
+                The Dynamic DNS Client is in the authentication phase.
+              </description>
+            </enumeration>
+            <enumeration value="Updated">
+              <description>
+                The Dynamic DNS Client has performed an update request since
+                the last IP address change.
+              </description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured">
+              <description>Error due to configuration.</description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                An error has occurred during the communication with the Server.
+                The {{param|LastError}} parameter is updated with the detail of
+                this error.
+              </description>
+            </enumeration>
+            <enumeration value="Disabled">
+              <description>The Client is disabled.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastError" access="readOnly">
+        <description>
+          The last error this Dynamic DNS Client has encountered.
+
+          The parameter MAY instead indicate a vendor-specific cause, which
+          MUST use the format defined in {{bibref|TR-106}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NO_ERROR"/>
+            <enumeration value="MISCONFIGURATION_ERROR"/>
+            <enumeration value="DNS_ERROR"/>
+            <enumeration value="CONNECTION_ERROR"/>
+            <enumeration value="AUTHENTICATION_ERROR"/>
+            <enumeration value="TIMEOUT_ERROR"/>
+            <enumeration value="PROTOCOL_ERROR"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Server" access="readWrite">
+        <description>
+          The DynamicDNS server associated with this Dynamic DNS Client.
+
+          {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="Device.DynamicDNS.Server."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          The IP interface over which update queries to the server are sent.
+
+          {{reference}}
+
+          If an empty string is specified, the CPE MUST use its routing policy
+          (Forwarding table entries), to determine the appropriate interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="Device.IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username used by this Dynamic DNS Client to authenticate with the
+          Server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used by this Dynamic DNS Client to authenticate with the
+          Server.
+        </description>
+        <syntax hidden="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HostnameNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DynamicDNS.Client.{i}.Hostname.{i}."
+        access="readWrite" numEntriesParameter="HostnameNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.10">
+      <description>
+        Each table entry represents a fully qualified domain name updated by
+        this Dynamic DNS Client.
+      </description>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this Hostname.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Status of this Hostname.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Registered">
+              <description>
+                The Hostname has been updated with the current IP address.
+              </description>
+            </enumeration>
+            <enumeration value="UpdateNeeded">
+              <description>
+                The IP address has changed since last update.
+              </description>
+            </enumeration>
+            <enumeration value="Updating">
+              <description>
+                The Client is trying to update this Hostname.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                The Hostname doesn't exist for this Dynamic DNS account.
+              </description>
+            </enumeration>
+            <enumeration value="Disabled">
+              <description>The Hostname is disabled.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Fully qualified domain name that has to be updated with the IP
+          address.
+
+          If the name is set to another value, the Client MUST immediately send
+          an update request to the Server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date time of the last successful update of this name to the
+          Dynamic DNS Server.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DynamicDNS.Server.{i}." access="readWrite"
+        numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.10">
+      <description>
+        Table of Dynamic DNS servers available for this CPE.
+      </description>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables Dynamic DNS Server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The textual name of the Dynamic DNS Server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServiceName" access="readWrite">
+        <description>
+          Dynamic DNS service used to contact this server.
+
+          {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <enumerationRef targetParam="Device.DynamicDNS.SupportedServices"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerAddress" access="readWrite">
+        <description>
+          Host name or IP address of the Dynamic DNS server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerPort" access="readWrite">
+        <description>
+          Port number of the Dynamic DNS server.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedProtocols" access="readOnly">
+        <description>
+          Indicates the protocols that are supported by the CPE for sending
+          requests to the Dynamic DNS server. {{list}} This list depends on the
+          Dynamic DNS service defined by the {{param|ServiceName}} parameter.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HTTP">
+              <description>As defined in {{bibref|RFC2616}}</description>
+            </enumeration>
+            <enumeration value="HTTPS">
+              <description>As defined in {{bibref|RFC2818}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          Indicates the protocol used to send requests to the Dynamic DNS
+          server.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedProtocols"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CheckInterval" access="readWrite">
+        <description>
+          Interval (in {{units}}) between two checks for IP change.
+
+          A value of zero indicates that the CPE knows when IP changes and
+          doesn’t need to check it periodically.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryInterval" access="readWrite">
+        <description>
+          Initial retry interval (in {{units}}) after a failed request. This
+          parameter can be used as a fixed value or as part of a retry interval
+          calculation.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRetries" access="readWrite">
+        <description>
+          Maximum number of retries after a failed request. When the maximum
+          number is reached, no further requests are sent until the context
+          changes.
+
+          A value of 0 means that there are no retries after a failed request.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="DynamicDNS:2.14">
+    <component ref="Root"/>
+    <component ref="DynamicDNS"/>
+  </model>
+</dm:document>

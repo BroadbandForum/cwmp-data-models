@@ -1,0 +1,984 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [FaultMgmt]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-faultmgmt"
+    file="tr-181-2-14-0-faultmgmt.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106"/>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="FaultMgmt">
+
+    <object name="Device.FaultMgmt." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.4">
+      <description>
+        This object contains parameters relating to Fault/Alarm Management.
+      </description>
+
+      <parameter name="SupportedAlarmNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxCurrentAlarmEntries" access="readOnly">
+        <description>
+          The maximum number of entries allowed in the
+          {{object|.FaultMgmt.CurrentAlarm.{i}.}} table.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentAlarmNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HistoryEventNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExpeditedEventNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="QueuedEventNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.FaultMgmt.SupportedAlarm.{i}." access="readOnly"
+        numEntriesParameter="SupportedAlarmNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        Supported Alarm Entries which can be raised by the device.
+
+        The instance numbers for this table SHOULD be maintained across
+        firmware upgrades of the device.
+      </description>
+      <uniqueKey>
+        <parameter ref="EventType"/>
+        <parameter ref="ProbableCause"/>
+        <parameter ref="SpecificProblem"/>
+        <parameter ref="PerceivedSeverity"/>
+      </uniqueKey>
+
+      <parameter name="EventType" access="readOnly">
+        <description>
+          Indicates the type of event.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProbableCause" access="readOnly">
+        <description>
+          Qualifies the alarm and provides further information than
+          {{param|EventType}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpecificProblem" access="readOnly">
+        <description>
+          Provides further qualification on the alarm beyond
+          {{param|EventType}} and {{param|ProbableCause}}.
+
+          This is vendor defined and will be {{empty}} if the device doesn't
+          support unique indexing of the table using {{param}}.
+
+          The string can be set to "*" to indicate the default case if only a
+          subset of {{param}} are to be contained within the table.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PerceivedSeverity" access="readOnly">
+        <description>
+          Indicates the relative level of urgency for operator attention, see
+          {{bibref|ITU-X.733}}. {{enum}}
+
+          This will be {{empty}} if the device doesn't support unique indexing
+          of the table using {{param}}.
+
+          The string can be set to "*" to indicate the default case if only a
+          subset of {{param}} are to be contained within the table.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="">
+              <description>{{empty}}</description>
+            </enumeration>
+            <enumeration value="*"/>
+            <enumeration value="Cleared"/>
+            <enumeration value="Critical"/>
+            <enumeration value="Major"/>
+            <enumeration value="Minor"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Indeterminate"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportingMechanism" access="readWrite">
+        <description>
+          Indicates the reporting mechanism setting of the alarm. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="0 Expedited">
+              <description>
+                The device inserts the alarm into the
+                {{object|.FaultMgmt.ExpeditedEvent.{i}.}} table and the
+                {{object|.FaultMgmt.ExpeditedEvent.{i}.}} table.
+              </description>
+            </enumeration>
+            <enumeration value="1 Queued">
+              <description>
+                The device inserts the alarm into the
+                {{object|.FaultMgmt.QueuedEvent.{i}.}} table and the
+                {{object|.FaultMgmt.QueuedEvent.{i}.}} table.
+              </description>
+            </enumeration>
+            <enumeration value="2 Logged">
+              <description>
+                The device inserts the alarm into the
+                {{object|.FaultMgmt.HistoryEvent.{i}.}} table.
+              </description>
+            </enumeration>
+            <enumeration value="3 Disabled">
+              <description>The device ignores the alarm.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.FaultMgmt.CurrentAlarm.{i}." access="readOnly"
+        numEntriesParameter="CurrentAlarmNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        Contains all currently active alarms (whose
+        {{param|.FaultMgmt.SupportedAlarm.{i}.PerceivedSeverity}} is not
+        {{enum|Cleared|.FaultMgmt.SupportedAlarm.{i}.PerceivedSeverity}}).
+
+        Newly raised alarms result in a new entry in this table being added,
+        any changes to the alarm as a result of an update event are updated in
+        the existing table entry, and a clear event raised against an alarm
+        results in the alarm being removed from this table.
+
+        If maximum entries as indicated by
+        {{param|.FaultMgmt.MaxCurrentAlarmEntries}} is reached, the next event
+        overrides the object with the oldest {{param|AlarmChangedTime}}.
+
+        When a new alarm replaces an existing alarm, then all parameter values
+        for that instance are considered as changed for the purposes of value
+        change notifications to the Controller (even if their new values are
+        identical to those of the prior alarm).
+      </description>
+      <uniqueKey>
+        <parameter ref="AlarmIdentifier"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="EventType"/>
+        <parameter ref="ProbableCause"/>
+        <parameter ref="SpecificProblem"/>
+      </uniqueKey>
+
+      <parameter name="AlarmIdentifier" access="readOnly">
+        <description>
+          Identifies one Alarm Entry in the Alarm List. This value MUST be
+          uniquely allocated by the device to the alarm instance during the
+          lifetime of the individual alarm.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AlarmRaisedTime" access="readOnly">
+        <description>
+          Indicates the date and time when the alarm was first raised by the
+          device.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AlarmChangedTime" access="readOnly">
+        <description>
+          Indicates the date and time when the alarm was last changed by the
+          device.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManagedObjectInstance" access="readOnly">
+        <description>
+          Specifies the instance of the Informational Object Class in which the
+          alarm occurred by carrying the Distinguished Name (DN) of this object
+          instance. The format of the DN is specific to the application that is
+          using this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="512"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EventType" access="readOnly">
+        <description>
+          Indicates the type of event.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProbableCause" access="readOnly">
+        <description>
+          Qualifies the alarm and provides further information than
+          {{param|EventType}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpecificProblem" access="readOnly">
+        <description>
+          Provides further qualification on the alarm beyond
+          {{param|EventType}} and {{param|ProbableCause}}.
+
+          This is vendor defined and will be {{empty}} if the device doesn't
+          support inclusion of this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PerceivedSeverity" access="readOnly">
+        <description>
+          Indicates the relative level of urgency for operator attention, see
+          {{bibref|ITU-X.733}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Critical"/>
+            <enumeration value="Major"/>
+            <enumeration value="Minor"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Indeterminate"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalText" access="readOnly">
+        <description>
+          This provides a textual string which is vendor defined.
+
+          This will be {{empty}} if the device doesn't support inclusion of
+          this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalInformation" access="readOnly">
+        <description>
+          This contains additional information about the alarm and is vendor
+          defined.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.FaultMgmt.HistoryEvent.{i}." access="readOnly"
+        numEntriesParameter="HistoryEventNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        Alarm events added or updated in
+        {{object|.FaultMgmt.CurrentAlarm.{i}.}} are simultaneously entered into
+        the this table. This table also contains alarm clearing events.
+
+        Active alarms at the time of a power failure or reboot might not get an
+        alarm clearing event.
+
+        This object has a fixed number of entries with instance numbers from 1
+        to {{param|.FaultMgmt.HistoryEventNumberOfEntries}}.
+
+        If maximum instance number
+        {{param|.FaultMgmt.HistoryEventNumberOfEntries}} is reached, the next
+        event overrides the object with instance number 1. Subsequent entries
+        override objects at sequentially increasing instance numbers. This
+        logic provides for automatic "rolling" of records.
+      </description>
+      <uniqueKey>
+        <parameter ref="EventTime"/>
+        <parameter ref="AlarmIdentifier"/>
+      </uniqueKey>
+
+      <parameter name="EventTime" access="readOnly">
+        <description>
+          Indicates the date and time when the alarm event occurs.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AlarmIdentifier" access="readOnly">
+        <description>
+          Identifies one Alarm Entry in the Alarm List. This value MUST be
+          uniquely allocated by the device to the alarm instance during the
+          lifetime of the individual alarm.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotificationType" access="readOnly">
+        <description>
+          Indicates the reason for the specific alarm notification event.
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NewAlarm"/>
+            <enumeration value="ChangedAlarm"/>
+            <enumeration value="ClearedAlarm"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManagedObjectInstance" access="readOnly">
+        <description>
+          Specifies the instance of the Informational Object Class in which the
+          alarm occurred by carrying the Distinguished Name (DN) of this object
+          instance. The format of the DN is specific to the application that is
+          using this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="512"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EventType" access="readOnly">
+        <description>
+          Indicates the type of event.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProbableCause" access="readOnly">
+        <description>
+          Qualifies the alarm and provides further information than
+          {{param|EventType}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpecificProblem" access="readOnly">
+        <description>
+          Provides further qualification on the alarm beyond
+          {{param|EventType}} and {{param|ProbableCause}}.
+
+          This is vendor defined and will be {{empty}} if the device doesn't
+          support inclusion of this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PerceivedSeverity" access="readOnly">
+        <description>
+          Indicates the relative level of urgency for operator attention, see
+          {{bibref|ITU-X.733}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Cleared"/>
+            <enumeration value="Critical"/>
+            <enumeration value="Major"/>
+            <enumeration value="Minor"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Indeterminate"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalText" access="readOnly">
+        <description>
+          This provides a textual string which is vendor defined.
+
+          This will be {{empty}} if the device doesn't support inclusion of
+          this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalInformation" access="readOnly">
+        <description>
+          This contains additional information about the alarm and is vendor
+          defined.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.FaultMgmt.ExpeditedEvent.{i}." access="readOnly"
+        numEntriesParameter="ExpeditedEventNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        Alarm events added or updated in
+        {{object|.FaultMgmt.CurrentAlarm.{i}.}} are simultaneously entered into
+        the this table if their corresponding entry in
+        {{object|.FaultMgmt.SupportedAlarm.{i}.}} has
+        {{param|.FaultMgmt.SupportedAlarm.{i}.ReportingMechanism}} set to
+        {{enum|0 Expedited|.FaultMgmt.SupportedAlarm.{i}.ReportingMechanism}}.
+        This table also contains alarm clearing events.
+
+        This object has a fixed number of entries with instance numbers from 1
+        to {{param|.FaultMgmt.ExpeditedEventNumberOfEntries}}.
+
+        Initially the table starts with all instances having
+        {{param|EventTime}} set to the Unknown Time value, as defined in
+        {{bibref|TR-106}}.
+
+        If maximum instance number
+        {{param|.FaultMgmt.ExpeditedEventNumberOfEntries}} is reached, the next
+        event overrides the object with instance number 1. Subsequent entries
+        override objects at sequentially increasing instance numbers. This
+        logic provides for automatic "rolling" of records.
+
+        When a new alarm replaces an existing alarm, then all parameter values
+        for that instance are considered as changed for the purposes of value
+        change notifications to the Controller (even if their new values are
+        identical to those of the prior alarm).
+      </description>
+      <uniqueKey>
+        <parameter ref="AlarmIdentifier"/>
+      </uniqueKey>
+
+      <parameter name="EventTime" access="readOnly">
+        <description>
+          Indicates the date and time when the alarm event occurs.
+
+          For an unpopulated entry, the value is the Unknown Time as defined in
+          {{bibref|TR-106}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AlarmIdentifier" access="readOnly">
+        <description>
+          Identifies one Alarm Entry in the Alarm List. This value MUST be
+          uniquely allocated by the device to the alarm instance during the
+          lifetime of the individual alarm.
+
+          For an unpopulated entry, the value is {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotificationType" access="readOnly">
+        <description>
+          Indicates the reason for the specific alarm notification event.
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NewAlarm"/>
+            <enumeration value="ChangedAlarm"/>
+            <enumeration value="ClearedAlarm"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManagedObjectInstance" access="readOnly">
+        <description>
+          Specifies the instance of the Informational Object Class in which the
+          alarm occurred by carrying the Distinguished Name (DN) of this object
+          instance. The format of the DN is specific to the application that is
+          using this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="512"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EventType" access="readOnly">
+        <description>
+          Indicates the type of event.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProbableCause" access="readOnly">
+        <description>
+          Qualifies the alarm and provides further information than
+          {{param|EventType}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpecificProblem" access="readOnly">
+        <description>
+          Provides further qualification on the alarm beyond
+          {{param|EventType}} and {{param|ProbableCause}}.
+
+          This is vendor defined and will be {{empty}} if the device doesn't
+          support inclusion of this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PerceivedSeverity" access="readOnly">
+        <description>
+          Indicates the relative level of urgency for operator attention, see
+          {{bibref|ITU-X.733}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Cleared"/>
+            <enumeration value="Critical"/>
+            <enumeration value="Major"/>
+            <enumeration value="Minor"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Indeterminate"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalText" access="readOnly">
+        <description>
+          This provides a textual string which is vendor defined.
+
+          This will be {{empty}} if the device doesn't support inclusion of
+          this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalInformation" access="readOnly">
+        <description>
+          This contains additional information about the alarm and is vendor
+          defined.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.FaultMgmt.QueuedEvent.{i}." access="readOnly"
+        numEntriesParameter="QueuedEventNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        Alarm events added or updated in
+        {{object|.FaultMgmt.CurrentAlarm.{i}.}} are simultaneously entered into
+        the this table if their corresponding entry in
+        {{object|.FaultMgmt.SupportedAlarm.{i}.}} has
+        {{param|.FaultMgmt.SupportedAlarm.{i}.ReportingMechanism}} set to
+        {{enum|1 Queued|.FaultMgmt.SupportedAlarm.{i}.ReportingMechanism}}.
+        This table also contains alarm clearing events.
+
+        This object has a fixed number of entries with instance numbers from 1
+        to {{param|.FaultMgmt.QueuedEventNumberOfEntries}}.
+
+        Initially the table starts with all instances having
+        {{param|EventTime}} set to the Unknown Time value, as defined in
+        {{bibref|TR-106}}.
+
+        If maximum instance number
+        {{param|.FaultMgmt.QueuedEventNumberOfEntries}} is reached, the next
+        event overrides the object with instance number 1. Subsequent entries
+        override objects at sequentially increasing instance numbers. This
+        logic provides for automatic "rolling" of records.
+
+        When a new alarm replaces an existing alarm, then all parameter values
+        for that instance are considered as changed for the purposes of value
+        change notifications to the Controller (even if their new values are
+        identical to those of the prior alarm).
+      </description>
+      <uniqueKey>
+        <parameter ref="AlarmIdentifier"/>
+      </uniqueKey>
+
+      <parameter name="EventTime" access="readOnly">
+        <description>
+          Indicates the date and time when the alarm event occurs.
+
+          For an unpopulated entry, the value is the Unknown Time as defined in
+          {{bibref|TR-106}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AlarmIdentifier" access="readOnly">
+        <description>
+          Identifies one Alarm Entry in the Alarm List. This value MUST be
+          uniquely allocated by the device to the alarm instance during the
+          lifetime of the individual alarm.
+
+          For an unpopulated entry, the value is {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotificationType" access="readOnly">
+        <description>
+          Indicates the reason for the specific alarm notification event.
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NewAlarm"/>
+            <enumeration value="ChangedAlarm"/>
+            <enumeration value="ClearedAlarm"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManagedObjectInstance" access="readOnly">
+        <description>
+          Specifies the instance of the Informational Object Class in which the
+          alarm occurred by carrying the Distinguished Name (DN) of this object
+          instance. The format of the DN is specific to the application that is
+          using this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="512"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EventType" access="readOnly">
+        <description>
+          Indicates the type of event.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProbableCause" access="readOnly">
+        <description>
+          Qualifies the alarm and provides further information than
+          {{param|EventType}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpecificProblem" access="readOnly">
+        <description>
+          Provides further qualification on the alarm beyond
+          {{param|EventType}} and {{param|ProbableCause}}.
+
+          This is vendor defined and will be {{empty}} if the device doesn't
+          support inclusion of this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PerceivedSeverity" access="readOnly">
+        <description>
+          Indicates the relative level of urgency for operator attention, see
+          {{bibref|ITU-X.733}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Cleared"/>
+            <enumeration value="Critical"/>
+            <enumeration value="Major"/>
+            <enumeration value="Minor"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Indeterminate"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalText" access="readOnly">
+        <description>
+          This provides a textual string which is vendor defined.
+
+          This will be {{empty}} if the device doesn't support inclusion of
+          this information.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalInformation" access="readOnly">
+        <description>
+          This contains additional information about the alarm and is vendor
+          defined.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="FaultMgmtSupportedAlarms:1" version="2.4">
+      <object ref="Device.FaultMgmt." requirement="present">
+        <parameter ref="SupportedAlarmNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.FaultMgmt.SupportedAlarm.{i}." requirement="present">
+        <parameter ref="EventType" requirement="readOnly"/>
+        <parameter ref="ProbableCause" requirement="readOnly"/>
+        <parameter ref="SpecificProblem" requirement="readOnly"/>
+        <parameter ref="PerceivedSeverity" requirement="readOnly"/>
+        <parameter ref="ReportingMechanism" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="FaultMgmtActive:1" version="2.4">
+      <object ref="Device.FaultMgmt." requirement="present">
+        <parameter ref="CurrentAlarmNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.FaultMgmt.CurrentAlarm.{i}." requirement="present">
+        <parameter ref="AlarmIdentifier" requirement="readOnly"/>
+        <parameter ref="AlarmRaisedTime" requirement="readOnly"/>
+        <parameter ref="AlarmChangedTime" requirement="readOnly"/>
+        <parameter ref="EventType" requirement="readOnly"/>
+        <parameter ref="ProbableCause" requirement="readOnly"/>
+        <parameter ref="PerceivedSeverity" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="FaultMgmtHistory:1" version="2.4">
+      <object ref="Device.FaultMgmt." requirement="present">
+        <parameter ref="HistoryEventNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.FaultMgmt.HistoryEvent.{i}." requirement="present">
+        <parameter ref="EventTime" requirement="readOnly"/>
+        <parameter ref="AlarmIdentifier" requirement="readOnly"/>
+        <parameter ref="NotificationType" requirement="readOnly"/>
+        <parameter ref="EventType" requirement="readOnly"/>
+        <parameter ref="ProbableCause" requirement="readOnly"/>
+        <parameter ref="PerceivedSeverity" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="FaultMgmtExpedited:1" version="2.4">
+      <object ref="Device.FaultMgmt." requirement="present">
+        <parameter ref="ExpeditedEventNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.FaultMgmt.ExpeditedEvent.{i}." requirement="present">
+        <parameter ref="EventTime" requirement="readOnly"/>
+        <parameter ref="AlarmIdentifier" requirement="readOnly"/>
+        <parameter ref="NotificationType" requirement="readOnly"/>
+        <parameter ref="EventType" requirement="readOnly"/>
+        <parameter ref="ProbableCause" requirement="readOnly"/>
+        <parameter ref="PerceivedSeverity" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="FaultMgmtQueued:1" version="2.4">
+      <object ref="Device.FaultMgmt." requirement="present">
+        <parameter ref="QueuedEventNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.FaultMgmt.QueuedEvent.{i}." requirement="present">
+        <parameter ref="EventTime" requirement="readOnly"/>
+        <parameter ref="AlarmIdentifier" requirement="readOnly"/>
+        <parameter ref="NotificationType" requirement="readOnly"/>
+        <parameter ref="EventType" requirement="readOnly"/>
+        <parameter ref="ProbableCause" requirement="readOnly"/>
+        <parameter ref="PerceivedSeverity" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="FaultMgmt:2.14">
+    <component ref="Root"/>
+    <component ref="FaultMgmt"/>
+  </model>
+</dm:document>

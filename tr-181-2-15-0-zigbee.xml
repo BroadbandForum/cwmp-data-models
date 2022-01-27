@@ -1,0 +1,1938 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [ZigBee]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-zigbee"
+    file="tr-181-2-15-0-zigbee.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IEEE_EUI64"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+    <dataType name="URL"/>
+    <dataType name="ZigBeeNetworkAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="ZigBee">
+
+    <object name="Device.ZigBee." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.7">
+      <description>
+        Top level object for ZigBee capabilities based on the
+        {{bibref|ZigBee2007}} specification.
+      </description>
+
+      <parameter name="InterfaceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ZDONumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.Interface.{i}." access="readOnly"
+        numEntriesParameter="InterfaceNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.7">
+      <description>
+        ZigBee interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). This table models the ZigBee
+        interface of a ZigBee end device, ZigBee router or ZigBee coordinator.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="ZDOReference"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface. This parameter is based on
+          ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEEAddress" access="readOnly"
+          activeNotify="forceDefaultEnabled">
+        <description>
+          The IEEE address assigned to this interface. A value of
+          "FF:FF:FF:FF:FF:FF:FF:FF" indicates that this address is unknown.
+          This parameter has the same value as the
+          {{param|.ZigBee.ZDO.{i}.IEEEAddress}} parameter of the ZDO instance
+          {{param|ZDOReference}} is pointing to.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkAddress" access="readOnly">
+        <description>
+          The ZigBee network address assigned to this interface. This parameter
+          has the same value as the {{param|.ZigBee.ZDO.{i}.NetworkAddress}}
+          parameter of the ZDO instance {{param|ZDOReference}} is pointing to.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ZDOReference" access="readOnly">
+        <description>
+          The ZigBee Device Object assigned to this interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedDeviceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.Interface.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} transmitted out of the interface,
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} sent transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received by the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of {{units}} discarded by interface due to any
+          error.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received that contained errors
+          preventing them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were
+          not addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were not addressed to a
+          multicast or broadcast address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were
+          chosen to be discarded even though no errors had been detected to
+          prevent the {{units}} being transmitted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being delivered.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were
+          addressed to a multicast address at this layer, including those that
+          were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were addressed to a
+          multicast address at this layer and delivered by this layer to a
+          higher layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} requested for transmission which were
+          addressed to a broadcast address at this layer, including those that
+          were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were addressed to a
+          broadcast address at this layer and delivered by this layer to a
+          higher layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of {{units}} received which were discarded because
+          of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="ZigBee packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.Interface.{i}.AssociatedDevice.{i}."
+        access="readOnly" numEntriesParameter="AssociatedDeviceNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.7">
+      <description>
+        This table provides information about other ZigBee devices that are
+        directly accessible via this interface.
+
+        {{keys}}
+
+        It is possible that instances of this object have the same key value
+        when the value of {{param|IEEEAddress}} parameter is
+        "FF:FF:FF:FF:FF:FF:FF:FF" and the ZigBee Coordinators on two or more
+        separate area networks assign the same value for the
+        {{param|NetworkAddress}}. This is because the ZigBee specification
+        describes only intra-area network topologies
+        {{bibref|ZigBee2007|Section 1.1.4 Network Topology}}. As such if two or
+        more {{object}} instances have the same key value the implemenation is
+        undefined.
+      </description>
+      <uniqueKey>
+        <parameter ref="IEEEAddress"/>
+        <parameter ref="NetworkAddress"/>
+      </uniqueKey>
+
+      <parameter name="IEEEAddress" access="readOnly">
+        <description>
+          The IEEE address assigned to this device. A value of
+          "FF:FF:FF:FF:FF:FF:FF:FF" indicates that this address is unknown.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkAddress" access="readOnly">
+        <description>
+          The ZigBee network address assigned to this device.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Active" access="readOnly">
+        <description>
+          Whether or not this device is currently present in the ZigBee network
+          as defined in {{bibref|ZigBee2007|section 2.4.4.1}}.
+
+          The ability to list inactive devices is OPTIONAL. If the CPE includes
+          inactive devices in this table, {{param}} MUST be set to {{false}}
+          for each inactive device. The length of time an inactive device
+          remains listed in this table is a local matter to the CPE.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ZDOReference" access="readOnly">
+        <description>
+          The ZigBee Device Object assigned to this interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}." access="readOnly"
+        numEntriesParameter="ZDONumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.7">
+      <description>
+        ZigBee Device Object (ZDO) provides management capabilities of the
+        ZigBee Application Support (APS) and Network (NWK) layers of a ZigBee
+        Device as defined in {{bibref|ZigBee2007|section 2.5}}.
+
+        {{keys}}
+
+        It is possible that instances of this object have the same key value
+        when the value of {{param|IEEEAddress}} parameter is
+        "FF:FF:FF:FF:FF:FF:FF:FF" and the ZigBee Coordinators on two or more
+        separate area networks assign the same value for the
+        {{param|NetworkAddress}}. This is because the ZigBee specification
+        describes only intra-area network topologies
+        {{bibref|ZigBee2007|Section 1.1.4 Network Topology}}. As such if two or
+        more {{object}} instances have the same key value the implemenation is
+        undefined
+      </description>
+      <uniqueKey>
+        <parameter ref="IEEEAddress"/>
+        <parameter ref="NetworkAddress"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEEAddress" access="readOnly">
+        <description>
+          The IEEE address assigned to this device. A value of
+          "FF:FF:FF:FF:FF:FF:FF:FF" indicates that this address is unknown.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkAddress" access="readOnly">
+        <description>
+          The ZigBee network address assigned to this device.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BindingTableNumberOfEntries" access="readOnly"
+          dmr:customNumEntriesParameter="true">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ApplicationEndpointNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.NodeDescriptor." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        The {{object}} object describes the node capabilities of the ZigBee
+        device as defined in {{bibref|ZigBee2007|section 2.3.2.3 Node
+        Descriptor}}.
+      </description>
+
+      <parameter name="LogicalType" access="readOnly">
+        <description>
+          The type of ZigBee device that is extracted from the Logical Type
+          Field as defined in {{bibref|ZigBee2007|Table 2.29}}.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ZC">
+              <description>ZigBee Coordinator</description>
+            </enumeration>
+            <enumeration value="ZR">
+              <description>ZigBee Router</description>
+            </enumeration>
+            <enumeration value="ZED">
+              <description>ZigBee End Device</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ComplexDescriptorSupported" access="readOnly">
+        <description>
+          When {{true}}, specifies that the {{object|#.ComplexDescriptor}}
+          object is supported for this ZigBee device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UserDescriptorSupported" access="readOnly">
+        <description>
+          When {{true}}, specifies that the {{object|#.UserDescriptor}} object
+          is supported for this ZigBee device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FrequencyBand" access="readOnly">
+        <description>
+          Specifies the frequency bands that are supported by the underlying
+          IEEE 802.15.4 radio utilized by the ZigBee device.
+
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="868-868.6">
+              <description>The 868-868.6 MHz Band</description>
+            </enumeration>
+            <enumeration value="902-928">
+              <description>The 902-928 MHz Band</description>
+            </enumeration>
+            <enumeration value="2400-2483.5">
+              <description>The 2400-2483.5 MHz Band</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACCapability" access="readOnly">
+        <description>
+          Specifies the IEEE 802.15.4-2003 MAC sub-layer capabilities for this
+          ZigBee device.
+
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="AlternatePANCoordinator">
+              <description>Alternate PAN Coordinator</description>
+            </enumeration>
+            <enumeration value="FFD">
+              <description>Full Function Device</description>
+            </enumeration>
+            <enumeration value="MainsPowerSource">
+              <description>
+                The current power source is mains power
+              </description>
+            </enumeration>
+            <enumeration value="OnWhenIdle">
+              <description>The receiver is on when idle</description>
+            </enumeration>
+            <enumeration value="SecureCommunication">
+              <description>Secure communication is enabled</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManufactureCode" access="readOnly">
+        <description>
+          Specifies a manufacturer code that is allocated by the ZigBee
+          Alliance, relating the manufacturer to the device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumBufferSize" access="readOnly">
+        <description>
+          Specifies the maximum buffer size, in {{units}}, of the network
+          sub-layer data unit (NSDU) for this ZigBee device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="128"/>
+            <units value="octets"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumIncomingTransferSize" access="readOnly">
+        <description>
+          Specifies the maximum size, in {{units}}, of the application
+          sub-layer data unit (ASDU) that can be transferred to this ZigBee
+          device in one single message transfer.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="32768"/>
+            <units value="octets"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumOutgoingTransferSize" access="readOnly">
+        <description>
+          Specifies the maximum size, in {{units}}, of the application
+          sub-layer data unit (ASDU) that can be transferred from this ZigBee
+          device in one single message transfer.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="32768"/>
+            <units value="octets"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerMask" access="readOnly">
+        <description>
+          Specifies the system server capabilities of this ZigBee device.
+
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="PrimaryTrustCenter"/>
+            <enumeration value="PrimaryBindingTableCache"/>
+            <enumeration value="BackupBindingTableCache"/>
+            <enumeration value="PrimaryDiscoveryCache"/>
+            <enumeration value="BackupDiscoveryCache"/>
+            <enumeration value="NetworkManager"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DescriptorCapability" access="readOnly">
+        <description>
+          Specifies the descriptor capabilities of this ZigBee device.
+
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="ExtendedActiveEndpointListAvailable"/>
+            <enumeration value="ExtendedSimpleDescriptorListAvailable"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.PowerDescriptor." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        The {{object}} object describes the power capabilities of the ZigBee
+        device as defined in {{bibref|ZigBee2007|section 2.3.2.4 Node Power
+        Descriptor}}.
+      </description>
+
+      <parameter name="CurrentPowerMode" access="readOnly">
+        <description>
+          Specifies the current sleep/power-saving mode of the ZigBee device.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Synchronized"/>
+            <enumeration value="Periodic"/>
+            <enumeration value="Manual"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AvailablePowerSource" access="readOnly">
+        <description>
+          Specifies the power sources available on this ZigBee device.
+
+          {{list}} {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Constant">
+              <description>Constant (mains) power</description>
+            </enumeration>
+            <enumeration value="Rechargeable">
+              <description>Rechargable battery</description>
+            </enumeration>
+            <enumeration value="Disposable">
+              <description>Disposable battery</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentPowerSource" access="readOnly">
+        <description>
+          The current power source field specifies the current power source
+          being utilized by the node.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Constant">
+              <description>Constant (mains) power</description>
+            </enumeration>
+            <enumeration value="Rechargeable">
+              <description>Rechargable battery</description>
+            </enumeration>
+            <enumeration value="Disposable">
+              <description>Disposable battery</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentPowerSourceLevel" access="readOnly">
+        <description>
+          Specifies the level of charge of the current power source.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Critical">
+              <description>Critical battery state</description>
+            </enumeration>
+            <enumeration value="33">
+              <description>Battery state is 33 percent</description>
+            </enumeration>
+            <enumeration value="66">
+              <description>Battery state is 66 percent</description>
+            </enumeration>
+            <enumeration value="100">
+              <description>Battery state is 100 percent</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.UserDescriptor." access="readOnly"
+        minEntries="1" maxEntries="1" dmr:noUniqueKeys="true" version="2.7">
+      <description>
+        The {{object}} object is an optional descriptor that describes user
+        defined capabilities of the ZigBee device as defined in
+        {{bibref|ZigBee2007|section 2.3.2.7 User Descriptor}}. The {{object}}
+        object contains information that allows the user to identify the device
+        using a user-friendly character string, such as "Bedroom TV" or "Stairs
+        Light".
+      </description>
+
+      <parameter name="DescriptorAvailable" access="readOnly">
+        <description>
+          When {{true}}, the User Descriptor recorded has been received from
+          the target device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readOnly">
+        <description>
+          Specifies the information that allows the user to identify the ZigBee
+          device using a user-friendly character string, such as "Bedroom TV"
+          or "Stairs light".
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="16"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.ComplexDescriptor." access="readOnly"
+        minEntries="1" maxEntries="1" dmr:noUniqueKeys="true" version="2.7">
+      <description>
+        The {{object}} object is an optional descriptor that describes extended
+        capabilities of the ZigBee device as defined in
+        {{bibref|ZigBee2007|section 2.3.2.6 Complex Descriptor}}.
+      </description>
+
+      <parameter name="DescriptorAvailable" access="readOnly">
+        <description>
+          When {{true}}, the Complex Descriptor recorded has been received from
+          the target device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Language" access="readOnly">
+        <description>
+          Specifies the ISO 639-1 language code as defined in
+          {{bibref|ISO639-1}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CharacterSet" access="readOnly">
+        <description>
+          Specifies the ISO 646 character set as defined in
+          {{bibref|ISO646-1991}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManufacturerName" access="readOnly">
+        <description>
+          Specifies the name of the manufacturer of the ZigBee device.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ModelName" access="readOnly">
+        <description>
+          Specifies the name of the manufacturer's model of the ZigBee device.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SerialNumber" access="readOnly">
+        <description>
+          Specifies the manufacturer's serial number of the ZigBee device.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceURL" access="readOnly">
+        <description>
+          Specifies the {{datatype}} through which more information relating to
+          the ZigBee device can be obtained.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Icon" access="readOnly">
+        <description>
+          The icon field contains an octet string which carries the data for an
+          icon that can represent the ZigBee device. The format of the icon
+          MUST be a 32-by-32-pixel PNG image.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="IconURL" access="readOnly">
+        <description>
+          Specifies the {{datatype}} through which the icon for the ZigBee
+          device can be obtained.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.Security." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        The {{object}} object provides the configuration capabilities needed to
+        perform the Security Management functionality defined in
+        {{bibref|ZigBee2007|section 4 Security Management}}.
+      </description>
+
+      <parameter name="TrustCenterAddress" access="readOnly">
+        <description>
+          Specifies the IEEE address of a special device trusted by devices
+          within a ZigBee network to distribute keys for the purpose of network
+          and end-to-end application configuration management.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityLevel" access="readOnly">
+        <description>
+          Specifies how an outgoing frame is to be secured, how an incoming
+          frame purportedly has been secured; it also indicates whether or not
+          the payload is encrypted and to what extent data authenticity over
+          the frame is provided, as reflected by the length of the message
+          integrity code (MIC).
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="MIC-32"/>
+            <enumeration value="MIC-64"/>
+            <enumeration value="MIC-128"/>
+            <enumeration value="ENC"/>
+            <enumeration value="ENC-MIC-32"/>
+            <enumeration value="ENC-MIC-64"/>
+            <enumeration value="ENC-MIC-128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeOutPeriod" access="readOnly">
+        <description>
+          The period of time, in {{units}}, that this ZigBee device will wait
+          for an expected security protocol frame.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.Network." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        The {{object}} object provides the configuration capabilities needed to
+        by a ZigBee Device to operate within a ZigBee Area Network as defined
+        in {{bibref|ZigBee2007|section 2.5.2.4 Network Manager}}.
+      </description>
+
+      <parameter name="NeighborNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}."
+        access="readOnly" numEntriesParameter="NeighborNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.7">
+      <description>
+        The {{object}} object provides the configuration capabilities needed to
+        by a ZigBee Device to operate within a ZigBee Area Network as defined
+        in {{bibref|ZigBee2007|section 2.5.2.4 Network Manager}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="Neighbor"/>
+      </uniqueKey>
+
+      <parameter name="Neighbor" access="readOnly">
+        <description>
+          Neighbor of this ZigBee device. The value MUST be the path name of a
+          row in the ZigBee.ZDO table. If the referenced row is deleted then
+          this entry MUST be deleted.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LQI" access="readOnly" activeNotify="canDeny">
+        <description>
+          The LQI field specified link quality identification (LQI) for
+          neighbor ZigBee device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Relationship" access="readOnly">
+        <description>
+          The relationship between the neighbor and this device.{{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Parent"/>
+            <enumeration value="Child"/>
+            <enumeration value="PrevChild"/>
+            <enumeration value="Sibling"/>
+            <enumeration value="None"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PermitJoin" access="readOnly">
+        <description>
+          An indication of whether the neighbor device is accepting join
+          requests.{{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Accepting"/>
+            <enumeration value="NotAccepting"/>
+            <enumeration value="Unknown"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Depth" access="readOnly">
+        <description>
+          The tree depth of the neighbor device. A value of 0x00 indicates that
+          the device is the ZigBee coordinator for the network.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.NodeManager." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        The {{object}} object describes the configuration capabilities related
+        for remote management of the ZigBee Area Network as defined in
+        {{bibref|ZigBee2007|section 2.5.2.6 Node Manager}}.
+      </description>
+
+      <parameter name="RoutingTableNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.NodeManager.RoutingTable.{i}."
+        access="readOnly" numEntriesParameter="RoutingTableNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true"
+        version="2.7">
+      <description>
+        The {{object}} object describes the route table as defined in
+        {{bibref|ZigBee2007|table 3.51 Routing Table Entry}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="DestinationAddress"/>
+      </uniqueKey>
+
+      <parameter name="DestinationAddress" access="readOnly">
+        <description>
+          The ZigBee network address of this route.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="4"/>
+            <pattern value="([0-9A-Fa-f]){4}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NextHopAddress" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Specifies the network address of the next hop ZigBee device on the
+          way to the destination ZigBee device.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly" activeNotify="canDeny">
+        <description>
+          The status of the route entry. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Active"/>
+            <enumeration value="DiscoveryUnderway"/>
+            <enumeration value="DiscoveryFailed"/>
+            <enumeration value="Inactive"/>
+            <enumeration value="ValidationUnderway"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MemoryConstrained" access="readOnly">
+        <description>
+          A flag indicating whether the device is a memory constrained
+          concentrator.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManyToOne" access="readOnly">
+        <description>
+          A flag indicating that the destination is a concentrator that issued
+          a many to-one request.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RouteRecordRequired" access="readOnly">
+        <description>
+          A flag indicating that a route record command frame should be sent to
+          the destination prior to the next data packet.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.Binding.{i}." access="readWrite"
+        numEntriesParameter="BindingTableNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.7">
+      <description>
+        The {{object}} object describes the configuration capabilities related
+        to maintaining a ZigBee Device's Binding Table as defined in
+        {{bibref|ZigBee2007|section 2.2.8.2 Binding}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the use of this binding on the device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceEndpoint" access="readWrite">
+        <description>
+          Specifies the source endpoint used in this binding entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="240"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceAddress" access="readWrite">
+        <description>
+          Specifies the source address used in this binding entry.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClusterId" access="readWrite">
+        <description>
+          Specifies the cluster identifier used in this binding entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestinationAddressMode" access="readWrite">
+        <description>
+          Specifies the type of destination address used for this binding
+          entry. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Group"/>
+            <enumeration value="Endpoint"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DestinationEndpoint" access="readWrite">
+        <description>
+          Specifies the destination endpoint for the binding entry. The value
+          of this field is valid when the value of the
+          {{param|DestinationAddressMode}} is
+          {{enum|Endpoint|DestinationAddressMode}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="240"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEEDestinationAddress" access="readWrite">
+        <description>
+          Specifies the IEEE destination address for this binding entry. The
+          value of this field is valid when the value of the
+          {{param|DestinationAddressMode}} is
+          {{enum|Endpoint|DestinationAddressMode}}.
+        </description>
+        <syntax>
+          <dataType ref="IEEE_EUI64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupDestinationAddress" access="readWrite">
+        <description>
+          Specifies the group destination address for this binding entry. The
+          value of this field is valid when the value of the
+          {{param|DestinationAddressMode}} is
+          {{enum|Group|DestinationAddressMode}}.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.Group.{i}." access="readWrite"
+        numEntriesParameter="GroupNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.7">
+      <description>
+        The {{object}} object describes the configuration capabilities related
+        to maintaining a ZigBee Device's Group Table as defined in
+        {{bibref|ZigBee2007|section 2.5.2.7 Group Manager}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="GroupId"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the use of this group on the device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupId" access="readWrite">
+        <description>
+          The Group Identifier for this object as defined in
+          {{bibref|ZigBee2007|table 2.25 Group Table Entry Format}}.
+        </description>
+        <syntax>
+          <dataType ref="ZigBeeNetworkAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointList" access="readWrite">
+        <description>
+          The list of application endpoints assigned as a member of this
+          {{object}} object.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong"
+                targetParent=".ZigBee.ZDO.{i}.ApplicationEndpoint."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}."
+        access="readWrite"
+        numEntriesParameter="ApplicationEndpointNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.7">
+      <description>
+        The {{object}} object describes the application endpoint as defined in
+        {{bibref|ZigBee2007|section 2.1.2 Application Framework}}.
+      </description>
+      <uniqueKey>
+        <parameter ref="EndpointId"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the use of this application endpoint on the
+          device.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointId" access="readWrite">
+        <description>
+          The Endpoint Identifier for this object as defined in
+          {{bibref|ZigBee2007|section 2.1.2 Application Framework}}.
+
+          An {{object}} with an {{param}} value of 0 is designated as the
+          device application: This is a special application that is responsible
+          for device operation and contains logic to manage the device's
+          networking and general maintenance features.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="240"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.7">
+      <description>
+        The {{object}} object contains the attributes of the Simple Descriptor
+        of an application endpoint, as defined in {{bibref|ZigBee2007|section
+        2.3.2.5 Simple Descriptor}}.
+      </description>
+
+      <parameter name="ProfileId" access="readWrite">
+        <description>
+          Specifies the application profile that is supported on this endpoint.
+          Application profiles are agreements for messages, message formats,
+          andprocessing actions that enable developers to create an
+          interoperable, distributed application employing application entities
+          that reside on separate ZigBee devices. These application profiles
+          enable applications to send commands, request data, and process
+          commands and requests as defined in {{bibref|ZigBee2007|section
+          2.1.2.1 Application Profiles}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceId" access="readOnly">
+        <description>
+          Application device identifier, as defined in
+          {{bibref|ZigBee2007|section 2.3.2.5.3 Application Device Identifier
+          Field}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceVersion" access="readOnly">
+        <description>
+          Application device version, as defined in {{bibref|ZigBee2007|section
+          2.3.2.5.4 Application Device Version Field}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="15"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="InputClusterList" access="readWrite">
+        <description>
+          {{list}} Specifies the input cluster identifiers to be matched by the
+          ZigBee coordinator by remote Zigbee device's output cluster list for
+          this {{object}} object.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutputClusterList" access="readWrite">
+        <description>
+          {{list}} Specifies the output cluster identifiers to be matched by
+          the ZigBee coordinator by remote Zigbee device's input cluster list
+          for this {{object}} object.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.Discovery." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.7">
+      <description>
+        This object is used for managing the discovery of ZigBee devices within
+        a ZigBee Area Network. ZigBee Devices are discovered via the
+        {{object|#.ZDO}} instance associated with the ZigBee Coordinator of an
+        Area Network.
+      </description>
+
+      <parameter name="AreaNetworkNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ZigBee.Discovery.AreaNetwork.{i}." access="readWrite"
+        numEntriesParameter="AreaNetworkNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.7">
+      <description>
+        This object specifies the ZigBee devices that are discovered by the
+        {{param|Coordinator}}.
+
+        As the ZigBee specification does not provide a discovery protocol
+        between the CWMP proxy and the ZigBee coordinator, the {{object}}
+        object is provisioned and not discovered.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Coordinator"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables discovery of the ZigBee devices in this
+          {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastUpdate" access="readOnly">
+        <description>
+          The date and time when this {{object}} or its member devices (i.e.,
+          the devices with ZDOs listed in {{param|ZDOList}}) were updated due
+          to a discovery operation.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the current discovery operation.
+
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Indeterminate">
+              <description>
+                The discovery operation has not been executed and there are no
+                valid discovery results available)
+              </description>
+            </enumeration>
+            <enumeration value="InProgress"/>
+            <enumeration value="Success"/>
+            <enumeration value="Error"/>
+            <enumeration value="Error_Timeout" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Coordinator" access="readWrite">
+        <description>
+          The Fully Qualified Domain Name (FQDN) or IP address of the ZigBee
+          Coordinator. The coordinator MAY be located within the CPE. In this
+          scenario the Controller or CPE MAY use the value of "localhost".
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ZDOReference" access="readOnly">
+        <description>
+          The ZDO object for this device that is used to discover the ZigBee
+          capabilities of attached devices.
+
+          {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ZDOList" access="readOnly">
+        <description>
+          The list of ZDO objects discovered in this Area Network by the ZigBee
+          Coordinator.
+
+          {{reference}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".ZigBee.ZDO."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="ZigBeeInterface:1" version="2.10">
+      <object ref="Device.ZigBee." requirement="present">
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.Interface.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="LowerLayers" requirement="readWrite"/>
+        <parameter ref="IEEEAddress" requirement="readOnly"/>
+        <parameter ref="NetworkAddress" requirement="readOnly"/>
+        <parameter ref="ZDOReference" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZigBeeAssociatedDevices:1" extends="ZigBeeInterface:1"
+        version="2.10">
+      <object ref="Device.ZigBee.Interface.{i}." requirement="present">
+        <parameter ref="AssociatedDeviceNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.Interface.{i}.AssociatedDevice.{i}."
+          requirement="present">
+        <parameter ref="IEEEAddress" requirement="readOnly"/>
+        <parameter ref="NetworkAddress" requirement="readOnly"/>
+        <parameter ref="Active" requirement="readOnly"/>
+        <parameter ref="ZDOReference" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZigBeeDisc:1" version="2.10">
+      <object ref="Device.ZigBee.Discovery." requirement="present">
+        <parameter ref="AreaNetworkNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.Discovery.AreaNetwork.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Coordinator" requirement="readWrite"/>
+        <parameter ref="ZDOReference" requirement="readOnly"/>
+        <parameter ref="ZDOList" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZDOBasic:1" version="2.10">
+      <object ref="Device.ZigBee." requirement="present">
+        <parameter ref="ZDONumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}." requirement="present">
+        <parameter ref="IEEEAddress" requirement="readOnly"/>
+        <parameter ref="NetworkAddress" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.NodeDescriptor."
+          requirement="present">
+        <parameter ref="LogicalType" requirement="readOnly"/>
+        <parameter ref="ComplexDescriptorSupported" requirement="readOnly"/>
+        <parameter ref="UserDescriptorSupported" requirement="readOnly"/>
+        <parameter ref="FrequencyBand" requirement="readOnly"/>
+        <parameter ref="MACCapability" requirement="readOnly"/>
+        <parameter ref="ManufactureCode" requirement="readOnly"/>
+        <parameter ref="MaximumBufferSize" requirement="readOnly"/>
+        <parameter ref="MaximumIncomingTransferSize" requirement="readOnly"/>
+        <parameter ref="MaximumOutgoingTransferSize" requirement="readOnly"/>
+        <parameter ref="ServerMask" requirement="readOnly"/>
+        <parameter ref="DescriptorCapability" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.PowerDescriptor."
+          requirement="present">
+        <parameter ref="CurrentPowerMode" requirement="readOnly"/>
+        <parameter ref="AvailablePowerSource" requirement="readOnly"/>
+        <parameter ref="CurrentPowerSource" requirement="readOnly"/>
+        <parameter ref="CurrentPowerSourceLevel" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ZDOAdv:1" extends="ZDOBasic:1" version="2.10">
+      <object ref="Device.ZigBee.ZDO.{i}." requirement="present">
+        <parameter ref="BindingTableNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="GroupNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ApplicationEndpointNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.UserDescriptor."
+          requirement="present">
+        <parameter ref="DescriptorAvailable" requirement="readOnly"/>
+        <parameter ref="Description" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.ComplexDescriptor."
+          requirement="present">
+        <parameter ref="DescriptorAvailable" requirement="readOnly"/>
+        <parameter ref="Language" requirement="readOnly"/>
+        <parameter ref="CharacterSet" requirement="readOnly"/>
+        <parameter ref="ManufacturerName" requirement="readOnly"/>
+        <parameter ref="ModelName" requirement="readOnly"/>
+        <parameter ref="SerialNumber" requirement="readOnly"/>
+        <parameter ref="DeviceURL" requirement="readOnly"/>
+        <parameter ref="Icon" requirement="readOnly"/>
+        <parameter ref="IconURL" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Security." requirement="present">
+        <parameter ref="TrustCenterAddress" requirement="readOnly"/>
+        <parameter ref="SecurityLevel" requirement="readOnly"/>
+        <parameter ref="TimeOutPeriod" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Network." requirement="present">
+        <parameter ref="NeighborNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}."
+          requirement="present">
+        <parameter ref="Neighbor" requirement="readOnly"/>
+        <parameter ref="LQI" requirement="readOnly"/>
+        <parameter ref="Relationship" requirement="readOnly"/>
+        <parameter ref="PermitJoin" requirement="readOnly"/>
+        <parameter ref="Depth" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.NodeManager." requirement="present">
+        <parameter ref="RoutingTableNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.NodeManager.RoutingTable.{i}."
+          requirement="present">
+        <parameter ref="DestinationAddress" requirement="readOnly"/>
+        <parameter ref="NextHopAddress" requirement="readOnly"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="MemoryConstrained" requirement="readOnly"/>
+        <parameter ref="ManyToOne" requirement="readOnly"/>
+        <parameter ref="RouteRecordRequired" requirement="readOnly"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Binding.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="SourceEndpoint" requirement="readWrite"/>
+        <parameter ref="SourceAddress" requirement="readWrite"/>
+        <parameter ref="ClusterId" requirement="readWrite"/>
+        <parameter ref="DestinationAddressMode" requirement="readWrite"/>
+        <parameter ref="DestinationEndpoint" requirement="readWrite"/>
+        <parameter ref="IEEEDestinationAddress" requirement="readWrite"/>
+        <parameter ref="GroupDestinationAddress" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.Group.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="GroupId" requirement="readWrite"/>
+        <parameter ref="EndpointList" requirement="readWrite"/>
+      </object>
+      <object ref="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="EndpointId" requirement="readWrite"/>
+      </object>
+      <object
+          ref="Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor."
+          requirement="present">
+        <parameter ref="ProfileId" requirement="readWrite"/>
+        <parameter ref="DeviceId" requirement="readOnly"/>
+        <parameter ref="DeviceVersion" requirement="readOnly"/>
+        <parameter ref="InputClusterList" requirement="readWrite"/>
+        <parameter ref="OutputClusterList" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="ZigBeeStats:1" extends="ZigBeeInterface:1" version="2.10">
+      <object ref="Device.ZigBee.Interface.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsSent" requirement="readOnly"/>
+        <parameter ref="UnicastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsSent" requirement="readOnly"/>
+        <parameter ref="DiscardPacketsReceived" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsSent" requirement="readOnly"/>
+        <parameter ref="MulticastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsSent" requirement="readOnly"/>
+        <parameter ref="BroadcastPacketsReceived" requirement="readOnly"/>
+        <parameter ref="UnknownPacketsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="ZigBee:2.15">
+    <component ref="Root"/>
+    <component ref="ZigBee"/>
+  </model>
+</dm:document>

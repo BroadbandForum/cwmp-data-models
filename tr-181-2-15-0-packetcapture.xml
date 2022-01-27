@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [PacketCapture]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-packetcapture"
+    file="tr-181-2-15-0-packetcapture.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="URL"/>
+  </import>
+
+  <component name="PacketCaptureDiagnosticsInput">
+    
+    <parameter name="Interface" access="readWrite" version="2.13">
+      <description>
+        A reference to a (layer 2 or above) interface object that will be the
+        target of this packet capture diagnostic.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+          <pathRef refType="weak" targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+    
+    <parameter name="Format" access="readOnly" version="2.13">
+      <description>
+        This indicates whether the network trace will be recorded in libpcap
+        {{bibref|LIBPCAP}} or pcapng format, and is dependent on the underlying
+        method of performing a network trace.
+      </description>
+      <syntax>
+        <string>
+          <enumeration value="libpcap">
+            <description>
+              The packet data is recorded in libpcap {{bibref|LIBPCAP}} format.
+            </description>
+          </enumeration>
+          <enumeration value="pcapng">
+            <description>
+              The packet data is recorded in pcapng format.
+            </description>
+          </enumeration>
+        </string>
+      </syntax>
+    </parameter>
+    
+    <parameter name="Duration" access="readWrite" version="2.13">
+      <description>
+        The duration in {{units}} to copy packets to the file target. The
+        diagnostic completes when either the {{param}}, {{param|PacketCount}},
+        or {{param|ByteCount}} conditions are met.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="1"/>
+          <units value="seconds"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+    
+    <parameter name="PacketCount" access="readWrite" version="2.13">
+      <description>
+        The maximum number of packets to record to the file target. A value of
+        zero (0) indicates no limit. The diagnostic completes when the
+        {{param|Duration}}, {{param|ByteCount}}, or {{param}} conditions are
+        met.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+    
+    <parameter name="ByteCount" access="readWrite" version="2.13">
+      <description>
+        The maximum number of bytes to record to the file target. A value of
+        zero (0) indicates no limit. The diagnostic completes when
+        {{param|Duration}}, {{param|PacketCount}} or {{param}} conditions are
+        met.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+    
+    <parameter name="FileTarget" access="readWrite" version="2.13">
+      <description>
+        The {{datatype}} specifying the destination file location. HTTP and
+        HTTPS transports MUST be supported. Other transports MAY be supported.
+      </description>
+      <syntax>
+        <dataType ref="URL"/>
+      </syntax>
+    </parameter>
+    
+    <parameter name="FilterExpression" access="readWrite" version="2.13">
+      <description>
+        A ({{bibref|BPF}}) formatted expression used to restrict the types of
+        network packets that are recorded to {{param|FileTarget}}.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+        </string>
+      </syntax>
+    </parameter>
+    
+    <parameter name="Username" access="readWrite" version="2.13">
+      <description>
+        Username to be used by the Agent to authenticate with the file
+        location. This string is set to {{empty}} if no authentication is
+        required.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+        </string>
+      </syntax>
+    </parameter>
+    
+    <parameter name="Password" access="readWrite" version="2.13">
+      <description>
+        Password to be used by the Agent to authenticate with the file
+        location. This string is set to {{empty}} if no authentication is
+        required.
+      </description>
+      <syntax hidden="true">
+        <string>
+          <size maxLength="256"/>
+        </string>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="PacketCaptureDiagnosticsOutputNumberOfEntries">
+    <parameter name="PacketCaptureResultNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="PacketCaptureDiagnosticsOutput">
+    
+    <object name="PacketCaptureResult.{i}." access="readOnly"
+        numEntriesParameter="PacketCaptureResultNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:noUniqueKeys="true" version="2.13">
+      <description>
+        Results for individual packet capture diagnostics. Packet capture files
+        whose FileLocation is local to the system SHOULD be deleted when the
+        next diagnostic is run, or upon a system reboot.
+      </description>
+      
+      <parameter name="FileLocation" access="readOnly">
+        <description>
+          The {{datatype}} specifying the resulting file location of the packet
+          capture record that triggered this result. This MAY be different than
+          the location specified in FileTarget.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="StartTime" access="readOnly">
+        <description>
+          The local system time at which the capture was started.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="EndTime" access="readOnly">
+        <description>
+          The local system time at which the capture was completed.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="Count" access="readOnly">
+        <description>
+          The number of packets recorded to the file target.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+</dm:document>

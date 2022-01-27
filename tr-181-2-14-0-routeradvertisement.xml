@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [RouterAdvertisement]
+
+  Copyright (c) 2010-2020, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-14-0-routeradvertisement"
+    file="tr-181-2-14-0-routeradvertisement.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="RouterAdvertisement">
+
+    <object name="Device.RouterAdvertisement." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.2">
+      <description>
+        The Router Advertisement (RA) object {{bibref|RFC4861}}. This object
+        applies only to IPv6. It contains an {{object|InterfaceSetting}} table
+        that defines the RA configuration for individual IP interfaces.
+
+        Information received via router advertisement messages is automatically
+        propagated to the relevant {{object|.IP.Interface}} sub-objects, e.g.
+        to the {{object|.IP.Interface.{i}.IPv6Address}} and
+        {{object|.IP.Interface.{i}.IPv6Prefix}} tables.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables Router Advertisement.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RouterAdvertisement.InterfaceSetting.{i}."
+        access="readWrite"
+        numEntriesParameter="InterfaceSettingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.2">
+      <description>
+        Per-interface Router Advertisement (RA) configuration
+        {{bibref|RFC4861}}. Table entries are created for use in sending Router
+        Advertisements.
+
+        For enabled table entries, if {{param|Interface}} is not a valid
+        reference to an IPv6-capable interface (that is attached to the IPv6
+        stack), then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+
+          Defines the value of the ''IsRouter'' and ''AdvSendAdvertisements''
+          flags from {{bibref|RFC4861|Section 4.2}}
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          This is the IP interface associated with this {{object}} entry.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManualPrefixes" access="readWrite">
+        <description>
+          {{list}} {{reference}}
+
+          Manually-configured prefixes that will be sent in Router
+          Advertisement messages. Each referenced prefix MUST have a
+          {{param|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} of
+          {{enum|Static|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} or
+          {{enum|Child|.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}}. Router
+          Advertisement messages MUST include Prefix Information Options
+          {{bibref|RFC4861}} for all ''Valid''
+          ({{param|.IP.Interface.{i}.IPv6Prefix.{i}.ValidLifetime}} is infinite
+          or in the future) prefixes in this list.
+
+          Prefixes MUST be associated with the interface instance referenced by
+          {{param|Interface}}.
+        </description>
+        <syntax>
+          <list maxItems="8">
+            <size/>
+          </list>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv6Prefix." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Prefixes" access="readOnly">
+        <description>
+          {{list}} {{reference}}
+
+          All prefixes that will be included in Router Advertisement (RA)
+          messages sent out this interface. This list can include:
+
+          * Prefixes from {{param|ManualPrefixes}} that are included in RA
+            messages.
+
+          * Prefixes with {{param|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} =
+            {{enum|Child|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or
+            {{enum|AutoConfigured|.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}
+            associated with the interface instance referenced by
+            {{param|Interface}}.
+        </description>
+        <syntax>
+          <list maxItems="8">
+            <size/>
+          </list>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IP.Interface.{i}.IPv6Prefix." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRtrAdvInterval" access="readWrite">
+        <description>
+          The maximum time allowed between sending unsolicited multicast Router
+          Advertisements from the interface, in {{units}} (see
+          {{bibref|RFC4861|Section 4.2}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="4" maxInclusive="1800"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="600"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinRtrAdvInterval" access="readWrite">
+        <description>
+          The minimum time allowed between sending unsolicited multicast Router
+          Advertisements from the interface, in {{units}} (see
+          {{bibref|RFC4861|Section 4.2}}).
+
+          The value MUST be no greater than 3/4 * {{param|MaxRtrAdvInterval}}.
+
+          Note: The ''1350'' maximum was derived from the RFC, based on 3/4
+          times the maximum value of {{param|MaxRtrAdvInterval}}. Similarly,
+          the ''200'' default was derived from the RFC, based on 1/3 times the
+          default value of {{param|MaxRtrAdvInterval}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="3" maxInclusive="1350"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="200"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvDefaultLifetime" access="readWrite">
+        <description>
+          The value placed in the "Router Lifetime" field of Router
+          Advertisement messages on this interface, in {{units}} (see
+          {{bibref|RFC4861|Section 4.2}}).
+
+          The value can be zero or between {{param|MaxRtrAdvInterval}} and 9000
+          {{units}}, but these limits can be overridden by specific documents
+          that describe how IPv6 operates over different link layers.
+
+          A value of zero indicates that the router is not to be used as a
+          default router.
+
+          Note: The ''1800'' default was derived from the RFC, based on 3 times
+          the default value of {{param|MaxRtrAdvInterval}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="1800"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvManagedFlag" access="readWrite">
+        <description>
+          The value placed in the "Managed address configuration" (M) flag
+          field of Router Advertisement messages on this interafce (see
+          {{bibref|RFC4861|Section 4.2}}, and {{bibref|RFC4862}}).
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvOtherConfigFlag" access="readWrite">
+        <description>
+          The value placed in the "Other configuration" (O) flag field of
+          Router Advertisement messages on this interface (see
+          {{bibref|RFC4861|Section 4.2}}, and {{bibref|RFC4862}}).
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvMobileAgentFlag" access="readWrite">
+        <description>
+          The value placed in the "Home agent" (H) flag field of Router
+          Advertisement messages on this interface (see
+          {{bibref|RFC3775|Section 7.1}}).
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvPreferredRouterFlag" access="readWrite">
+        <description>
+          The value placed in the "Default Router Preference" (Prf) field of
+          Router Advertisement messages on this interface, as defined in
+          {{bibref|RFC4191|Section 2.2}}. {{enum}}
+
+          Also see {{bibref|RFC4191|Section 2.1}} which discusses how this flag
+          is encoded on the wire.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="High"/>
+            <enumeration value="Medium"/>
+            <enumeration value="Low"/>
+          </string>
+          <default type="object" value="Medium"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvNDProxyFlag" access="readWrite">
+        <description>
+          The value placed in the "Proxy" (P) flag field of Router
+          Advertisement messages on this interface (see
+          {{bibref|RFC4389|Section 4.1.3.3}}).
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvLinkMTU" access="readWrite">
+        <description>
+          The value placed in MTU options of Router Advertisement messages on
+          this interface. A value of zero indicates that no MTU options are
+          included (see {{bibref|RFC4861|Section 4.6.4}}).
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvReachableTime" access="readWrite">
+        <description>
+          The value placed in the "Reachable Time" field of Router
+          Advertisement messages on this interface, in {{units}} (see
+          {{bibref|RFC4861|Section 4.2}}).
+
+          The value zero means unspecified (by the router).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="3600000"/>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvRetransTimer" access="readWrite">
+        <description>
+          The value placed in the "Retrans Timer" field of Router Advertisement
+          messages on this interface (see {{bibref|RFC4861|Section 4.2}}).
+
+          The value zero means unspecified (by the router).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvCurHopLimit" access="readWrite">
+        <description>
+          The value placed in the "Cur Hop Limit" field of Router Advertisement
+          messages on this interface (see {{bibref|RFC4861|Section 4.2}}).
+
+          The value zero means unspecified (by the router).
+
+          Note: The default can be overridden with the value specified in
+          {{bibref|RFC3232}} that was in effect at the time of implementation.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RouterAdvertisement.InterfaceSetting.{i}.Option.{i}."
+        access="readWrite" numEntriesParameter="OptionNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.2">
+      <description>
+        This object specifies the options in a Router Advertisement (RA)
+        message {{bibref|RFC4861|Section 4.6}}. {{object}} entries are created
+        for use in sending Router Advertisements (enabled options MUST be
+        included in RA messages sent). This includes support for sending DNS
+        information in the RA message as described in {{bibref|RFC6106}}.
+
+        This table is intended only for options that are not modeled elsewhere.
+        For example, it is not appropriate for the MTU option (which is modeled
+        via {{param|#.AdvLinkMTU}}).
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag (type) {{bibref|RFC4861|Section 4.6}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          A hexbinary encoded option value {{bibref|RFC4861|Section 4.6}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="0" maxLength="65535"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="RouterAdvertisement:1" version="2.2">
+      <object ref="Device.RouterAdvertisement." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.RouterAdvertisement.InterfaceSetting.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="MaxRtrAdvInterval" requirement="readWrite"/>
+        <parameter ref="MinRtrAdvInterval" requirement="readWrite"/>
+        <parameter ref="AdvDefaultLifetime" requirement="readWrite"/>
+        <parameter ref="AdvManagedFlag" requirement="readWrite"/>
+        <parameter ref="AdvOtherConfigFlag" requirement="readWrite"/>
+        <parameter ref="AdvMobileAgentFlag" requirement="readWrite"/>
+        <parameter ref="AdvPreferredRouterFlag" requirement="readWrite"/>
+        <parameter ref="AdvNDProxyFlag" requirement="readWrite"/>
+        <parameter ref="AdvLinkMTU" requirement="readWrite"/>
+        <parameter ref="AdvReachableTime" requirement="readWrite"/>
+        <parameter ref="AdvRetransTimer" requirement="readWrite"/>
+        <parameter ref="AdvCurHopLimit" requirement="readWrite"/>
+        <parameter ref="OptionNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object
+          ref="Device.RouterAdvertisement.InterfaceSetting.{i}.Option.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Tag" requirement="readWrite"/>
+        <parameter ref="Value" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="RouterAdvertisement:2.14">
+    <component ref="Root"/>
+    <component ref="RouterAdvertisement"/>
+  </model>
+</dm:document>

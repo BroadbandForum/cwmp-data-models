@@ -1,0 +1,1564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [DeviceInfo]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-8
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-15-0-deviceinfo"
+    file="tr-181-2-15-0-deviceinfo.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-14-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="DeviceInfo">
+
+    <object name="Device.DeviceInfo." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        This object contains general device information.
+      </description>
+
+      <parameter name="DeviceCategory" access="readOnly" version="2.8">
+        <description>
+          Each list item is a device category (e.g. "AV_TV" and "AV_Recorder"),
+          or the value is {{empty}} if no such element is provided by the
+          device.
+
+          Note: It is assumed that this list might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. Standard HTIP device categories are defined in
+          {{bibref|JJ-300.01}}. In this case, the maximum length of the list is
+          127 and of each item is 31, and any non-HTIP device categories SHOULD
+          NOT conflict with standard HTIP device categories.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Manufacturer" access="readOnly">
+        <description>
+          The manufacturer of the CPE (human readable string).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManufacturerOUI" access="readOnly">
+        <description>
+          Organizationally unique identifier of the device manufacturer.
+          Represented as a six hexadecimal-digit value using all upper-case
+          letters and including any leading zeros. {{pattern}}
+
+          The value MUST be a valid OUI as defined in {{bibref|OUI}}.
+
+          This value MUST remain fixed over the lifetime of the device,
+          including across firmware updates.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ModelName" access="readOnly" activeNotify="canDeny">
+        <description>
+          Model name of the CPE (human readable string).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ModelNumber" access="readOnly" version="2.8">
+        <description>
+          The model number of the device (human readable string), or {{empty}}
+          if no model number is provided by the device.
+
+          Note: It is assumed that this string might be used for HTIP
+          (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and
+          {{bibref|G.9973}}. In this case, the maximum length of the string is
+          31.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readOnly" activeNotify="canDeny">
+        <description>
+          A full description of the CPE device (human readable string).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProductClass" access="readOnly">
+        <description>
+          Identifier of the class of product for which the serial number
+          applies. That is, for a given manufacturer, this parameter is used to
+          identify the product or class of product over which the
+          {{param|SerialNumber}} parameter is unique.
+
+          This value MUST remain fixed over the lifetime of the device,
+          including across firmware updates.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SerialNumber" access="readOnly">
+        <description>
+          Identifier of the particular device that is unique for the indicated
+          class of product and manufacturer.
+
+          This value MUST remain fixed over the lifetime of the device,
+          including across firmware updates.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HardwareVersion" access="readOnly" forcedInform="true">
+        <description>
+          A string identifying the particular CPE model and version.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SoftwareVersion" access="readOnly"
+          activeNotify="forceEnabled" forcedInform="true">
+        <description>
+          A string identifying the software version currently installed in the
+          CPE (i.e. version of the overall CPE firmware).
+
+          To allow version comparisons, this element SHOULD be in the form of
+          dot-delimited integers, where each successive integer represents a
+          more minor category of variation. For example, ''3.0.21'' where the
+          components mean: ''Major.Minor.Build''.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActiveFirmwareImage" access="readOnly" version="2.12">
+        <description>
+          {{noreference}}A full path reference to the row in the
+          {{object|FirmwareImage}} table representing the currently running
+          firmware image.
+        </description>
+        <syntax>
+          <string>
+            <pathRef targetType="row" targetParent="FirmwareImage."
+                refType="strong"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BootFirmwareImage" access="readWrite" version="2.12">
+        <description>
+          {{noreference}}A full path reference to the row in the
+          {{object|FirmwareImage}} table of the firmware image that is to be
+          loaded the next time the device boots.
+
+          This parameter value cannot be empty and must point to a valid and
+          enabled {{object|FirmwareImage}} object where the
+          ({{param|FirmwareImage.{i}.Available}} parameter is set to 'true').
+          Out of the factory, this parameter should be set to point to the
+          firmware image the CPE will attempt to boot when first powered on.
+
+          The firmware image instance referenced by this parameter must also
+          have an Available parameter value of 'true'. Attempting to set this
+          parameter to point to a non-enabled firmware image MUST result in the
+          CPE responding with a CWMP fault (9007).
+
+          In situations where the CPE cannot boot the firmware image specified
+          by this parameter and manages to boot a different firmware image, the
+          CPE MUST NOT modify this value to point to the alternate firmware
+          image that is currently active.
+        </description>
+        <syntax>
+          <string>
+            <pathRef targetType="row" targetParent="FirmwareImage."
+                refType="strong"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalHardwareVersion" access="readOnly">
+        <description>
+          {{list}} Each entry is an additional version. Represents any
+          additional hardware version information the vendor might wish to
+          supply.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="64"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdditionalSoftwareVersion" access="readOnly">
+        <description>
+          {{list}} Each entry is an additional version. Represents any
+          additional software version information the vendor might wish to
+          supply.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="64"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProvisioningCode" access="readWrite"
+          activeNotify="forceEnabled" forcedInform="true">
+        <description>
+          Identifier of the primary service provider and other provisioning
+          information, which MAY be used by the ACS to determine service
+          provider-specific customization and provisioning parameters.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          Time in {{units}} since the CPE was last restarted.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="FirstUseDate" access="readOnly" activeNotify="canDeny">
+        <description>
+          Date and time in UTC that the CPE first both successfully established
+          an IP-layer network connection and acquired an absolute time
+          reference using NTP or equivalent over that network connection. The
+          CPE MAY reset this date after a factory reset.
+
+          If NTP or equivalent is not available, this parameter, if present,
+          SHOULD be set to the Unknown Time value.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FirmwareImageNumberOfEntries" access="readOnly"
+          version="2.12">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorConfigFileNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProcessorNumberOfEntries" access="readOnly"
+          version="2.1">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorLogFileNumberOfEntries" access="readOnly"
+          version="2.1">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LocationNumberOfEntries" access="readOnly"
+          version="2.4">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceImageNumberOfEntries" access="readOnly"
+          version="2.11" dmr:customNumEntriesParameter="true">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.VendorConfigFile.{i}." access="readOnly"
+        numEntriesParameter="VendorConfigFileNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.0">
+      <description>
+        Every instance of this object is a Vendor Configuration File, and
+        contains parameters associated with the Vendor Configuration File.
+
+        This table of Vendor Configuration Files is for information only and
+        does not allow the Controller to operate on these files in any way.
+
+        Whenever the CPE successfully downloads a configuration file as a
+        result of the Download RPC with the FileType argument of ''3 Vendor
+        Configuration File'', the CPE MUST update this table.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Name of the vendor configuration file.
+
+          If the CPE is able to obtain the name of the configuration file from
+          the file itself, then the value of this parameter MUST be set to that
+          name.
+
+          Otherwise, if the CPE can extract the file name from the URL used to
+          download the configuration file, then the value of this parameter
+          MUST be set to that name.
+
+          Otherwise, the value of this parameter MUST be set to the value of
+          the TargetFileName argument of the Download RPC used to download this
+          configuration file.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          A string identifying the configuration file version currently used in
+          the CPE.
+
+          If the CPE is able to obtain the version of the configuration file
+          from the file itself, then the value of this parameter MUST be set to
+          the obtained value.
+
+          Otherwise, the value of this parameter MUST be {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Date" access="readOnly">
+        <description>
+          Date and time when the content of the current version of this vendor
+          configuration file was first applied by the CPE.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readOnly">
+        <description>
+          A description of the vendor configuration file (human-readable
+          string).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UseForBackupRestore" access="readOnly" version="2.7">
+        <description>
+          When {{true}}, this parameter indicates that this {{object}} instance
+          is to be used for backup and restoration purposes.
+
+          Note: The backup and restore operations may require the use of
+          multiple {{object}} instances. In this scenario the mechanism for
+          detemining the order and combination of {{object}} instances used for
+          backup and restoration purposes is implementation specific.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.MemoryStatus." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Status of the device's physical memory.
+      </description>
+
+      <parameter name="Total" access="readOnly">
+        <description>
+          The total physical volatile RAM, in {{units}}, installed on the
+          device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="KiB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Free" access="readOnly" activeNotify="canDeny">
+        <description>
+          The free physical volatile RAM, in {{units}}, currently available on
+          the device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="KiB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalPersistent" access="readOnly" version="2.15">
+        <description>
+          The sum total physical Non-Volatile Memory (NVM), in {{units}},
+          installed on the device. This memory persists across reboots and can
+          be used by the system, applications, or users.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="KiB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="FreePersistent" access="readOnly"
+          activeNotify="canDeny" version="2.15">
+        <description>
+          The sum total free physical Non-Volatile Memory (NVM), in {{units}},
+          currently available on the device. This memory persists across
+          reboots and is available for use by the system, applications, or
+          users.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="KiB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.ProcessStatus." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Status of the processes on the device.
+      </description>
+
+      <parameter name="CPUUsage" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total amount of the CPU, in {{units}}, rounded up to the nearest
+          whole {{units}}. In the case that multiple CPU are present, this
+          value represents the average of all CPU.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="100"/>
+            <units value="percent"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProcessNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.ProcessStatus.Process.{i}."
+        access="readOnly" numEntriesParameter="ProcessNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        List of all processes running on the device.
+      </description>
+      <uniqueKey>
+        <parameter ref="PID"/>
+      </uniqueKey>
+
+      <parameter name="PID" access="readOnly">
+        <description>
+          The Process Identifier.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Command" access="readOnly">
+        <description>
+          The name of the command that has caused the process to exist.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Size" access="readOnly" activeNotify="canDeny">
+        <description>
+          The size in {{units}} of the memory occupied by the process.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="KiB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readOnly">
+        <description>
+          The priority of the process where 0 is highest.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="99"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="CPUTime" access="readOnly" activeNotify="canDeny">
+        <description>
+          The amount of time in {{units}} that the process has spent taking up
+          CPU time since the process was started.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="State" access="readOnly" activeNotify="canDeny">
+        <description>
+          The current state that the process is in.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Running"/>
+            <enumeration value="Sleeping"/>
+            <enumeration value="Stopped"/>
+            <enumeration value="Idle" optional="true"/>
+            <enumeration value="Uninterruptible" optional="true"/>
+            <enumeration value="Zombie" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.TemperatureStatus." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Status of the temperature of the device.
+      </description>
+
+      <parameter name="TemperatureSensorNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.TemperatureStatus.TemperatureSensor.{i}."
+        access="readOnly"
+        numEntriesParameter="TemperatureSensorNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.0">
+      <description>
+        This object represents information that the device has obtained via
+        sampling an internal temperature sensor.
+      </description>
+      <uniqueKey>
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny"
+          version="2.3">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Indicates whether or not the temperature sensor is enabled.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this temperature sensor.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                The sensor is not currently sampling the temperature.
+              </description>
+            </enumeration>
+            <enumeration value="Enabled">
+              <description>
+                The sensor is currently sampling the temperature.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                The sensor error currently prevents sampling the temperature.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResetTime" access="readOnly">
+        <description>
+          The time at which this temperature sensor was reset.
+
+          Reset can be caused by:
+
+          * {{param|Status}} transition from {{enum|Disabled|Status}} to
+            {{enum|Enabled|Status}}
+
+          * {{template|Reset}}.
+
+          * An internal reset of the temperature sensor (including a reboot of
+            the device).
+
+          The Unknown Time value, as defined in {{bibref|TR-106}}, indicates
+          that this temperature sensor has never been reset, which can only
+          happen if it has never been enabled.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Name of this temperature sensor. This text MUST be sufficient to
+          distinguish this temperature sensor from other temperature sensors.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly" activeNotify="canDeny">
+        <description>
+          This temperature sensor's last good reading in {{units}}.
+
+          A value of -274 (which is below absolute zero) indicates a good
+          reading has not been obtained since last reset.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastUpdate" access="readOnly" activeNotify="canDeny">
+        <description>
+          The time at which this temperature sensor's last good reading was
+          obtained.
+
+          The Unknown Time value, as defined in {{bibref|TR-106}}, indicates a
+          good reading has not been obtained since last reset.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinValue" access="readOnly">
+        <description>
+          This temperature sensor's lowest value reading in {{units}} since
+          last reset.
+
+          A value of -274 (which is below absolute zero) indicates a good
+          reading has not been obtained since last reset.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinTime" access="readOnly">
+        <description>
+          The time at which this temperature sensor's lowest value was read.
+
+          The Unknown Time value, as defined in {{bibref|TR-106}}, indicates a
+          good reading has not been obtained since last reset.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxValue" access="readOnly">
+        <description>
+          This temperature sensor's highest value reading in {{units}} since
+          last reset.
+
+          A value of -274 (which is below absolute zero) indicates a good
+          reading has not been obtained since last reset.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxTime" access="readOnly">
+        <description>
+          The time at which this temperature sensor's highest value was read.
+
+          The Unknown Time value, as defined in {{bibref|TR-106}}, indicates a
+          good reading has not been obtained since last reset.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowAlarmValue" access="readWrite">
+        <description>
+          This temperature sensor's low alarm value in {{units}}.
+
+          A value of -274 (which is below absolute zero) indicates a non
+          configured value.
+
+          A change to this value will cause {{param|LowAlarmTime}} to be reset.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowAlarmTime" access="readOnly">
+        <description>
+          Initial time at which this temperature sensor's
+          {{param|LowAlarmValue}} was encountered.
+
+          This value is only set the first time the alarm is seen and not
+          changed until the next reset.
+
+          The Unknown Time value, as defined in {{bibref|TR-106}}, indicates
+          that an alarm has not been encountered since the last reset.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighAlarmValue" access="readWrite">
+        <description>
+          This temperature sensor's high alarm value in {{units}}.
+
+          A value of -274 (which is below absolute zero) indicates a non
+          configured value.
+
+          A change to this value will cause {{param|HighAlarmTime}} to be
+          reset.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="PollingInterval" access="readWrite" version="2.1">
+        <description>
+          The interval, measured in {{units}}, in which the device polls this
+          {{object}}.
+
+          If the value is 0 then the device selects its own polling interval.
+
+          If the value is greater than 0 then the device MUST use this value as
+          the polling interval.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighAlarmTime" access="readOnly">
+        <description>
+          Initial time at which this temperature sensor's
+          {{param|HighAlarmValue}} was encountered.
+
+          This value is only set the first time the alarm is seen and not
+          changed until the next reset.
+
+          The Unknown Time value, as defined in {{bibref|TR-106}}, indicates
+          that an alarm has not been encountered since the last reset.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.NetworkProperties." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object defines the parameters that describe how the device handles
+        network traffic.
+      </description>
+
+      <parameter name="MaxTCPWindowSize" access="readOnly">
+        <description>
+          The maximum number of {{units}} of outstanding data a sender can send
+          on a particular connection prior to an acknowledgment
+          {{bibref|RFC793}}. Any scaling factor SHOULD be included in this
+          parameter {{bibref|RFC1323}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TCPImplementation" access="readOnly">
+        <description>
+          {{list}} Indicates the TCP congestion control mechanism(s)
+          implemented. {{enum}}
+
+          Tahoe, Reno, and New Reno are defined in {{bibref|RFC2582}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Tahoe">
+              <description>
+                Represents the base TCP implementation in {{bibref|RFC793}} and
+                elements of {{bibref|RFC2582}}
+              </description>
+            </enumeration>
+            <enumeration value="Reno">
+              <description>
+                Represents the base TCP implementation in {{bibref|RFC793}}
+                with the additional algorithms defined in {{bibref|RFC2581}}
+              </description>
+            </enumeration>
+            <enumeration value="New Reno">
+              <description>
+                Described as a modification to the Reno algorithms in
+                {{bibref|RFC2582}}
+              </description>
+            </enumeration>
+            <enumeration value="Vegas">
+              <description>
+                An emerging TCP congestion control mechanism
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.Processor.{i}." access="readOnly"
+        numEntriesParameter="ProcessorNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:noUniqueKeys="true" version="2.1">
+      <description>
+        Each table entry represents a hardware or virtual processor that
+        resides on this device.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny"
+          version="2.3">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Architecture" access="readOnly">
+        <description>
+          The architecture of the processor on the underlying hardware.
+          {{enum}}
+
+          For processor architectures not included in this list, the vendor MAY
+          include vendor-specific values, which MUST use the format defined in
+          {{bibref|TR-106|Section 3.3}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="arm"/>
+            <enumeration value="i386"/>
+            <enumeration value="m68010"/>
+            <enumeration value="m68k"/>
+            <enumeration value="mipseb">
+              <description>big-endian</description>
+            </enumeration>
+            <enumeration value="mipsel">
+              <description>little-endian</description>
+            </enumeration>
+            <enumeration value="powerpc"/>
+            <enumeration value="sh3eb">
+              <description>big-endian</description>
+            </enumeration>
+            <enumeration value="sh3el">
+              <description>little-endian</description>
+            </enumeration>
+            <enumeration value="x86_64"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.VendorLogFile.{i}." access="readOnly"
+        numEntriesParameter="VendorLogFileNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.1">
+      <description>
+        Each table entry represents a Vendor Log File.
+
+        This table of log files is informational only and does not allow the
+        Controller to operate on these files in any way.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Name of the log file.
+
+          Typically this will be the full file system path, but provided that
+          it is guaranteed to be unique across current and future log files, it
+          MAY be a shorter name derived from the file system path, or be
+          derived via another mechanism.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumSize" access="readOnly">
+        <description>
+          The maximum size of the log file in {{units}}. If the device doesn't
+          know the maximum file size then {{param}} will be 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="bytes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Persistent" access="readOnly">
+        <description>
+          When {{true}}, the log file contents are preserved across a device
+          reboot.
+
+          When {{false}}, the log file contents will be purged when the device
+          is rebooted.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.Location.{i}." access="readWrite"
+        numEntriesParameter="LocationNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        This object contains Location information.
+      </description>
+      <uniqueKey>
+        <parameter ref="Source"/>
+        <parameter ref="ExternalSource"/>
+      </uniqueKey>
+
+      <parameter name="Source" access="readOnly">
+        <description>
+          Identifies the source of the location data.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="GPS"/>
+            <enumeration value="AGPS"/>
+            <enumeration value="Manual"/>
+            <enumeration value="External"/>
+          </string>
+          <default type="object" value="External"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AcquiredTime" access="readOnly">
+        <description>
+          The time when the location was acquired.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExternalSource" access="readOnly">
+        <description>
+          URL, MAC address, or other identifier that identifies an "External"
+          source of this location.
+
+          Meaningful only if {{param|Source}} has a value of
+          {{enum|External|Source}}, otherwise it MUST be {{empty}}.
+
+          If {{param|ExternalProtocol}} has a value of
+          {{enum|CWMP|ExternalProtocol}}, this is the URL or IP address of the
+          Controller.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExternalProtocol" access="readOnly">
+        <description>
+          Protocol used to acquire a location from an "External" source.
+          {{enum}}
+
+          Meaningful only if {{param|Source}} has a value of
+          {{enum|External|Source}}, otherwise it MUST be {{empty}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="">
+              <description>{{empty}}</description>
+            </enumeration>
+            <enumeration value="CWMP"/>
+            <enumeration value="USP" version="2.13"/>
+            <enumeration value="OMA-DM"/>
+            <enumeration value="SNMP"/>
+            <enumeration value="UPnP"/>
+            <enumeration value="HELD"/>
+            <enumeration value="DHCPv4"/>
+            <enumeration value="DHCPv6"/>
+            <enumeration value="LLDP-MED"/>
+            <enumeration value="MLP"/>
+            <enumeration value="Other"/>
+          </string>
+          <default type="object" value="CWMP"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DataObject" access="readWrite">
+        <description>
+          The currently valid location information.
+
+          Writable only when {{param|ExternalProtocol}} has a value of
+          {{enum|CWMP|ExternalProtocol}} or {{enum|USP|ExternalProtocol}}.
+
+          If obtained through the local GPS/AGPS then the location information
+          is formatted according to {{bibref|RFC5491}}.
+
+          If manually configured then location information will be
+          XML-formatted according to {{bibref|RFC5491}} (geographical
+          information) and {{bibref|RFC5139}} (civic addresses).
+
+          If obtained by an external source this is the location information as
+          received.
+
+          If it's an XML document (e.g. CWMP, OMA-DM, UPnP, HELD, MLP) the
+          location information will be represented as-is, otherwise it will be
+          converted to base64.
+
+          CWMP or USP configured location information will be XML-formatted
+          according to {{bibref|RFC5491}} (geographical information) and
+          {{bibref|RFC5139}} (civic addresses).
+
+          Only zero or one Location object instance with value
+          {{enum|CWMP|ExternalProtocol}} or {{enum|USP|ExternalProtocol}} MUST
+          exist at any given time.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="1200"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.DeviceImageFile.{i}." access="readOnly"
+        numEntriesParameter="DeviceImageNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.11">
+      <description>
+        This object describes an image of the device.
+      </description>
+      <uniqueKey>
+        <parameter ref="Location"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" activeNotify="canDeny">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Location" access="readOnly">
+        <description>
+          The location of the device that represents the image as the user
+          looks at the front of the device in its typical orientation (e.g.,
+          on-end, flat).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Front"/>
+            <enumeration value="Back"/>
+            <enumeration value="Left"/>
+            <enumeration value="Right"/>
+            <enumeration value="Top"/>
+            <enumeration value="Bottom"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Image" access="readOnly">
+        <description>
+          The device image in PNG, JPEG or GIF format.
+        </description>
+        <syntax>
+          <base64/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.DeviceInfo.FirmwareImage.{i}." access="readOnly"
+        numEntriesParameter="FirmwareImageNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.12">
+      <description>
+        Top-level object for mapping firmware images.
+
+        This is a static table – the number of object instances in this table
+        is defined by the firmware that is currently running.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Firmware/software image name. Descriptive text of the image or
+          filename.
+
+          The value of {{param}} is {{empty}} if {{param|Status}} is anything
+          other than {{enum|Active|Status}}, {{enum|Available|Status}},
+          {{enum|InstallationFailed|Status}}, or
+          {{enum|ActivationFailed|Status}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          A string identifying the version of the firmware image represented by
+          this {{object}}. Whenever this firmware image is active (ie, the
+          device has booted this firmware image), the value of the
+          {{param|.DeviceInfo.SoftwareVersion}} parameter MUST be the same as
+          the value contained in this parameter.
+
+          To allow version comparisons, this element SHOULD be in the form of
+          dot-delimited integers, where each successive integer represents a
+          more minor category of variation. For example, 3.0.21 where the
+          components mean: ''Major.Minor.Build''.
+
+          The value of {{param}} is {{empty}} if {{param|Status}} is anything
+          other than {{enum|Available|Status}},
+          {{enum|InstallationFailed|Status}}, or
+          {{enum|ActivationFailed|Status}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Available" access="readWrite">
+        <description>
+          Specifies whether or not this particular firmware image can be used
+          by the Agent. An Agent will only attempt to boot this particular
+          firmware image if this parameter value is set to {{true}}.
+
+          This value MUST be set to {{true}} by the device whenever a new
+          firmware image is installed.
+
+          This value cannot be set to {{false}} if the firmware image is active
+          or is referenced by the {{param|#.BootFirmwareImage}} parameter.
+
+          Firmware image instances cannot be deleted, so a Controller MAY use
+          this parameter to subsequently mark a particular firmware as being
+          invalid, which will prevent the Agent from attempting to boot it.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Status of the firmware image, as determined by the Agent. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NoImage">
+              <description>
+                This Firmware Image instance is empty.
+
+                This value could happen on an Agent that supports multiple
+                firmware images, but only has a single image installed.
+              </description>
+            </enumeration>
+            <enumeration value="Active" version="2.14">
+              <description>
+                This Firmware Image instance is the currently active image.
+              </description>
+            </enumeration>
+            <enumeration value="Downloading">
+              <description>
+                This Firmware Image instance is being downloaded.
+              </description>
+            </enumeration>
+            <enumeration value="Validating">
+              <description>
+                This Firmware Image instance has been downloaded, and is in the
+                process of being validated.
+              </description>
+            </enumeration>
+            <enumeration value="Available">
+              <description>
+                This Firmware Image instance has been downloaded, validated,
+                and installed, and is ready to be activated.
+              </description>
+            </enumeration>
+            <enumeration value="DownloadFailed">
+              <description>
+                The Agent has attempted to download this Firmware Image
+                instance, but ultimately failed while retrieving it from the
+                source URL.
+              </description>
+            </enumeration>
+            <enumeration value="ValidationFailed">
+              <description>
+                The Agent has attempted to validate a Firmware Image downloaded
+                to this instance, but ultimately failed while validating it.
+              </description>
+            </enumeration>
+            <enumeration value="InstallationFailed">
+              <description>
+                The Agent has attempted to install a Firmware Image downloaded
+                and validated to this instance, but ultimately failed while
+                installing it.
+              </description>
+            </enumeration>
+            <enumeration value="ActivationFailed">
+              <description>
+                The Agent has attempted to active this Firmware Image instance,
+                but ultimately failed while being activated.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BootFailureLog" access="readOnly">
+        <description>
+          If the Agent is unable to boot into this firmware image, when
+          specified, the Agent can use this parameter to record some
+          information as to why the boot failed.
+
+          If the Agent successfully boots into this firmware, the value of this
+          parameter SHOULD be {{empty}}. When a new firmware image is installed
+          into this object instance, this parameter MUST be cleared.
+
+          The length of this string is defined as implementation-specific by
+          the Agent.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="MemoryStatus:1" version="2.0">
+      <object ref="Device.DeviceInfo.MemoryStatus." requirement="present">
+        <parameter ref="Total" requirement="readOnly"/>
+        <parameter ref="Free" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="ProcessStatus:1" version="2.0">
+      <object ref="Device.DeviceInfo.ProcessStatus." requirement="present">
+        <parameter ref="CPUUsage" requirement="readOnly"/>
+        <parameter ref="ProcessNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DeviceInfo.ProcessStatus.Process.{i}."
+          requirement="present">
+        <parameter ref="PID" requirement="readOnly"/>
+        <parameter ref="Command" requirement="readOnly"/>
+        <parameter ref="Size" requirement="readOnly"/>
+        <parameter ref="Priority" requirement="readOnly"/>
+        <parameter ref="CPUTime" requirement="readOnly"/>
+        <parameter ref="State" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="TempStatus:1" version="2.0">
+      <object ref="Device.DeviceInfo.TemperatureStatus." requirement="present">
+        <parameter ref="TemperatureSensorNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.DeviceInfo.TemperatureStatus.TemperatureSensor.{i}."
+          requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ResetTime" requirement="readOnly"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="Value" requirement="readOnly"/>
+        <parameter ref="LastUpdate" requirement="readOnly"/>
+        <parameter ref="MinValue" requirement="readOnly"/>
+        <parameter ref="MinTime" requirement="readOnly"/>
+        <parameter ref="MaxValue" requirement="readOnly"/>
+        <parameter ref="MaxTime" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="Processors:1" version="2.1">
+      <object ref="Device.DeviceInfo.Processor.{i}." requirement="present">
+        <parameter ref="Architecture" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="VendorLogFiles:1" version="2.1">
+      <object ref="Device.DeviceInfo.VendorLogFile.{i}." requirement="present">
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="MaximumSize" requirement="readOnly"/>
+        <parameter ref="Persistent" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="Location:1" version="2.4">
+      <object ref="Device.DeviceInfo." requirement="present">
+        <parameter ref="LocationNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DeviceInfo.Location.{i}." requirement="createDelete">
+        <parameter ref="Source" requirement="readOnly"/>
+        <parameter ref="AcquiredTime" requirement="readOnly"/>
+        <parameter ref="ExternalSource" requirement="readOnly"/>
+        <parameter ref="ExternalProtocol" requirement="readOnly"/>
+        <parameter ref="DataObject" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="DeviceImage:1" version="2.11">
+      <object ref="Device.DeviceInfo." requirement="present">
+        <parameter ref="DeviceImageNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.DeviceInfo.DeviceImageFile.{i}."
+          requirement="present">
+        <parameter ref="Location" requirement="readOnly"/>
+        <parameter ref="Image" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="DeviceInfo:2.14">
+    <component ref="Root"/>
+    <component ref="DeviceInfo"/>
+  </model>
+</dm:document>
