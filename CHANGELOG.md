@@ -2,6 +2,18 @@
 
 *The latest [CPE WAN Management Protocol (CWMP)](https://www.broadband-forum.org/technical/download/TR-069.pdf) data models can be found at <https://cwmp-data-models.broadband-forum.org>.*
 
+## 2022-04-06: [TR-181 Issue 2 Amendment 15 Corrigendum 1](https://cwmp-data-models.broadband-forum.org/#Device:2.15)
+
+*Tag: [v1.6.5](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.5)*
+
+TR-181
+
+* Removed items that were erroneously added to the User:1 profile and instead
+  added them to a new User:2 profile
+* Fixed the BulkData Profile Parameter reference; it's a string, not a formal
+  path reference
+* Fixed the VendorConfigFile description's CWMP/USP-specific text
+
 ## 2022-01-27: [TR-106 Amendment 11](https://data-model-template.broadband-forum.org) and [TR-181 Issue 2 Amendment 15](https://cwmp-data-models.broadband-forum.org/#Device:2.15)
 
 *Tag: [v1.6.4](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.4)*
