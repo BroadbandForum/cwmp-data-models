@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  FAPService:2.1 Femto Access Point Service Data Model [CWMP]
+
+  Copyright (c) 2010-2019, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-8"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-8
+                          https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-8.xsd
+                        urn:broadband-forum-org:cwmp:datamodel-report-0-1
+                          https://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
+    spec="urn:broadband-forum-org:tr-196-2-1-2-cwmp" file="tr-196-2-1-2-cwmp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCWMP"/>
+  </import>
+
+  <import file="tr-196-2-common.xml" spec="urn:broadband-forum-org:tr-196-2-1">
+    <model name="_FAPService:2.1" ref="FAPService:2.1"/>
+  </import>
+
+
+  <model name="FAPService:2.1"  base="_FAPService:2.1" isService="true">
+    <object base="FAPService.{i}.AccessMgmt.Legacy.LocalIPAccess.Rule.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="Interface" access="readWrite" dmr:version="2.0">
+        <description action="append">
+          Example: InternetGatewayDevice.LANDevice.{i}.LANEthernetInterfaceConfig.{i}.
+        </description>
+      </parameter>
+    </object>
+
+    <object base="FAPService.{i}.CellConfig.UMTS." access="readOnly" minEntries="1" maxEntries="1" dmr:version="2.0">
+      <parameter base="TunnelInstance" access="readWrite">
+        <description action="prefix">
+          This is the reference to the IPsec tunnel instance used by the UMTS FAP.
+          For all root data models, which use the tunnel definition provided in {{bibref|TR-262}} (InternetGatewayDevice:1 {{bibref|TR-098}} and Device:1 {{bibref|TR-181i1}}) the {{param}} MUST point to a row in the 'FAP.Tunnel.IKESA.{i}.' table, defined in {{bibref|TR-262}}.
+          If the root data model used is Device:2 {{bibref|TR-181i2}} then the {{param}} MUST point to IPsec tunnel instance defined in {{bibref|TR-181i2}}.
+        </description>
+      </parameter>
+    </object>
+
+    <object base="FAPService.{i}.CellConfig.LTE.Tunnel.{i}." access="readWrite" minEntries="0" maxEntries="unbounded">
+      <parameter base="TunnelRef" access="readWrite">
+        <description action="prefix">
+          This is the reference to an IPsec tunnel instance used by the LTE FAP.
+          For all root data models, which use the tunnel definition provided in {{bibref|TR-262}} (InternetGatewayDevice:1 {{bibref|TR-098}} and Device:1 {{bibref|TR-181i1}}) the {{param}} MUST point to a row in the 'FAP.Tunnel.IKESA.{i}.' table, defined in {{bibref|TR-262}}.
+          If the root data model used is Device:2 {{bibref|TR-181i2}} then the {{param}} MUST point to IPsec tunnel instance defined in {{bibref|TR-181i2}}.
+        </description>
+      </parameter>
+    </object>
+
+    <object base="FAPService.{i}.CellConfig.CDMA2000." access="readOnly" minEntries="1" maxEntries="1" dmr:version="2.0">
+      <parameter base="TunnelInstance" access="readWrite" dmr:version="2.0">
+        <description action="prefix">
+          This is the reference to the IPsec tunnel instance used by the CDMA2000 FAP.
+          For all root data models, which use the tunnel definition provided in {{bibref|TR-262}} (InternetGatewayDevice:1 {{bibref|TR-098}} and Device:1 {{bibref|TR-181i1}}) the {{param}} MUST point to a row in the 'FAP.Tunnel.IKESA.{i}.' table, defined in {{bibref|TR-262}}.
+          If the root data model used is Device:2 {{bibref|TR-181i2}} then the {{param}} MUST point to IPsec tunnel instance defined in {{bibref|TR-181i2}}.
+        </description>
+      </parameter>
+    </object>
+  </model>
+
+</dm:document>

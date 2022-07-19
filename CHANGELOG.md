@@ -2,6 +2,15 @@
 
 *The latest [CPE WAN Management Protocol (CWMP)](https://www.broadband-forum.org/technical/download/TR-069.pdf) data models can be found at <https://cwmp-data-models.broadband-forum.org>.*
 
+## 2022-07-19: [TR-196 Issue 2 Amendment 1 Corrigendum 2](https://cwmp-data-models.broadband-forum.org/#FAPService:2)
+
+*Tag: [v1.6.6](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.6)*
+
+TR-196
+
+* Deprecated Blacklisted parameters and replaced with Blocklisted
+  parameters
+
 ## 2022-04-06: [TR-181 Issue 2 Amendment 15 Corrigendum 1](https://cwmp-data-models.broadband-forum.org/#Device:2.15)
 
 *Tag: [v1.6.5](https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.5)*
