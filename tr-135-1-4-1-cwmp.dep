@@ -1,0 +1,26 @@
+# makefiles should define a callable DEPENDENCIES variable that expects two
+# arguments:
+#
+#   $(1) - the base name (with no file extension) of the supplied XML file
+#   $(2) - a space-separated list of relative paths for all the XML files on
+#          which the supplied XML file depends (starting with the supplied
+#          XML file)
+#
+# For example (direct dependencies):
+#
+# EXTS = .html -full.xml
+#
+# define DEPENDENCIES
+#   $(eval $(EXTS:%=$(1)%): $(2))
+# endef
+#
+# or (copying the dependent files to the current directory):
+#
+# define DEPENDENCIES
+#   $(eval $(EXTS:%=$(1)%): $(notdir $(2)))
+#   $(foreach PATH, $(2),
+#     $(eval $(notdir $(PATH)): $(PATH); @install -Cv -m 0644 $$< $$@)
+#   )
+# endef
+
+$(call DEPENDENCIES,tr-135-1-4-1-cwmp,../../install/cwmp/tr-135-1-4-1-cwmp.xml ../../install/cwmp/tr-069-biblio.xml ../../install/cwmp/tr-106-types.xml ../../install/cwmp/tr-135-1-4-1-common.xml)

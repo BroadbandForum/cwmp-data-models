@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [WiFi CWMP]
+
+  Copyright (c) 2010-2022, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2017-2019 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-16-0-wifi-cwmp"
+    file="tr-181-2-16-0-wifi-cwmp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="DiagnosticsState"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-wifi.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-wifi">
+    <component name="WiFi"/>
+    <component name="WiFiNeighboringWiFiDiagnosticsOutputNumberOfEntries"/>
+    <component name="WiFiNeighboringWiFiDiagnosticsOutput"/>
+    <component name="RemoteMeasurementRequestInput"/>
+    <component name="RemoteMeasurementRequestOutput"/>
+    <component name="CCAMeasurementInput"/>
+    <component name="CCAMeasurementOutput"/>
+  </import>
+
+  <component name="WiFiCWMP">
+    <object base="Device.WiFi." access="readOnly" minEntries="1"
+        maxEntries="1">
+
+      <parameter name="Reset" access="readWrite" version="2.12">
+        <description>
+          This parameter represents a request to reset or reboot the WiFi
+          sub-system without resetting or rebooting the device.
+        </description>
+        <syntax command="true">
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WiFi.AccessPoint.{i}.Security." access="readOnly"
+        minEntries="1" maxEntries="1">
+
+      <parameter name="Reset" access="readWrite" version="2.4">
+        <description>
+          When set to {{true}}, this {{object|#}} instance's WiFi security
+          settings are reset to their factory default values. The affected
+          settings include {{param|ModeEnabled}}, {{param|WEPKey}},
+          {{param|PreSharedKey}}, {{param|KeyPassphrase}},
+          {{param|SAEPassphrase}}, and {{param|#.WPS.PIN}} (if applicable).
+
+          If the parameter cannot be set, the CPE MUST reject the request as an
+          invalid parameter value. Possible failure reasons include a lack of
+          default values or if {{param|ModeEnabled}} is an Enterprise type,
+          i.e. {{enum|WPA-Enterprise|ModesSupported}},
+          {{enum|WPA2-Enterprise|ModesSupported}},
+          {{enum|WPA3-Enterprise|ModesSupported}}, or
+          {{enum|WPA-WPA2-Enterprise|ModesSupported}}.
+        </description>
+        <syntax command="true">
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.NeighboringWiFiDiagnostic." access="readOnly"
+        minEntries="1" maxEntries="1"
+        dmr:previousObject="Device.WiFi.Radio.{i}." version="2.7">
+      <description>
+        This object defines access to other WiFi SSIDs that this device is able
+        to receive.
+      </description>
+
+      <parameter name="DiagnosticsState" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <enumeration value="Completed" access="readOnly"
+                status="obsoleted">
+              <description>
+                {{deprecated|2.13|because it's a typo for {{enum|Complete}}}}
+
+                {{obsoleted|2.16}}
+              </description>
+            </enumeration>
+          </dataType>
+        </syntax>
+      </parameter>
+      <component ref="WiFiNeighboringWiFiDiagnosticsOutputNumberOfEntries"/>
+      <component ref="WiFiNeighboringWiFiDiagnosticsOutput"/>
+    </object>
+
+    <object name="Device.WiFi.RemoteMeasurementDiagnostic." access="readOnly"
+        minEntries="1" maxEntries="1"
+        dmr:previousObject="Device.WiFi.Radio.{i}." version="2.15">
+      <description>
+        This object is to provide diagnostic information on a Remote
+        Measurement of a Wi-Fi BSS.
+      </description>
+
+      <parameter name="DiagnosticsState" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <component ref="RemoteMeasurementRequestInput"/>
+      <component ref="RemoteMeasurementRequestOutput"/>
+    </object>
+
+    <object name="Device.WiFi.CCAMeasurementDiagnostic." access="readOnly"
+        minEntries="1" maxEntries="1"
+        dmr:previousObject="Device.WiFi.Radio.{i}." version="2.15">
+      <description>
+        This object is to provide diagnostic information on a Clear Channel
+        Assessment (CCA) measurement scan on this radio on the given channel
+        using a specific {{param|DwellTime}}.
+      </description>
+
+      <parameter name="DiagnosticsState" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+          </dataType>
+        </syntax>
+      </parameter>
+      <component ref="CCAMeasurementInput"/>
+      <component ref="CCAMeasurementOutput"/>
+    </object>
+  </component>
+
+  <model name="WiFiCWMP:2.16">
+    <component ref="Root"/>
+    <component ref="WiFi"/>
+    <component ref="WiFiCWMP"/>
+  </model>
+</dm:document>

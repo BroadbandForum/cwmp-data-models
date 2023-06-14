@@ -1,0 +1,1959 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [XPON]
+
+  Copyright (c) 2022, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-16-0-xpon"
+    file="tr-181-2-16-0-xpon.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="XPON">
+
+    <object name="Device.XPON." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.16">
+      <description>
+        This object models one or more xPON interfaces or ONUs as specified by
+        the ITU based PON standards. It does not address IEEE based PON
+        standards (like EPON). An ONU performs tasks such as traffic
+        classification, VLAN manipulation, GEM port mapping, aggregation and/or
+        forwarding between one or more UNIs and one or more ANIs.
+      </description>
+
+      <parameter name="ONUNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}." access="readOnly"
+        numEntriesParameter="ONUNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.16">
+
+      <description>
+        This object models one xPON interface or ONU as specified by the ITU
+        based PON standards.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this ONU. If disabled, the ONU should prevent
+          user traffic from flowing, suppress notifications, and power down as
+          much as possible.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the ONU as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          This attribute identifies the version of the ONU as defined by the
+          vendor.
+
+          This parameter is based on ''Version'' from {{bibref|G.988|Section
+          9.1.1}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="14"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EquipmentID" access="readOnly">
+        <description>
+          This attribute may be used to identify the specific type of ONU.
+
+          This parameter is based on ''Equipment ID'' from
+          {{bibref|G.988|Section 9.1.2}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="20"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SoftwareImageNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EthernetUNINumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ANINumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.SoftwareImage.{i}." access="readOnly"
+        numEntriesParameter="SoftwareImageNumberOfEntries" minEntries="0"
+        maxEntries="2" version="2.16">
+      <description>
+        This table models the software images stored in the ONU.
+
+        It is expected this table has two entries: the ONU normally creates two
+        instances of the Software Image ME to model the 2 software images in
+        the ONU.
+
+        This object is based on {{bibref|G.988|Section 9.1.4}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="ID"/>
+      </uniqueKey>
+
+      <parameter name="ID" access="readOnly">
+        <description>
+          The ID as assigned by the CPE to this {{object}} entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          A string identifying the software version.
+
+          This parameter is based on ''Version'' from {{bibref|G.988|Section
+          9.1.4}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="14"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsCommitted" access="readOnly">
+        <description>
+          This parameter indicates whether or not the associated software image
+          is committed.
+
+          This parameter is based on ''Is committed'' from
+          {{bibref|G.988|Section 9.1.4}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsActive" access="readOnly">
+        <description>
+          This parameter indicates whether the associated software image is
+          active ({{true}}) or inactive ({{false}}).
+
+          This parameter is based on ''Is active'' from {{bibref|G.988|Section
+          9.1.4}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsValid" access="readOnly">
+        <description>
+          This parameter indicates whether the associated software image is
+          valid ({{true}}) or invalid ({{false}}).
+
+          This parameter is based on ''Is valid'' from {{bibref|G.988|Section
+          9.1.4}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.EthernetUNI.{i}." access="readOnly"
+        numEntriesParameter="EthernetUNINumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.16">
+      <description>
+        Ethernet UNI table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). This object models User Network
+        Interfaces carrying Ethernet frames.
+
+        An EthernetUNI can be a virtual or a physical UNI. If the ONU is
+        managed via OMCI, an EthernetUNI has an associated service, which is
+        either a VEIP (see {{bibref|G.988|Section 9.5.5}}) or a PPTP Ethernet
+        UNI (see {{bibref|G.988|Section 9.5.1}}).
+
+        If the associated service is a VEIP, the ONU shows a VEIP ME in the
+        OMCI MIB. If it's a PPTP Ethernet UNI, the ONU shows a PPTP Ethernet
+        UNI ME in the OMCI MIB. It is expected the associated service is a VEIP
+        for a virtual UNI, and that it is a PPTP Ethernet UNI for a physical
+        UNI. However, some network operators require that the ONU shows a PPTP
+        Ethernet UNI ME instead of a VEIP ME in its OMCI MIB even if the
+        EthernetUNI models a virtual UNI.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readOnly">
+        <description>
+          Indicates whether this interface is enabled ({{true}}) or not
+          ({{false}}). If the ONU is managed via OMCI, the interface is enabled
+          if the OLT set the parameter ''Administrative state'' of the ME
+          managing the associated service to 0. (The value 0 unlocks the
+          functions performed by the ME.) The ME is either the VEIP ME (see
+          {{bibref|G.988|Section 9.5.5}}) or the PPTP Ethernet UNI ME (see
+          {{bibref|G.988|Section 9.5.1}}.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} becomes {{true}} then {{param}} SHOULD change
+          to {{enum|Up}} if and only if the interface is able to transmit and
+          receive network traffic; it SHOULD change to {{enum|Dormant}} if and
+          only if the interface is operable but is waiting for external actions
+          before it can transmit and receive network traffic (and subsequently
+          change to {{enum|Up}} if still operable when the expected actions
+          have completed); it SHOULD change to {{enum|LowerLayerDown}} if and
+          only if the interface is prevented from entering the {{enum|Up}}
+          state because one or more of the interfaces beneath it is down; it
+          SHOULD remain in the {{enum|Error}} state if there is an error or
+          other fault condition detected on the interface; it SHOULD remain in
+          the {{enum|NotPresent}} state if the interface has missing (typically
+          hardware) components; it SHOULD change to {{enum|Unknown}} if the
+          state of the interface can not be determined for some reason.
+
+          If the ONU is managed via OMCI, then {{param}} can only be
+          {{enum|Up}} if the ONU has been provisioned at OMCI level in such a
+          way that this interface is able to pass traffic.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the interface entry as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readOnly">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: it is expected that {{param}} will not be used: if {{object}}
+          models a physical UNI, it represents a layer 1 interface; if
+          {{object}} models a virtual UNI, it virtualizes a layer 1 interface.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ANIs" access="readOnly">
+        <description>
+          {{list}} {{reference}} References all associated ANI interfaces.
+
+          An ONU is potentially capable of forwarding frames between a UNI and
+          its associated ANI interfaces. This parameter defines such a
+          relationship. However, the list does not mean that the forwarding is
+          actually happening, or the forwarding policies have been provisioned,
+          between the UNI and the associated ANI interfaces. For an ONU with a
+          single TC layer device, the parameter value can be either empty for
+          simplicity, or can be the path name of the associated ANI. For an ONU
+          with multiple TC layer devices, this parameter value may have one or
+          more path names.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetParent="#.ANI." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterdomainID" access="readOnly">
+        <description>
+          String to identify the associated service in the ONU management
+          domain to the TR-181 management domain. If the ONU is managed via
+          OMCI, it is recommended to format this string as
+          "(service_type,MEID)", with service_type being an enumeration of
+          ''VEIP'' or ''PPTPEthernetUNI'', and MEID the value of the attribute
+          "Managed entity ID" of the ME instance managing the service
+          associated with this EthernetUNI.
+
+          Examples:
+
+          * (VEIP,1025)
+
+          * (PPTPEthernetUNI,257)
+
+          An OSS (Operations Support System) having access to both the TR-181
+          and the OMCI domain can then find out which EthernetUNI instance
+          represents a certain VEIP or PPTPEthernetUNI ME instance in the OMCI
+          domain.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterdomainName" access="readOnly">
+        <description>
+          String that provides an additional way to identify the associated
+          service to the TR-181 management domain. If the ONU is managed via
+          OMCI and if the service associated with this EthernetUNI is a VEIP,
+          then the value of this parameter is the value of the attribute
+          "Interdomain name" of the corresponding VEIP ME instance.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="25"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.EthernetUNI.{i}.Stats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+
+        Transmit direction has PON as destination. Receive direction has PON as
+        source.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames received on the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound Ethernet frames that could not be
+          transmitted because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound Ethernet frames that contained errors
+          preventing them from being delivered to the TR-181 domain.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames requested for transmission which
+          were not addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames, delivered by this interface to
+          the TR-181 domain, which were not addressed to a multicast or
+          broadcast address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound Ethernet frames which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound Ethernet frames which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being delivered. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames requested for transmission and
+          which were addressed to a multicast address at this layer, including
+          those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received Ethernet frames, delivered by this
+          interface to the TR-181 domain, which were addressed to a multicast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames that the TR-181 domain requested
+          for transmission and which were addressed to a broadcast address at
+          this layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received Ethernet frames, delivered by this
+          interface to the TR-181 domain, which were addressed to a broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames received via the interface which
+          were discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}." access="readOnly"
+        numEntriesParameter="ANINumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.16">
+      <description>
+        Access Node Interface (ANI) table. An ANI models the xPON MAC/PHY as
+        defined in the ITU-T PON standards.
+
+        This object is not an interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}, but it has many of the same core
+        parameters as an interface object, and they follow largely the same
+        conventions. The most important deviations are:
+
+        * This object does not have a LowerLayers parameter.
+
+        * The value LowerLayerDown is not a valid value for its Status
+          parameter.
+
+        Because it's not an interface object, it does not occur in the
+        {{object|###.InterfaceStack}} table.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the interface.
+
+          If disabled, the device should force the ONU state of this ANI to O1
+          (Initial state).
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+
+          Note: forcing the state to O1 implies the device disables the TX
+          laser of the associated transceiver(s). It's not required to disable
+          the RX part of the transceivers as well.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the interface. Although this object
+          is not an interface object, it follows largely the conventions of
+          {{bibref|TR-181i2|Section 4.2.2}}. The most important deviation is
+          that LowerLayerDown is not a valid value. {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} becomes {{true}} then {{param}} SHOULD change
+          to {{enum|Up}} if and only if the interface is able to transmit and
+          receive network traffic; more specifically, {{param}} should change
+          to {{enum|Up}} if {{param|TC.ONUActivation.ONUState}} becomes O5; it
+          SHOULD change to {{enum|Dormant}} if and only if the interface is
+          operable but is waiting for external actions before it can transmit
+          and receive network traffic (and subsequently change to {{enum|Up}}
+          if still operable when the expected actions have completed); it
+          SHOULD remain in the {{enum|Error}} state if there is an error or
+          other fault condition detected on the interface; it SHOULD remain in
+          the {{enum|NotPresent}} state if the interface has missing (typically
+          hardware) components; it SHOULD change to {{enum|Unknown}} if the
+          state of the interface can not be determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the ANI entry as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the interface entered its
+          current operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PONMode" access="readOnly">
+        <description>
+          PON mode, defines the detected or configured PON mode of the ANI. {{enum}}
+
+          {{object|Transceiver}} has a parameter of the same name. For proper
+          operation, the PON mode of the transceiver(s) corresponding to this
+          ANI must be equal to the PON mode of this ANI. But a user might e.g.
+          accidentally insert a G-PON SFP while the PON mode of the ANI is
+          XGS-PON.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown"/>
+            <enumeration value="G-PON"/>
+            <enumeration value="XG-PON"/>
+            <enumeration value="NG-PON2"/>
+            <enumeration value="XGS-PON"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransceiverNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Throughput statistics for this interface.
+
+        The CPE MUST reset the interface's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        interface becomes operationally down due to a previous administrative
+        down (i.e. the interface's {{param|#.Status}} parameter transitions to
+        a down state after the interface is disabled) or when the interface
+        becomes administratively up (i.e. the interface's {{param|#.Enable}}
+        parameter transitions from {{false}} to {{true}}). Administrative and
+        operational interface status is discussed in {{bibref|TR-181i2|section
+        4.2.2}}.
+
+        Transmit direction has PON as destination. Receive direction has PON as
+        source.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames received on the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound Ethernet frames that could not be
+          transmitted because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound Ethernet frames that contained errors
+          preventing them from being forwarded to the UNI(s).
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames requested for transmission which
+          were not addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames, forwarded by this interface to
+          the UNI(s), which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound Ethernet frames which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound Ethernet frames which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being delivered. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames requested for transmission and
+          which were addressed to a multicast address at this layer, including
+          those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received Ethernet frames, forwarded by this
+          interface to the UNI(s), which were addressed to a multicast address
+          at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames requested for transmission on the
+          PON and which were addressed to a broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received Ethernet frames, forwarded by this
+          interface to the UNI(s), which were addressed to a broadcast address
+          at this layer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of Ethernet frames received via the interface which
+          were discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        This object represents an ITU-T PON TC layer device.
+      </description>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.ONUActivation."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        This object shows info related to the activation of this ANI by an OLT.
+      </description>
+
+      <parameter name="ONUState" access="readOnly">
+        <description>
+          ONU activation state. {{enum}}
+
+          See:
+
+          * {{bibref|G.9807.1|Section C.12}}
+
+          * {{bibref|G.984.3|Section 10}}
+
+          * {{bibref|G.987.3|Section 12}}
+
+          * {{bibref|G.989.3|Section 12}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="O1"/>
+            <enumeration value="O2"/>
+            <enumeration value="O3"/>
+            <enumeration value="O2-3"/>
+            <enumeration value="O4"/>
+            <enumeration value="O5"/>
+            <enumeration value="O6"/>
+            <enumeration value="O7"/>
+            <enumeration value="O8"/>
+            <enumeration value="O9"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorID" access="readOnly">
+        <description>
+          Identifies the vendor of the ONU. See {{bibref|G.988|Section 9.1.1}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="4"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SerialNumber" access="readOnly">
+        <description>
+          Represents the combination of the Vendor-ID and the Vendor-specific
+          serial number (VSSN). The parameter shows the serial number in a
+          human readable format. Example: if the vendor ID is ABCD and the VSSN
+          encodes the number 1234568, the value of this parameter is
+          ABCD12345678. See {{bibref|G.988|Section 9.1.1}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="12"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ONUID" access="readOnly">
+        <description>
+          Identifier that the OLT assigns to this ANI during the activation.
+          See:
+
+          * {{bibref|G.9807.1|Section C.6.1.5.6}}
+
+          * {{bibref|G.984.3|Section 5.5.2}}
+
+          * {{bibref|G.987.3|Section 6.4.2}}
+
+          * {{bibref|G.989.3|Section 6.1.5.6}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1022"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.PM." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Performance monitoring (PM) counters.
+      </description>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PHY." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        PHY PM.
+      </description>
+      <parameter name="CorrectedFECBytes" access="readOnly">
+        <description>
+          The number of bytes that were corrected by the FEC function.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CorrectedFECCodewords" access="readOnly">
+        <description>
+          Count of FEC codewords that contained errors but were corrected by
+          the FEC function.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UncorrectableFECCodewords" access="readOnly">
+        <description>
+          Count of FEC codewords that contained errors and could not be
+          corrected by the FEC function.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalFECCodewords" access="readOnly">
+        <description>
+          Count of total received FEC codewords.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSBdHECErrorCount" access="readOnly">
+        <description>
+          HEC error in any of the fields of PSBd.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HeaderHECErrorCount" access="readOnly">
+        <description>
+          HEC errors received in the DS XGTC or FS header.
+
+          This counter is called:
+
+          * "FS HEC error count" in {{bibref|G.9807.1|Table C.14.1}} and
+            {{bibref|G.989.3|Table 14-1}}.
+
+          * "XGTC HEC error count" in {{bibref|G.987.3|Table 14-1}}.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProfile" access="readOnly">
+        <description>
+          ONU could not transmit because the specified burst profile was not
+          known.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.PM.GEM." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        (X)GEM PM.
+      </description>
+
+      <parameter name="FramesSent" access="readOnly">
+        <description>
+          Total number of (X)GEM frames transmitted.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FramesReceived" access="readOnly">
+        <description>
+          Total number of (X)GEM frames received.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FrameHeaderHECErrors" access="readOnly">
+        <description>
+          XGEM frame header HEC errors.
+
+          Number of events involving loss of XGEM channel delineation.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeyErrors" access="readOnly">
+        <description>
+          XGEM key errors.
+
+          XGEM frames discarded because of unknown or invalid encryption key.
+          Examples include: no unicast or broadcast key established for
+          specified key index, key index indicating encrypted XGEM frame on a
+          XGEM port that is not provisioned for encryption, key index
+          indicating upstream encryption on a XGEM port that is provisioned for
+          downstream encryption only, or invalid key index (11). This count is
+          included in {{param|FramesReceived}}.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PLOAM." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        PLOAM PM.
+      </description>
+
+      <parameter name="MICErrors" access="readOnly">
+        <description>
+          PLOAM MIC errors.
+
+          Counter of received PLOAM messages with MIC errors.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DownstreamMessageCount" access="readOnly">
+        <description>
+          Downstream PLOAM message count.
+
+          Count of PLOAM messages sent by OLT, received by ONU, either
+          broadcast or directed to the specific ONU-ID.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RangingTime" access="readOnly">
+        <description>
+          Count of Ranging_Time PLOAM messages sent by OLT.
+
+          It provides a base for transmission time drift estimation.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpstreamMessageCount" access="readOnly">
+        <description>
+          Upstream PLOAM message count.
+
+          Count of messages (other than Acknowledgement) sent by ONU to OLT.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.PM.OMCI." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        OMCI PM.
+      </description>
+      <parameter name="BaselineMessagesReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          OMCI baseline message count.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExtendedMessagesReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          OMCI extended message count.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MICErrors" access="readOnly" activeNotify="canDeny">
+        <description>
+          Count of received OMCI messages with MIC errors.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.GEM." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Info about the GEM ports of this ANI.
+      </description>
+      <parameter name="PortNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}."
+        access="readOnly" numEntriesParameter="PortNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.16">
+      <description>
+        GEM port table. Each entry gives info about a(n) (X)GEM port.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="PortID"/>
+      </uniqueKey>
+
+      <parameter name="PortID" access="readOnly">
+        <description>
+          Identifies a GEM port.
+
+          See:
+
+          * {{bibref|G.9807.1|Section C.6.1.5.8}}
+
+          * {{bibref|G.984.3|Section 5.5.5}}
+
+          * {{bibref|G.987.3|Section 6.4.4}}
+
+          * {{bibref|G.989.3|Section 6.1.5.8}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65534"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Direction" access="readOnly">
+        <description>
+          Type of connection this GEM port is used for. {{enum}}
+
+          See: {{bibref|G.988|Section 9.2.3}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="UNI-to-ANI"/>
+            <enumeration value="ANI-to-UNI"/>
+            <enumeration value="bidirectional"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PortType" access="readOnly">
+        <description>
+          GEM port type.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="unicast"/>
+            <enumeration value="multicast"/>
+            <enumeration value="broadcast"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.PM."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Performance monitoring (PM) counters for this (X)GEM port.
+      </description>
+
+      <parameter name="FramesSent" access="readOnly">
+        <description>
+          (X)GEM frames transmitted by this (X)GEM port.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FramesReceived" access="readOnly">
+        <description>
+          (X)GEM frames received by this (X)GEM port.
+
+          See:
+
+          * {{bibref|G.9807.1|Table C.14.1}}
+
+          * {{bibref|G.987.3|Table 14-1}}
+
+          * {{bibref|G.989.3|Table 14-1}}
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.PerformanceThresholds."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Performance thresholds.
+      </description>
+      <parameter name="SignalFail" access="readOnly">
+        <description>
+          Signal fail (SF) threshold.
+
+          This parameter specifies the downstream bit error rate (BER)
+          threshold to detect the SF alarm. When this value is y, the BER
+          threshold is 10^–y.
+
+          This parameter is based on ''Signal fail (SF) threshold'' from
+          {{bibref|G.988|Section 9.2.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="3" maxInclusive="8"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalDegrade" access="readOnly">
+        <description>
+          Signal degrade (SD) threshold.
+
+          This parameter specifies the downstream BER threshold to detect the
+          SD alarm. When this value is x, the BER threshold for SD is 10^–x .
+          The SD threshold must be lower than the SF threshold; i.e., x &gt; y.
+
+          This parameter is based on ''Signal degrade (SD) threshold'' from
+          {{bibref|G.988|Section 9.2.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="4" maxInclusive="10"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.TC.Alarms." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Alarms at TC level for this ANI.
+      </description>
+      <parameter name="LOS" access="readOnly">
+        <description>
+          Loss of signal. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LOF" access="readOnly">
+        <description>
+          Loss of frame. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SF" access="readOnly">
+        <description>
+          Signal failed. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="SD" access="readOnly">
+        <description>
+          Signal degraded. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="LCDG" access="readOnly">
+        <description>
+          Loss of GEM channel delineation. See {{bibref|G.984.3|Section
+          11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="TF" access="readOnly">
+        <description>
+          Transmitter failure. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="SUF" access="readOnly">
+        <description>
+          Start-up failure. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="MEM" access="readOnly">
+        <description>
+          Message error message. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="DACT" access="readOnly">
+        <description>
+          Deactivate ONU-ID. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="DIS" access="readOnly">
+        <description>
+          Disabled ONU. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="MIS" access="readOnly">
+        <description>
+          Link mismatching. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="PEE" access="readOnly">
+        <description>
+          When the ONU receives a PEE message. See {{bibref|G.984.3|Section
+          11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="RDI" access="readOnly">
+        <description>
+          Remote defect indication. See {{bibref|G.984.3|Section 11.1.2}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="LODS" access="readOnly">
+        <description>
+          Loss of downstream syncronization. See {{bibref|G.9807.1|}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="ROGUE" access="readOnly">
+        <description>
+          The ANI behaves rogue: it is not transmitting in a manner consistent
+          with parameters specified in the ITU-T PON standards. Hence it can
+          threaten all upstream transmissions on the PON, causing interference
+          and disrupting communications of other ONUs on the PON. An example of
+          rogue behavior is transmitting in the wrong timeslot.
+
+          See:
+
+          * {{bibref|G.9807.1|Section C.19}}
+
+          * {{bibref|G.989.3|Section 19}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.XPON.ONU.{i}.ANI.{i}.Transceiver.{i}."
+        access="readOnly" numEntriesParameter="TransceiverNumberOfEntries"
+        minEntries="0" maxEntries="2" version="2.16">
+      <description>
+        Transceiver table. Each entry models a PON transceiver.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="ID"/>
+      </uniqueKey>
+
+      <parameter name="ID" access="readOnly">
+        <description>
+          The ID as assigned by the CPE to this Transceiver entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Identifier" access="readOnly">
+        <description>
+          Transceiver type. Allowed values are given by {{bibref|SFF-8024|Table
+          4-1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorName" access="readOnly">
+        <description>
+          Vendor name. See {{bibref|SFF-8472|Table 4-1}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorPartNumber" access="readOnly">
+        <description>
+          Vendor part number. See "Vendor PN" in {{bibref|SFF-8472|Table 4-1}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorRevision" access="readOnly">
+        <description>
+          Vendor revision. See "Vendor rev" in {{bibref|SFF-8472|Table 4-1}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PONMode" access="readOnly">
+        <description>
+          PON mode, reports the PON mode of the transceiver.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown"/>
+            <enumeration value="G-PON"/>
+            <enumeration value="XG-PON"/>
+            <enumeration value="NG-PON2"/>
+            <enumeration value="XGS-PON"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Connector" access="readOnly">
+        <description>
+          Connector type.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown"/>
+            <enumeration value="LC">
+              <description>
+                Lucent Connector, Little Connector, or Local Connector.
+              </description>
+            </enumeration>
+            <enumeration value="SC">
+              <description>
+                Subscriber connector, square connector or standard connector.
+              </description>
+            </enumeration>
+            <enumeration value="ST">
+              <description>Straight tip connector.</description>
+            </enumeration>
+            <enumeration value="FC">
+              <description>Ferrule Connector or Fiber Channel.</description>
+            </enumeration>
+            <enumeration value="MT-RJ">
+              <description>Mechanical Transfer Registered Jack.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NominalBitRateDownstream" access="readOnly">
+        <description>
+          Nominal data rate downstream in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NominalBitRateUpstream" access="readOnly">
+        <description>
+          Nominal data rate upstream in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPower" access="readOnly">
+        <description>
+          Measured RX power in {{units}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPower" access="readOnly">
+        <description>
+          Measured TX power in {{units}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Voltage" access="readOnly">
+        <description>
+          Measured supply voltage in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="mV"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Bias" access="readOnly">
+        <description>
+          Measured bias current in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="µA"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Temperature" access="readOnly">
+        <description>
+          Measured temperature in {{units}}.
+
+          A value of -274 (which is below absolute zero) indicates a good
+          reading has not been obtained.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+
+  </component>
+
+  <model name="XPON:2.16">
+    <component ref="Root"/>
+    <component ref="XPON"/>
+  </model>
+
+</dm:document>

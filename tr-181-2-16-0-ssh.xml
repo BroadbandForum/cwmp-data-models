@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [SSH]
+
+  Copyright (c) 2021-2022, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-16-0-ssh"
+    file="tr-181-2-16-0-ssh.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="IPAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="SSH">
+    <object name="Device.SSH." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.16">
+      <description>
+        This object contains global parameters relating to the Secure Shell
+        clients and or servers implementations that are active in the CPE.
+      </description>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AuthorizedKeyNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the SSH service.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+    <parameter name="Status" access="readOnly">
+      <description>
+        The status of the SSH service. {{enum}}
+      </description>
+      <syntax>
+        <string>
+          <enumeration value="Disabled">
+            <description>
+              Indicates that the SSH service is disabled.
+            </description>
+          </enumeration>
+          <enumeration value="Enabled">
+            <description>
+              Indicates that the SSH service is enabled.
+            </description>
+          </enumeration>
+          <enumeration value="Error" optional="true">
+            <description>
+              Indicates that the SSH service has encountered an error.
+            </description>
+          </enumeration>
+        </string>
+      </syntax>
+    </parameter>
+  </object>
+
+    <object name="Device.SSH.Server.{i}." access="readWrite"
+        numEntriesParameter="ServerNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.16">
+      <description>
+        This object contains parameters relating to a SSH server instance.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the SSH server instance. When {{param}} is set to
+          {{false}}, any active sessions must be forcibly terminated and the
+          {{param|ActivationDate}} is reset.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of the SSH server instance. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                Indicates that the SSH server instance is disabled.
+              </description>
+            </enumeration>
+            <enumeration value="Enabled">
+              <description>
+                Indicates that the SSH server instance is enabled.
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>
+                Indicates that the SSH server instance has encountered an
+                error.
+              </description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured">
+              <description>
+                Indicates that a necessary configuration value is undefined or
+                invalid.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          The IP Interface associated with the {{object}} entry.
+
+          If {{empty}} is specified, the CPE MUST use its bridging or routing
+          policy to determine the appropriate interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Specify the port used by the SSH server.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="22"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IdleTimeout" access="readWrite">
+        <description>
+          When the session is inactive, it is automatically terminated after
+          {{param}} amount of {{units}}. A value of ''0'' disables this
+          feature.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="180"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeepAlive" access="readWrite">
+        <description>
+          Every amount of {{param}} {{units}} a keep alive message is sent. A
+          value of ''0'' disables this feature.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="300"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowRootLogin" access="readWrite">
+        <description>
+          Permit SSH users to login as root.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowPasswordLogin" access="readWrite">
+        <description>
+          Permit SSH users to login using a password.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowRootPasswordLogin" access="readWrite">
+        <description>
+          Permit the root SSH user to login using a password.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxAuthTries" access="readWrite">
+        <description>
+          Maximum authentication tries allowed before disconnect
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="3"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowAllIPv4" access="readWrite">
+        <description>
+          Allow access from any IPv4 address. The source prefixes defined in
+          {{param|IPv4AllowedSourcePrefix}} will be ignored.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4AllowedSourcePrefix" access="readWrite">
+        <description>
+          {{list}} Allow only access from the provided list of IPv4 prefixes.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowAllIPv6" access="readWrite">
+        <description>
+          Allow access from any IPv6 address. The source prefixes defined in
+          {{param|IPv6AllowedSourcePrefix}} will be ignored.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6AllowedSourcePrefix" access="readWrite">
+        <description>
+          {{list}} Allow only access from the provided list of IPv6 prefixes.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActivationDate" access="readOnly">
+        <description>
+          Activation date indicates when the server instance has been activated
+          and the {{param|Enable}} is set to {{true}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoDisableDuration" access="readOnly">
+        <description>
+          The SSH server instance will be disabled when the the {{param}}
+          elapses, and configuration must be done in {{units}}. At the end, the
+          coressponding {{param|Enable}} parameter of the SSH server instance
+          is automatically changed to false {{false}}. Any active sessions must
+          be forcibly terminated. 0 means the the SSH server instance is always
+          active.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="minutes"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PID" access="readWrite">
+        <description>
+          Current PID of the SSH server instance.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.SSH.Server.{i}.Session.{i}." access="readWrite"
+        numEntriesParameter="SessionNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.16">
+      <description>
+        Active SSH session list.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="User" access="readWrite">
+        <description>
+          The user to whom the session belongs to.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".Users.User."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPAddress" access="readOnly">
+        <description>
+          IP address of the remote SSH client.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readOnly">
+        <description>
+          Port of the remote SSH client.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SSH.AuthorizedKey.{i}." access="readWrite"
+        numEntriesParameter="AuthorizedKeyNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.16">
+      <description>
+        This object contains parameters relating to a SSH server instance.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="User" access="readWrite">
+        <description>
+          The user to whom the authorized key belongs to.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".Users.User."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Key" access="readWrite">
+        <description>
+          Public key used for authentication (OpenSSH format).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="SSH:2.16">
+    <component ref="Root"/>
+    <component ref="SSH"/>
+  </model>
+</dm:document>

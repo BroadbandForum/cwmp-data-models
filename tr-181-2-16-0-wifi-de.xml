@@ -1,0 +1,5069 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [WiFi Data Elements]
+
+  Copyright (c) 2010-2022, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2017-2019 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-16-0-wifi-de"
+    file="tr-181-2-16-0-wifi-de.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-wifi-base.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-wifi-base">
+    <component name="WiFiRoot"/>
+  </import>
+
+  <component name="WiFi6">
+
+    <parameter name="HE160" access="readOnly">
+      <description>
+        Indicates support for High Efficiency (HE) 160 MHz.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="HE8080" access="readOnly">
+      <description>
+        Indicates support for HE 80+80 MHz.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MCSNSS" access="readOnly">
+      <description>
+        Supported High Efficiency-Modulation and Coding Scheme (HE-MCS) and
+        Number of Spatial Streams (NSS) Set field as defined in
+        {{bibref|802.11ax|Figure 9-788d}} Supported HE-MCS And NSS Set field
+        format. HE-MCS And NSS Set field for 160MHz is present if 160MHz is
+        supported. HE-MCS And NSS Set field for 80+80MHz is present if 80+80MHz
+        is supported.
+      </description>
+      <syntax>
+        <base64>
+          <size minLength="4" maxLength="12"/>
+        </base64>
+      </syntax>
+    </parameter>
+
+    <parameter name="SUBeamformer" access="readOnly">
+      <description>
+        Indicates support for Single-User (SU) Beamformer.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SUBeamformee" access="readOnly">
+      <description>
+        Indicates support for SU Beamformee.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MUBeamformer" access="readOnly">
+      <description>
+        Indicates support for Multi-User (MU) Beamformer.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="Beamformee80orLess" access="readOnly">
+      <description>
+        Indicates support for Beamformee Space-Time Stream (STS) ≤ 80 MHz.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="BeamformeeAbove80" access="readOnly">
+      <description>
+        Indicates support for Beamformee STS &gt; 80 MHz.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="ULMUMIMO" access="readOnly">
+      <description>
+        Indicates support for Uplink (UL) Multi-User Multiple Input, Multiple
+        Output (MU-MIMO).
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="ULOFDMA" access="readOnly">
+      <description>
+        Indicates support for UL Orthogonal Frequency Division Multiplexing
+        (OFDMA).
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxDLMUMIMO" access="readOnly">
+      <description>
+        Max number of users supported per DL MU-MIMO Transmitter (TX) in an AP
+        role.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="255"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxULMUMIMO" access="readOnly">
+      <description>
+        Max number of users supported per UL MU-MIMO Receiver (RX) in an AP
+        role.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="255"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxDLOFDMA" access="readOnly">
+      <description>
+        Max number of users supported per Downlink (DL) OFDMA TX in an AP role.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="255"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxULOFDMA" access="readOnly">
+      <description>
+        Max number of users supported per UL OFDMA RX in an AP role.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="255"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="RTS" access="readOnly">
+      <description>
+        Indicates support for Request To Send (RTS).
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MURTS" access="readOnly">
+      <description>
+        Indicates support for MU RTS.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MultiBSSID" access="readOnly">
+      <description>
+        Indicates support for Multi-Basic Service Set Identifier (BSSID).
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MUEDCA" access="readOnly">
+      <description>
+        Indicates support for MU Enhanced distributed channel access (EDCA).
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="TWTRequestor" access="readOnly">
+      <description>
+        Indicates support for Target Wake Time (TWT) Requestor.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="TWTResponder" access="readOnly">
+      <description>
+        Indicates support for TWT Responder.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SpatialReuse" access="readOnly">
+      <description>
+        Indicates support for EasyMesh configuration and reporting of BSS Color
+        and Spatial Reuse.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="AnticipatedChannelUsage" access="readOnly">
+      <description>
+        Indicates support for Anticipated Channel Usage (ACU) reporting.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+  </component>
+
+  <component name="AKMSuite">
+
+    <parameter name="OUI" access="readOnly" version="2.15">
+      <description>
+        Any Organizationally Unique Identifier (OUI) value specified in
+        {{bibref|802.11-2020|Table 9-151}}).
+      </description>
+      <syntax>
+        <base64/>
+      </syntax>
+    </parameter>
+
+    <parameter name="Type" access="readOnly">
+      <description>
+        Any suite type value specified in {{bibref|802.11-2020|Table 9-151}}.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="255"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="SSIDVID">
+
+    <parameter name="SSID" access="readOnly" version="2.15">
+      <description>
+        The SSID.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="64"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="VID" access="readOnly" version="2.15">
+      <description>
+        The VLAN ID (VID).
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="4095"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="SPRule">
+    <parameter name="ID" access="readOnly" version="2.15">
+      <description>
+        Service prioritization rule Identifier.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="Precedence" access="readOnly" version="2.15">
+      <description>
+        Rule Precedence – higher number means higher priority.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="254"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="Output" access="readOnly" version="2.15">
+      <description>
+        Rule Output. The value of, or method used to select, the 802.1Q C-TAG
+        Priority Code Point (PCP) output value.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="9"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="AlwaysMatch" access="readOnly" version="2.15">
+      <description>
+        Indicates if the rule always matches.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="SpatialReuse">
+
+    <parameter name="BSSColor" access="readOnly">
+      <description>
+        The value of the BSS Color subfield of the
+        HEOperations.BSSColorInformation field being transmitted by BSSs
+        operating on this radio. (EasyMesh TLV Field: BSS Color)
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="HESIGASpatialReuseValue15Allowed" access="readOnly">
+      <description>
+        Indicates if the Agent is allowed to set HESIGA.SpatialReuse field to
+        value 15 (PSR_AND_NON_SRG_OBSS_PD_PROHIBITED) in HE PPDU transmissions
+        of this radio. (EasyMesh TLV Field:
+        HESIGA_Spatial_reuse_value15_allowed)
+
+        : {{true}}: allowed;
+
+        : {{false}}: disallowed.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SRGInformationValid" access="readOnly">
+      <description>
+        This field indicates whether the SRG Information fields (SRG OBSS PD
+        Min Offset, SRG OBSS PD Max Offset, SRG BSS Color Bitmap and SRG
+        Partial BSSID Bitmap) in this command are valid. (EasyMesh TLV Field:
+        SRG Information Valid)
+
+        : {{true}}: SRG Information fields valid;
+
+        : {{false}}: SRG Information fields not valid.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="NonSRGOffsetValid" access="readOnly">
+      <description>
+        This field indicates whether the Non-SRG OBSSPD Max Offset field in
+        this command is valid. (EasyMesh TLV Field: Non-SRG Offset Valid)
+
+        : {{true}}: Non-SRG Max Offset field valid;
+
+        : {{false}}: Non-SRG Max Offset field not valid.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PSRDisallowed" access="readOnly">
+      <description>
+        Indicates if the Agent is disallowed to use Parameterized Spatial Reuse
+        (PSR)-based Spatial Reuse for transmissions by the specified radio.
+        (EasyMesh TLV Field: PSR Disallowed)
+
+        : {{true}}: PSR disallowed;
+
+        : {{false}}: PSR allowed.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+    <parameter name="NonSRGOBSSPDMaxOffset" access="readOnly">
+      <description>
+        The value of dot11NonSRGAPOBSSPDMaxOffset (i.e the Non-SRG OBSSPD Max
+        Offset value being used to control the transmissions of the specified
+        radio). (EasyMesh TLV Field: Non-SRG OBSSPD Max Offset)
+
+        This field is valid only if {{param|NonSRGOffsetValid}} is {{true}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SRGOBSSPDMinOffset" access="readOnly">
+      <description>
+        The value of dot11SRGAPOBSSPDMinOffset (i.e. the SRG OBSSPD Min Offset
+        value being used to control the transmissions of the specified radio).
+        (EasyMesh TLV Field: SRG OBSSPD Min Offset)
+
+        This field is valid only if {{param|SRGInformationValid}} is {{true}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SRGOBSSPDMaxOffset" access="readOnly">
+      <description>
+        The value of dot11SRGAPOBSSPDMaxOffset (i.e. the SRG OBSSPD Max Offset
+        value being used to control the transmissions of the specified radio).
+        (EasyMesh TLV Field: SRG OBSSPD Max Offset)
+
+        This field is valid only if {{param|SRGInformationValid}} is {{true}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SRGBSSColorBitmap" access="readOnly">
+      <description>
+        The value of dot11SRGAPBSSColorBitmap (i.e. the SRG BSS Color Bitmap
+        being used to control the tranmissions of the specified radio).
+        (EasyMesh TLV Field: SRG BSS Color Bitmap)
+
+        This field is valid only if {{param|SRGInformationValid}} is {{true}}.
+      </description>
+      <syntax>
+        <hexBinary>
+          <size minLength="8" maxLength="8"/>
+        </hexBinary>
+      </syntax>
+    </parameter>
+
+    <parameter name="SRGPartialBSSIDBitmap" access="readOnly">
+      <description>
+        The value of dot11SRGAPBSSIDBitmap (i.e. the SRG Partial BSSID Color
+        Bitmap being used to control the transmissions of the specified radio).
+        (EasyMesh TLV Field: SRG Partial BSSID Bitmap)
+
+        This field is valid only if {{param|SRGInformationValid}} is {{true}}.
+
+        Note: See rules in section 26.10.2.3 of [17] regarding the members of
+        an SRG.
+      </description>
+      <syntax>
+        <hexBinary>
+          <size minLength="8" maxLength="8"/>
+        </hexBinary>
+      </syntax>
+    </parameter>
+
+  </component>
+
+  <component name="WiFiAllianceDataElements">
+
+    <object name="Device.WiFi.DataElements." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.13">
+      <description>
+        This object represents the Wi-Fi Alliance Data Elements as defined in
+        {{bibref|DataElements}} with extended capabilities in additional
+        objects whose names begin with MultiAP.
+      </description>
+    </object>
+
+    <object name="Device.WiFi.DataElements.Network." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.13">
+      <description>
+        This object describes a Wi-Fi network containing 1 or more Access Point
+        (AP) devices.
+      </description>
+
+      <parameter name="ID" access="readOnly">
+        <description>
+          A unique identifier for this particular Wi-Fi network.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The time this group was collected. Formatted with the date-and-time
+          string format as defined in {{bibref|RFC3339|Section 3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ControllerID" access="readOnly">
+        <description>
+          A unique identifier for a Multi-AP controller.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MSCSDisallowedStaList" access="readOnly" version="2.15">
+        <description>
+          List of STAs for which Mirrored Stream Classification Service (MSCS)
+          operation is disallowed.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SCSDisallowedStaList" access="readOnly" version="2.15">
+        <description>
+          List of STAs for which Stream Classification Service (SCS) operation
+          is disallowed.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSIDNumberOfEntries" access="readOnly" version="2.15">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.DataElements.Network.SSID.{i}."
+        access="readOnly" numEntriesParameter="SSIDNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object specifies SSIDs for fronthaul use across all agents in this
+        Wi-Fi Multi-AP network, or on this single-AP. Also specifies the
+        {{param|Band}} for each {{param|SSID}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="SSID"/>
+      </uniqueKey>
+
+      <parameter name="SSID" access="readOnly">
+        <description>
+          The SSID for fronthaul use across this Wi-Fi Multi-AP network.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+     <parameter name="Band" access="readOnly">
+        <description>
+          The band(s) (GHz) for which this {{param|SSID}} applies. {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+              <enumeration value="All">
+                <description>Applies to all bands</description>
+              </enumeration>
+              <enumeration value="2.4">
+                <description>2.4 GHz band</description>
+              </enumeration>
+              <enumeration value="5">
+                <description>The entire 5 GHz band</description>
+              </enumeration>
+              <enumeration value="6">
+                <description>The entire 6 GHz band</description>
+              </enumeration>
+              <enumeration value="5_UNII_1">
+                <description>5 GHz UNII-1 band, 5.15 to 5.25 GHz</description>
+              </enumeration>
+              <enumeration value="5_UNII_2">
+                <description>5 GHz UNII-2 band, 5.25 to 5.725 GHz</description>
+              </enumeration>
+              <enumeration value="5_UNII_3">
+                <description>5 GHz UNII-3 band, 5.725 to 5.85 GHz</description>
+              </enumeration>
+              <enumeration value="5_UNII_4">
+                <description>5 GHz UNII-4 band, 5.85 to 5.925 GHz</description>
+              </enumeration>
+              <enumeration value="6_UNII_5">
+                <description>
+                  6 GHz UNII-5 band, 5.925 to 6.425 GHz
+                </description>
+              </enumeration>
+              <enumeration value="6_UNII_6">
+                <description>
+                  6 GHz UNII-6 band, 6.425 to 6.525 GHz
+                </description>
+              </enumeration>
+              <enumeration value="6_UNII_7">
+                <description>
+                  6 GHz UNII-7 band, 6.525 to 6.875 GHz
+                </description>
+              </enumeration>
+              <enumeration value="6_UNII_8">
+                <description>
+                  6 GHz UNII-8 band, 6.875 to 7.125 GHz
+                </description>
+              </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.MultiAPSteeringSummaryStats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        The summary of statistics related to Multi-AP Steering for the Wi-Fi
+        network.
+
+        The counters contained in {{object}} are all reset on reboot.
+      </description>
+
+      <parameter name="NoCandidateAPFailures" access="readOnly">
+        <description>
+          Number of times Associated Devices should have been steered but
+          weren't because a better candidate AP couldn't be found.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlacklistAttempts" access="readOnly">
+        <description>
+          Number of times a Blacklist steer was attempted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlacklistSuccesses" access="readOnly">
+        <description>
+          Number of times an attempted Blacklist steer succeeded.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlacklistFailures" access="readOnly">
+        <description>
+          Number of times an attempted Blacklist steer failed.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMAttempts" access="readOnly">
+        <description>
+          Number of times a BTM (BSS Transition Management; {{bibref|802.11k}})
+          steer was attempted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMSuccesses" access="readOnly">
+        <description>
+          Number of times an attempted BTM (BSS Transition Management;
+          {{bibref|802.11k}}) steer succeeded.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMFailures" access="readOnly">
+        <description>
+          Number of times an attempted BTM (BSS Transition Management;
+          {{bibref|802.11k}}) steer failed.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMQueryResponses" access="readOnly">
+        <description>
+          Number of asynchronous BTM (BSS Transition Management;
+          {{bibref|802.11k}}) Queries for which a BTM Request was issued.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.DataElements.Network.Device.{i}."
+        access="readOnly" numEntriesParameter="DeviceNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.13">
+      <description>
+        Each instance of this object represents an individual Access Point
+        device in the Wi-Fi network.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="ID"/>
+      </uniqueKey>
+
+      <parameter name="ID" access="readOnly">
+        <description>
+          A unique identifier for this particular device within the Wi-Fi
+          network as defined in {{bibref|DataElements|Section 3.1}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MultiAPCapabilities" access="readOnly">
+        <description>
+          The Multi-AP capabilities supported by this device as defined by the
+          APCapability TLV in {{bibref|EasyMesh|Section 17.2.6}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="1" maxLength="1"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="CollectionInterval" access="readOnly">
+        <description>
+          The interval between the collection of consecutive measurements of
+          the most frequently updated Data Element from this device in
+          {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportUnsuccessfulAssociations" access="readWrite"
+          version="2.15">
+        <description>
+          Indicates whether the Multi-AP Agent or the single AP reports
+          unsuccessful association attempts of client Stations (STAs) to the
+          Multi-AP Controller.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxReportingRate" access="readOnly" version="2.15">
+        <description>
+          Maximum rate for reporting unsuccessful association attempts in
+          {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="attempts per minute"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="APMetricsReportingInterval" access="readWrite"
+          version="2.15">
+        <description>
+          AP Metrics Reporting Interval.
+
+          : 0: Do not report AP Metrics periodically;
+
+          : 1 – 255: AP Metrics reporting interval in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Manufacturer" access="readOnly" version="2.15">
+        <description>
+          Identifier of the manufacturer of the device.
+
+          If the instance of this {{object}} is the same as {{object|Device.}},
+          then this parameter is the same as
+          {{param|Device.DeviceInfo.Manufacturer}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SerialNumber" access="readOnly" version="2.15">
+        <description>
+          Identifier of the particular Access Point device that is unique for
+          the indicated model and manufacturer.
+
+          This value MUST remain fixed over the lifetime of the device,
+          including across firmware updates.
+
+          If the instance of this {{object}} is the same as {{object|Device.}},
+          then this parameter is the same as
+          {{param|Device.DeviceInfo.SerialNumber}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManufacturerModel" access="readOnly" version="2.15">
+        <description>
+          Identifier of the manufacturer model to help the user more easily
+          identify a particular piece of equipment.
+
+          If the instance of this {{object}} is the same as {{object|Device.}},
+          then this parameter is the same as
+          {{param|Device.DeviceInfo.ModelName}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SoftwareVersion" access="readOnly" version="2.15">
+        <description>
+          Identifier of the software version currently installed in the Access
+          Point device (i.e. version of the overall firmware).
+
+          If the instance of this {{object}} is the same as {{object|Device.}},
+          then this parameter is the same as
+          {{param|Device.DeviceInfo.SoftwareVersion}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionEnv" access="readOnly" version="2.15">
+        <description>
+          Identifier of the execution environment (operating system) in the
+          device. This parameter can be an entry in the table
+          {{object|####.SoftwareModules.ExecEnv}}.
+
+          If the instance of this {{object}} is the same as {{object|Device.}},
+          then this parameter is the same as
+          {{object|Device.SoftwareModules.ExecEnv.{i}.}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DSCPMap" access="readOnly" version="2.15">
+        <description>
+          A hexadecimal string of 64 Priority Code Point (PCP) values (one
+          octet per value) corresponding to the Differentiated Services Code
+          Point (DSCP) markings 0x00 to 0x3F, ordered by increasing DSCP value.
+          Each octet is in the range 0x00 – 0x07. This is used to select a PCP
+          value if a Service Prioritization Rule specifies Rule Output: 0x08
+        </description>
+        <syntax>
+          <hexBinary>
+            <size maxLength="64"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxPrioritizationRules" access="readOnly"
+          version="2.15">
+        <description>
+          The maximum total number of service prioritization rules supported by
+          the Agent.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PrioritizationSupport" access="readOnly" version="2.15">
+        <description>
+          Indicates support for Service Prioritization.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxVIDs" access="readOnly" version="2.15">
+        <description>
+          Max Total Number of unique VLAN IDs (VIDs) the Multi-AP Agent
+          supports.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="APMetricsWiFi6" access="readOnly" version="2.15"
+          status="deprecated">
+        <description>
+          Associated Wi-Fi6 STA Status Inclusion Policy.
+
+          : {{true}}: Include Associated Wi-Fi6 STA Status TLV in AP Metrics
+            Response.
+
+          : {{false}}: Do not include Associated Wi-Fi6 STA Status TLV [3] in
+            AP Metrics Response.
+
+          {{deprecated|2.16|because it was the same as
+          {{param|Radio.{i}.APMetricsWiFi6}}.}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CountryCode" access="readOnly" version="2.15">
+        <description>
+          Two-character country code in which the Multi-AP Agent is operating
+          according to {{bibref|ISO3166-1}}. The characters are encoded as
+          UTF-8.
+
+          If the instance of this {{object|##}} is the same as
+          {{object|Device.WiFi.Radio.{i}.}}, then this parameter is the same as
+          {{param|Device.WiFi.Radio.{i}.RegulatoryDomain}}.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="2" maxLength="2"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LocalSteeringDisallowedSTAList" access="readWrite"
+          version="2.15">
+        <description>
+          {{list}} The STAs for which local steering is disallowed.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMSteeringDisallowedSTAList" access="readWrite"
+          version="2.15">
+        <description>
+          {{list}} The STAs for which BSS Transition Management (BTM) steering
+          is disallowed.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DFSEnable" access="readOnly" version="2.15">
+        <description>
+          Indicates if Dynamic Frequency Selection (DFS) is enabled or
+          disabled.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReportIndependentScans" access="readWrite"
+          version="2.15">
+        <description>
+          Channel Scan Reporting Policy, Report Independent Channel Scans
+
+          : {{true}}: report Independent Channel Scans,
+
+          : {{false}}: do not report Independent Channel Scans unless
+            explicitly requested in a Channel Scan Request.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedSTAinAPMetricsWiFi6" access="readWrite"
+          version="2.15" status="deprecated">
+        <description>
+          For EasyMesh {{bibref|EasyMesh}}, this is the Associated Wi-Fi6 STA
+          Status Inclusion Policy.
+
+          : {{true}}: Include Associated Wi-Fi6 STA Status TLV in AP Metrics
+            Response;
+
+          : {{false}}: Do not include Associated Wi-Fi6 STA Status TLV in AP
+            Metrics Response.
+
+          {{deprecated|2.16|because it was the same as
+          {{param|Radio.{i}.APMetricsWiFi6}}.}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxUnsuccessfulAssociationReportingRate"
+          access="readWrite" version="2.15">
+        <description>
+          For EasyMesh {{bibref|EasyMesh}}, this is the maximum rate for
+          reporting unsuccessful association attempts (in attempts per
+          {{units}}).
+        </description>
+        <syntax>
+           <unsignedInt>
+            <units value="minutes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="STASteeringState" access="readOnly" version="2.15">
+        <description>
+          Indicates if EasyMesh {{bibref|EasyMesh}} controller-initiated
+          station steering is disallowed or allowed on this device.
+
+          : {{true}}: EasyMesh controller-initiated station steering
+            disallowed;
+
+          : {{false}}: EasyMesh controller-initiated station steering allowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CoordinatedCACAllowed" access="readWrite"
+          version="2.15">
+        <description>
+          Allow or disallow the use of EasyMesh {{bibref|EasyMesh}} Coordinated
+          Channel Availability Check (CAC) on this device.
+
+          : {{true}}: allowed;
+
+          : {{false}}: disallowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TrafficSeparationAllowed" access="readOnly"
+          version="2.15">
+        <description>
+          This parameter indicates if EasyMesh traffic separation
+          {{bibref|EasyMesh|Section 19.1}} is allowed or disallowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServicePrioritizationAllowed" access="readOnly"
+          version="2.15">
+        <description>
+          This parameter indicates if EasyMesh service prioritization
+          {{bibref|EasyMesh|Section 20}} is allowed or disallowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RadioNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Default8021QNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSIDtoVIDMappingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CACStatusNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEE1905SecurityNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SPRuleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AnticipatedChannelsNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AnticipatedChannelUsageNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Default8021Q.{i}."
+        access="readWrite" numEntriesParameter="Default8021QNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.15">
+      <description>
+        The default 802.1Q settings for EasyMesh service prioritization
+        {{bibref|EasyMesh}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="PrimaryVID"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables default 802.1Q settings.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PrimaryVID" access="readWrite">
+        <description>
+          The primary 802.1Q C-TAG (VLAN ID).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="4095"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DefaultPCP" access="readWrite">
+        <description>
+          The default Priority Code Point (PCP).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="7"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.SSIDtoVIDMapping.{i}."
+        access="readOnly" numEntriesParameter="SSIDtoVIDMappingNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        The Service Set Identifier (SSID) to VLAN ID mapping for EasyMesh
+        traffic separation {{bibref|EasyMesh}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="SSID"/>
+      </uniqueKey>
+
+      <component ref="SSIDVID"/>
+    </object>
+
+    <object name="Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}."
+        access="readOnly" numEntriesParameter="CACStatusNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        Latest Channel Availability Check (CAC) Status Report from the device.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="TimeStamp"/>
+      </uniqueKey>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The time this group was collected.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CACAvailableChannelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CACNonOccupancyChannelNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CACActiveChannelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACAvailableChannel.{i}."
+        access="readOnly"
+        numEntriesParameter="CACAvailableChannelNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.15">
+        <description>
+          This object describes available channels identified by Channel
+          Availability Check (CAC).
+        </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="OpClass" access="readOnly">
+        <description>
+          Operating class of an available channel, from
+          {{bibref|802.11-2020|Table E-4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          Single channel number of an available channel in the given operating
+          class.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Minutes" access="readOnly">
+        <description>
+          {{units}} since CAC was completed identifying available channel.
+          Equals zero for non-DFS channels.
+        </description>
+          <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="Minutes"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACNonOccupancyChannel.{i}."
+        access="readOnly"
+        numEntriesParameter="CACNonOccupancyChannelNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+        <description>
+          This object describes channels identified by Channel Availability Check
+          (CAC) that may not be occupied.
+        </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="OpClass" access="readOnly">
+        <description>
+          Operating class of a channel that is in the non-occupancy list, from
+          {{bibref|802.11-2020|Table E-4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          Single channel number in the operating class on which the radar was
+          detected.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Seconds" access="readOnly">
+        <description>
+          {{units}} remaining in the non-occupancy duration for the channel
+          specified by the operating class and channel pair.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+            <units value="Seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACActiveChannel.{i}."
+        access="readOnly" numEntriesParameter="CACActiveChannelNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object describes channels with ongoing Channel Availability Check
+        (CAC).
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="OpClass" access="readOnly">
+        <description>
+          Operating class of a channel that has ongoing CAC, from
+          {{bibref|802.11-2020|Table E-4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          Single channel number in the operating class that has an ongoing CAC.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Countdown" access="readOnly">
+        <description>
+          {{units}} remaining to complete the CAC.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.DataElements.Network.Device.{i}.SPRule.{i}."
+        access="readOnly" numEntriesParameter="SPRuleNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object describes a list of service prioritization (SP) rules
+        {{bibref|EasyMesh}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="ID"/>
+      </uniqueKey>
+
+      <component ref="SPRule"/>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.IEEE1905Security.{i}."
+        access="readOnly" numEntriesParameter="IEEE1905SecurityNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object describes the IEEE 1905 security capabilities.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="OnboardingProtocol"/>
+      </uniqueKey>
+
+      <parameter name="OnboardingProtocol" access="readOnly">
+        <description>
+          Onboarding protocols supported;
+
+          :0: 1905 Device Provisioning Protocol as defined in the EasyMesh
+           {{bibref|EasyMesh}} 1905 Layer Security Capability TLV.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IntegrityAlgorithm" access="readOnly">
+        <description>
+          Message integrity algorithms supported.
+
+          : 0: HMAC-SHA256.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EncryptionAlgorithm" access="readOnly">
+        <description>
+          Message encryption algorithms supported.
+
+          : 0: AES-SIV.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannels.{i}."
+        access="readOnly"
+        numEntriesParameter="AnticipatedChannelsNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.15">
+      <description>
+        This object contains a table of Wi-Fi 6 {{bibref|802.11ax}} operating
+        classes, and channels within those operating classes, which have
+        anticipated channel preference.
+
+        Operating Class contains an enumerated value from
+        {{bibref|802.11-2020|Table E-4}}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="OpClass" access="readOnly" version="2.15">
+        <description>
+          The Operating Class per {{bibref|802.11-2020|Table E-4}}.
+
+          Note that the operating class identifies the band and channel width.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelList" access="readOnly" version="2.15">
+        <description>
+          {{list}} The channel numbers in this Operating Class which have
+          anticipated channel preference.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}."
+        access="readOnly"
+        numEntriesParameter="AnticipatedChannelUsageNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object reports Wi-Fi 6 {{bibref|802.11ax}} anticipated medium
+        usage on channels (and subsets of those channels) on which the device
+        is operating.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="OpClass" access="readOnly">
+        <description>
+          The operating class per {{bibref|802.11-2020|Table E-4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          The channel number in the given operating class of the channel on
+          which the anticipated channel usage is reported.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReferenceBSSID" access="readOnly">
+        <description>
+          Reference BSSID. Start Time values in this object are referenced to
+          the Time Sync Function (TSF) timer value indicated in the Timestamp
+          field in Beacon frames transmitted by this BSSID on the channel.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EntryNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.Entry.{i}."
+        access="readOnly" numEntriesParameter="EntryNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object reports an entry for anticipated channel usage
+        {{bibref|802.11ax}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="BurstStartTime"/>
+      </uniqueKey>
+
+      <parameter name="BurstStartTime" access="readOnly">
+        <description>
+          Least significant 4 octets of the TSF timer of the Reference BSSID,
+          at the start of the anticipated first burst of channel usage.
+
+          Note: a burst is a continuous or quasi-continuous period of channel
+          usage. For IEEE 802.11 transmissions, a burst might comprise only one
+          PPDU, or multiple closely spaced PPDUs.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="4" maxLength="4"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="BurstLength" access="readOnly">
+        <description>
+          Duration of each burst of channel usage in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Repetitions" access="readOnly">
+        <description>
+          Number of repetitions of the burst of channel usage;
+
+          : 0 = single burst,
+
+          : 2^32-1 = indefinite/unknown.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BurstInterval" access="readOnly">
+        <description>
+          Interval between two successive bursts of channel usage in {{units}};
+          set to zero if {{param|Repetitions}} is zero.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RUBitmask" access="readOnly">
+        <description>
+          Bitmask of 26-tone Resource Units (RUs) defined in
+          {{bibref|802.11ax|Section 27.3.2.2}}, where the (i-1)th bit position
+          is set to one if the nominal bandwidth of the channel usage
+          corresponding to this entry fully or partially overlaps with the RUi,
+          and is otherwise set to zero.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="2" maxLength="10"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitterIdentifier" access="readOnly">
+        <description>
+          One of:
+
+          : MAC address: if the entry corresponds to channel usage by a single
+            client STA associated to an AP of the Agent;
+
+          : BSSID: if the entry corresponds to channel usage by multiple or
+            unspecified client STAs associated to an AP of the Agent;
+
+          : BSS Color: (first 42-bits are zero) if the channel usage is caused
+            by a source external to the BSSs operated by the Agent and the
+            BSSID can’t be decoded (since frame sent at high MCS) but the BSS
+            Color in the PHY headers could still be identified;
+
+          : Zero: if the channel usage is caused by a source external to the
+            BSSs operated by the Agent.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PowerLevel" access="readOnly">
+        <description>
+          Indicates maximum transmit power during each channel usage burst in
+          {{units}}; equal to 255 when unknown or when the entry corresponds to
+          multiple transmitters with different transmit powers
+        </description>
+        <syntax>
+          <int>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelUsageReason" access="readOnly">
+        <description>
+          The reason for this anticipated channel usage. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="TWT_schedule"/>
+            <enumeration value="TSPEC">
+              <description>
+                TSPEC or other traffic stream with predictable characteristics.
+              </description>
+            </enumeration>
+            <enumeration value="Scheduler_policy">
+              <description>
+                Scheduler policy (if uplink, using Wi-Fi 6 trigger-based
+                scheduling).
+              </description>
+            </enumeration>
+            <enumeration value="IEEE_802.11">
+              <description>
+                IEEE 802.11 transmitter external to the BSSs operated by the
+                reporting Agent.
+              </description>
+            </enumeration>
+            <enumeration value="Non_IEEE_802.11">
+              <description>Non-IEEE 802.11, or unknown source.</description>
+            </enumeration>
+            <enumeration value="BSS_non_usage">
+              <description>
+                BSS non-usage (in this special case, a burst is defined as a
+                continuous period in which the Agent ensures no transmissions
+                by any of its BSSs on the channel).
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        This object represents an individual Access Point device.
+      </description>
+
+      <parameter name="ManufacturerOUI" access="readOnly">
+        <description>
+          Organizationally unique identifier of the Access Point device
+          manufacturer. Represented as a six hexadecimal-digit value using all
+          upper-case letters and including any leading zeros. {{pattern}}
+
+          The value MUST be a valid OUI as defined in {{bibref|OUI}}.
+
+          This value MUST remain fixed over the lifetime of the device,
+          including across firmware updates.
+
+          If the instance of this {{object}} is the same as {{object|Device.}},
+          then this parameter is the same as
+          {{param|Device.DeviceInfo.ManufacturerOUI}}.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="6"/>
+            <pattern value="[0-9A-F]{6}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastContactTime" access="readOnly">
+        <description>
+          The last time that the Access Point device was contacted via the
+          Multi-AP control protocol.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssocIEEE1905DeviceRef" access="readOnly">
+        <description>
+          {{param}} is a reference to the IEEE 1905.1 Network Topology Device.
+          Since IEEE 1905.1 is a common protocol used by Multi-AP Controllers
+          for communications, this parameter allows the MultiAP portion of the
+          data model to reference the associated IEEE 1905.1 portion of the
+          data model.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent="#####.IEEE1905.AL.NetworkTopology.IEEE1905Device."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EasyMeshControllerOperationMode" access="readOnly">
+        <description>
+          This parameter represents the status of Wi-Fi CERTIFIED EasyMeshTM
+          controller functionality. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NotSupported">
+              <description>
+                Wi-Fi EasyMesh controller is not supported.
+              </description>
+            </enumeration>
+            <enumeration value="SupportedNotEnabled">
+              <description>
+                Wi-Fi EasyMesh controller is supported but not enabled.
+              </description>
+            </enumeration>
+            <enumeration value="Running">
+              <description>Wi-Fi EasyMesh controller is running.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EasyMeshAgentOperationMode" access="readOnly">
+        <description>
+          This parameter represents the status of Wi-Fi CERTIFIED EasyMeshTM
+          agent functionality. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NotSupported">
+              <description>Wi-Fi EasyMesh agent is not supported.</description>
+            </enumeration>
+            <enumeration value="SupportedNotEnabled">
+              <description>
+                Wi-Fi EasyMesh agent is supported but not enabled.
+              </description>
+            </enumeration>
+            <enumeration value="Running">
+              <description>Wi-Fi EasyMesh agent is running.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        This object represents an individual Access Point device's Backhaul and
+        unique aspects in the Wi-Fi network.
+
+        The endpoints of the backhaul interface are represented by the
+        (Device's ID and interface MAC Address). This object represents the
+        upward view of the backhaul interface. The two endpoints of the
+        backhaul interface are - ({{param|BackhaulDeviceID}},
+        {{param|BackhaulMACAddress}}) of the uplinked Backhaul Device -
+        {{param|MACAddress}} of this Access Point Device
+
+          {{param|BackhaulDeviceID}} / {{param|BackhaulMACAddress}} &lt;--
+          {{param|LinkType}} --- &lt; {{param|MACAddress}}
+
+        {{empty}} is reserved for the {{object}} instance that represents the
+        Multi-AP Controller.
+      </description>
+
+      <parameter name="LinkType" access="readOnly">
+        <description>
+          The medium being used to backhaul this Access Point Device to the
+          Backhaul Access Point Device. The {{enum|None}} value is reserved for
+          the {{object}} instance that represents the Multi-AP Controller.
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="Wi-Fi"/>
+            <enumeration value="MoCA"/>
+            <enumeration value="Ethernet"/>
+            <enumeration value="G.hn"/>
+            <enumeration value="HPNA"/>
+            <enumeration value="HomePlug"/>
+            <enumeration value="UPA"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BackhaulMACAddress" access="readOnly">
+        <description>
+          The MAC Address at the far end of the backhaul link of the interface
+          on the network that is providing a backhaul for this Access Point
+          Device. This along with {{param|BackhaulDeviceID}}, helps to identfy
+          the backhaul interface endpoint.
+
+          {{empty}} is reserved for the {{object}} instance that represents the
+          Multi-AP Controller.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BackhaulDeviceID" access="readOnly">
+        <description>
+          The Device's ID of the Device on the network that is providing a
+          Backhaul Link for this Access Point Device.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC Address at the near end of the backhaul link of this Access
+          Point Device's backhaul interface that is connecting via
+          {{param|LinkType}} to {{param|BackhaulMACAddress}} of the Backhaul
+          Device identified by {{param|BackhaulDeviceID}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentOperatingClassProfileNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.CurrentOperatingClassProfile.{i}."
+        access="readOnly"
+        numEntriesParameter="CurrentOperatingClassProfileNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        Describes one of the current Operating Classes in use by this Radio.
+        One Opeating Class is indicated for each current Operating Channel
+        Bandwidth.
+
+        The Channel indicated for the 20 MHz Operating Class is equal to the
+        current primary channel.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Class"/>
+      </uniqueKey>
+
+      <parameter name="Class" access="readOnly">
+        <description>
+          The Operating Class per {{bibref|802.11-2020|Table E-4}} that this
+          radio is currently operating on.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          This Channel number in the Operating Class that this Radio is
+          currently operating on.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPower" access="readOnly">
+        <description>
+          Nominal Transmit Power EIRP that this radio is currently using for
+          the current Channel in the Opeating Class.
+
+          Represented as 2's complement signed integer in units of decibels
+          relative to 1 mW ({{units}}).
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-127" maxInclusive="127"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The time this group was collected.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.Stats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        This object represents the statistics of the backhaul interface view
+        from the current Device's ID
+      </description>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of bytes transmitted across the backhaul medium (as
+          identified by the value of the {{param|#.LinkType}} parameter),
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of bytes received across the backhaul medium (as
+          identified by the value of the {{param|#.LinkType}} parameter),
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of packets transmitted across the backhaul medium
+          (as identified by the value of the {{param|#.LinkType}} parameter),
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of packets received across the backhaul medium (as
+          identified by the value of the {{param|#.LinkType}} parameter),
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LinkUtilization" access="readOnly">
+        <description>
+          Current utilization (expressed in {{units}}) of the medium (as
+          identified by the value of the {{param|#.LinkType}} parameter) being
+          used to backhaul this Access Point device to the Multi-AP Controller.
+          A value of 0 is used for the {{object}} instance that represents the
+          Access Point on the Multi-AP Controller.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="100"/>
+            <units value="%"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength of the backhaul link of the
+          Access Point (AP) to the Multi-AP Controller, measured in {{units}}.
+          RCPI is encoded per {{bibref|802.11-2020|Table 9-176}}. The value of
+          this parameter is indeterminate if the value of the
+          {{param|#.LinkType}} parameter is anything other than
+          {{enum|Wi-Fi|#.LinkType}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+            <units value="dBm"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastDataDownlinkRate" access="readOnly">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission of data from the access point to the associated device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastDataUplinkRate" access="readOnly">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission of data from the associated device to the access point.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The time this group was collected.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}."
+        access="readOnly" numEntriesParameter="RadioNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.13">
+      <description>
+        This object represents all of the individual Radios contained within
+        the identified Access Point device known to the controller.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="ID"/>
+      </uniqueKey>
+
+      <parameter name="ID" access="readOnly">
+        <description>
+          A unique identifier for this particular Radio within the identified
+          Access Point as defined in {{bibref|DataElements|Section 3.1}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="6" maxLength="6"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enabled" access="readOnly">
+        <description>
+          Indicates whether this radio is enabled or disabled.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.Radio.{i}.}}, then this parameter is the same as
+          {{param|Device.WiFi.Radio.{i}.Enable}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Noise" access="readOnly">
+        <description>
+          An indicator of the average radio noise plus interference power
+          measured for the primary operating channel.
+
+          Encoded as defined for ANPI in {{bibref|802.11-2020|Section
+          11.10.9.4}}.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.Radio.{i}.}}, then this parameter is the same as
+          {{param|Device.WiFi.Radio.{i}.Stats.Noise}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Utilization" access="readOnly">
+        <description>
+          (Total Channel Utililzation) The percentage of time (linearly scaled
+          with 255 representing 100%) that the Access Point device sensed the
+          medium was busy, as indicated by either the physical or virtual
+          carier sense (CS) mechanism. This is essentially the amount of time
+          spent transmiting (both successful and failed transmissions),
+          receiving (both local and non-local transmissions), and processing
+          noise {{bibref|802.11-2020|Section 9.4.2.27}}.
+
+          When more than one channel is in use for the BSS operating on the
+          radio, the {{param}} value is calculated only for the primary
+          channel.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Transmit" access="readOnly">
+        <description>
+          (Transmit Channel Utilization) The percentage of time (linearly
+          scaled with 255 representing 100%) that the radio has spent on
+          sending individually or group addressed transmissions (successful and
+          failed).
+
+          When more than one channel is in use for the BSS operating on the
+          radio, the {{param}} value is calculated only for the primary
+          channel.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceiveSelf" access="readOnly">
+        <description>
+          (Receive Local Channel Utilization) The percentage of time (linearly
+          scaled with 255 representing 100%) that the radio has spent on
+          receiving individually or group addressed local transmissions (i.e.
+          transmissions from any STA associated with any BSS operating on this
+          radio).
+
+          When more than one channel is in use for the BSS operating on the
+          radio, the {{param}} value is calculated only for the primary
+          channel.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceiveOther" access="readOnly">
+        <description>
+          (Receive Non-Local Channel Utilization) The percentage of time
+          (linearly scaled with 255 representing 100%) that the radio has spent
+          on receiving individually or group addressed non-local transmissions
+          (i.e. valid IEEE 802.11 PPDUs that are not associated with any BSS
+          operatin gon this radio).
+
+          When more than one channel is in use for the BSS operating on the
+          radio, the {{param}} value is calculated only for the primary
+          channel.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TrafficSeparationCombinedFronthaul" access="readOnly"
+          version="2.15">
+        <description>
+          Indicates traffic separation on combined fronthaul and Profile-1
+          backhaul support {{bibref|EasyMesh}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TrafficSeparationCombinedBackhaul" access="readOnly"
+          version="2.15">
+        <description>
+          Indicates traffic separation on combined Profile-1 backhaul and
+          Profile-2 backhaul support {{bibref|EasyMesh}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SteeringPolicy" access="readWrite" version="2.15">
+        <description>
+          Steering Policy:
+
+          : 0: Agent Initiated Steering Disallowed;
+
+          : 1: Agent Initiated Receive Channel Power Indicator (RCPI)-based
+            Steering Mandated;
+
+          : 2: Agent Initiated RCPI-based Steering Allowed.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelUtilizationThreshold" access="readWrite"
+          version="2.15">
+        <description>
+          Channel Utilization Threshold (defined per Basic Service Set (BSS)
+          Load element {{bibref|802.11-2020|Section 9.4.2.27}}.).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RCPISteeringThreshold" access="readWrite"
+          version="2.15">
+        <description>
+          RCPI Steering Threshold (encoded per {{bibref|802.11-2020|Table
+          9-176}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="220"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="STAReportingRCPIThreshold" access="readWrite"
+          version="2.15">
+        <description>
+          Station (STA) Metrics Reporting RCPI Threshold.
+
+          : 0: Do not report STA Metrics based on RCPI threshold.
+
+          : 1 – 220: RCPI threshold (encoded per {{bibref|802.11-2020|Table
+            9-176}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="220"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="STAReportingRCPIHysteresisMarginOverride"
+          access="readWrite" version="2.15">
+        <description>
+          STA Metrics Reporting RCPI Hysteresis Margin Override.
+
+          : 0: Use Agent's implementation-specific default RCPI Hysteresis
+            margin;
+
+          : &gt;0: RCPI hysteresis margin value. This field is coded as an
+            unsigned integer in units of {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="decibels (dB)"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelUtilizationReportingThreshold"
+          access="readWrite" version="2.15">
+        <description>
+          AP Metrics Channel Utilization Reporting Threshold.
+
+          : 0: Do not report AP Metrics based on Channel utilization threshold;
+
+          : &gt;0: AP Metrics Channel Utilization Reporting Threshold (similar
+            to channel utilization measurement in {{bibref|802.11-2020|Section
+            9.4.2.27}}).
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedSTATrafficStatsInclusionPolicy"
+          access="readWrite" version="2.15">
+        <description>
+          Associated STA Traffic Stats Inclusion Policy.
+
+          : {{true}}: Include Associated STA Traffic Stats TLV in AP Metrics
+            Response.
+
+          : {{false}}: Do not include Associated STA Traffic Stats
+            Type-Length-Value (TLV) in AP Metrics Response;
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedSTALinkMetricsInclusionPolicy"
+          access="readWrite" version="2.15">
+        <description>
+          Associated STA Link Metrics Inclusion Policy.
+
+          : {{true}}: Include Associated STA Link Metrics TLV in AP Metrics
+            Response.
+
+          : {{false}}: Do not include Associated STA Link Metrics TLV in AP
+            Metrics Response;
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChipsetVendor" access="readOnly" version="2.15">
+        <description>
+          A string identifying the Wi-Fi chip vendor of this radio in the
+          device.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="APMetricsWiFi6" access="readWrite" version="2.15">
+        <description>
+          Associated Wi-Fi6 STA Status Inclusion Policy.
+
+          : {{true}}: include Associated Wi-Fi6 STA Status TLV in AP Metrics
+            Response.
+
+          : {{false}}: do not include Associated Wi-Fi6 STA Status TLV [3] in
+            AP Metrics Response.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentOperatingClassProfileNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnassociatedSTANumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BSSNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScanResultNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+      <component ref="DEScanResult"/>
+      <component ref="DEScanResultNumberOfEntries"/>
+
+      <parameter name="DisAllowedOpClassChannelsNumberOfEntries"
+          access="readOnly" version="2.15">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BackhaulSta."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.13">
+      <description>
+        Contains the Medium Access Control (MAC) address of the STA on this
+        radio providing Wi-Fi backhaul to this device.
+      </description>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC address of the logical STA sharing the radio for Wi-Fi
+          backhaul.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        This object describes the channel scan capabilities of a radio.
+      </description>
+
+      <parameter name="OnBootOnly" access="readOnly" version="2.15">
+        <description>
+          “On boot only” flag, Indicates whether the specified radio is capable
+          only of “On boot” scans.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Impact" access="readOnly" version="2.15">
+        <description>
+          Scan Impact of using this radio to perform a scan.
+
+          : 1: No impact,
+
+          : 2: Reduced number of spatial streams,
+
+          : 3: Time slicing impairment,
+
+          : 4: Radio unavailable for &gt;= 2 seconds.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="3"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinimumInterval" access="readOnly" version="2.15">
+        <description>
+          Minimum Scan Interval, the minimum interval in {{units}} between the
+          start of two consecutive channel scans on this radio.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    <parameter name="OpClassChannelsNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.OpClassChannels.{i}."
+        access="readOnly" numEntriesParameter="OpClassChannelsNumberOfEntries"
+        minEntries="1" maxEntries="unbounded" version="2.15">
+      <description>
+        Table of the operating classes (selected from
+        {{bibref|802.11-2020|Table E-4}}) and channel numbers in each operating
+        class that the radio is capable of scanning.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="OpClass" access="readOnly" version="2.15">
+      <description>
+        The Operating Class per {{bibref|802.11-2020|Table E-4}} For 2.4GHz
+        and 5GHz bands, only 20MHz Operating Classes are valid.
+
+        Note that the operating class identifies the band and channel width.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range maxInclusive="255"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="ChannelList" access="readOnly">
+      <description>
+        {{list}} The channel numbers in this Operating Class which the radio
+        is capable of scanning.
+      </description>
+      <syntax>
+        <list/>
+        <unsignedInt>
+          <range maxInclusive="255"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        This object describes the Channel Availability Check (CAC) capabilities
+        of a radio.
+      </description>
+
+      <parameter name="CACMethodNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}."
+        access="readOnly" numEntriesParameter="CACMethodNumberOfEntries"
+        minEntries="0" maxEntries="4" version="2.15">
+      <description>
+        List of Channel Availability Check (CAC) method information for each
+        type of CAC that the radio can perform. Each type is defined by a
+        method and time to complete. For each type, the classes and channels
+        allowed are enumerated.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Method"/>
+      </uniqueKey>
+
+      <parameter name="Method" access="readOnly">
+        <description>
+          CAC method supported;
+
+          : 0: Continuous CAC,
+
+          : 1: Continuous with dedicated radio,
+
+          : 2: Multi-Input Multi-Output (MIMO) dimension reduced,
+
+          : 3: Time sliced CAC.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NumberOfSeconds" access="readOnly">
+        <description>
+          Number of {{units}} required to complete this method of CAC.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    <parameter name="OpClassChannelsNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}.OpClassChannels.{i}."
+        access="readOnly" numEntriesParameter="OpClassChannelsNumberOfEntries"
+        minEntries="1" maxEntries="unbounded" version="2.15">
+      <description>
+        Table of the operating classes (selected from
+        {{bibref|802.11-2020|Table E-4}}) and channel numbers in each operating
+        class supported for this method of CAC.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="OpClass" access="readOnly">
+        <description>
+          The Operating Class per {{bibref|802.11-2020|Table E-4}}.
+
+          Note that the operating class identifies the band and channel width.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelList" access="readOnly">
+        <description>
+          {{list}} The channel numbers in this Operating Class that are
+          supported for this method of CAC.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.13">
+      <description>
+        This object represents the capabilities of the radio which may be
+        different from the current operational configuration.
+      </description>
+
+      <parameter name="HTCapabilities" access="readOnly">
+        <description>
+          Describes the HT capabilities of the radio as defined by the
+          HTCapabilities TLV {{bibref|EasyMesh|Section 17.2.8}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="1" maxLength="1"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="VHTCapabilities" access="readOnly">
+        <description>
+          Describes the VHT capabilities of the radio as defined by the
+          VHTCapabilities TLV {{bibref|EasyMesh|Section 17.2.9}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="2" maxLength="6"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="HECapabilities" access="readOnly" status="deprecated">
+        <description>
+          Describes the HE capabilities of the radio as defined by the
+          HECapabilities TLV {{bibref|EasyMesh|Section 17.2.10}}.
+
+          {{deprecated|2.15|because it is superseded by {{object|WiFi6APRole}}
+          and {{object|WiFi6bSTARole}}.}}
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="4" maxLength="14"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="CapableOperatingClassProfileNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    <parameter name="AKMFrontHaulNumberOfEntries" access="readOnly"
+          version="2.15">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="AKMBackhaulNumberOfEntries" access="readOnly"
+          version="2.15">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi6APRole."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        Describes the Wi-Fi 6 capabilities for the AP role.
+      </description>
+
+      <component ref="WiFi6"/>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi6bSTARole."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        Describes the Wi-Fi 6 capabilities for the backhaul Station (bSTA)
+        role.
+      </description>
+
+      <component ref="WiFi6"/>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.AKMFrontHaul.{i}."
+        access="readOnly" numEntriesParameter="AKMFrontHaulNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        Authentication and Key Management (AKM) Suite (security mode)
+        capabilities for the fronthaul BSS.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OUI"/>
+      </uniqueKey>
+
+      <component ref="AKMSuite"/>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.AKMBackhaul.{i}."
+        access="readOnly" numEntriesParameter="AKMBackhaulNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        Authentication and Key Management (AKM) Suite (security mode)
+        capabilities for the backhaul BSS.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OUI"/>
+      </uniqueKey>
+
+      <component ref="AKMSuite"/>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.CapableOperatingClassProfile.{i}."
+        access="readOnly"
+        numEntriesParameter="CapableOperatingClassProfileNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.13">
+      <description>
+        Describes one of the possible Operating Classes supported by this
+        Radio.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Class"/>
+      </uniqueKey>
+
+      <parameter name="Class" access="readOnly">
+        <description>
+          The Operating Class per {{bibref|802.11-2020|Table E-4}} that this
+          radio is capable of operating on.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxTxPower" access="readOnly">
+        <description>
+          Maximum Transmit Power EIRP that this radio is capable of
+          transmitting in the current regulatory domain for the Operating
+          Class.
+
+          Represented as 2's complement signed integer in units of decibels
+          relative to 1 mW ({{units}}).
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-127" maxInclusive="127"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="NonOperable" access="readOnly">
+        <description>
+          {{list}} The channel numbers which are statically non-operable in the
+          Operating Class (i.e. the Radio is never able to operate on these
+          channels).
+
+          Other channels from this Operating Class which are not listed here
+          are supported for the Radio.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NumberOfNonOperChan" access="readOnly">
+        <description>
+          The number of non-operable channels contained in
+          {{param|NonOperable}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}."
+        access="readOnly"
+        numEntriesParameter="CurrentOperatingClassProfileNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.13">
+      <description>
+        Describes one of the current Operating Classes in use by this Radio.
+        One Operating Class is indicated for each current Operating Channel
+        Bandwidth.
+
+        The Channel indicated for the 20 MHz Operating Class is equal to the
+        current primary channel.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Class"/>
+      </uniqueKey>
+
+      <parameter name="Class" access="readOnly">
+        <description>
+          The Operating Class per {{bibref|802.11-2020|Table E-4}} that this
+          radio is currently operating on.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          This Channel number in the Operating Class that this Radio is
+          currently operating on.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPower" access="readOnly">
+        <description>
+          Nominal Transmit Power EIRP that this radio is currently using for
+          the current Channel in the Opeating Class.
+
+          Represented as 2's complement signed integer in units of decibels
+          relative to 1 mW ({{units}}).
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-127" maxInclusive="127"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitPowerLimit" access="readOnly" version="2.15">
+        <description>
+          This is the upper limit on nominal transmit Equivalent Isotropically
+          Radiated Power (EIRP) that this radio is allowed to use for the
+          current {{param|Class}}. In units of decibels relative to 1 mW
+          {{units}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-128" maxInclusive="127"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The time this group was collected. Formatted with the date-and-time
+          string format as defined in {{bibref|RFC3339|Section 3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.DisAllowedOpClassChannels.{i}."
+        access="readWrite"
+        numEntriesParameter="DisAllowedOpClassChannelsNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.15">
+      <description>
+        The operating classes, and list of channels for each operating class,
+        which are not allowed to be used on this radio.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OpClass"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables disallowed operating classes and channels.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OpClass" access="readWrite">
+        <description>
+          The Operating Class per {{bibref|802.11-2020|Table E-4}}.
+
+          Note that the operating class identifies the band and channel width.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelList" access="readWrite">
+        <description>
+          {{list}} The channel numbers in this Operating Class that are not
+          allowed to be used on this radio.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.SpatialReuse."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        The spatial reuse configuration of this radio. Applies only to Wi-Fi 6
+        {{bibref|802.11ax}} and possibly later generations of radios.
+
+        Acronyms: Spatial Reuse Group (SRG), Overlapping Basic Service Set
+        (OBSS), Preamble Detection (PD).
+      </description>
+
+      <parameter name="PartialBSSColor" access="readOnly">
+        <description>
+          The value of the Partial Basic Service Set (BSS) Color subfield of
+          the HEOperations.BSSColorInformation field being transmitted by BSSs
+          operating on this radio. (EasyMesh TLV Field: Partial BSS Color)
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <component ref="SpatialReuse"/>
+
+      <parameter name="NeighborBSSColorInUseBitmap" access="readOnly">
+        <description>
+          Bitmap of BSS colors of Overlapping BSSs (OBSSs) that the
+          High-Efficiency (HE) AP has identified by itself or via the
+          autonomous BSS Color collision reports received from associated
+          non-AP HE STAs.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="8" maxLength="8"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}."
+        access="readOnly" numEntriesParameter="BSSNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.13">
+      <description>
+        A single logical BSS operating on this radio.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="BSSID"/>
+      </uniqueKey>
+
+      <parameter name="BSSID" access="readOnly">
+        <description>
+          The MAC Address of the logical BSS (BSSID).
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as
+          {{param|Device.WiFi.SSID.{i}.BSSID}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSID" access="readOnly">
+        <description>
+          The SSID in use for this BSS.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as
+          {{param|Device.WiFi.SSID.{i}.SSID}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enabled" access="readOnly">
+        <description>
+          Whether the BSSID is currently enabled (beaconing frames are being
+          sent) or disabled.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as
+          {{param|Device.WiFi.SSID.{i}.Enable}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly">
+        <description>
+          Time in {{units}} since the last change to the {{param|Enabled}}
+          value.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as
+          {{param|Device.WiFi.SSID.{i}.LastChange}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The time this group was collected. Formatted with the date-and-time
+          string format as defined in {{bibref|RFC3339|Section 3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastBytesSent" access="readOnly">
+        <description>
+          Access Point (BSS) wide statistics for total unicast bytes
+          transmitted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastBytesReceived" access="readOnly">
+        <description>
+          Access Point (BSS) wide statistics for total unicast bytes received.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastBytesSent" access="readOnly">
+        <description>
+          Access Point (BSS) wide statistics for total multicast bytes
+          transmitted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastBytesReceived" access="readOnly">
+        <description>
+          Access Point (BSS) wide statistics for total multicast bytes
+          received.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastBytesSent" access="readOnly">
+        <description>
+          Access Point (BSS) wide statistics for total broadcast bytes
+          transmitted.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastBytesReceived" access="readOnly">
+        <description>
+          Access Point (BSS) wide statistics for total broadcast bytes
+          received.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ByteCounterUnits" access="readOnly" version="2.15">
+        <description>
+          Byte Counter Units.
+
+          : 1: kibibytes (KiB)
+
+          : 2: mebibytes (MiB).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="2"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Profile1bSTAsDisallowed" access="readOnly"
+          version="2.15">
+        <description>
+          Profile-1 Backhaul STA association disallowed.
+
+          : {{true}}: Backhaul STA association disallowed;
+
+          : {{false}}: Backhaul STA association allowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Profile2bSTAsDisallowed" access="readOnly"
+          version="2.15">
+        <description>
+          Profile-2 Backhaul STA association disallowed.
+
+          : {{true}}: Profile 2 bSTA disallowed;
+
+          : {{false}}: Profile 2 bSTA allowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociationAllowanceStatus" access="readOnly"
+          version="2.15">
+        <description>
+          The status of allowance of new client device associations on this
+          BSS.
+
+          : 0: No more associations allowed,
+
+          : 1: Associations allowed.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="EstServiceParametersBE" access="readOnly">
+        <description>
+          Estimated Service Parameters information field for AC=BE, defined per
+          {{bibref|802.11-2020|Figure 9-637}} and referenced in
+          {{bibref|EasyMesh|Section 17.2.22}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="0" maxLength="3"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="EstServiceParametersBK" access="readOnly">
+        <description>
+          Estimated Service Parameters information field for AC=BK, defined per
+          {{bibref|802.11-2020|Figure 9-637}} and referenced in
+          {{bibref|EasyMesh|Section 17.2.22}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="0" maxLength="3"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="EstServiceParametersVI" access="readOnly">
+        <description>
+          Estimated Service Parameters information field for AC=VI, defined per
+          {{bibref|802.11-2020|Figure 9-637}} and referenced in
+          {{bibref|EasyMesh|Section 17.2.22}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="0" maxLength="3"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="EstServiceParametersVO" access="readOnly">
+        <description>
+          Estimated Service Parameters information field for AC=VO, defined per
+          {{bibref|802.11-2020|Figure 9-637}} and referenced in
+          {{bibref|EasyMesh|Section 17.2.22}}.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="0" maxLength="3"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="BackhaulUse" access="readOnly" version="2.15">
+        <description>
+          Indicates that this BSS is in use as a backhaul BSS;
+
+          : {{true}}: backhaul BSS in use,
+
+          : {{false}}: backhaul BSS not in use.
+
+          In {{bibref|EasyMesh}} 0 is in use and 1 is not in use.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FronthaulUse" access="readOnly" version="2.15">
+        <description>
+          Indicates that this BSS is in use as a fronthaul BSS;
+
+          : {{true}}: fronthaul BSS in use,
+
+          : {{false}}: fronthaul BSS not in use.
+
+          In {{bibref|EasyMesh}} 0 is in use and 1 is not in use.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="R1disallowed" access="readOnly" version="2.15">
+        <description>
+          Multi-AP Profile-1 [3] (R1) disallowed status.
+
+          : {{true}}: disallowed,
+
+          : {{false}}: allowed.
+
+          In {{bibref|EasyMesh}} 0 is allowed and 1 is disallowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="R2disallowed" access="readOnly" version="2.15">
+        <description>
+          Multi-AP Profile-2 [3] (R2) disallowed status.
+
+          : {{true}}: disallowed,
+
+          : {{false}}: allowed.
+
+          In {{bibref|EasyMesh}} 0 is allowed and 1 is disallowed.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MultiBSSID" access="readOnly" version="2.15">
+        <description>
+          Multiple BSSID Set;
+
+          : {{true}}: configured,
+
+          : {{false}}: not-configured.
+
+          In {{bibref|EasyMesh}}, 1 is configured and 0 is not-configured.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmittedBSSID" access="readOnly" version="2.15">
+        <description>
+          Transmitted BSSID;
+
+          : {{true}}: transmitted,
+
+          : {{false}}: non-transmitted.
+
+          In {{bibref|EasyMesh}}, 1 is transmitted and 0 is non-transmitted.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FronthaulAKMsAllowed" access="readWrite" version="2.15">
+        <description>
+          {{list}} List items indicate Authentication and Key Management (AKM)
+          suites/security modes allowed at this BSS for fronthaul. {{enum}}
+        </description>
+        <syntax>
+        <list/>
+          <string>
+           <enumeration value="psk"><description>
+             "psk" indicates one or more of the PSK and FT-PSK AKMs defined
+             in {{bibref|802.11-2020|Table 9-151}} typically at least
+             "00-0F-AC:2" for interoperability.
+           </description>
+            </enumeration>
+            <enumeration value="dpp"><description>
+              "dpp" indicates one or more of the DPP and FT-DPP AKMs defined
+              in {{bibref|EasyConnect|Section 8.4}}, typically at least
+              "50-6F-9A:2" for interoperability.
+            </description>
+            </enumeration>
+            <enumeration value="sae"><description>
+              "sae" indicates one or more of the SAE and FT-SAE AKMs defined
+              in {{bibref|802.11-2020|Table 9-151}} typically at least
+              "00-0F-AC:8" for interoperability.
+            </description>
+            </enumeration>
+            <enumeration value="psk+sae"/>
+            <enumeration value="dpp+sae"/>
+            <enumeration value="dpp+psk+sae"/>
+            <enumeration value="SuiteSelector"><description>
+              AKM suite selector, each AKM suite selector (OUI and type) is
+              encoded as a 4-octet hex-encoded value without internal
+              delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}.
+            </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BackhaulAKMsAllowed" access="readWrite" version="2.15">
+        <description>
+          {{list}} List items indicate Authentication and Key Management (AKM)
+          suites/security modes allowed at this BSS for backhaul. {{enum}}
+        </description>
+        <syntax>
+        <list/>
+          <string>
+            <enumeration value="psk"><description>
+              "psk" indicates one or more of the PSK and FT-PSK AKMs defined
+              in {{bibref|802.11-2020|Table 9-151}} typically at least
+              "00-0F-AC:2" for interoperability.
+            </description>
+            </enumeration>
+            <enumeration value="dpp"><description>
+              "dpp" indicates one or more of the DPP and FT-DPP AKMs defined
+              in {{bibref|EasyConnect|Section 8.4}}, typically at least
+              "50-6F-9A:2" for interoperability.
+            </description>
+            </enumeration>
+            <enumeration value="sae"><description>
+              "sae" indicates one or more of the SAE and FT-SAE AKMs defined
+              in {{bibref|802.11-2020|Table 9-151}} typically at least
+              "00-0F-AC:8" for interoperability.
+            </description>
+            </enumeration>
+            <enumeration value="psk+sae"/>
+            <enumeration value="dpp+sae"/>
+            <enumeration value="dpp+psk+sae"/>
+            <enumeration value="SuiteSelector"><description>
+              AKM suite selector, each AKM suite selector (OUI and type) is
+              encoded as a 4-octet hex-encoded value without internal
+              delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}.
+            </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="STANumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="QMDescriptorNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.QMDescriptor.{i}."
+        access="readOnly" numEntriesParameter="QMDescriptorNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        This object contains a table of {{param|DescriptorElement}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="ClientMAC"/>
+      </uniqueKey>
+
+      <parameter name="ClientMAC" access="readOnly">
+        <description>
+          MAC address of STA for which this descriptor applies.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+      <parameter name="DescriptorElement" access="readOnly">
+        <description>
+          The descriptor element. One of:
+
+          : MSCS descriptor element (as described in
+            {{bibref|802.11-2020|Section 9.4.2.243}}, or
+
+          : SCS descriptor element (as described in
+            {{bibref|802.11-2020|Section 9.4.2.121}}, or
+
+          : QoS Management DSCP policy element (as described in
+            {{bibref|802.11-2020|Section 9.4.2.94}} and
+            {{bibref|RFC8325|Section 6.3}}).
+        </description>
+        <syntax>
+          <hexBinary/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.MultiAPRadio."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        This object represents an individual Access Point Radio in the Wi-Fi
+        network.
+      </description>
+
+      <parameter name="RadarDetections" access="readOnly">
+        <description>
+          {{list}} List items represent channels in the non-occupancy list due
+          to radars detected by Dynamic Frequency Selection (DFS) Channel
+          Availability Check (CAC).
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MultiAPSteering."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        A single logical Access Point operating on this radio.
+      </description>
+
+      <parameter name="BlacklistAttempts" access="readOnly">
+        <description>
+          Number of times a Blacklist steer was attempted for this Access
+          Point.
+
+          Blacklist steering is the process of forcing a connected STA to move
+          to another Access Point by temporarily blocking its access to the
+          current Access Point.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMAttempts" access="readOnly">
+        <description>
+          Number of times a BTM (BSS Transition Management; {{bibref|802.11k}})
+          steer was attempted for this Access Point.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMQueryResponses" access="readOnly">
+        <description>
+          Number of asynchronous BTM (BSS Transition Management;
+          {{bibref|802.11k}}) Queries for which a BTM Request was issued by
+          this Access Point.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+    </object>
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}."
+        access="readOnly" numEntriesParameter="STANumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.13">
+      <description>
+        Object describing a single Associated Device (STA).
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="MACAddress"/>
+      </uniqueKey>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC address of an associated device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.MACAddress}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The time this group was collected. Formatted with the date-and-time
+          string format as defined in {{bibref|RFC3339|Section 3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="HTCapabilities" access="readOnly">
+        <description>
+          Describes the HT capabilities of the Associated Device (STA).
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="1" maxLength="1"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="VHTCapabilities" access="readOnly">
+        <description>
+          Describes the VHT capabilities of the Associated Device (STA).
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="2" maxLength="6"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="HECapabilities" access="readOnly" status="deprecated">
+        <description>
+          Describes the HE capabilities of the Associated Device (STA).
+
+          {{deprecated|2.15|because it is superseded by
+          {{object|WiFi6Capabilities}}.}}
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="4" maxLength="14"/>
+          </base64>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientCapabilities" access="readOnly" version="2.15">
+        <description>
+          The frame body of the most recently received (Re)Association Request
+          frame from this client (STA), as defined in Table 9-34 and Table 9-36
+          of {{bibref|802.11-2020}} in the order of the underlying referenced
+          standard.
+        </description>
+        <syntax>
+          <base64/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastDataDownlinkRate" access="readOnly">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission of data from the access point to the associated device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.LastDataDownlinkRate}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastDataUplinkRate" access="readOnly">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission of data from the associated device to the access point.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.LastDataUplinkRate}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="UtilizationReceive" access="readOnly">
+        <description>
+          The amount of time in {{units}} that the Radio has spent on the
+          Channel receiving data from this Associated Device (STA).
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="milliseconds"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="UtilizationTransmit" access="readOnly">
+        <description>
+          The amount of time in {{units}} that the Radio has spent on the
+          Channel transmitting data to this Associated Device (STA).
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="milliseconds"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="EstMACDataRateDownlink" access="readOnly">
+        <description>
+          Estimate of the MAC layer throughput in {{units}} achievable in the
+          downlink direction if 100% of channel airtime and BSS operating
+          bandwidth were available, as defined in {{bibref|EasyMesh|Section
+          10.3.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="EstMACDataRateUplink" access="readOnly">
+        <description>
+          Estimate of the MAC layer throughput in {{units}} achievable in the
+          uplink direction if 100% of channel airtime and BSS operating
+          bandwidth were available, as defined in {{bibref|EasyMesh|Section
+          10.3.1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength of the uplink from the
+          associated STA to the access point - measured in {{units}}. RCPI is
+          encoded per {{bibref|802.11-2020|Table 9-176}}, and described in
+          {{bibref|EasyMesh|Section 10.3.1}}). Reserved: 221 - 255.
+
+          NOTE: The underlying WFA specification is in the process of being
+          reviewed for possible clarification. Please refer to that
+          specification for more details.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.SignalStrength}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+            <units value="dBm"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastConnectTime" access="readOnly">
+        <description>
+          The time in {{units}} since this Assocated Device (STA) was
+          associated.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of bytes transmitted to the Associated Device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.BytesSent}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of bytes received from the Associated Device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.BytesReceived}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of packets transmitted to the Associated Device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.PacketsSent}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of packets received from the Associated Device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.PacketsReceived}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors. These might be due to the number of
+          retransmissions exceeding the retry limit, or from other causes.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.ErrorsSent}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.ErrorsReceived}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransCount" access="readOnly">
+        <description>
+          The total number of transmitted packets which were retransmissions.
+          Two retransmissions of the same packet results in this counter
+          incrementing by two.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}}}, then
+          this parameter is the same as
+          {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.RetransCount}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MeasurementReport" access="readOnly">
+        <description>
+          {{list}} Measurement Report element(s) received from the Associated
+          Device (STA) that constitute the latest Beacon report as defined in
+          {{bibref|802.11-2020|Figure 9-230}}.
+        </description>
+        <syntax>
+          <list/>
+          <base64/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NumberOfMeasureReports" access="readOnly">
+        <description>
+          The number of measurement report elements contained in
+          {{param|MeasurementReport}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPV4Address" access="readOnly">
+        <description>
+          IPV4 Address assigned to the client.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPV6Address" access="readOnly">
+        <description>
+          IPV6Address assigned to the client.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Hostname" access="readOnly">
+        <description>
+          Hostname assigned to the client.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CellularDataPreference" access="readWrite"
+          version="2.15">
+        <description>
+          This is the Cellular Data Preference for a Agile Multiband (AMB)
+          capable STA This specifies the use of the cellular data connection.
+          {{bibref|AMB}} {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Excluded"/>
+            <enumeration value="Should not use"/>
+            <enumeration value="Should use"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReAssociationDelay" access="readWrite" version="2.15">
+        <description>
+          Re-association Delay {{bibref|AMB}}. The time, in {{units}}, after a
+          BTM steer from AP1 to AP2 during which the station cannot go back and
+          re-associate with AP1.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    <parameter name="TIDQueueSizesNumberOfEntries" access="readOnly"
+          version="2.15">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+    </object>
+
+      <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+        <description>
+          The summary of statistics and operations for an individual STA on the
+          Wi-Fi network.
+
+          The counters contained in {{object}} are all reset on reboot.
+        </description>
+
+        <parameter name="AssociationTime" access="readOnly">
+          <description>
+            Date and time in UTC when the device was associated.
+
+            If the instance of this {{object}} is the same as
+            {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.}}, then
+            this parameter is the same as
+            {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.AssociationTime}}.
+          </description>
+          <syntax>
+            <dateTime/>
+          </syntax>
+        </parameter>
+
+        <parameter name="Noise" access="readOnly">
+          <description>
+            An indicator of the average radio noise plus interference power
+            measured on the uplink from the Associated Device (STA) to the Access
+            Point (AP).
+
+            Encoded as defined for ANPI in {{bibref|802.11-2020|Section
+            11.10.9.4}}.
+
+            If the instance of this {{object}} is the same as
+            {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.}}, then
+            this parameter is the same as
+            {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Noise}}.
+          </description>
+          <syntax>
+            <unsignedInt>
+              <range maxInclusive="255"/>
+            </unsignedInt>
+          </syntax>
+        </parameter>
+
+        <parameter name="SteeringHistoryNumberOfEntries" access="readOnly">
+          <description>
+            {{numentries}}
+          </description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+        </parameter>
+      </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.SteeringSummaryStats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        The summary of statistics related to Multi-AP Steering for this STA on
+        the Wi-Fi network.
+
+        The counters contained in {{object}} are all reset on reboot.
+      </description>
+
+      <parameter name="NoCandidateAPFailures" access="readOnly">
+        <description>
+          Number of times this Associated Device should have been steered but
+          wasn't because a better candidate AP couldn't be found.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlacklistAttempts" access="readOnly">
+        <description>
+          Number of times a Blacklist steer was attempted on this Associated
+          Device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlacklistSuccesses" access="readOnly">
+        <description>
+          Number of times an attempted Blacklist steer succeeded for this
+          Associated Device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BlacklistFailures" access="readOnly">
+        <description>
+          Number of times an attempted Blacklist steer failed for this
+          Associated Device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMAttempts" access="readOnly">
+        <description>
+          Number of times a BTM (BSS Transition Management; {{bibref|802.11k}})
+          steer was attempted on this Associated Device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMSuccesses" access="readOnly">
+        <description>
+          Number of times an attempted BTM (BSS Transition Management;
+          {{bibref|802.11k}}) steer succeeded for this Associated Device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMFailures" access="readOnly">
+        <description>
+          Number of times an attempted BTM (BSS Transition Management;
+          {{bibref|802.11k}}) steer failed for this Associated Device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BTMQueryResponses" access="readOnly">
+        <description>
+          Number of asynchronous BTM (BSS Transition Management;
+          {{bibref|802.11k}}) Queries for which a BTM Request was issued to
+          this Associated Device.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastSteerTime" access="readOnly">
+        <description>
+          The number of {{units}} since this Associated Device was last
+          attempted to be steered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.SteeringHistory.{i}."
+        access="readOnly" numEntriesParameter="SteeringHistoryNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        The history of Multi-AP Steering for this STA on the Wi-Fi network.
+
+        The contents of this multi-instance object are reset on reboot.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Time"/>
+        <parameter ref="APOrigin"/>
+        <parameter ref="APDestination"/>
+      </uniqueKey>
+
+      <parameter name="Time" access="readOnly">
+        <description>
+          The date/time when steering was initiated for the Associated Device.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="APOrigin" access="readOnly">
+        <description>
+          The BSSID of the Access Point that initiated the steering.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TriggerEvent" access="readOnly">
+        <description>
+          The type of event that caused the steering to be initiaited. {{enum}}
+
+          NOTE: This might be Unknown for BTM Query Response steers.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unknown"/>
+            <enumeration value="Wi-Fi Channel Utilization"/>
+            <enumeration value="Wi-Fi Link Quality"/>
+            <enumeration value="Backhaul Link Utilization"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SteeringApproach" access="readOnly">
+        <description>
+          The type of steering that was attempted. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Blacklist"/>
+            <enumeration value="BTM Request"/>
+            <enumeration value="Async BTM Query"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="APDestination" access="readOnly">
+        <description>
+          The BSSID of the destination Access Point of a successful steer.
+
+          A failed steering attempt will leave this parameter {{empty}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SteeringDuration" access="readOnly">
+        <description>
+          The amount of time in {{units}} required for the steer to complete
+          successfully.
+
+          A failed steering attempt will leave this parameter 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.WiFi6Capabilities."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        Describes the Wi-Fi 6 capabilities of the Associated Device (STA).
+      </description>
+
+       <component ref="WiFi6"/>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.TIDQueueSizes.{i}."
+        access="readOnly" numEntriesParameter="TIDQueueSizesNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15">
+      <description>
+        Object describing Traffic Identifiers (TIDs), and Queue Size for each
+        TID, for this Associated Device (STA).
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="TID"/>
+      </uniqueKey>
+
+      <parameter name="TID" access="readOnly">
+        <description>
+          The TID of the corresponding Queue Size field.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Size" access="readOnly">
+        <description>
+          Queue Size for this TID. Its format is defined in Table 9-10-QoS
+          Control field {{bibref|802.11-2020}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.UnassociatedSTA.{i}."
+        access="readOnly" numEntriesParameter="UnassociatedSTANumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.13">
+      <description>
+        Each instance represents a Non-AP STA that has been discovered by the
+        Radio but is not associated to any of the BSS operating on the Radio.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="MACAddress"/>
+      </uniqueKey>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC address of the Non-AP STA.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength (RCPI) of the uplink from the
+          Non-AP STA - measured in {{units}}. RCPI is encoded per
+          {{bibref|802.11-2020|Table 9-176}}, and described in
+          {{bibref|EasyMesh|Section 10.3.2}}. Reserved: 221 - 255.
+
+          NOTE: The underlying WFA specification is in the process of being
+          reviewed for possible clarification. Please refer to that
+          specification for more details.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+            <units value="dBm"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.DataElements.AssociationEvent."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.13">
+      <description>
+        This object contains the events generated when a STA associates to a
+        BSS.
+      </description>
+
+      <parameter name="AssociationEventDataNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}."
+        access="readOnly"
+        numEntriesParameter="AssociationEventDataNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true"
+        version="2.13">
+      <description>
+        The events generated when an Associated Device (STA) associates to a
+        BSS.
+      </description>
+
+      <component ref="AssociationEventData"/>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}.WiFi6Capabilities."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        Describes the Wi-Fi 6 capabilities of the Associated Device (STA).
+      </description>
+
+      <component ref="WiFi6"/>
+    </object>
+
+    <object name="Device.WiFi.DataElements.DisassociationEvent."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.13">
+      <description>
+        This object contains the events generated when an Associated Device
+        (STA) disassociates from a BSS.
+      </description>
+
+      <parameter name="DisassociationEventDataNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.DisassociationEvent.DisassociationEventData.{i}."
+        access="readOnly"
+        numEntriesParameter="DisassociationEventDataNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" dmr:noUniqueKeys="true"
+        version="2.13">
+      <description>
+        The events generated when an Associated Device (STA) disassociates from
+        a BSS.
+      </description>
+
+      <component ref="DisassociationEventData"/>
+    </object>
+
+    <object name="Device.WiFi.DataElements.FailedConnectionEvent."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.15">
+      <description>
+        This object contains the events generated when a Station (STA) fails to
+        connect to a Basic Service Set (BSS).
+      </description>
+
+      <parameter name="FailedConnectionEventDataNumberOfEntries"
+          access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="Device.WiFi.DataElements.FailedConnectionEvent.FailedConnectionEventData.{i}."
+        access="readOnly"
+        numEntriesParameter="FailedConnectionEventDataNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.15"
+        dmr:noUniqueKeys="true">
+      <description>
+        This object describes the data provided with a failed connection event
+      </description>
+
+      <component ref="FailedConnectionEventData"/>
+    </object>
+
+  </component>
+
+  <component name="DEScanResultNumberOfEntries">
+    <object base="ScanResult.{i}." access="readOnly" minEntries="0"
+        maxEntries="unbounded">
+      <parameter name="OpClassScanNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="ScanResult.{i}.OpClassScan.{i}." access="readOnly"
+        minEntries="0" maxEntries="unbounded">
+      <parameter name="ChannelScanNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded">
+      <parameter name="NeighborBSSNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="DEScanResult">
+
+    <object name="ScanResult.{i}." access="readOnly"
+        numEntriesParameter="ScanResultNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:noUniqueKeys="true" version="2.14">
+      <description>
+        The list of neighboring Access Points discovered by a Radio organized
+        per Operating Class and Channel tuple.
+      </description>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The timestamp of the last scan. Formatted with the date-and-time
+          string format as defined in {{bibref|RFC3339|Section 3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="ScanResult.{i}.OpClassScan.{i}." access="readOnly"
+        numEntriesParameter="OpClassScanNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.14">
+      <description>
+        The Operating Class of neighboring Access Points discovered by a Radio
+        during a channel scan.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="OperatingClass"/>
+      </uniqueKey>
+
+      <parameter name="OperatingClass" access="readOnly">
+        <description>
+          The Operating Class per {{bibref|802.11-2020|Table E-4}} of the
+          OpClass and Channel tuple scanned by the Radio. For 2.4GHz and 5GHz
+          bands, only 20MHz Operating Classes are valid.
+
+          Note that the Operating Class identifies the band and channel width.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}."
+        access="readOnly" numEntriesParameter="ChannelScanNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.14">
+      <description>
+        The Channel associated with an Operating Class of neighboring Access
+        Points discovered by a Radio during a channel scan.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="Channel"/>
+      </uniqueKey>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          The channel number of the Channel scanned by the Radio given the
+          Operating Class.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeStamp" access="readOnly">
+        <description>
+          The timestamp of the last scan of the channel. Formatted with the
+          date-and-time string format as defined in {{bibref|RFC3339|Section
+          3}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Utilization" access="readOnly">
+        <description>
+          The current Channel Utilization measured by the Radio on the scanned
+          20MHz channel, as defined by {{bibref|802.11-2020|Section 9.4.2.27}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Noise" access="readOnly">
+        <description>
+          An indicator of the average radio noise plus interference power
+          measured for the primary operating channel.
+
+          Encoded as defined for ANPI in {{bibref|802.11-2020|Section
+          11.10.9.4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object
+        name="ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}."
+        access="readOnly" numEntriesParameter="NeighborBSSNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.14">
+      <description>
+        The neighboring BSS discovered by a Radio during a channel scan.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="BSSID"/>
+      </uniqueKey>
+
+      <parameter name="BSSID" access="readOnly">
+        <description>
+          The BSSID indicated by the neighboring BSS.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSID" access="readOnly">
+        <description>
+          The SSID indicated by the neighboring BSS.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength (RSSI) of the Beacon or Probe
+          Response frames of the neighboring BSS as received by the radio
+          measured in {{units}}. (RSSI is encoded per
+          {{bibref|802.11-2020|Table 9-176}}). Reserved: 221 - 255.
+
+          NOTE: The underlying WFA specification is in the process of being
+          reviewed for possible clarification. Please refer to that
+          specification for more details.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+            <units value="dBm"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelBandwidth" access="readOnly">
+        <description>
+          Indicates the maximum bandwidth at which the neighboring BSS is
+          operating. e.g. "20" or "40" or "80" or "80+80" or "160" MHz.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelUtilization" access="readOnly">
+        <description>
+          The channel utilization reported by the neighboring BSS per the BSS
+          Load element if present in Beacon or Probe Response frames, as
+          defined by {{bibref|802.11-2020|Section 9.4.2.27}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="StationCount" access="readOnly">
+        <description>
+          The number of Associated Devices (STA) reported by this neighboring
+          BSS per the BSS Load element if present in Beacon or Probe Response
+          frames as defined by {{bibref|802.11-2020|Section 9.4.2.27}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="AssociationEventData">
+
+    <parameter name="TimeStamp" access="readOnly">
+      <description>
+        The time this event happened. Formatted with the date-and-time string
+        format as defined in {{bibref|RFC3339|Section 3}}.
+      </description>
+      <syntax>
+        <string/>
+      </syntax>
+    </parameter>
+
+    <parameter name="BSSID" access="readOnly">
+      <description>
+        The MAC Address of the logical BSS (BSSID) which is reporting the
+        Association Event.
+      </description>
+      <syntax>
+        <dataType ref="MACAddress"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MACAddress" access="readOnly">
+      <description>
+        The MAC Address of the Associated Device (STA).
+      </description>
+      <syntax>
+        <dataType ref="MACAddress"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="StatusCode" access="readOnly">
+      <description>
+        The status code sent to the Associated Device (STA) in the Association
+        Response frame as defined by {{bibref|802.11-2020|Table 9-50}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="HTCapabilities" access="readOnly">
+      <description>
+        Describes the HT capabilities of the Associated Device (STA).
+      </description>
+      <syntax>
+        <base64>
+          <size minLength="1" maxLength="1"/>
+        </base64>
+      </syntax>
+    </parameter>
+
+    <parameter name="VHTCapabilities" access="readOnly">
+      <description>
+        Describes the VHT capabilities of the Associated Device (STA).
+      </description>
+      <syntax>
+        <base64>
+          <size minLength="2" maxLength="6"/>
+        </base64>
+      </syntax>
+    </parameter>
+
+    <parameter name="HECapabilities" access="readOnly" status="deprecated">
+      <description>
+        Describes the HE capabilities of the Associated Device (STA).
+
+        {{deprecated|2.16|because it is superseded by
+        {{object|WiFi6Capabilities}}.}}
+      </description>
+      <syntax>
+        <base64>
+          <size minLength="4" maxLength="14"/>
+        </base64>
+      </syntax>
+    </parameter>
+
+    <parameter name="ClientCapabilities" access="readOnly" version="2.16">
+      <description>
+        The frame body of the (Re)Association Request frame received from this
+        client (STA), as defined in Table 9-34 and Table 9-36 of
+        {{bibref|802.11-2020}} in the order of the underlying referenced
+        standard.
+      </description>
+      <syntax>
+        <base64/>
+      </syntax>
+    </parameter>
+
+  </component>
+
+  <component name="DisassociationEventData">
+    <parameter name="BSSID" access="readOnly">
+      <description>
+        The MAC Address of the logical BSS ( BSSID) which is reporting the
+        Disassociation Event.
+      </description>
+      <syntax>
+        <dataType ref="MACAddress"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MACAddress" access="readOnly">
+      <description>
+        The MAC Address of the Associated Device (STA).
+      </description>
+      <syntax>
+        <dataType ref="MACAddress"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="ReasonCode" access="readOnly">
+      <description>
+        The Reason Code received by the AP from the Associated Device (STA) in
+        the most recent Disassociation or Deauthentication frame or sent by the
+        AP to the Associated Device (STA) in the most recent Disassociation or
+        Deauthentication frame as defined in {{bibref|802.11-2020|Table 9-49}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="BytesSent" access="readOnly">
+      <description>
+        The total number of bytes transmitted to the Associated Device (STA).
+      </description>
+      <syntax>
+        <dataType ref="StatsCounter64"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="BytesReceived" access="readOnly">
+      <description>
+        The total number of bytes received from the Associated Device (STA).
+      </description>
+      <syntax>
+        <dataType ref="StatsCounter64"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PacketsSent" access="readOnly">
+      <description>
+        The total number of packets transmitted to the Associated Device (STA).
+      </description>
+      <syntax>
+        <dataType ref="StatsCounter64"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PacketsReceived" access="readOnly">
+      <description>
+        The total number of packets received from the Associated Device (STA).
+      </description>
+      <syntax>
+        <dataType ref="StatsCounter64"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="ErrorsSent" access="readOnly">
+      <description>
+        The total number of outbound packets that could not be transmitted to
+        the Associated Device (STA) because of errors. These might be due to
+        the number of retransmissions exceeding the retry limit or from other
+        causes.
+      </description>
+      <syntax>
+        <dataType ref="StatsCounter32"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="ErrorsReceived" access="readOnly">
+      <description>
+        The total number of inbound packets from the Associated Device (STA)
+        that contained errors preventing them from being delivered to a
+        higher-layer protocol.
+      </description>
+      <syntax>
+        <dataType ref="StatsCounter32"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="RetransCount" access="readOnly">
+      <description>
+        The total number of transmitted packets to the Associated Device (STA)
+        which were retransmissions.
+
+        N retransmissions of the same packet results in this counter
+        incrementing by N.
+      </description>
+      <syntax>
+        <dataType ref="StatsCounter32"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="TimeStamp" access="readOnly">
+      <description>
+        The time this event happened. Formatted with the date-and-time string
+        format as defined in {{bibref|RFC3339|Section 3}}.
+      </description>
+      <syntax>
+        <string/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="FailedConnectionEventData">
+
+    <parameter name="MACAddress" access="readOnly">
+      <description>
+        STA MAC Address identifying the client that has attempted to connect.
+      </description>
+      <syntax>
+        <dataType ref="MACAddress"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="StatusCode" access="readOnly">
+      <description>
+        Status Code set to a non-zero value that indicates the reason for
+        association or authentication failure as defined in
+        {{bibref|802.11-2020|Table 9-50}}, or Status Code set to zero and
+        {{param|ReasonCode}} provided.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="ReasonCode" access="readOnly">
+      <description>
+        Reason Code indicating the reason the STA was disassociated or
+        deauthenticated as defined in {{bibref|802.11-2020|Table 9-49}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="TimeStamp" access="readOnly">
+      <description>
+        The time this event happened. Formatted with the date-and-time string
+        format as defined in {{bibref|RFC3339|Section 3}}.
+      </description>
+      <syntax>
+        <string/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <model name="WiFiDE:2.16">
+    <component ref="Root"/>
+    <component ref="WiFiRoot"/>
+    <component ref="WiFiAllianceDataElements"/>
+  </model>
+</dm:document>

@@ -1,0 +1,4920 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [WiFi Base]
+
+  Copyright (c) 2010-2021, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2017-2019 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-16-0-wifi-base"
+    file="tr-181-2-16-0-wifi-base.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias"/>
+    <dataType name="IPAddress"/>
+    <dataType name="MACAddress"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="WiFiNeighboringWiFiDiagnosticsOutputNumberOfEntries">
+    <parameter name="ResultNumberOfEntries" access="readOnly">
+      <description>
+        {{numentries}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="WiFiNeighboringWiFiDiagnosticsOutput">
+
+    <object name="Result.{i}." access="readOnly"
+        numEntriesParameter="ResultNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.7">
+      <description>
+        Neighboring SSID table. This table models other WiFi SSIDs that this
+        device is able to receive.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="BSSID"/>
+      </uniqueKey>
+
+      <parameter name="Radio" access="readOnly">
+        <description>
+          The Radio that detected the neighboring WiFi SSID.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="Device.WiFi.Radio."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSID" access="readOnly">
+        <description>
+          The current service set identifier in use by the neighboring WiFi
+          SSID. The value MAY be empty for hidden SSIDs.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BSSID" access="readOnly">
+        <description>
+          The BSSID used for the neighboring WiFi SSID.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Mode" access="readOnly">
+        <description>
+          The mode the neighboring WiFi radio is operating in.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="AdHoc"/>
+            <enumeration value="Infrastructure"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          The current radio channel used by the neighboring WiFi radio.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength (RSSI) of the neighboring WiFi
+          radio measured in {{units}}, as an average of the last 100 packets
+          received.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityModeEnabled" access="readOnly">
+        <description>
+          The type of encryption the neighboring WiFi SSID advertises.
+
+          The {{enum|WEP}} value indicates either WEP-64 or WEP-128.
+
+          The {{enum|WPA}} value is the same as WPA-Personal.
+
+          The {{enum|WPA2}} value is the same as WPA2-Personal.
+
+          The {{enum|WPA-WPA2}} value is the same as WPA-WPA2-Personal.
+
+          The {{enum|WPA3-SAE}} value is the same as WPA3-Personal.
+
+          The {{enum|WPA2-PSK-WPA3-SAE}} value is the same as
+          WPA3-Personal-Transition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="WEP"/>
+            <enumeration value="WPA"/>
+            <enumeration value="WPA2"/>
+            <enumeration value="WPA-WPA2"/>
+            <enumeration value="WPA-Enterprise"/>
+            <enumeration value="WPA2-Enterprise"/>
+            <enumeration value="WPA-WPA2-Enterprise"/>
+            <enumeration value="WPA3-SAE"/>
+            <enumeration value="WPA2-PSK-WPA3-SAE"/>
+            <enumeration value="WPA3-Enterprise"/>
+            <enumeration value="OWE" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EncryptionMode" access="readOnly">
+        <description>
+          The type of encryption the neighboring WiFi SSID advertises.
+
+          When {{param|SecurityModeEnabled}} is one of
+          {{enum|WPA3-SAE|SecurityModeEnabled}},
+          {{enum|WPA2-PSK-WPA3-SAE|SecurityModeEnabled}}, or
+          {{enum|WPA3-Enterprise|SecurityModeEnabled}}, {{enum|TKIP}} is not
+          valid, and should not be in the list.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="TKIP"/>
+            <enumeration value="AES"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingFrequencyBand" access="readOnly">
+        <description>
+          Indicates the frequency band at which the radio this SSID instance is
+          operating.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="2.4GHz"/>
+            <enumeration value="5GHz"/>
+            <enumeration value="6GHz" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedStandards" access="readOnly">
+        <description>
+          {{list}} List items indicate which IEEE 802.11 standards this
+          {{object}} instance can support simultaneously, in the frequency band
+          specified by {{param|OperatingFrequencyBand}}. {{enum}}
+
+          Each value indicates support for the indicated standard.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}},
+          {{enum|g}}, {{enum|n}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}},
+          {{enum|n}}, {{enum|ac}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|6GHz|OperatingFrequencyBand}}, only value {{enum|ax}} is
+          allowed.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="a">
+              <description>{{bibref|802.11a-1999}}</description>
+            </enumeration>
+            <enumeration value="b">
+              <description>{{bibref|802.11b-1999}}</description>
+            </enumeration>
+            <enumeration value="g">
+              <description>{{bibref|802.11g-2003}}</description>
+            </enumeration>
+            <enumeration value="n">
+              <description>{{bibref|802.11n-2009}}</description>
+            </enumeration>
+            <enumeration value="ac">
+              <description>{{bibref|802.11ac-2013}}</description>
+            </enumeration>
+            <enumeration value="ax">
+              <description>{{bibref|802.11ax}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingStandards" access="readOnly">
+        <description>
+          {{list}} List items indicate which IEEE 802.11 standard that is
+          detected for this {{object}}.
+
+          Each value indicates support for the indicated standard.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|2.4GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values
+          {{enum|b}}, {{enum|g}}, {{enum|n}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|5GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values
+          {{enum|a}}, {{enum|n}}, {{enum|ac}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|6GHz|##.Radio.{i}.SupportedFrequencyBands}}, only value
+          {{enum|ax}} is allowed.
+
+          For example, a value of "g,b" (or "b,g" - order is not important)
+          means that the 802.11g standard {{bibref|802.11g-2003}} is used with
+          a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A
+          value of "g" means that only the 802.11g standard can be used.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam="SupportedStandards"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingChannelBandwidth" access="readOnly">
+        <description>
+          Indicates the bandwidth at which the channel is operating.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="20MHz"/>
+            <enumeration value="40MHz"/>
+            <enumeration value="80MHz"/>
+            <enumeration value="160MHz"/>
+            <enumeration value="Auto"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BeaconPeriod" access="readOnly">
+        <description>
+          Time interval (in {{units}}) between transmitting beacons.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="ms"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Noise" access="readOnly">
+        <description>
+          Indicator of average noise strength (in {{units}}) received from the
+          neighboring WiFi radio.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="BasicDataTransferRates" access="readOnly">
+        <description>
+          {{list}} Basic data transmit rates (in Mbps) for the SSID. For
+          example, if {{param}} is "1,2", this indicates that the SSID is
+          operating with basic rates of 1 Mbps and 2 Mbps.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedDataTransferRates" access="readOnly">
+        <description>
+          {{list}} Data transmit rates (in Mbps) for unicast frames at which
+          the SSID will permit a station to connect. For example, if {{param}}
+          is "1,2,5.5", this indicates that the SSID will only permit
+          connections at 1 Mbps, 2 Mbps and 5.5 Mbps.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DTIMPeriod" access="readOnly">
+        <description>
+          The number of beacon intervals (measured in {{units}}) that elapse
+          between transmission of Beacon frames containing a TIM element whose
+          DTIM count field is 0. This value is transmitted in the DTIM Period
+          field of beacon frames. {{bibref|802.11-2020}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="ms"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="WiFiRoot">
+    <object name="Device.WiFi." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        The WiFi object is based on the IEEE 802.11 specifications
+        ({{bibref|802.11-2020}}). It defines interface objects
+        ({{object|Radio}} and {{object|SSID}}), and application objects
+        ({{object|AccessPoint}} and {{object|EndPoint}}).
+      </description>
+    </object>
+  </component>
+
+  <component name="WiFiBase">
+    <object base="Device.WiFi." access="readOnly" minEntries="1"
+        maxEntries="1">
+
+      <parameter name="RadioNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSIDNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessPointNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndPointNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResetCounter" access="readOnly" version="2.12">
+        <description>
+          This parameter counts the number of WiFi host or driver resets since
+          the last device reset. This parameter is reset to zero after the
+          device resets, and increments with each successive WiFi host or
+          driver reset.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResetCause" access="readOnly" version="2.14">
+        <description>
+          Reports the cause for the previous Wi-Fi driver reset.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="HostReinit">
+              <description>
+                Indicates that the host processor intentionally performed the
+                reset. This can be due to an external instruction.
+              </description>
+            </enumeration>
+            <enumeration value="SpontaneousInterrupt">
+              <description>
+                Indicates that the reset was spontaneous. This can be due to an
+                error condition.
+              </description>
+            </enumeration>
+            <enumeration value="LossOfPower">
+              <description>
+                Indicates that the reset was due to a loss of mains power on
+                the device.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.Radio.{i}." access="readOnly"
+        numEntriesParameter="RadioNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true" version="2.0">
+      <description>
+        This object models an 802.11 wireless radio on a device (a stackable
+        interface object as described in {{bibref|TR-181i2|Section 4.2}}).
+
+        If the device can establish more than one connection simultaneously
+        (e.g. a dual radio device), a separate {{object}} instance MUST be used
+        for each physical radio of the device. See {{bibref|TR-181i2|Appendix
+        III.1}} for additional information.
+
+        Note: A dual-band single-radio device (e.g. an 802.11a/b/g radio) can
+        be configured to operate at 2.4 or 5 GHz frequency bands, but only a
+        single frequency band is used to transmit/receive at a given time.
+        Therefore, a single {{object}} instance is used even for a dual-band
+        radio.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the radio.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Enabled}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the radio (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the radio as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the radio entered its current
+          operational state.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+
+          Note: Since {{object}} is a layer 1 interface, it is expected that
+          {{param}} will not be used.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Upstream" access="readOnly">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+
+          An interface might have some SSIDs pointing towards the Internet and
+          other SSIDs pointing towards End Devices. This is indicated by the
+          associated {{param|#.SSID.{i}.Upstream}} parameters. This interface's
+          {{param}} parameter is set to {{true}} if any of the associated
+          ''SSID.{i}.Upstream'' parameters are {{true}}, and is set to
+          {{false}} otherwise.
+
+          This parameter was DEPRECATED in 2.12 (and then OBSOLETED in 2.14)
+          because it couldn't describe all multi-SSID use cases. It has now
+          been restored, and its multi-SSID behavior has been clarified.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxBitRate" access="readOnly">
+        <description>
+          The maximum PHY bit rate supported by this interface (expressed in
+          {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Mbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedFrequencyBands" access="readOnly">
+        <description>
+          {{list}} List items indicate the frequency bands at which the radio
+          can operate.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="2.4GHz"/>
+            <enumeration value="5GHz"/>
+            <enumeration value="6GHz" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingFrequencyBand" access="readWrite">
+        <description>
+          Indicates the frequency band at which the radio is operating.
+
+          If the radio supports multiple bands, and {{param}} is changed, then
+          all parameters whose value is not valid for the new frequency band
+          (e.g. {{param|Channel}}) MUST be set to a valid value (according to
+          some CPE vendor-specific behavior).
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedFrequencyBands"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedStandards" access="readOnly">
+        <description>
+          {{list}} List items indicate which IEEE 802.11 standards this
+          {{object}} instance can support simultaneously, in the frequency band
+          specified by {{param|OperatingFrequencyBand}}. {{enum}}
+
+          Each value indicates support for the indicated standard.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}},
+          {{enum|g}}, {{enum|n}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}},
+          {{enum|n}}, {{enum|ac}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|6GHz|OperatingFrequencyBand}}, only value {{enum|ax}} is
+          allowed.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="a">
+              <description>{{bibref|802.11a-1999}}</description>
+            </enumeration>
+            <enumeration value="b">
+              <description>{{bibref|802.11b-1999}}</description>
+            </enumeration>
+            <enumeration value="g">
+              <description>{{bibref|802.11g-2003}}</description>
+            </enumeration>
+            <enumeration value="n">
+              <description>{{bibref|802.11n-2009}}</description>
+            </enumeration>
+            <enumeration value="ac">
+              <description>{{bibref|802.11ac-2013}}</description>
+            </enumeration>
+            <enumeration value="ax">
+              <description>{{bibref|802.11ax}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingStandards" access="readWrite">
+        <description>
+          {{list}} List items indicate which IEEE 802.11 standard this
+          {{object}} instance is configured for.
+
+          Each value indicates support for the indicated standard.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}},
+          {{enum|g}}, {{enum|n}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}},
+          {{enum|n}}, {{enum|ac}}, {{enum|ax}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|6GHz|OperatingFrequencyBand}}, only value {{enum|ax}} is
+          allowed.
+
+          For example, a value of "g,b" (or "b,g" - order is not important)
+          means that the 802.11g standard {{bibref|802.11g-2003}} is used with
+          a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A
+          value of "g" means that only the 802.11g standard can be used.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam="SupportedStandards"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PossibleChannels" access="readOnly">
+        <description>
+          {{list}} List items represent possible radio channels for the
+          wireless standard (a, b, g, n, ac, ax) and the regulatory domain.
+
+          Ranges in the form "n-m" are permitted.
+
+          For example, for 802.11b and North America, would be "1-11".
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelsInUse" access="readOnly" activeNotify="canDeny">
+        <description>
+          {{list}} List items represent channels that the radio determines to
+          be currently in use (including any that it is using itself).
+
+          Ranges in the form "n-m" are permitted.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readWrite">
+        <description>
+          The current radio channel used by the connection. To request
+          automatic channel selection, set {{param|AutoChannelEnable}} to
+          {{true}}.
+
+          Whenever {{param|AutoChannelEnable}} is {{true}}, the value of the
+          {{param}} parameter MUST be the channel selected by the automatic
+          channel selection procedure.
+
+          For channels in "wide mode" (802.11n where a 40MHz channel bandwidth
+          is used), this parameter is used for Primary Channel only. The
+          secondary or extension channel information is available through
+          {{param|ExtensionChannel}}.
+
+          Note: Valid {{param}} values depend on the
+          {{param|OperatingFrequencyBand}} value specified and the
+          {{param|RegulatoryDomain}}.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.Channel}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoChannelSupported" access="readOnly">
+        <description>
+          Indicates whether automatic channel selection is supported by this
+          radio. If {{false}}, then {{param|AutoChannelEnable}} MUST be
+          {{false}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoChannelEnable" access="readWrite">
+        <description>
+          Enable or disable automatic channel selection.
+
+          Set to {{false}} to disable the automatic channel selection
+          procedure, in which case the currently selected channel remains
+          selected.
+
+          Set to {{true}} to enable the automatic channel selection procedure.
+          This procedure MUST automatically select the channel, and MAY also
+          change it subsequently.
+
+          {{param}} MUST automatically change to {{false}} whenever the channel
+          is manually selected, i.e. whenever the {{param|Channel}} parameter
+          is written.
+
+          Whenever {{param}} is {{true}}, the value of the {{param|Channel}}
+          parameter MUST be the channel selected by the automatic channel
+          selection procedure.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoChannelRefreshPeriod" access="readWrite">
+        <description>
+          The time period in {{units}} between two consecutive automatic
+          channel selections. A value of 0 means that the automatic channel
+          selection is done only at boot time.
+
+          This parameter is significant only if {{param|AutoChannelEnable}} is
+          set to {{true}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelLastChange" access="readOnly"
+          activeNotify="canDeny" version="2.12">
+        <description>
+          The accumulated time in {{units}} since the current {{param|Channel}}
+          came into use.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelLastSelectionReason" access="readOnly"
+          version="2.12">
+        <description>
+          The cause of the last channel selection.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Manual">
+              <description>
+                Manual selection of the {{param|Channel}}.
+              </description>
+            </enumeration>
+            <enumeration value="Auto_Startup">
+              <description>
+                Automatic channel selection procedure launched at radio
+                startup.
+              </description>
+            </enumeration>
+            <enumeration value="Auto_User">
+              <description>
+                Automatic channel selection procedure triggered by the user
+                (e.g. via a GUI).
+              </description>
+            </enumeration>
+            <enumeration value="Auto_Refresh">
+              <description>
+                Automatic channel selection procedure triggered by the
+                {{param|AutoChannelRefreshPeriod}} timer.
+              </description>
+            </enumeration>
+            <enumeration value="Auto_Dynamic">
+              <description>
+                Automatic channel selection procedure dynamically triggered to
+                adjust to environmental interference.
+              </description>
+            </enumeration>
+            <enumeration value="Auto_DFS">
+              <description>
+                Automatic channel selection procedure triggered by Dynamic
+                Frequency Selection (DFS) {{bibref|ETSIBRAN}}.
+              </description>
+            </enumeration>
+            <enumeration value="Unknown"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxSupportedSSIDs" access="readOnly" version="2.12">
+        <description>
+          Maximum number of SSIDs supported on this radio.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxSupportedAssociations" access="readOnly"
+          version="2.12">
+        <description>
+          Maximum number of associated devices supported.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="FirmwareVersion" access="readOnly" version="2.12">
+        <description>
+          This radio's WiFi firmware version.
+
+          If the instance of this {{object|##}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.}}, then this
+          parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.SoftwareVersion}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedOperatingChannelBandwidths" access="readOnly"
+          version="2.12">
+        <description>
+          {{list}} These are the valid writable values for
+          {{param|OperatingChannelBandwidth}}.
+
+          Each list item is an enumeration of: {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="20MHz"/>
+            <enumeration value="40MHz">
+              <description>wide mode</description>
+            </enumeration>
+            <enumeration value="80MHz">
+              <description>802.11ac and 802.11ax only</description>
+            </enumeration>
+            <enumeration value="160MHz">
+              <description>802.11ac and 802.11ax only</description>
+            </enumeration>
+            <enumeration value="80+80MHz">
+              <description>802.11ac and 802.11ax only</description>
+            </enumeration>
+            <enumeration value="Auto"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingChannelBandwidth" access="readWrite">
+        <description>
+          The preferred channel bandwidth to be used (applicable to 802.11n,
+          802.11ac, and 802.11ax specifications only).
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedOperatingChannelBandwidths"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentOperatingChannelBandwidth" access="readOnly"
+          version="2.11">
+        <description>
+          The channel bandwidth currently in use. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="20MHz"/>
+            <enumeration value="40MHz"/>
+            <enumeration value="80MHz"/>
+            <enumeration value="160MHz"/>
+            <enumeration value="80+80MHz"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExtensionChannel" access="readWrite">
+        <description>
+          The secondary extension channel position (applicable to the 802.11n
+          specification only), applicable when operating in wide channel mode
+          (i.e. when {{param|OperatingChannelBandwidth}} is set to
+          {{enum|40MHz|OperatingChannelBandwidth}} or
+          {{enum|Auto|OperatingChannelBandwidth}}).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="AboveControlChannel"/>
+            <enumeration value="BelowControlChannel"/>
+            <enumeration value="Auto"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="GuardInterval" access="readWrite">
+        <description>
+          The guard interval value between OFDM symbols.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="400nsec">
+              <description>
+                applicable to 802.11n and 802.11ac specifications only
+              </description>
+            </enumeration>
+            <enumeration value="800nsec">
+              <description>
+                applicable to 802.11n and 802.11ac specifications only
+              </description>
+            </enumeration>
+            <enumeration value="1xLTF_0.8us" version="2.14">
+              <description>
+                applicable to 802.11ax specification only
+              </description>
+            </enumeration>
+            <enumeration value="1xLTF_1.6us" version="2.14">
+              <description>
+                applicable to 802.11ax specification only
+              </description>
+            </enumeration>
+            <enumeration value="2xLTF_0.8us" version="2.14">
+              <description>
+                applicable to 802.11ax specification only
+              </description>
+            </enumeration>
+            <enumeration value="2xLTF_1.6us" version="2.14">
+              <description>
+                applicable to 802.11ax specification only
+              </description>
+            </enumeration>
+            <enumeration value="4xLTF_0.8us" version="2.14">
+              <description>
+                applicable to 802.11ax specification only
+              </description>
+            </enumeration>
+            <enumeration value="4xLTF_3.2us" version="2.14">
+              <description>
+                applicable to 802.11ax specification only
+              </description>
+            </enumeration>
+            <enumeration value="Auto"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CenterFrequencySegement0" access="readWrite"
+          status="obsoleted" version="2.13">
+        <description>
+          When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}},
+          this parameter determines the Center Frequency Segment 0 for the
+          first 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}}
+          and Table 9-252.
+
+          {{deprecated|2.14|due to a typo. Use
+          {{param|CenterFrequencySegment0}} instead}}
+
+          {{obsoleted|2.16}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CenterFrequencySegement1" access="readWrite"
+          status="obsoleted" version="2.13">
+        <description>
+          When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}},
+          this parameter determines the Center Frequency Segment 1 for the
+          second 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}}
+          and Table 9-252.
+
+          {{deprecated|2.14|due to a typo. Use
+          {{param|CenterFrequencySegment1}} instead}}
+
+          {{obsoleted|2.16}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CenterFrequencySegment0" access="readWrite"
+          version="2.14">
+        <description>
+          When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}},
+          this parameter determines the Center Frequency Segment 0 for the
+          first 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}}
+          and Table 9-252.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CenterFrequencySegment1" access="readWrite"
+          version="2.14">
+        <description>
+          When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}},
+          this parameter determines the Center Frequency Segment 1 for the
+          second 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}}
+          and Table 9-252.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MCS" access="readWrite">
+        <description>
+          The Modulation Coding Scheme index (applicable to 802.11n, 802.11ac,
+          and 802.11ax specifications only). Values from 0 to 15 MUST be
+          supported for ({{bibref|802.11n-2009}}). Values from 0 to 9 MUST be
+          supported for {{bibref|802.11ac-2013}}. Values from 0 to 11 MUST be
+          supported for {{bibref|802.11ax}}. A value of -1 indicates automatic
+          selection of the MCS index.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="15"/>
+            <range minInclusive="16" maxInclusive="31"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitPowerSupported" access="readOnly">
+        <description>
+          {{list}} List items represent supported transmit power levels as
+          {{units}} of full power. For example, "0,25,50,75,100".
+
+          A -1 item indicates auto mode (automatic decision by CPE). Auto mode
+          allows the ''Radio'' to adjust transmit power accordingly. For
+          example, this can be useful for power-save modes such as EU-CoC,
+          where the ''Radio'' can adjust power according to activity in the
+          CPE.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="64"/>
+          </list>
+          <int>
+            <range minInclusive="-1" maxInclusive="100"/>
+            <units value="percentage"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitPower" access="readWrite">
+        <description>
+          Indicates the current transmit power level as a {{units}} of full
+          power. The value MUST be one of the values reported by the
+          {{param|TransmitPowerSupported}} parameter. A value of -1 indicates
+          auto mode (automatic decision by CPE).
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.TxPower}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="100"/>
+            <units value="percentage"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEE80211hSupported" access="readOnly">
+        <description>
+          Indicates whether IEEE 802.11h {{bibref|802.11h-2003}} functionality
+          is supported by this radio. The value can be {{true}} only if the
+          802.11a or the 802.11n@5GHz standard is supported (i.e.
+          {{param|SupportedFrequencyBands}} includes
+          {{enum|5GHz|SupportedFrequencyBands}} and
+          {{param|SupportedStandards}} includes {{enum|a|SupportedStandards}}
+          and/or {{enum|n|SupportedStandards}}).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEE80211hEnabled" access="readWrite">
+        <description>
+          Indicates whether IEEE 802.11h functionality is enabled on this
+          radio. The value can be {{true}} only if the 802.11a or the
+          802.11n@5GHz standard is supported and enabled (i.e.
+          {{param|OperatingFrequencyBand}} is
+          {{enum|5GHz|OperatingFrequencyBand}} and {{param|OperatingStandards}}
+          includes {{enum|a|OperatingStandards}} and/or
+          {{enum|n|OperatingStandards}}).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RegulatoryDomain" access="readWrite">
+        <description>
+          The 802.11d Regulatory Domain. First two octets are
+          {{bibref|ISO3166-1}} two-character country code. The third octet is
+          either " " (all environments), "O" (outside) or "I" (inside).
+
+          If the instance of this {{object|##}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.}}, then this
+          parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.CountryCode}}.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="3" maxLength="3"/>
+            <pattern value="[A-Z][A-Z][ OI]"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryLimit" access="readWrite" version="2.8">
+        <description>
+          The maximum number of retransmissions of a short packet i.e. a packet
+          that is no longer than the {{param|RTSThreshold}}. This corresponds
+          to IEEE 802.11 parameter ''dot11ShortRetryLimit''
+          {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="CCARequest" access="readWrite" version="2.8">
+        <description>
+          A request for the clear channel assessment (CCA) report in the format
+          specified in {{bibref|802.11-2012|Clause 8.4.2.23.3}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="11" maxLength="11"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="CCAReport" access="readOnly" version="2.8">
+        <description>
+          The clear channel assessment (CCA) report in the format specified in
+          {{bibref|802.11-2012|Clause 8.4.2.24.3}}.
+
+          When read, the value of this parameter MUST correspond to
+          {{param|CCARequest}}. How this is achieved is a local matter to the
+          CPE.
+
+          If this parameter is read before a CCARequest has been issued, then
+          its value is {{empty}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="12" maxLength="12"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="RPIHistogramRequest" access="readWrite" version="2.8">
+        <description>
+          A request for a received power indicator (RPI) histogram in the
+          format specified in {{bibref|802.11-2012|Clause 8.4.2.23.4}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="11" maxLength="11"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="RPIHistogramReport" access="readOnly" version="2.8">
+        <description>
+          Received power indicator (RPI) histogram report in the format
+          specified in {{bibref|802.11-2012|Clause 8.4.2.24.4}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="19" maxLength="19"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="FragmentationThreshold" access="readWrite"
+          version="2.8">
+        <description>
+          This specifies the current maximum size, in {{units}}, of the MPDU
+          that can be delivered to the PHY. This parameter is based on
+          ''dot11FragmentationThreshold'' from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="octets"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RTSThreshold" access="readWrite" version="2.8">
+        <description>
+          This indicates the number of {{units}} in an MPDU, below which an
+          RTS/CTS handshake is not performed. This parameter is based on
+          ''dot11RTSThreshold'' from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="octets"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LongRetryLimit" access="readWrite" version="2.8">
+        <description>
+          This indicates the maximum number of transmission attempts of a
+          frame, the length of which is greater than {{param|RTSThreshold}},
+          that will be made before a failure condition is indicated. This
+          parameter is based on ''dot11LongRetryLimit'' from
+          {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BeaconPeriod" access="readWrite" version="2.8">
+        <description>
+          Time interval between transmitting beacons (expressed in {{units}}).
+          This parameter is based on ''dot11BeaconPeriod'' from
+          {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DTIMPeriod" access="readWrite" version="2.8">
+        <description>
+          This specifies the number of beacon intervals (measured in {{units}})
+          that elapse between transmission of Beacon frames containing a TIM
+          element whose DTIM Count field is 0. This parameter is based on
+          ''dot11DTIMPeriod'' from {{bibref|802.11-2020}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="ms"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketAggregationEnable" access="readWrite"
+          version="2.8">
+        <description>
+          This determines whether or not packet aggregation (commonly called
+          "frame aggregation") is enabled. This applies only to 802.11n.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreambleType" access="readWrite" version="2.8">
+        <description>
+          The type of preamble. Longer preambles (more overhead) are needed by
+          802.11g to coexist with legacy systems 802.11 and 802.11b.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="short"/>
+            <enumeration value="long"/>
+            <enumeration value="auto"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BasicDataTransmitRates" access="readWrite"
+          version="2.8">
+        <description>
+          {{list}} The set of data rates, in ''Mbps'', that have to be
+          supported by all stations that desire to join this BSS. The stations
+          have to be able to receive and transmit at each of the data rates
+          listed in {{param}}. For example, a value of "1,2", indicates that
+          stations support 1 Mbps and 2 Mbps. Most control packets use a data
+          rate in {{param}}.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedDataTransmitRates" access="readOnly"
+          version="2.8">
+        <description>
+          {{list}} Maximum radio data transmit rates in ''Mbps'' for unicast
+          frames (a superset of {{param|BasicDataTransmitRates}}). Given the
+          value of {{param|BasicDataTransmitRates}} from the example above,
+          {{param}} might be "1,2,5.5,11", indicating that unicast frames can
+          additionally be transmitted at 5.5 Mbps and 11 Mbps.
+
+          {{param}} indicates equipment capability. This radio is capable of
+          supporting these data rates.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperationalDataTransmitRates" access="readWrite"
+          version="2.8">
+        <description>
+          {{list}} Data transmit rates in ''Mbps'' for unicast frames at which
+          the radio will permit operation with any associated station (a subset
+          of {{param|SupportedDataTransmitRates}}). Given the values of
+          {{param|BasicDataTransmitRates}} and
+          {{param|SupportedDataTransmitRates}} from the examples above,
+          {{param}} might be "1,2,5.5", indicating that the radio will only
+          permit operation at 1 Mbps, 2 Mbps and 5.5 Mbps, even though it could
+          theoretically operate at 11 Mbps.
+
+          This radio is limited to allowing operation only at these data rates.
+          Note: Setting {{param}} can't increase the set of possible data rates
+          but could narrow them.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EnableRRM" access="readWrite" version="2.14">
+        <description>
+          Enables or disables 802.11k {{bibref|802.11k}} Radio Resource
+          Management (RRM).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManagementPacketRate" access="readWrite" version="2.15">
+        <description>
+          The rate of Wi-Fi management frames (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.Radio.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Throughput statistics for this interface. Packet counters here count
+        802.11 WiFi frames. See {{bibref|TR-181i2|Appendix III}} for further
+        details. The CPE MUST reset the interface's Stats parameters (unless
+        otherwise stated in individual object or parameter descriptions) either
+        when the interface becomes operationally down due to a previous
+        administrative down (i.e. the interface's {{param|#.Status}} parameter
+        transitions to a down state after the interface is disabled) or when
+        the interface becomes administratively up (i.e. the interface's
+        {{param|#.Enable}} parameter transitions from {{false}} to {{true}}).
+        Administrative and operational interface status is discussed in
+        {{bibref|TR-181i2|Section 4.2.2}}.
+      </description>
+
+      <parameter name="CtsReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of Request To Send (RTS) control frames that
+          received a Clear To Send (CTS) response.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NoCtsReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of Request To Send (RTS) control frames that did not
+          receive a Clear To Send (CTS) response.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FrameHeaderError" access="readOnly" version="2.14">
+        <description>
+          The total number of received packets for which the PHY was able to
+          correlate the preamble but not the header.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="GoodPLCPReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of received frames with a good Physical Layer
+          Convergence Protocol (PLCP) header.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DPacketOtherMACReceived" access="readOnly"
+          version="2.14">
+        <description>
+          The total number of Wi-Fi data packets received from other Basic
+          Service Sets (BSSs), with a good Frame Check Sequence (FCS) and not
+          matching the receiver address, meaning that that the frame is
+          received at the MAC layer but is addressed to a different MAC.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MPacketOtherMACReceived" access="readOnly"
+          version="2.14">
+        <description>
+          The total number of Wi-Fi management packets received from other
+          Basic Service Sets (BSSs), with a good Frame Check Sequence (FCS) and
+          not matching the receiver address, meaning that that the frame is
+          received at the MAC layer but is addressed to a different MAC.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CPacketOtherMACReceived" access="readOnly"
+          version="2.14">
+        <description>
+          The total number of Wi-Fi control packets received from other Basic
+          Service Sets (BSSs), with a good Frame Check Sequence (FCS) and not
+          matching the receiver address, meaning that that the frame is
+          received at the MAC layer but is addressed to a different MAC.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CtsOtherMACReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of received Clear to Send (CTS) packets not
+          addressed to the MAC address of this receiver.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RtsOtherMACReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of received Request to Send (RTS) frames not
+          addressed to the MAC address of this receiver.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PLCPErrorCount" access="readOnly" version="2.7">
+        <description>
+          The number of packets that were received with a detected Physical
+          Layer Convergence Protocol (PLCP) header error.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FCSErrorCount" access="readOnly" version="2.7">
+        <description>
+          The number of packets that were received with a detected FCS error.
+          This parameter is based on dot11FCSErrorCount from
+          {{bibref|802.11-2012|Annex C}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InvalidMACCount" access="readOnly" version="2.7">
+        <description>
+          The number of packets that were received with a detected invalid MAC
+          header error.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsOtherReceived" access="readOnly" version="2.7">
+        <description>
+          The number of packets that were received, but which were destined for
+          a MAC address that is not associated with this interface.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Noise" access="readOnly" version="2.8">
+        <description>
+          An indicator of average noise strength received at this radio,
+          measured in {{units}}. This measurement of non-IEEE 802.11 noise
+          power is made by sampling the channel when virtual carrier sense
+          indicates idle and this radio is neither transmitting nor receiving a
+          frame.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Noise}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalChannelChangeCount" access="readOnly"
+          version="2.12">
+        <description>
+          The total number of times that the {{param|#.Channel}} has changed
+          since the {{object|#}} entered its current operating state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ManualChannelChangeCount" access="readOnly"
+          version="2.12">
+        <description>
+          The number of times that the {{param|#.Channel}} has changed due to
+          manual channel selection since the {{object|#}} entered its current
+          operating state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoStartupChannelChangeCount" access="readOnly"
+          version="2.12">
+        <description>
+          The number of times that the {{param|#.Channel}} has changed due to
+          automatic channel selection procedure launched at radio startup since
+          the {{object|#}} entered its current operating state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoUserChannelChangeCount" access="readOnly"
+          version="2.12">
+        <description>
+          The number of times that the {{param|#.Channel}} has changed due to
+          automatic channel selection procedure triggered by the user (e.g. via
+          a GUI) since the {{object|#}} entered its current operating state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoRefreshChannelChangeCount" access="readOnly"
+          version="2.12">
+        <description>
+          The number of times that the {{param|#.Channel}} has changed due to
+          automatic channel selection procedure triggered by the
+          {{param|#.AutoChannelRefreshPeriod}} timer since the {{object|#}}
+          entered its current operating state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoDynamicChannelChangeCount" access="readOnly"
+          version="2.12">
+        <description>
+          The number of times that the {{param|#.Channel}} has changed due to
+          automatic channel selection procedure dynamically triggered to adjust
+          to environmental interference since the {{object|#}} entered its
+          current operating state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoDFSChannelChangeCount" access="readOnly"
+          version="2.12">
+        <description>
+          The number of times that the {{param|#.Channel}} has changed due to
+          automatic channel selection procedure triggered by DFS
+          {{bibref|ETSIBRAN}} since the {{object|#}} entered its current
+          operating state.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.SSID.{i}." access="readWrite"
+        numEntriesParameter="SSIDNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        WiFi SSID table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}), where table entries model the MAC
+        layer. A WiFi SSID entry is typically stacked on top of a
+        {{object|#.Radio}} object.
+
+        WiFi SSID is also a multiplexing layer, i.e. more than one {{object}}
+        can be stacked above a single {{object|#.Radio}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="BSSID"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the SSID entry.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.Enabled}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the SSID entry (see
+          {{bibref|TR-181i2|Section 4.2.2}}). {{enum}}
+
+          When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be
+          {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a
+          fault condition on the interface).
+
+          When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD
+          change to {{enum|Up}} if and only if the interface is able to
+          transmit and receive network traffic; it SHOULD change to
+          {{enum|Dormant}} if and only if the interface is operable but is
+          waiting for external actions before it can transmit and receive
+          network traffic (and subsequently change to {{enum|Up}} if still
+          operable when the expected actions have completed); it SHOULD change
+          to {{enum|LowerLayerDown}} if and only if the interface is prevented
+          from entering the {{enum|Up}} state because one or more of the
+          interfaces beneath it is down; it SHOULD remain in the {{enum|Error}}
+          state if there is an error or other fault condition detected on the
+          interface; it SHOULD remain in the {{enum|NotPresent}} state if the
+          interface has missing (typically hardware) components; it SHOULD
+          change to {{enum|Unknown}} if the state of the interface can not be
+          determined for some reason.
+
+          This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Down"/>
+            <enumeration value="Unknown"/>
+            <enumeration value="Dormant"/>
+            <enumeration value="NotPresent"/>
+            <enumeration value="LowerLayerDown"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Down"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name of the SSID entry as assigned by the CPE.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastChange" access="readOnly" activeNotify="canDeny">
+        <description>
+          The accumulated time in {{units}} since the SSID entered its current
+          operational state.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.LastChange}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerLayers" access="readWrite">
+        <description>
+          {{list}} {{reference|an interface object that is stacked immediately
+          below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="1024"/>
+          </list>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BSSID" access="readOnly">
+        <description>
+          The Basic Service Set ID.
+
+          This is the MAC address of the access point, which can either be
+          local (when this instance models an access point SSID) or remote
+          (when this instance models an end point SSID).
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.BSSID}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC address of this interface.
+
+          If this instance models an access point SSID, {{param}} is the same
+          as {{param|BSSID}}.
+
+          Note: This is not necessarily the same as the Ethernet header source
+          or destination MAC address, which is associated with the IP interface
+          and is modeled via the {{param|##.Ethernet.Link.{i}.MACAddress}}
+          parameter.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSID" access="readWrite">
+        <description>
+          The current service set identifier in use by the connection. The SSID
+          is an identifier that is attached to packets sent over the wireless
+          LAN that functions as an ID for joining a particular radio network
+          (BSS).
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.SSID}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Upstream" access="readOnly" version="2.12">
+        <description>
+          Indicates whether the interface points towards the Internet
+          ({{true}}) or towards End Devices ({{false}}).
+
+          For example:
+
+          * For an Internet Gateway Device, {{param}} will be {{true}} for all
+            WAN interfaces and {{false}} for all LAN interfaces.
+
+          * For a standalone WiFi Access Point that is connected via Ethernet
+            to an Internet Gateway Device, {{param}} will be {{true}} for the
+            Ethernet interface and {{false}} for the WiFi Radio interface.
+
+          * For an End Device, {{param}} will be {{true}} for all interfaces.
+
+          See {{param|#.Radio.{i}.Upstream}} for details of how the two
+          ''Upstream'' parameters interact.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ATFEnable" access="readWrite" version="2.14">
+        <description>
+          Enables or disables Air Time Fairness (ATF).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FlushATFTable" access="readWrite" version="2.14">
+        <description>
+          After this parameter is set to true, the ATF configuration of the
+          interface will be reset.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SetATF" access="readWrite" version="2.14">
+        <description>
+          Configures the ATF setting for all associated devices on an
+          individual SSID. Expressed as {{units}} of airtime, such that no
+          station should exceed this percentage.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="percent"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.SSID.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Throughput statistics for this interface. Packet counters here count
+        802.11 WiFi frames. See {{bibref|TR-181i2|Appendix III}} for further
+        details. The CPE MUST reset the interface's Stats parameters (unless
+        otherwise stated in individual object or parameter descriptions) either
+        when the interface becomes operationally down due to a previous
+        administrative down (i.e. the interface's {{param|#.Status}} parameter
+        transitions to a down state after the interface is disabled) or when
+        the interface becomes administratively up (i.e. the interface's
+        {{param|#.Enable}} parameter transitions from {{false}} to {{true}}).
+        Administrative and operational interface status is discussed in
+        {{bibref|TR-181i2|Section 4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes transmitted out of the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of bytes received on the interface, including
+          framing characters.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of packets transmitted out of the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received on the interface.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors. These can be due to the number of retransmissions
+          exceeding the retry limit, or from other causes.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransCount" access="readOnly" version="2.7">
+        <description>
+          The total number of transmitted packets which were retransmissions.
+          Two retransmissions of the same packet results in this counter
+          incrementing by two.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FailedRetransCount" access="readOnly" version="2.7">
+        <description>
+          The number of packets that were not transmitted successfully due to
+          the number of retransmission attempts exceeding an 802.11 retry
+          limit. This parameter is based on dot11FailedCount from
+          {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryCount" access="readOnly" version="2.7">
+        <description>
+          The number of packets that were successfully transmitted after one or
+          more retransmissions. This parameter is based on dot11RetryCount from
+          {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MultipleRetryCount" access="readOnly" version="2.7">
+        <description>
+          The number of packets that were successfully transmitted after more
+          than one retransmission. This parameter is based on
+          dot11MultipleRetryCount from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ACKFailureCount" access="readOnly" version="2.7">
+        <description>
+          The number of expected ACKs that were never received. This parameter
+          is based on dot11ACKFailureCount from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AggregatedPacketCount" access="readOnly" version="2.7">
+        <description>
+          The number of aggregated packets that were transmitted. This applies
+          only to 802.11n and 802.11ac.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets requested for transmission which were not
+          addressed to a multicast or broadcast address at this layer,
+          including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnicastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were not addressed to a multicast or broadcast
+          address at this layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of outbound packets which were chosen to be
+          discarded even though no errors had been detected to prevent their
+          being transmitted. One possible reason for discarding such a packet
+          could be to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of inbound packets which were chosen to be discarded
+          even though no errors had been detected to prevent their being
+          delivered. One possible reason for discarding such a packet could be
+          to free up buffer space.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a multicast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MulticastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a multicast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsSent" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets that higher-level protocols requested for
+          transmission and which were addressed to a broadcast address at this
+          layer, including those that were discarded or not sent.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BroadcastPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of received packets, delivered by this layer to a
+          higher layer, which were addressed to a broadcast address at this
+          layer.
+        </description>
+        <syntax>
+          <unsignedLong/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnknownProtoPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The total number of packets received via the interface which were
+          discarded because of an unknown or unsupported protocol.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSentBufOverflow" access="readOnly"
+          version="2.14">
+        <description>
+          The total number of discarded packets during transmission caused by
+          transmit buffer overflow.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSentNoAssoc" access="readOnly"
+          version="2.14">
+        <description>
+          The total number of discarded packets due to the station not being
+          associated.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FragSent" access="readOnly" version="2.14">
+        <description>
+          The total number of frame-fragments transmitted out of the interface.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SentNoAck" access="readOnly" version="2.14">
+        <description>
+          The total number of transmitted data packets that did not receive an
+          ACK when expected.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DupReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of received packets whose Sequence Control field
+          indicates it is a duplicate.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TooLongReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of received packets longer than the maximum allowed
+          packet length.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TooShortReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of received packets that did not contain enough
+          bytes for the packet type.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AckUcastReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of unicast ACKs received, with good Frame Check
+          Sequence (FCS).
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}." access="readWrite"
+        numEntriesParameter="AccessPointNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.0">
+      <description>
+        This object models an 802.11 connection from the perspective of a
+        wireless access point. Each {{object}} entry is associated with a
+        particular {{object|#.SSID}} interface instance via the
+        {{param|SSIDReference}} parameter.
+
+        For enabled table entries, if {{param|SSIDReference}} is not a valid
+        reference then the table entry is inoperable and the CPE MUST set
+        {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="SSIDReference"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this access point.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this access point. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSIDReference" access="readWrite">
+        <description>
+          {{reference}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.SSID." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSIDAdvertisementEnabled" access="readWrite">
+        <description>
+          Indicates whether or not beacons include the SSID name.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryLimit" access="readWrite" status="deleted">
+        <description>
+          The maximum number of retransmission for a packet. This corresponds
+          to IEEE 802.11 parameter ''dot11ShortRetryLimit''.
+
+          {{deprecated|2.11|because it is really a {{object|#.Radio}}
+          attribute. Use {{param|#.Radio.{i}.RetryLimit}}}}
+
+          {{obsoleted|2.14}}
+
+          {{deleted|2.15}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="7"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="WMMCapability" access="readOnly">
+        <description>
+          Indicates whether this access point supports WiFi Multimedia (WMM)
+          Access Categories (AC) {{bibref|WMM}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UAPSDCapability" access="readOnly">
+        <description>
+          Indicates whether this access point supports WMM Unscheduled
+          Automatic Power Save Delivery (U-APSD).
+
+          Note: U-APSD support implies WMM support.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="WMMEnable" access="readWrite">
+        <description>
+          Whether WMM support is currently enabled. When enabled, this is
+          indicated in beacon frames.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UAPSDEnable" access="readWrite">
+        <description>
+          Whether U-APSD support is currently enabled. When enabled, this is
+          indicated in beacon frames.
+
+          Note: U-APSD can only be enabled if WMM is also enabled.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedDeviceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxAssociatedDevices" access="readWrite"
+          status="deleted" version="2.4">
+        <description>
+          The maximum number of devices that can simultaneously be connected to
+          the access point.
+
+          A value of 0 means that there is no specific limit.
+
+          {{deprecated|2.13|in favor of {{param|MaxAllowedAssociations}}}}
+
+          {{obsoleted|2.14-2.15}}
+
+          {{deleted|2.16}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IsolationEnable" access="readWrite" version="2.4">
+        <description>
+          Enables or disables device isolation.
+
+          A value of {{true}} means that the devices connected to the Access
+          Point are isolated from all other devices within the home network (as
+          is typically the case for a Wireless Hotspot).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MACAddressControlEnabled" access="readWrite"
+          version="2.9">
+        <description>
+          Indicates whether or not MAC Address Control is enabled on this
+          {{object|#}}. MAC Address Control limits client devices to those
+          whose hardware addresses match the {{param|AllowedMACAddress}} list.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowedMACAddress" access="readWrite" version="2.9">
+        <description>
+          Hardware addresses of client devices that are allowed to associate
+          with this {{object|#}} if {{param|MACAddressControlEnabled}} is
+          {{true}}.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxAllowedAssociations" access="readWrite"
+          version="2.12">
+        <description>
+          Maximum number of associated devices allowed for this SSID. If the
+          number is reached new device connections to this access point will be
+          rejected.
+
+          If the number is changed to a value less than the actual number of
+          associated devices, new device connections will be rejected until the
+          number of devices is below this number. It is not expected that any
+          connections are dropped.
+
+          If the parameter {{param|#.Radio.{i}.MaxSupportedAssociations}}
+          exists, the value MUST be less than or equal to the maximum number
+          specified in {{param|#.Radio.{i}.MaxSupportedAssociations}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CpeOperationMode" access="readWrite" version="2.14">
+        <description>
+          Reports information about the CPE operation mode (router or
+          bridge/range extender).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Router">
+              <description>
+                Indicates indicates operation as a router.
+              </description>
+            </enumeration>
+            <enumeration value="Bridge/Extender">
+              <description>
+                Indicates operation as a range extender or acess point in
+                bridge mode.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Router"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.Security." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object contains security related parameters that apply to a CPE
+        acting as an Access Point {{bibref|802.11-2007}}.
+      </description>
+
+      <parameter name="ModesSupported" access="readOnly">
+        <description>
+          {{list}} Indicates which security modes this {{object|#}} instance is
+          capable of supporting.
+
+          The {{enum|WPA3-Personal}} value is the same as WPA3-SAE.
+
+          The {{enum|WPA3-Personal-Transition}} value is the same as
+          WPA2-PSK-WPA3-SAE.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="WEP-64"/>
+            <enumeration value="WEP-128"/>
+            <enumeration value="WPA-Personal"/>
+            <enumeration value="WPA2-Personal"/>
+            <enumeration value="WPA3-Personal"/>
+            <enumeration value="WPA-WPA2-Personal"/>
+            <enumeration value="WPA3-Personal-Transition"/>
+            <enumeration value="WPA-Enterprise"/>
+            <enumeration value="WPA2-Enterprise"/>
+            <enumeration value="WPA3-Enterprise"/>
+            <enumeration value="WPA-WPA2-Enterprise"/>
+            <enumeration value="OWE" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ModeEnabled" access="readWrite">
+        <description>
+          Indicates which security mode is enabled.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="ModesSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EncryptionMode" access="readWrite" version="2.14">
+        <description>
+          The type of encryption in use.
+
+          When {{param|ModeEnabled}} is one of
+          {{enum|WPA3-Personal|ModesSupported}},
+          {{enum|WPA3-Personal-Transition|ModesSupported}}, or
+          {{enum|WPA3-Enterprise|ModesSupported}}, {{enum|TKIP}} is not valid,
+          and should not be in the list.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="TKIP"/>
+            <enumeration value="AES"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="WEPKey" access="readWrite">
+        <description>
+          A WEP key expressed as a hexadecimal string.
+
+          {{param}} is used only if {{param|ModeEnabled}} is set to
+          {{enum|WEP-64|ModeEnabled}} or {{enum|WEP-128|ModeEnabled}}.
+
+          A 5 byte {{param}} corresponds to security mode
+          {{enum|WEP-64|ModeEnabled}} and a 13 byte {{param}} corresponds to
+          security mode {{enum|WEP-128|ModeEnabled}}.
+        </description>
+        <syntax secured="true">
+          <hexBinary>
+            <size minLength="5" maxLength="5"/>
+            <size minLength="13" maxLength="13"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreSharedKey" access="readWrite">
+        <description>
+          A literal PreSharedKey (PSK) expressed as a hexadecimal string.
+
+          {{param}} is only used if {{param|ModeEnabled}} is set to
+          {{enum|WPA-Personal|ModeEnabled}} or
+          {{enum|WPA2-Personal|ModeEnabled}} or
+          {{enum|WPA-WPA2-Personal|ModeEnabled}}.
+
+          If {{param|KeyPassphrase}} is written, then {{param}} is immediately
+          generated. The Controller SHOULD NOT set both the
+          {{param|KeyPassphrase}} and the {{param}} directly (the result of
+          doing this is undefined).
+        </description>
+        <syntax secured="true">
+          <hexBinary>
+            <size maxLength="32"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeyPassphrase" access="readWrite">
+        <description>
+          A passphrase from which the {{param|PreSharedKey}} is to be
+          generated, for {{enum|WPA-Personal|ModeEnabled}} or
+          {{enum|WPA2-Personal|ModeEnabled}} or
+          {{enum|WPA-WPA2-Personal|ModeEnabled}} security modes.
+
+          If {{param}} is written, then {{param|PreSharedKey}} for WPA2 is
+          immediately generated. The Controller SHOULD NOT set both the
+          {{param}} and the {{param|PreSharedKey}} directly (the result of
+          doing this is undefined). The key is generated as specified by WPA,
+          which uses PBKDF2 from PKCS #5: Password-based Cryptography
+          Specification Version 2.0 ({{bibref|RFC2898}}).
+        </description>
+        <syntax secured="true">
+          <string>
+            <size minLength="8" maxLength="63"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RekeyingInterval" access="readWrite">
+        <description>
+          The interval (expressed in {{units}}) in which the keys are
+          re-generated.
+
+          This is applicable to WPA, WPA2 and Mixed (WPA-WPA2) modes in
+          Personal or Enterprise mode (i.e. when {{param|ModeEnabled}} is set
+          to a value other than {{enum|None|ModeEnabled}} or
+          {{enum|WEP-64|ModeEnabled}} or {{enum|WEP-128|ModeEnabled}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="3600"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SAEPassphrase" access="readWrite" version="2.13">
+        <description>
+          A passphrase for {{enum|WPA3-Personal|ModeEnabled}} or
+          {{enum|WPA3-Personal-Transition|ModeEnabled}} security modes.
+
+          NOTE: this parameter is for WPA3. WPA2 {{param|PreSharedKey}} is
+          generated from {{param|KeyPassphrase}}.
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RadiusServerIPAddr" access="readWrite">
+        <description>
+          The IP Address of the RADIUS server used for WLAN security. {{param}}
+          is only applicable when {{param|ModeEnabled}} is an Enterprise type
+          (i.e. {{enum|WPA-Enterprise|ModeEnabled}},
+          {{enum|WPA2-Enterprise|ModeEnabled}},
+          {{enum|WPA3-Enterprise|ModeEnabled}}, or
+          {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecondaryRadiusServerIPAddr" access="readWrite"
+          version="2.5">
+        <description>
+          The IP Address of a secondary RADIUS server used for WLAN security.
+          {{param}} is only applicable when {{param|ModeEnabled}} is an
+          Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}},
+          {{enum|WPA2-Enterprise|ModeEnabled}},
+          {{enum|WPA3-Enterprise|ModeEnabled}}, or
+          {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).
+
+          The client can forward requests to the secondary server in the event
+          that the primary server is down or unreachable, or after a number of
+          tries to the primary server fail, or in a round-robin fashion
+          {{bibref|RFC2865}}.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RadiusServerPort" access="readWrite">
+        <description>
+          The port number of the RADIUS server used for WLAN security.
+          {{param}} is only applicable when {{param|ModeEnabled}} is an
+          Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}},
+          {{enum|WPA2-Enterprise|ModeEnabled}},
+          {{enum|WPA3-Enterprise|ModeEnabled}}, or
+          {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1812"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecondaryRadiusServerPort" access="readWrite"
+          version="2.5">
+        <description>
+          The port number of the secondary RADIUS server used for WLAN
+          security. {{param}} is only applicable when {{param|ModeEnabled}} is
+          an Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}},
+          {{enum|WPA2-Enterprise|ModeEnabled}},
+          {{enum|WPA3-Enterprise|ModeEnabled}}, or
+          {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).
+
+          If this parameter is not implemented, the secondary RADIUS server
+          will use the same port number as the primary RADIUS server.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1812"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RadiusSecret" access="readWrite">
+        <description>
+          The secret used for handshaking with the RADIUS server
+          {{bibref|RFC2865}}.
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecondaryRadiusSecret" access="readWrite" version="2.5">
+        <description>
+          The secret used for handshaking with the secondary RADIUS server
+          {{bibref|RFC2865}}.
+
+          If this parameter is not implemented, the secondary RADIUS server
+          will use the same secret as the primary RADIUS server.
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MFPConfig" access="readWrite" version="2.11">
+        <description>
+          Management Frame Protection configuration applicable when
+          {{param|ModeEnabled}} is set to {{enum|WPA2-Personal|ModeEnabled}},
+          {{enum|WPA2-Enterprise|ModeEnabled}},
+          {{enum|WPA3-Personal|ModeEnabled}}, or
+          {{enum|WPA3-Enterprise|ModeEnabled}}. When in WPA3 modes, {{param}}
+          MUST be set to {{enum|Required}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Optional"/>
+            <enumeration value="Required"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SPPAMSDU" access="readWrite" version="2.16">
+        <description>
+          Signaling and Payload Protected for A-MSDU frames.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                This AP does not advertise supporting SPP A-MSDU
+              </description>
+            </enumeration>
+            <enumeration value="Capable">
+              <description>
+                This AP advertises supporting SPP A-MSDU
+              </description>
+            </enumeration>
+            <enumeration value="Required">
+              <description>
+                This AP advertises supporting SPP A-MSDU and refuses non-SPP
+                A-MSDU frames
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="TransitionDisableIndication" access="readWrite"
+          version="2.16">
+        <description>
+          Sets the transition disable indication. When this parameter is
+          enabled with {{param|ModeEnabled}} set to a transition mode, such as
+          {{enum|WPA3-Personal-Transition|ModeEnabled}}, stations connected to
+          the AP are not allowed to transition between the security modes
+          allowed by the transition mode. Stations capable of the more secure
+          security mode allowed by the transition, as defined in
+          {{bibref|WPA3v3.0}}, will always communicate to the AP using it.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.WPS." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object contains parameters related to Wi-Fi Protected Setup for
+        this access point (as specified in {{bibref|WPSv1.0}} or {{bibref|WPS
+        2.0}}).
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables WPS functionality for this access point.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConfigMethodsSupported" access="readOnly">
+        <description>
+          WPS configuration methods supported by the device. {{enum}}
+
+          This parameter corresponds directly to the "Config Methods" attribute
+          of {{bibref|WPS 2.0}}.
+
+          The {{enum|USBFlashDrive}} and {{enum|Ethernet}} are only applicable
+          in WPS 1.0 and are deprecated in WPS 2.x. The
+          {{enum|PhysicalPushButton}}, {{enum|VirtualPushButton}},
+          {{enum|PhysicalDisplay}} and {{enum|VirtualDisplay}} are applicable
+          to WPS 2.x only.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="USBFlashDrive"/>
+            <enumeration value="Ethernet"/>
+            <enumeration value="Label"/>
+            <enumeration value="Display"/>
+            <enumeration value="ExternalNFCToken"/>
+            <enumeration value="IntegratedNFCToken"/>
+            <enumeration value="NFCInterface"/>
+            <enumeration value="PushButton"/>
+            <enumeration value="PIN"/>
+            <enumeration value="PhysicalPushButton"/>
+            <enumeration value="PhysicalDisplay"/>
+            <enumeration value="VirtualPushButton"/>
+            <enumeration value="VirtualDisplay"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConfigMethodsEnabled" access="readWrite">
+        <description>
+          {{list}} Indicates WPS configuration methods enabled on the device.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam="ConfigMethodsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly" version="2.11">
+        <description>
+          Indicates the current status of WPS. If the device goes to
+          {{enum|SetupLocked}} the WPS needs to be disabled and re-enabled to
+          come out of state.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Error"/>
+            <enumeration value="Unconfigured"/>
+            <enumeration value="Configured"/>
+            <enumeration value="SetupLocked"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly" version="2.11">
+        <description>
+          The Wi-Fi Simple Configuration version supported by the device, a
+          string of the form ''m.n'' where ''m'' is the major version and ''n''
+          is the minor version.
+
+          For example, a value of ''1.0'' denotes WSC 1.0 and a value of
+          ''2.0'' denotes WSC 2.0.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PIN" access="readWrite" version="2.11">
+        <description>
+          Represents the Device PIN used for PIN based pairing between WPS
+          peers. This PIN is either a four digit number or an eight digit
+          number.
+        </description>
+        <syntax secured="true">
+          <string>
+            <size maxLength="8"/>
+            <pattern value="\d{4}|\d{8}"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}."
+        access="readOnly" numEntriesParameter="AssociatedDeviceNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        A table of the devices currently associated with the access point.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="MACAddress"/>
+      </uniqueKey>
+
+      <parameter name="MACAddress" access="readOnly">
+        <description>
+          The MAC address of an associated device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MACAddress}}.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readOnly" version="2.14">
+        <description>
+          Associated device type (Laptop, iPhone, Android, etc.).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SetStaATF" access="readWrite" version="2.14">
+        <description>
+          Configures the Air Time Fairness (ATF) setting of this individual
+          associated device. Expressed as {{units}} of airtime, such that this
+          associated device should not exceed this percentage. Setting this
+          value overrides {{param|##.SSID.{i}.SetATF}} for this associated
+          device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="percent"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingStandard" access="readOnly" version="2.10">
+        <description>
+          The operating standard that this associated device is connected with.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="a">
+              <description>{{bibref|802.11a-1999}}</description>
+            </enumeration>
+            <enumeration value="b">
+              <description>{{bibref|802.11b-1999}}</description>
+            </enumeration>
+            <enumeration value="g">
+              <description>{{bibref|802.11g-2003}}</description>
+            </enumeration>
+            <enumeration value="n">
+              <description>{{bibref|802.11n-2009}}</description>
+            </enumeration>
+            <enumeration value="ac">
+              <description>{{bibref|802.11ac-2013}}</description>
+            </enumeration>
+            <enumeration value="ax">
+              <description>{{bibref|802.11ax}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AuthenticationState" access="readOnly">
+        <description>
+          Whether an associated device has authenticated ({{true}}) or not
+          ({{false}}).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastDataDownlinkRate" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission from the access point to the associated device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.LastDataDownlinkRate}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000"/>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastDataUplinkRate" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission from the associated device to the access point.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.LastDataUplinkRate}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000"/>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociationTime" access="readOnly" version="2.12">
+        <description>
+          Date and time in UTC when the device was associated
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.LastConnectTime}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength of the uplink from the
+          associated device to the access point, measured in {{units}}, as an
+          average of the last 100 packets received from the device.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.SignalStrength}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Noise" access="readOnly" version="2.12">
+        <description>
+          An indicator of radio noise on the uplink from the associated device
+          to the access point, measured in {{units}}, as an average of the last
+          100 packets received from the device (see ANPI definition in
+          {{bibref|802.11-2012|Clause 10.11.9.4}})
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.Noise}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Retransmissions" access="readOnly">
+        <description>
+          The number of {{units}} that had to be re-transmitted, from the last
+          100 packets sent to the associated device. Multiple re-transmissions
+          of the same packet count as one.
+
+          If the instance of this {{object}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.RetransCount}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="packets"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Active" access="readOnly">
+        <description>
+          Whether or not this node is currently present in the WiFi AccessPoint
+          network.
+
+          The ability to list inactive nodes is OPTIONAL. If the CPE includes
+          inactive nodes in this table, {{param}} MUST be set to {{false}} for
+          each inactive node. The length of time an inactive node remains
+          listed in this table is a local matter to the CPE.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        These count bytes or packets sent to, or received from, this Associated
+        Device, which is a WiFi station associated to this access point. Packet
+        counters here count 802.11 WiFi frames.
+
+        The CPE MUST reset these {{object}} parameters (unless otherwise stated
+        in individual object or parameter descriptions) either when the
+        {{param|##.Status}} of the parent {{object|##}} object transitions from
+        {{enum|Disabled|##.Status}} to {{enum|Enabled|##.Status}}, or when it
+        transitions from {{enum|Enabled|##.Status}} to
+        {{enum|Disabled|##.Status}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of bytes transmitted to the Associated Device,
+          including framing characters.
+
+          If the instance of this {{object|#}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.BytesSent}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of bytes received from the Associated Device,
+          including framing characters.
+
+          If the instance of this {{object|#}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.BytesReceived}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of packets transmitted to the Associated Device.
+
+          If the instance of this {{object|#}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.PacketsSent}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of packets received from the Associated Device.
+
+          If the instance of this {{object|#}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.PacketsReceived}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound packets that could not be transmitted
+          because of errors. These might be due to the number of
+          retransmissions exceeding the retry limit, or from other causes.
+
+          If the instance of this {{object|#}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.ErrorsSent}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly" version="2.14">
+        <description>
+          The total number of inbound packets that contained errors preventing
+          them from being delivered to a higher-layer protocol.
+
+          If the instance of this {{object|#}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.ErrorsReceived}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransCount" access="readOnly">
+        <description>
+          The total number of transmitted packets which were retransmissions.
+          Two retransmissions of the same packet results in this counter
+          incrementing by two.
+
+          If the instance of this {{object|#}} is the same as
+          {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}},
+          then this parameter is the same as
+          {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.RetransCount}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FailedRetransCount" access="readOnly">
+        <description>
+          The number of packets that were not transmitted successfully due to
+          the number of retransmission attempts exceeding an 802.11 retry
+          limit. This parameter is based on ''dot11FailedCount'' from
+          {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryCount" access="readOnly">
+        <description>
+          The number of packets that were successfully transmitted after one or
+          more retransmissions. This parameter is based on ''dot11RetryCount''
+          from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MultipleRetryCount" access="readOnly">
+        <description>
+          The number of packets that were successfully transmitted after more
+          than one retransmission. This parameter is based on
+          ''dot11MultipleRetryCount'' from {{bibref|802.11-2012}}.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.AC.{i}." access="readOnly"
+        minEntries="4" maxEntries="4" version="2.8">
+      <description>
+        This object contains parameters related to WiFi QoS for different
+        802.11e access categories (priorities). Access categories are: BE, BK,
+        VI, and VO. These parameters can help control and monitor 802.11e
+        Enhanced distributed channel access (EDCA). The size of this table is
+        fixed, with four entries which are identified by the
+        {{param|AccessCategory}} parameter as follows:
+
+        * BE (Best Effort)
+
+        * BK (Background)
+
+        * VI (Video)
+
+        * VO (Voice)
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="AccessCategory"/>
+      </uniqueKey>
+
+      <parameter name="AccessCategory" access="readOnly">
+        <description>
+          This identifies the access category.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="BE"/>
+            <enumeration value="BK"/>
+            <enumeration value="VI"/>
+            <enumeration value="VO"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AIFSN" access="readWrite" status="deprecated">
+        <description>
+          Arbitration Inter Frame Spacing (Number). This is the number of time
+          slots in the arbitration interframe space.
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="2" maxInclusive="15"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ECWMin" access="readWrite" status="deprecated">
+        <description>
+          Exponent of Contention Window (Minimum). This encodes the values of
+          CWMin as an exponent: CWMin = 2^ECWMin - 1. For example, if ECWMin is
+          8, then CWMin is 2^8 - 1, or 255, (expressed in {{units}}).
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="15"/>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ECWMax" access="readWrite" status="deprecated">
+        <description>
+          Exponent of Contention Window (Maximum). This encodes the values of
+          CWMax as an exponent: CWMax = 2^ECWMax - 1. For example, if ECWMax is
+          8, then CWMax is 2^8 - 1, or 255, (expressed in {{units}}).
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="15"/>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxOpMax" access="readWrite" status="deprecated">
+        <description>
+          Maximum transmit opportunity, in multiples of {{units}}. A TXOP time
+          interval of 0 means it is limited to a single MAC protocol data unit
+          (MPDU).
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="32 microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AckPolicy" access="readWrite">
+        <description>
+          Ack Policy, where False="Do Not Acknowledge" and True="Acknowledge"
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutQLenHistogramIntervals" access="readWrite">
+        <description>
+          {{list}} Definition of the histogram intervals for counting the
+          transmit queue length in packets. Each value indicates the maximum
+          value of the interval. For example, "0,1,4,8," defines the five
+          intervals: 0 packets in queue, 1 packet in queue, 2 to 4 packets in
+          queue, 5 to 8 packets in queue, and 9 or more packets in queue. (No
+          value after the last comma means no upper bound.) If this parameter
+          is set to {{empty}}, no {{param|Stats.OutQLenHistogram}} stats will
+          be collected.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutQLenHistogramSampleInterval" access="readWrite">
+        <description>
+          The time between recording samples of the current transmit queue in
+          {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.AC.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        This object contains statistics for different 802.11e access categories
+        (priorities).
+
+        Packet counters here count 802.11 WiFi frames.
+
+        If there are not separate stats for each access category, (e.g.,
+        802.11e is not used and there is only one queue), then only access
+        category 0 = BE applies (e.g., the statistics for the single queue are
+        in access category 0 = BE).
+
+        The CPE MUST reset the Access Point's Stats parameters (unless
+        otherwise stated in individual object or parameter descriptions) either
+        when the Access Point becomes operationally down due to a previous
+        administrative down (i.e. the Access Point's Status parameter
+        transitions to a Disabled state) or when the Access Point becomes
+        administratively up (i.e. the Access Point's Enable parameter
+        transitions from false to true). Administrative and operational status
+        is discussed in {{bibref|TR-181i2|Section 4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of {{units}} transmitted in this access category,
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received in this access category,
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of {{units}} transmitted in this access category.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received in this access category.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound {{units}} in this access category that
+          could not be transmitted because of errors. These might be due to the
+          number of retransmissions exceeding the retry limit, or from other
+          causes.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly">
+        <description>
+          The total number of inbound {{units}} in this access category that
+          contained errors preventing them from being delivered to a
+          higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly">
+        <description>
+          The total number of outbound {{units}} in this access category which
+          were chosen to be discarded even though no errors had been detected
+          to prevent their being transmitted. One possible reason for
+          discarding such a packet could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly">
+        <description>
+          The total number of inbound {{units}} in this access category which
+          were chosen to be discarded even though no errors had been detected
+          to prevent their being delivered. One possible reason for discarding
+          such a packet could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransCount" access="readOnly">
+        <description>
+          The total number of transmitted {{units}} in this access category
+          which were retransmissions. Two retransmissions of the same packet
+          results in this counter incrementing by two.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutQLenHistogram" access="readOnly">
+        <description>
+          {{list}} Histogram of the total length of the transmit queue of this
+          access category in packets (1 packet, 2 packets, etc.) according to
+          the intervals defined by {{param|#.OutQLenHistogramIntervals}}, with
+          samples taken each {{param|#.OutQLenHistogramSampleInterval}}.
+          Example: "12,5,1,0,2,0,0,1".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.AccessPoint.{i}.Accounting." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.5">
+      <description>
+        This object contains the parameters related to RADIUS accounting
+        functionality for the access point.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables accounting functionality for the access point.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerIPAddr" access="readWrite">
+        <description>
+          The IP Address of the RADIUS accounting server.
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecondaryServerIPAddr" access="readWrite">
+        <description>
+          The IP Address of a secondary RADIUS accounting server.
+
+          The client can forward requests to the secondary server in the event
+          that the primary server is down or unreachable, or after a number of
+          tries to the primary server fail, or in a round-robin fashion.
+          {{bibref|RFC2866}}
+        </description>
+        <syntax>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerPort" access="readWrite">
+        <description>
+          The port number of the RADIUS server used for accounting. The default
+          port is 1813 as defined in {{bibref|RFC2866}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1813"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecondaryServerPort" access="readWrite">
+        <description>
+          The port number of the secondary RADIUS server used for accounting.
+          The default port is 1813 as defined in {{bibref|RFC2866}}.
+
+          If this parameter is not implemented, the secondary RADIUS server
+          will use the same port number as the primary RADIUS server.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1813"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Secret" access="readWrite">
+        <description>
+          The secret used for handshaking with the RADIUS accounting server
+          {{bibref|RFC2865}}.
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecondarySecret" access="readWrite">
+        <description>
+          The secret used for handshaking with the secondary RADIUS accounting
+          server {{bibref|RFC2865}}.
+
+          If this parameter is not implemented, the secondary RADIUS server
+          will use the same secret as the primary RADIUS server.
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterimInterval" access="readWrite">
+        <description>
+          Specifies the default interim accounting interval in {{units}}, which
+          is used for service accounting when the ''Acct-Interim-Interval''
+          attribute is not configured. {{bibref|RFC2869|Section 2.1}}
+
+          The value MUST NOT be smaller than 60. The value SHOULD NOT be
+          smaller than 600, and careful consideration should be given to its
+          impact on network traffic {{bibref|RFC2869|Section 5.16}}.
+
+          A value of 0 means no interim accounting messages are sent.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="0"/>
+            <range minInclusive="60"/>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}." access="readWrite"
+        numEntriesParameter="EndPointNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        This object models an 802.11 connection from the perspective of a
+        wireless end point. Each {{object}} entry is associated with a
+        particular {{object|#.SSID}} interface instance via the
+        {{param|SSIDReference}} parameter, and an associated active
+        {{object|Profile}} instance via the {{param|ProfileReference}}
+        parameter. The active profile is responsible for specifying the actual
+        SSID and security settings used by the end point.
+
+        For enabled table entries, if {{param|SSIDReference}} or
+        {{param|ProfileReference}} is not a valid reference then the table
+        entry is inoperable and the CPE MUST set {{param|Status}} to
+        {{enum|Error_Misconfigured|Status}}.
+
+        Note: The {{object}} table includes a unique key parameter that is a
+        strong reference. If a strongly referenced object is deleted, the CPE
+        will set the referencing parameter to {{empty}}. However, doing so
+        under these circumstances might cause the updated {{object}} row to
+        then violate the table's unique key constraint; if this occurs, the CPE
+        MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and
+        disable the offending {{object}} row.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="SSIDReference"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this end point.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this end point. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProfileReference" access="readWrite">
+        <description>
+          {{reference}} This is the currently active profile, which specifies
+          the SSID and security settings to be used by the end point.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="Profile." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSIDReference" access="readOnly">
+        <description>
+          {{reference}} {{param}} is determined based on the
+          {{param|Profile.{i}.SSID}} within the associated
+          {{param|ProfileReference}}) endpoint profile. {{param}} MUST be
+          {{empty}} if {{param|ProfileReference}} is {{empty}} (i.e. only when
+          an active profile is assigned can the associated SSID interface be
+          determined).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.SSID." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProfileNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        Throughput statistics for this end point.
+      </description>
+
+      <parameter name="LastDataDownlinkRate" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission from the access point to the end point device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="600000"/>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastDataUplinkRate" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The data transmit rate in {{units}} that was most recently used for
+          transmission from the end point to the access point device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="600000"/>
+            <units value="kbps"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength of the downlink from the access
+          point to the end point, measured in {{units}}, as an average of the
+          last 100 packets received from the device.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Retransmissions" access="readOnly">
+        <description>
+          The number of {{units}} that had to be re-transmitted, from the last
+          100 packets sent to the access point. Multiple re-transmissions of
+          the same packet count as one.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="packets"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}.Security." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object contains security related parameters that apply to a WiFi
+        end point {{bibref|802.11-2007}}.
+      </description>
+
+      <parameter name="ModesSupported" access="readOnly">
+        <description>
+          {{list}} Indicates which security modes this {{object|#}} instance is
+          capable of supporting.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="WEP-64"/>
+            <enumeration value="WEP-128"/>
+            <enumeration value="WPA-Personal"/>
+            <enumeration value="WPA2-Personal"/>
+            <enumeration value="WPA3-Personal"/>
+            <enumeration value="WPA-WPA2-Personal"/>
+            <enumeration value="WPA3-Personal-Transition"/>
+            <enumeration value="WPA-Enterprise"/>
+            <enumeration value="WPA2-Enterprise"/>
+            <enumeration value="WPA3-Enterprise"/>
+            <enumeration value="WPA-WPA2-Enterprise"/>
+            <enumeration value="OWE" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}.Profile.{i}." access="readWrite"
+        numEntriesParameter="ProfileNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.0">
+      <description>
+        EndPoint Profile table.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="SSID"/>
+        <parameter ref="Location"/>
+        <parameter ref="Priority"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this Profile.
+
+          When there are multiple WiFi EndPoint Profiles, e.g. each instance
+          supports a different SSID and/or different security configuration,
+          this parameter can be used to control which of the instances are
+          currently enabled.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this Profile. {{enum}}
+
+          The {{enum|Active}} value is reserved for the instance that is
+          actively connected. The {{enum|Available}} value represents an
+          instance that is not currently active, but is also not disabled or in
+          error. The {{enum|Error}} value MAY be used by the CPE to indicate a
+          locally defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Active"/>
+            <enumeration value="Available"/>
+            <enumeration value="Error" optional="true"/>
+            <enumeration value="Disabled"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSID" access="readWrite">
+        <description>
+          The profile identifier in use by the connection. The SSID is an
+          identifier that is attached to packets sent over the wireless LAN
+          that functions as an ID for joining a particular radio network (BSS).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Location" access="readWrite">
+        <description>
+          Location of the profile. This value serves as a reminder from the
+          user, describing the location of the profile. For example: "Home",
+          "Office", "Neighbor House", "Airport", etc. An empty string is also
+          valid.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readWrite">
+        <description>
+          The profile Priority defines one of the criteria used by the End
+          Point to automatically select the "best" AP when several APs with
+          known profiles are simultaneously available for association.
+
+          In this situation, the End Point has to select the AP with the higher
+          priority in its profile. If there are several APs with the same
+          priority, providing different SSID or the same SSID, then the
+          wireless end point has to select the APs according to other criteria
+          like signal quality, SNR, etc.
+
+          0 is the highest priority.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}.Profile.{i}.Security."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object contains security related parameters that apply to a WiFi
+        End Point profile {{bibref|802.11-2007}}.
+      </description>
+
+      <parameter name="ModeEnabled" access="readWrite">
+        <description>
+          Indicates which security mode is enabled.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.Security.ModesSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="WEPKey" access="readWrite">
+        <description>
+          A WEP key expressed as a hexadecimal string.
+
+          {{param}} is used only if {{param|ModeEnabled}} is set to
+          {{enum|WEP-64|ModeEnabled}} or {{enum|WEP-128|ModeEnabled}}.
+
+          A 5 byte {{param}} corresponds to security mode
+          {{enum|WEP-64|ModeEnabled}} and a 13 byte {{param}} corresponds to
+          security mode {{enum|WEP-128|ModeEnabled}}.
+        </description>
+        <syntax secured="true">
+          <hexBinary>
+            <size minLength="5" maxLength="5"/>
+            <size minLength="13" maxLength="13"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreSharedKey" access="readWrite">
+        <description>
+          A literal PreSharedKey (PSK) expressed as a hexadecimal string.
+
+          {{param}} is only used if {{param|ModeEnabled}} is set to
+          {{enum|WPA-Personal|ModeEnabled}} or
+          {{enum|WPA2-Personal|ModeEnabled}} or
+          {{enum|WPA-WPA2-Personal|ModeEnabled}}.
+
+          If {{param|KeyPassphrase}} is written, then {{param}} is immediately
+          generated. The Controller SHOULD NOT set both the
+          {{param|KeyPassphrase}} and the {{param}} directly (the result of
+          doing this is undefined).
+        </description>
+        <syntax secured="true">
+          <hexBinary>
+            <size maxLength="32"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeyPassphrase" access="readWrite">
+        <description>
+          A passphrase from which the {{param|PreSharedKey}} is to be
+          generated, for {{enum|WPA-Personal|ModeEnabled}} or
+          {{enum|WPA2-Personal|ModeEnabled}} or
+          {{enum|WPA-WPA2-Personal|ModeEnabled}} security modes.
+
+          If {{param}} is written, then {{param|PreSharedKey}} is immediately
+          generated. The Controller SHOULD NOT set both the {{param}} and the
+          {{param|PreSharedKey}} directly (the result of doing this is
+          undefined). The key is generated as specified by WPA, which uses
+          PBKDF2 from PKCS #5: Password-based Cryptography Specification
+          Version 2.0 {{bibref|RFC2898}}.
+        </description>
+        <syntax secured="true">
+          <string>
+            <size minLength="8" maxLength="63"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SAEPassphrase" access="readWrite" version="2.13">
+        <description>
+          A passphrase for {{enum|WPA3-Personal|ModeEnabled}} or
+          {{enum|WPA3-Personal-Transition|ModeEnabled}} security modes.
+
+          NOTE: this parameter is for WPA3. WPA2 {{param|PreSharedKey}} is
+          generated from {{param|KeyPassphrase}}.
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MFPConfig" access="readWrite" version="2.11">
+        <description>
+          Management Frame Protection configuration applicable when
+          {{param|ModeEnabled}} is set to {{enum|WPA2-Personal|ModeEnabled}},
+          {{enum|WPA2-Enterprise|ModeEnabled}},
+          {{enum|WPA3-Personal|ModeEnabled}}, or
+          {{enum|WPA3-Enterprise|ModeEnabled}}. When in WPA3 modes, {{param}}
+          MUST be set to {{enum|Required}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Optional"/>
+            <enumeration value="Required"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}.WPS." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.0">
+      <description>
+        This object contains parameters related to Wi-Fi Protected Setup
+        {{bibref|WPSv1.0}} for this end point.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables WPS functionality for this end point.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConfigMethodsSupported" access="readOnly">
+        <description>
+          WPS configuration methods supported by the device. {{enum}}
+
+          This parameter corresponds directly to the "Config Methods" attribute
+          of {{bibref|WPS 2.0}}.
+
+          The {{enum|USBFlashDrive}} and {{enum|Ethernet}} are only applicable
+          in WPS 1.0 and are deprecated in WPS 2.x. The
+          {{enum|PhysicalPushButton}}, {{enum|VirtualPushButton}},
+          {{enum|PhysicalDisplay}} and {{enum|VirtualDisplay}} are applicable
+          to WPS 2.x only.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="USBFlashDrive"/>
+            <enumeration value="Ethernet"/>
+            <enumeration value="Label"/>
+            <enumeration value="Display"/>
+            <enumeration value="ExternalNFCToken"/>
+            <enumeration value="IntegratedNFCToken"/>
+            <enumeration value="NFCInterface"/>
+            <enumeration value="PushButton"/>
+            <enumeration value="PIN"/>
+            <enumeration value="PhysicalPushButton"/>
+            <enumeration value="PhysicalDisplay"/>
+            <enumeration value="VirtualPushButton"/>
+            <enumeration value="VirtualDisplay"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConfigMethodsEnabled" access="readWrite">
+        <description>
+          {{list}} Indicates the WPS configuration methods enabled on the
+          device.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam="ConfigMethodsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly" version="2.11">
+        <description>
+          Indicates the current status of WPS in EndPoint.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Error"/>
+            <enumeration value="Unconfigured"/>
+            <enumeration value="Configured"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly" version="2.11">
+        <description>
+          The Wi-Fi Simple Configuration version supported by the device, a
+          string of the form ''m.n'' where ''m'' is the major version and ''n''
+          is the minor version.
+
+          For example, a value of ''1.0'' denotes WSC 1.0 and a value of
+          ''2.0'' denotes WSC 2.0.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PIN" access="readWrite" version="2.11">
+        <description>
+          Represents the Device PIN used for PIN based pairing between WPS
+          peers. This PIN is either a four digit number or an eight digit
+          number.
+
+          Changed in 2.16: The data type was fixed (it was previously defined
+          as an integer that had to have the value 4 or 8).
+        </description>
+        <syntax secured="true">
+          <string>
+            <size maxLength="8"/>
+            <pattern value="\d{4}|\d{8}" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}.AC.{i}." access="readOnly"
+        minEntries="4" maxEntries="4" version="2.8">
+      <description>
+        This object contains parameters related to WiFi QoS for different
+        802.11e access categories (priorities). Access categories are: BE, BK,
+        VI, and VO. These parameters can help control and monitor 802.11e
+        Enhanced distributed channel access (EDCA). The size of this table is
+        fixed, with four entries which are identified by the
+        {{param|AccessCategory}} parameter as follows:
+
+        * BE (Best Effort)
+
+        * BK (Background)
+
+        * VI (Video)
+
+        * VO (Voice)
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="AccessCategory"/>
+      </uniqueKey>
+
+      <parameter name="AccessCategory" access="readOnly">
+        <description>
+          This identifies the access category.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="BE"/>
+            <enumeration value="BK"/>
+            <enumeration value="VI"/>
+            <enumeration value="VO"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AIFSN" access="readWrite" status="deprecated">
+        <description>
+          Arbitration Inter Frame Spacing (Number). This is the number of time
+          slots in the arbitration interframe space.
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="2" maxInclusive="15"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ECWMin" access="readWrite" status="deprecated">
+        <description>
+          Exponent of Contention Window (Minimum). This encodes the values of
+          CWMin as an exponent: CWMin = 2^ECWMin - 1. For example, if ECWMin is
+          8, then CWMin is 2^8 - 1, or 255, (expressed in {{units}}).
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="15"/>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ECWMax" access="readWrite" status="deprecated">
+        <description>
+          Exponent of Contention Window (Maximum). This encodes the values of
+          CWMax as an exponent: CWMax = 2^ECWMax - 1. For example, if ECWMax is
+          8, then CWMax is 2^8 - 1, or 255, (expressed in {{units}}).
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="15"/>
+            <units value="microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxOpMax" access="readWrite" status="deprecated">
+        <description>
+          Maximum transmit opportunity, in multiples of {{units}}. A TXOP time
+          interval of 0 means it is limited to a single MAC protocol data unit
+          (MPDU).
+
+          {{deprecated|2.15|because it is superseded by the WMM
+          Specification.}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="32 microseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AckPolicy" access="readWrite">
+        <description>
+          Ack Policy, where False="Do Not Acknowledge" and True="Acknowledge"
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutQLenHistogramIntervals" access="readWrite">
+        <description>
+          {{list}} Definition of the histogram intervals for counting the
+          transmit queue length in packets. Each value indicates the maximum
+          value of the interval. For example, "0,1,4,8," defines the five
+          intervals: 0 packets in queue, 1 packet in queue, 2 to 4 packets in
+          queue, 5 to 8 packets in queue, and 9 or more packets in queue. (No
+          value after the last comma means no upper bound.) If this parameter
+          is set to an empty string, no {{param|Stats.OutQLenHistogram}} stats
+          will be collected.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutQLenHistogramSampleInterval" access="readWrite">
+        <description>
+          The time between recording samples of the current transmit queue
+          {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.EndPoint.{i}.AC.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.8">
+      <description>
+        This object contains statistics for different 802.11e access categories
+        (priorities).
+
+        Packet counters here count 802.11 WiFi frames.
+
+        If there are not separate stats for each access category, (e.g.,
+        802.11e is not used and there is only one queue), then only access
+        category 0 = BE applies (e.g., the statistics for the single queue are
+        in access category 0 = BE).
+
+        The CPE MUST reset the EndPoint's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        EndPoint becomes operationally down due to a previous administrative
+        down (i.e. the EndPoint's Status parameter transitions to a Disabled
+        state) or when the EndPoint becomes administratively up (i.e. the
+        EndPoint's Enable parameter transitions from false to true).
+        Administrative and operational status is discussed in
+        {{bibref|TR-181i2|Section 4.2.2}}.
+      </description>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of {{units}} transmitted in this access category,
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received in this access category,
+          including framing characters.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of {{units}} transmitted in this access category.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received in this access category.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of outbound {{units}} in this access category that
+          could not be transmitted because of errors. These might be due to the
+          number of retransmissions exceeding the retry limit, or from other
+          causes.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly">
+        <description>
+          The total number of inbound {{units}} in this access category that
+          contained errors preventing them from being delivered to a
+          higher-layer protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsSent" access="readOnly">
+        <description>
+          The total number of outbound {{units}} in this access category which
+          were chosen to be discarded even though no errors had been detected
+          to prevent their being transmitted. One possible reason for
+          discarding such a packet could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiscardPacketsReceived" access="readOnly">
+        <description>
+          The total number of inbound {{units}} in this access category which
+          were chosen to be discarded even though no errors had been detected
+          to prevent their being delivered. One possible reason for discarding
+          such a packet could be to free up buffer space.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransCount" access="readOnly">
+        <description>
+          The total number of transmitted {{units}} in this access category
+          which were retransmissions. Two retransmissions of the same packet
+          results in this counter incrementing by two.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="OutQLenHistogram" access="readOnly">
+        <description>
+          {{list}} Histogram of the total length of the transmit queue of this
+          access category in packets (1 packet, 2 packets, etc.) according to
+          the intervals defined by {{param|#.OutQLenHistogramIntervals}}, with
+          samples taken each {{param|#.OutQLenHistogramSampleInterval}}.
+          Example: "12,5,1,0,2,0,0,1"
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <profile name="WiFiRadio:1" version="2.0">
+      <object ref="Device.WiFi." requirement="present">
+        <parameter ref="RadioNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.Radio.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="Upstream" requirement="readOnly"/>
+        <parameter ref="MaxBitRate" requirement="readOnly"/>
+        <parameter ref="SupportedFrequencyBands" requirement="readOnly"/>
+        <parameter ref="OperatingFrequencyBand" requirement="readWrite"/>
+        <parameter ref="SupportedStandards" requirement="readOnly"/>
+        <parameter ref="OperatingStandards" requirement="readWrite"/>
+        <parameter ref="RegulatoryDomain" requirement="readWrite"/>
+        <parameter ref="PossibleChannels" requirement="readOnly"/>
+        <parameter ref="Channel" requirement="readWrite"/>
+        <parameter ref="AutoChannelSupported" requirement="readOnly"/>
+        <parameter ref="AutoChannelEnable" requirement="readWrite"/>
+        <parameter ref="TransmitPowerSupported" requirement="readOnly"/>
+        <parameter ref="TransmitPower" requirement="readWrite"/>
+        <parameter ref="ExtensionChannel" requirement="readWrite"/>
+        <parameter ref="GuardInterval" requirement="readWrite"/>
+        <parameter ref="MCS" requirement="readWrite"/>
+        <parameter ref="IEEE80211hSupported" requirement="readOnly"/>
+        <parameter ref="IEEE80211hEnabled" requirement="readWrite"/>
+        <parameter ref="ChannelsInUse" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.Radio.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="WiFiSSID:1" version="2.0">
+      <object ref="Device.WiFi." requirement="present">
+        <parameter ref="SSIDNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.SSID.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="readWrite"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LowerLayers" requirement="readWrite"/>
+        <parameter ref="BSSID" requirement="readOnly"/>
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="SSID" requirement="readWrite"/>
+      </object>
+      <object ref="Device.WiFi.SSID.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="WiFiAccessPoint:1" version="2.0">
+      <object ref="Device.WiFi." requirement="present">
+        <parameter ref="AccessPointNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.AccessPoint.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="SSIDReference" requirement="readWrite"/>
+        <parameter ref="SSIDAdvertisementEnabled" requirement="readWrite"/>
+        <parameter ref="WMMCapability" requirement="readOnly"/>
+        <parameter ref="UAPSDCapability" requirement="readOnly"/>
+        <parameter ref="WMMEnable" requirement="readWrite"/>
+        <parameter ref="UAPSDEnable" requirement="readWrite"/>
+        <parameter ref="AssociatedDeviceNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.AccessPoint.{i}.Security."
+          requirement="present">
+        <parameter ref="ModesSupported" requirement="readOnly"/>
+        <parameter ref="ModeEnabled" requirement="readWrite"/>
+        <parameter ref="WEPKey" requirement="readWrite"/>
+        <parameter ref="PreSharedKey" requirement="readWrite"/>
+        <parameter ref="KeyPassphrase" requirement="readWrite"/>
+        <parameter ref="RekeyingInterval" requirement="readWrite"/>
+        <parameter ref="RadiusServerIPAddr" requirement="readWrite"/>
+        <parameter ref="RadiusServerPort" requirement="readWrite"/>
+        <parameter ref="RadiusSecret" requirement="readWrite"/>
+      </object>
+      <object ref="Device.WiFi.AccessPoint.{i}.WPS." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ConfigMethodsSupported" requirement="readOnly"/>
+        <parameter ref="ConfigMethodsEnabled" requirement="readWrite"/>
+      </object>
+      <object ref="Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}."
+          requirement="present">
+        <parameter ref="MACAddress" requirement="readOnly"/>
+        <parameter ref="AuthenticationState" requirement="readOnly"/>
+        <parameter ref="LastDataDownlinkRate" requirement="readOnly"/>
+        <parameter ref="LastDataUplinkRate" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="WiFiAccessPoint:2" base="WiFiAccessPoint:1" version="2.9">
+      <object ref="Device.WiFi.AccessPoint.{i}." requirement="present">
+        <parameter ref="MACAddressControlEnabled" requirement="readWrite"/>
+        <parameter ref="AllowedMACAddress" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="WiFiEndPoint:1" version="2.0">
+      <object ref="Device.WiFi." requirement="present">
+        <parameter ref="EndPointNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.EndPoint.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ProfileReference" requirement="readWrite"/>
+        <parameter ref="SSIDReference" requirement="readOnly"/>
+        <parameter ref="ProfileNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.EndPoint.{i}.Stats." requirement="present">
+        <parameter ref="LastDataDownlinkRate" requirement="readOnly"/>
+        <parameter ref="LastDataUplinkRate" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.EndPoint.{i}.Security." requirement="present">
+        <parameter ref="ModesSupported" requirement="readOnly"/>
+      </object>
+      <object ref="Device.WiFi.EndPoint.{i}.Profile.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="SSID" requirement="readWrite"/>
+        <parameter ref="Location" requirement="readWrite"/>
+        <parameter ref="Priority" requirement="readWrite"/>
+      </object>
+      <object ref="Device.WiFi.EndPoint.{i}.Profile.{i}.Security."
+          requirement="present">
+        <parameter ref="ModeEnabled" requirement="readWrite"/>
+        <parameter ref="WEPKey" requirement="readWrite"/>
+        <parameter ref="PreSharedKey" requirement="readWrite"/>
+        <parameter ref="KeyPassphrase" requirement="readWrite"/>
+      </object>
+      <object ref="Device.WiFi.EndPoint.{i}.WPS." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="ConfigMethodsSupported" requirement="readOnly"/>
+        <parameter ref="ConfigMethodsEnabled" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="WiFiBase:2.16">
+    <component ref="Root"/>
+    <component ref="WiFiBase"/>
+  </model>
+</dm:document>

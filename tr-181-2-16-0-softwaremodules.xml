@@ -1,0 +1,1670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [SoftwareModules]
+
+  Copyright (c) 2022, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-16-0-softwaremodules"
+    file="tr-181-2-16-0-softwaremodules.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="Alias" ref="_AliasCommon"/>
+    <dataType name="URL"/>
+    <dataType name="UUID"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <template id="DUStopped">
+    all ExecutionUnits which were created by the DeploymentUnit are stopped
+  </template>
+
+  <template id="RetainDataTrue">
+    the RetainData input argument of the command is present and has the value
+    {{true}}
+  </template>
+
+  <component name="SMApplicationData">
+    <object name="ApplicationData.{i}." minEntries="0" maxEntries="unbounded"
+        access="readOnly" version="2.16"
+        numEntriesParameter="ApplicationDataNumberOfEntries">
+      <description>
+        The ApplicationData volumes which currently exist within this ExecEnv.
+      </description>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          A name which is assigned to the ApplicationData instance at the time
+          of its creation, which distinguishes it from any other application
+          data volumes owned by the same application.
+        </description>
+
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Capacity" access="readOnly">
+        <description>
+          Storage capacity of the volume, in {{units}}.
+        </description>
+
+        <syntax>
+          <unsignedInt>
+            <units value="MiB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Encrypted" access="readOnly">
+        <description>
+          Whether the data is stored on an encrypted medium.
+        </description>
+
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Retain" access="readOnly">
+        <description>
+          The level of persistency of the volume.
+        </description>
+
+        <syntax>
+          <string>
+            <enumeration value="UntilStopped"/>
+            <enumeration value="Forever"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccessPath" access="readOnly">
+        <description>
+          The path by which the Execution Units created by the Deployment Unit
+          may access the storage volume.
+        </description>
+
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="SMRetainData">
+    <parameter name="RetainData" access="readOnly" version="2.16">
+      <description>
+        This argument only has an effect if the UUID of the DeploymentUnit
+        matches the ApplicationUUID of one or more rows in the
+        {{object|Device.SoftwareModules.ExecEnv.{i}.ApplicationData}} table
+        which have the Retain parameter set to
+        {{enum|Forever|Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i}.Retain}}.
+        If this is the case then the data held in these volumes will be
+        preserved across the operation if and only if {{param}} is set
+        {{true}}.
+      </description>
+      <syntax>
+        <boolean/>
+        <default type="implementation" value="false"/>
+      </syntax> 
+    </parameter>
+  </component>
+
+  <component name="SMEEHostObject">
+     <object name="HostObject.{i}." minEntries="0" maxEntries="unbounded"
+        version="2.16" access="readOnly"
+        numEntriesParameter="HostObjectNumberOfEntries">
+       <description>
+         This parameter describes the host OS objects (such as peripherals,
+         files or directories, communication sockets, ...) which are accessible
+         to the ExecutionUnit.
+       </description>
+       <parameter name="Source" mandatory="true" access="readOnly">
+         <description>
+           The object identifier by which the object may be accessed in the host
+           OS environment. This object identifier MUST be valid in the host OS
+           environment. For security reasons, Execution Environments may impose
+           restrictions on the object identifiers which may be specified.
+         </description>
+         <syntax>
+           <string>
+             <size maxLength="256"/>
+           </string>
+         </syntax>
+       </parameter>
+       <parameter name="Destination" mandatory="true" access="readOnly">
+         <description>
+           The object identifier by which the object may be accessed by the
+           ExecutionUnit. This object identifier MUST be valid in the context of
+           the Execution Environment in which the ExecutionUnit is installed.
+         </description>
+         <syntax>
+           <string>
+             <size maxLength="256"/>
+           </string>
+         </syntax>
+       </parameter>
+       <parameter name="Options" access="readOnly">
+         <description>
+           May be used to pass implementation-dependent options which are to be
+           applied to the mapping,
+         </description>
+         <syntax>
+           <string>
+             <size maxLength="256"/>
+           </string>
+         </syntax>
+       </parameter>
+     </object>
+  </component>
+
+  <component name="SMEEResourceConstraints">
+    <parameter name="AllocatedDiskSpace" access="readOnly">
+      <description>
+        The amount of disk space measured in {{units}} allocated to this
+        ExecEnv. A value of -1 indicates that this parameter is not applicable.
+      </description>
+      <syntax>
+        <int>
+          <range minInclusive="-1"/>
+          <units value="KiB"/>
+        </int>
+        <default type="implementation" value="-1"/>
+      </syntax>
+    </parameter>
+
+   <parameter name="AllocatedMemory" access="readOnly">
+     <description>
+       The amount of physical RAM measured in {{units}} allocated to this
+       ExecEnv. A value of -1 indicates that this parameter is not applicable.
+     </description>
+     <syntax>
+       <int>
+         <range minInclusive="-1"/>
+         <units value="KiB"/>
+       </int>
+       <default type="implementation" value="-1"/>
+     </syntax>
+   </parameter>
+
+    <parameter name="AllocatedCPUPercent" access="readOnly" version="2.16">
+      <description>
+        The percentage of CPU time allocated to this ExecEnv, i.e. the
+        percentage of the whole CPU (all cores) which is available to the
+        parent ExecEnv (the primary firmware "owns" 100{{units}} of CPU). A
+        value of -1 indicates that this parameter is not applicable.
+      </description>
+      <syntax>
+        <int>
+          <range minInclusive="-1" maxInclusive="100"/>
+          <units value="%"/>
+        </int>
+       <default type="implementation" value="-1"/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="SoftwareModules">
+    <object name="Device.SoftwareModules." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.1">
+      <description>
+        Top level object for dynamically managed software applications.
+      </description>
+
+      <parameter name="ExecEnvClassNumberOfEntries" access="readOnly"
+          version="2.16">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecEnvNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeploymentUnitNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionUnitNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SoftwareModules.ExecEnvClass.{i}." access="readOnly"
+        numEntriesParameter="ExecEnvClassNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.16">
+      <description>
+        This table lists the kinds of Execution Environments which are
+        available in this device. Rows in this table may possibly be be added,
+        modified, or removed by as a result of respectively installing,
+        updating, or removing a {{object|#.DeploymentUnit}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Vendor"/>
+        <parameter ref="Name"/>
+        <parameter ref="Version"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The Name of this {{object}} as specified by the Vendor that
+          implemented this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Vendor" access="readOnly">
+        <description>
+          The author of this {{object}} formatted as a fully qualified domain
+          name.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          The Version of this {{object}} as specified by the Vendor that
+          implemented this {{object}}. Vendors are encouraged to use Semantic
+          Versioning.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeploymentUnitRef" access="readOnly">
+        <description>
+          A reference to the DeploymentUnit (if any) by which this {{object}}
+          was created.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.DeploymentUnit."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CapabilityNumberOfEntries" access="readOnly"
+          version="2.16">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SoftwareModules.ExecEnvClass.{i}.Capability.{i}."
+        numEntriesParameter="CapabilityNumberOfEntries" access="readOnly"
+        minEntries="0" maxEntries="unbounded" version="2.16">
+      <description>
+        The standard(s) describing the kinds of {{object|##.DeploymentUnit}}
+        which can be installed into instances of this {{object|#}}.
+      </description>
+
+      <uniqueKey functional="true">
+        <parameter ref="Specification"/>
+        <parameter ref="SpecificationVersion"/>
+      </uniqueKey>
+
+      <parameter name="Specification" access="readOnly">
+        <description>
+          The specification which describes the format of the
+          {{object|##.DeploymentUnit}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="OCIImage" optional="true"/>
+            <enumeration value="VMRawImage" optional="true"/>
+            <enumeration value="OSGiBundle" optional="true"/>
+            <enumeration value="JAR" optional="true"/>
+            <enumeration value="WAR" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpecificationVersion" access="readOnly">
+        <description>
+          The Version of the Specification which is supported by this
+          {{object|#}}.
+
+          If this parameter begins with the character "(" or "[" then it MUST
+          end with the character ")" or "]" and it indicates a version range
+          which may be interpreted following Semantic Versioning rules.
+          Otherwise it indicates the latest version of the specification which
+          is known to be supported by this {{object|#}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SpecificationURI" access="readOnly">
+        <description>
+          The URI where of the definition of the Specification may be found.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SoftwareModules.ExecEnv.{i}." access="readOnly"
+        numEntriesParameter="ExecEnvNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.1">
+      <description>
+        The Execution Environments that are available on the device, along with
+        their properties and configurable settings.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Indicates whether or not this {{object}} is enabled.
+
+          Disabling an enabled Execution Environment stops it, while enabling a
+          disabled Execution Environment starts it.
+
+          When an Execution Environment is disabled, Deployment Units installed
+          to that Execution Environment will be unaffected, but any Execution
+          Units currently running on that Execution Environment will
+          automatically transition to {{enum|Idle|#.ExecutionUnit.{i}.Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up"/>
+            <enumeration value="Error" optional="true"/>
+            <enumeration value="Disabled"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          A Name provided by the device that adequately distinguishes this
+          {{object}} from all other {{object}} instances.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readOnly">
+        <description>
+          Indicates the complete type and specification version of this
+          {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="InitialRunLevel" access="readWrite">
+        <description>
+          The run level that this {{object}} will be in upon startup (whether
+          that is caused by a device Boot or the Execution Environment
+          starting).
+
+          Run levels dictate which Execution Units will be started. Execution
+          Units will be started if {{param|CurrentRunLevel}} is greater than or
+          equal to {{param|#.ExecutionUnit.{i}.RunLevel}} and
+          {{param|#.ExecutionUnit.{i}.AutoStart}} is {{true}}.
+
+          If the value of {{param|CurrentRunLevel}} is -1, then the value of
+          this parameter is irrelevant when read and setting its value has no
+          impact on the Run Level of this {{object}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentRunLevel" access="readOnly">
+        <description>
+          '''Description is defined separately for CWMP and USP.'''
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="InitialExecutionUnitRunLevel" access="readWrite"
+          version="2.4">
+        <description>
+          Indicates the initial value on creation for
+          {{param|#.ExecutionUnit.{i}.RunLevel}} for all Execution Unit
+          instances associated with this {{object}}.
+
+          If the value of {{param|CurrentRunLevel}} is -1, then the value of
+          this parameter is irrelevant when read and setting its value has no
+          impact on the Run Level of any Execution Unit.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Vendor" access="readOnly">
+        <description>
+          The vendor that produced this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          The Version of this {{object}} as specified by the Vendor that
+          implemented this {{object}}, not the version of the specification.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ParentExecEnv" access="readOnly">
+        <description>
+          Represents the parent {{object}} of this {{object}}.
+
+          If this value is {{empty}} then this is the Primary Execution
+          Environment.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.ExecEnv."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="SMEEResourceConstraints"/>
+
+      <parameter name="AvailableDiskSpace" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The amount of disk space measured in {{units}} currently available to
+          this {{object}}. This value changes as the {{object|#.ExecutionUnit}}
+          instances associated with this {{object}} consumes disk space. A
+          value of -1 MUST be used for {{object}} instances where this
+          parameter is not applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="KiB"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="AvailableMemory" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The amount of physical RAM measured in {{units}} currently available
+          to this {{object}}. This value changes as the
+          {{object|#.ExecutionUnit}} instances associated with this {{object}}
+          are started/stopped and consume the physical RAM. A value of -1 MUST
+          be used for {{object}} instances where this parameter is not
+          applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="KiB"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="AvailableCPUPercent" access="readOnly" version="2.16">
+        <description>
+          The fraction (in {{units}}) of CPU time currently available to this
+          {{object}}. This value changes as the {{object|#.ExecutionUnit}}
+          instances associated with this {{object}} are started/stopped and
+          consume the CPU. A value of -1 MUST be used for {{object}} instances
+          where this parameter is not applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="100"/>
+            <units value="%"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActiveExecutionUnits" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Represents the {{object|#.ExecutionUnit}} instances currently running
+          on this {{object}}. This parameter only contains
+          {{object|#.ExecutionUnit}} instances that currently have a
+          {{param|#.ExecutionUnit.{i}.Status}} of
+          {{enum|Active|#.ExecutionUnit.{i}.Status}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.ExecutionUnit."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProcessorRefList" access="readOnly">
+        <description>
+          Represents the processors that this {{object}} has available to it.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="##.DeviceInfo.Processor."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CreatedAt" access="readOnly" version="2.16">
+        <description>
+          The time and date at which this {{object}} was created. If the
+          {{object}} is provided by the primary firmware of the device then
+          this parameter SHOULD be set to {{null}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecEnvClassRef" access="readOnly" version="2.16">
+        <description>
+          The {{object|#.ExecEnvClass}} of which this {{object}} is an
+          instance.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.ExecEnvClass."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ApplicationDataNumberOfEntries" access="readOnly"
+          version="2.16">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <component ref="SMApplicationData"/>
+    </object>
+
+    <object base="Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded">
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="ApplicationUUID"/>
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Alias" access="readWrite" dmr:previousParameter="">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ApplicationUUID" access="readOnly">
+        <description>
+          The {{param|##.DeploymentUnit.{i}.UUID}} of the
+          {{object|##.DeploymentUnit}} for which this volume was created. This
+          parameter retains its value so long as the {{object}} instance
+          continues to exist, even if the {{object|##.DeploymentUnit}} is not
+          currently installed.
+        </description>
+
+        <syntax>
+          <dataType ref="UUID"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Utilization" access="readOnly" activeNotify="canDeny">
+        <description>
+          The amount of data which is currently stored in this volume, in
+          {{units}}.
+        </description>
+
+        <syntax>
+          <unsignedInt>
+            <units value="MiB"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.SoftwareModules.DeploymentUnit.{i}."
+        access="readOnly" numEntriesParameter="DeploymentUnitNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.1">
+      <description>
+        This table serves as the Deployment Unit inventory and contains status
+        information about each Deployment Unit.
+
+        A new instance of this table gets created during the installation of a
+        Software Module.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="UUID"/>
+        <parameter ref="Version"/>
+        <parameter ref="ExecutionEnvRef"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="UUID" access="readOnly">
+        <description>
+          A Universally Unique Identifier either provided by the Controller, or
+          generated by the device, at the time of Deployment Unit Installation.
+
+          The format of this value is defined by {{bibref|RFC4122}} Version 5
+          (Name-Based) and {{bibref|TR-181i2|Annex C}}.
+
+          This value MUST NOT be altered when the {{object}} is updated.
+        </description>
+        <syntax>
+          <dataType ref="UUID"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DUID" access="readOnly">
+        <description>
+          Deployment Unit Identifier chosen by the targeted
+          {{object|#.ExecEnv}}. The format of this value is Execution
+          Environment specific.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Indicates the Name of this {{object}}, which is chosen by the author
+          of the Deployment Unit.
+
+          The value of this parameter is used in the generation of the
+          {{param|UUID}} based on the rules defined in {{bibref|TR-181i2|Annex
+          C}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly" activeNotify="canDeny">
+        <description>
+          Indicates the status of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Installing">
+              <description>
+                This instance is in the process of being Installed and SHOULD
+                transition to the {{enum|Installed}} state.
+              </description>
+            </enumeration>
+            <enumeration value="Installed">
+              <description>
+                This instance has been successfully Installed. The
+                {{param|Resolved}} flag SHOULD also be referenced for
+                dependency resolution.
+              </description>
+            </enumeration>
+            <enumeration value="Updating">
+              <description>
+                This instance is in the process of being Updated and SHOULD
+                transition to the {{enum|Installed}} state.
+              </description>
+            </enumeration>
+            <enumeration value="Uninstalling">
+              <description>
+                This instance is in the process of being Uninstalled and SHOULD
+                transition to the {{enum|Uninstalled}} state.
+              </description>
+            </enumeration>
+            <enumeration value="Uninstalled">
+              <description>
+                This instance has been successfully Uninstalled. This status
+                will typically not be seen within a {{object}} instance.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Resolved" access="readOnly">
+        <description>
+          Indicates whether or not this {{object}} has resolved all of its
+          dependencies.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="URL" access="readOnly">
+        <description>
+          '''Description is defined separately for CWMP and USP.'''
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readOnly">
+        <description>
+          Textual description of this {{object}}. The format of this value is
+          Execution Environment specific.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Vendor" access="readOnly">
+        <description>
+          The author of this {{object}} formatted as a domain name.
+
+          The value of this parameter is used in the generation of the
+          {{param|UUID}} based on the rules defined in {{bibref|TR-181i2|Annex
+          C}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          Version of this {{object}}. The format of this value is Execution
+          Environment specific.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorLogList" access="readOnly">
+        <description>
+          Represents the vendor log files that have come into existence because
+          of this {{object}}.
+
+          This does not include any vendor log files that have come into
+          existence because of {{object|#.ExecutionUnit}} instances that are
+          contained within this {{object}}.
+
+          When this {{object}} is uninstalled the vendor log files referenced
+          here SHOULD be removed from the device.
+
+          Not all {{object}} instances will actually have a corresponding
+          vendor log file, in which case the value of this parameter will be
+          {{empty}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong"
+                targetParent="##.DeviceInfo.VendorLogFile." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorConfigList" access="readOnly">
+        <description>
+          Represents the vendor config files that have come into existence
+          because of this {{object}}.
+
+          This does not include any vendor config files that have come into
+          existence because of {{object|#.ExecutionUnit}} instances that are
+          contained within this {{object}}.
+
+          When this {{object}} is uninstalled the vendor config files
+          referenced here SHOULD be removed from the device.
+
+          Not all {{object}} instances will actually have a corresponding
+          vendor config file, in which case the value of this parameter will be
+          {{empty}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong"
+                targetParent="##.DeviceInfo.VendorConfigFile." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionUnitList" access="readOnly">
+        <description>
+          Represents the {{object|#.ExecutionUnit}} instances that are
+          associated with this {{object}} instance.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.ExecutionUnit."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionEnvRef" access="readOnly">
+        <description>
+          Represents the {{object|#.ExecEnv}} instance where this {{object}}
+          instance is installed.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.ExecEnv."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Installed" access="readOnly" version="2.16">
+        <description>
+          Documents when this {{object}} instance was installed.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastUpdate" access="readOnly" version="2.16">
+        <description>
+          Documents when this {{object}} instance was last updated.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.SoftwareModules.ExecutionUnit.{i}." access="readOnly"
+        numEntriesParameter="ExecutionUnitNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.1">
+      <description>
+        This table serves as the Execution Unit inventory and contains both
+        status information about each Execution Unit as well as configurable
+        parameters for each Execution Unit.
+
+        Each {{object|#.DeploymentUnit}} that is installed can have zero or
+        more Execution Units.
+
+        Once a Deployment Unit is installed it populates this table with its
+        contained Execution Units.
+
+        When the Deployment Unit (that caused this {{object}} to come into
+        existence) is updated, this instance MAY be removed and new instances
+        MAY come into existence. While the Deployment Unit (that caused this
+        {{object}} to come into existence) is being updated, all {{object}}
+        instances associated with the Deployment Unit will be stopped until the
+        update is complete at which time they will be restored to the state
+        that they were in before the update started.
+
+        When the Deployment Unit (that caused this {{object}} to come into
+        existence) is uninstalled, this instance is removed.
+
+        Each {{object}} MAY also contain a set of vendor specific parameters
+        displaying status and maintaining configuration that reside under the
+        {{object|Extensions}} object.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="EUID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="EUID" access="readOnly">
+        <description>
+          Execution Unit Identifier chosen by the {{object|#.ExecEnv}} during
+          installation of the associated {{object|#.DeploymentUnit}}.
+
+          The format of this value is Execution Environment specific, but it
+          MUST be unique across {{object|#.ExecEnv}} instances. Thus, it is
+          recommended that this be a combination of the
+          {{param|#.ExecEnv.{i}.Name}} and an Execution Environment local
+          unique value.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Alias" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The name of this {{object}} as it pertains to its associated
+          {{object|#.DeploymentUnit}}, which SHOULD be unique across all
+          {{object}} instances contained within its associated
+          {{object|#.DeploymentUnit}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecEnvLabel" access="readOnly">
+        <description>
+          The name of this {{object}} as provided by the {{object|#.ExecEnv}},
+          which SHOULD be unique across all {{object}} instances contained
+          within a specific {{object|#.ExecEnv}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly"
+          activeNotify="forceDefaultEnabled">
+        <description>
+          Indicates the status of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Idle">
+              <description>
+                This instance is in an Idle state and not running.
+              </description>
+            </enumeration>
+            <enumeration value="Starting">
+              <description>
+                This instance is in the process of Starting and SHOULD
+                transition to the {{enum|Active}} state.
+              </description>
+            </enumeration>
+            <enumeration value="Active">
+              <description>This instance is currently running.</description>
+            </enumeration>
+            <enumeration value="Stopping">
+              <description>
+                This instance is in the process of Stopping and SHOULD
+                transition to the {{enum|Idle}} state.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionFaultCode" access="readOnly">
+        <description>
+          If while running or transitioning between states this {{object}}
+          identifies a fault this parameter embodies the problem. The value of
+          {{enum|NoFault}} MUST be used when everything is working as intended.
+          {{enum}}
+
+          For fault codes not included in this list, the vendor MAY include
+          vendor-specific values, which MUST use the format defined in
+          {{bibref|TR-106|Section 3.3}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NoFault"/>
+            <enumeration value="FailureOnStart"/>
+            <enumeration value="FailureOnAutoStart"/>
+            <enumeration value="FailureOnStop"/>
+            <enumeration value="FailureWhileActive"/>
+            <enumeration value="DependencyFailure"/>
+            <enumeration value="UnStartable"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionFaultMessage" access="readOnly">
+        <description>
+          If while running or transitioning between states this {{object}}
+          identifies a fault this parameter provides a more detailed
+          explanation of the problem.
+
+          If {{param|ExecutionFaultCode}} has the value of
+          {{enum|NoFault|ExecutionFaultCode}} then the value of this parameter
+          MUST be {{empty}} and ignored by the Controller.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AutoStart" access="readWrite">
+        <description>
+          If {{true}} and the {{param|RunLevel}} verification is also met, then
+          this {{object}} will be automatically started by the device after its
+          {{object|#.ExecEnv}} is either rebooted or restarted.
+
+          If {{false}} this {{object}} will not be started after its
+          {{object|#.ExecEnv}} is either rebooted or restarted until it is
+          explicitly commanded to do so by either the Controller or another
+          Execution Unit.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RunLevel" access="readWrite">
+        <description>
+          Determines when this {{object}} will be started.
+
+          If {{param|AutoStart}} is {{true}} and
+          {{param|#.ExecEnv.{i}.CurrentRunLevel}} is greater than or equal to
+          {{param}}, then this {{object}} will be started.
+
+          If the value of {{param|#.ExecEnv.{i}.CurrentRunLevel}} is -1, then
+          the associated {{object|#.ExecEnv.}} doesn't support Run Levels, thus
+          the value of this parameter is irrelevant when read and setting its
+          value has no impact to the Run Level of this {{object}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Vendor" access="readOnly">
+        <description>
+          Vendor of this {{object}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="128"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readOnly">
+        <description>
+          Version of the {{object}}. The format of this value is Execution
+          Environment specific.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readOnly">
+        <description>
+          Textual description of this {{object}}. The format of this value is
+          Execution Environment specific.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllocatedDiskSpace" access="readOnly" version="2.16">
+        <description>
+          The amount of disk space measured in {{units}} allocated to this
+          {{object}}. A value of -1 MUST be used for {{object}} instances where
+          this parameter is not applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="KiB"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="DiskSpaceInUse" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The amount of disk space measured in {{units}} currently being used
+          by this {{object}}. A value of -1 MUST be used for {{object}}
+          instances where this parameter is not applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="KiB"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllocatedMemory" access="readOnly" version="2.16">
+        <description>
+          The amount of physical RAM measured in {{units}} allocated to this
+          {{object}}. A value of -1 MUST be used for {{object}} instances where
+          this parameter is not applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="KiB"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="MemoryInUse" access="readOnly" activeNotify="canDeny">
+        <description>
+          The amount of physical RAM measured in {{units}} currently being used
+          by this {{object}}. A value of -1 MUST be used for {{object}}
+          instances where this parameter is not applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+            <units value="KiB"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllocatedCPUPercent" access="readOnly" version="2.16">
+        <description>
+          The CPU power allocated to this {{object}}, as a fraction (in
+          {{units}}) of the CPU allocation of the {{object|#.ExecEnv}} in which
+          this {{object}} resides. A value of -1 MUST be used for {{object}}
+          instances where this parameter is not applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="100"/>
+            <units value="%"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="CPUPercentInUse" access="readOnly" version="2.16">
+        <description>
+          The CPU power currently being used by this by this {{object}}, as a
+          fraction (in {{units}}) of the CPU allocation of the
+          {{object|#.ExecEnv}} in which this {{object}} resides. A value of -1
+          MUST be used for {{object}} instances where this parameter is not
+          applicable.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="100"/>
+            <units value="%"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="References" access="readOnly">
+        <description>
+          Represents the instances of multi-instanced objects that are directly
+          controlled by, and have come into existence because of, this
+          {{object}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedProcessList" access="readOnly">
+        <description>
+          Represents the system processes that are active in the system because
+          of this {{object}}.
+
+          If {{param|Status}} is not {{enum|Active|Status}} it is expected that
+          this list will be {{empty}}. Some {{object}} instances MIGHT NOT have
+          any system processes irrespective of the value of {{param|Status}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong"
+                targetParent="##.DeviceInfo.ProcessStatus.Process."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorLogList" access="readOnly">
+        <description>
+          Represents the vendor log files that have come into existence because
+          of this {{object}}.
+
+          When the {{object|#.DeploymentUnit}} (that caused this {{object}} to
+          come into existence) is uninstalled the vendor log files referenced
+          here SHOULD be removed from the device.
+
+          Not all {{object}} instances will actually have a corresponding
+          vendor log file, in which case the value of this parameter will be
+          {{empty}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong"
+                targetParent="##.DeviceInfo.VendorLogFile." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorConfigList" access="readOnly">
+        <description>
+          Represents the vendor config files that have come into existence
+          because of this {{object}}.
+
+          When the {{object|#.DeploymentUnit}} (that caused this {{object}} to
+          come into existence) is uninstalled the vendor config files
+          referenced here SHOULD be removed from the device.
+
+          Not all {{object}} instances will actually have a corresponding
+          vendor config file, in which case the value of this parameter will be
+          {{empty}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong"
+                targetParent="##.DeviceInfo.VendorConfigFile." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ApplicationDataList" access="readOnly" version="2.16">
+        <description>
+          Represents the application data volumes that are used by this
+          {{object}}.
+        </description>
+
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong"
+                targetParent="#.ExecEnv.{i}.ApplicationData." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExecutionEnvRef" access="readOnly">
+        <description>
+          Represents the {{object|#.ExecEnv}} that this {{object}} is
+          associated with.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.ExecEnv."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HostObjectNumberOfEntries" access="readOnly"
+          version="2.16">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+            </syntax>
+      </parameter>
+    </object>
+
+
+    <object name="Device.SoftwareModules.ExecutionUnit.{i}.AutoRestart."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        Configures the parameters of the auto-restart algorithm for this
+        {{object|#}}.
+
+        An auto-restart may be triggered if the Agent determines that the EU
+        has terminated abnormally. An exponential backoff algorithm is applied
+        (increasing each time the delay before the EU is re-launched) in order
+        to prevent continual re-starting of the EU.
+
+        The retry interval range is controlled by two Parameters,
+        {{param|RetryMinimumWaitInterval}} and
+        {{param|RetryIntervalMultiplier}}.
+
+        Let ''m'' be the value of {{param|RetryMinimumWaitInterval}}, ''k'' the
+        value of {{param|RetryIntervalMultiplier}}, and ''n'' the current value
+        of {{param|RetryCount}}. Then on the next occasion that the Agent
+        determines that the EU has terminated abnormally, the delay before
+        re-starting the EU must lie between ''m * (k/1000)^n'' and ''m *
+        (k/1000)^(n+1)'' seconds, so long as ''m * (k/1000)^n'' evaluates to a
+        value less than {{param|RetryMaximumWaitInterval}}. Once this point has
+        been reached, on all subsequent occasion that the Agent determines that
+        the EU has terminated abnormally the delay before re-starting the EU
+        must lie between {{param|RetryMaximumWaitInterval}}'' * (1000/k)'' and
+        {{param|RetryMaximumWaitInterval}} seconds.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable the auto-restart feature for this {{object|#}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="implementation" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryMinimumWaitInterval" access="readWrite">
+        <description>
+          Configures the initial delay in {{units}} between detecting that the
+          EU has terminated abnormally and re-starting it.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryMaximumWaitInterval" access="readWrite">
+        <description>
+          Configures the maximum delay in {{units}} between detecting that the
+          EU has terminated abnormally and re-starting it.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryIntervalMultiplier" access="readWrite">
+        <description>
+          Configures the retry interval multiplier. This value is expressed in
+          units of 0.001, so for example a value of 2000 will result in the
+          retry interval being doubled each time.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumRetryCount" access="readWrite">
+        <description>
+          Configures the maximum number of consecutive restarts (as shown in
+          {{param|RetryCount}}) after which no more attempts will be performed.
+          A value of zero means that the number of attempts is unlimited.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResetPeriod" access="readWrite">
+        <description>
+          If the {{object|#}} runs for this number of {{units}} without
+          terminating abnormally the Agent MAY reset the {{param|RetryCount}}
+          to zero, thereby resetting the exponential backoff algorithm. A value
+          of zero disables this behavior.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryCount" access="readWrite">
+        <description>
+          The number of restart attempts which have been initiated so far.
+          Resetting this parameter to zero has the effect of re-initialising
+          the exponential back-off algorithm.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastRestarted" access="readOnly">
+        <description>
+          The time at which the {{object|#}} was last re-started. Initially
+          this parameter is set to the Unknown Time (0001-01-01T00:00:00Z).
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NextRestart" access="readOnly">
+        <description>
+          The time at which the next restart of the {{object|#}} is scheduled
+          to occur. The Infinte Time (9999-12-31T23:59:59Z) is used to indicate
+          that no restart is currently scheduled.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <component ref="SMEEHostObject"
+        path="Device.SoftwareModules.ExecutionUnit.{i}."/>
+
+    <object base="Device.SoftwareModules.ExecutionUnit.{i}.HostObject.{i}."
+        access="readOnly" minEntries="0" maxEntries="unbounded">
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Destination"/>
+      </uniqueKey>
+      <parameter name="Alias" access="readWrite" dmr:previousParameter="">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="Alias"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SoftwareModules.ExecutionUnit.{i}.Extensions."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.1">
+      <description>
+        This object proposes a general location for vendor extensions specific
+        to this Execution Unit, which allows multiple Execution Units to expose
+        parameters without the concern of conflicting parameter names. These
+        vendor extensions are related to displaying status and maintaining
+        configuration for this Execution Unit.
+      </description>
+    </object>
+  </component>
+
+  <model name="SoftwareModules:2.16">
+    <component ref="Root"/>
+    <component ref="SoftwareModules"/>
+  </model>
+</dm:document>

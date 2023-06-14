@@ -1,0 +1,186 @@
+# pandoc BBF metadata file (YAML)
+
+# XXX IMPORTANT! syntax errors seem to cause parsing to be aborted quietly!
+#     for example, %name% strings MUST be quoted; the defaults file parser
+#     has the same restriction but does report errors (so use it to check)
+
+# XXX Also, I think that the parser returns 'null' as a string not as Lua nil?
+
+# documents can override these
+siteurl: 'index.html'
+reponame: ''
+repodesc: 'specification source'
+title: '%shortname% -- %project%'
+doctitle: '%bbfNumber% -- %bbfTitle%'
+# XXX currently you have to use explicit []{.release} (can't use a variable)
+subtitle: '%bbfIssue%: %bbfVersion% %bbfStatus% []{.release}'
+author: []
+date: '%bbfIssue% Date: %bbfMonth% %bbfYear%'
+shortname: '%bbfNumber%'
+project: '%bbfTitle%'
+tagline: ''
+description-meta: '%title%: %tagline%'
+version: '%bbfNumber% %bbfIssue% %bbfVersion%'
+status: '%BBFSTATUS%'
+copydate: '%bbfYear%'
+analyticstag: ''
+
+# BBF document info; c.f. Word document properties
+bbfNumber: WT-nnn
+bbfTitle: TITLE
+bbfIssue: Revision
+bbfVersion: 00
+bbfMonth: '%today.monthName%'
+bbfYear: '%today.year%'
+bbfType: Working Text
+bbfStatus: Draft
+bbfContrib: ''
+
+# BBF Work Area and Project Stream names
+bbfWorkArea: ''
+bbfProjectStream: ''
+
+# BBF test plan info
+bbfCertProgram: '**\<BBF.NNN\>**'
+bbfCertProductType: '**\<type of product\>**'
+
+# additional BBF-specific metadata
+titleid: title
+# XXX this is from GitHub; it's blue/green? not appropriate?
+theme-color: '#157878'
+
+# additional pandoc metadata
+title-prefix: BBF
+# XXX comment this out for now (it's the default anyway) because we currently
+#     need the bbf.csl en-UK default to prevail (see bbf.csl for explanation)
+#lang: en-US
+
+# pandoc-crossref metadata
+autoSectionLabels: true
+numberSections: true
+# XXX look into integrating this with --toc-level / toc-level
+sectionsDepth: -1
+
+lofTitle: |
+  ### List of Figures {.unnumbered .unlisted}
+lolTitle: |
+  ### List of Listings {.unnumbered .unlisted}
+lotTitle: |
+  ### List of Tables {.unnumbered .unlisted}
+
+figPrefix:
+  - Figure
+  - Figures
+
+secPrefix:
+  - Section
+  - Sections
+
+tblPrefix:
+  - Table
+  - Tables
+
+pairDelim: '&#32;and&#32;'
+lastDelim: '&#32;and&#32;'
+
+linkReferences: true
+nameInLink: true
+
+# pandoc-citeproc references
+# XXX citation-style needs to be overridden on the command-line if it's
+#     not in the current directory or somewhere where pandoc-crossref looks
+link-citations: true
+reference-section-title: References
+citation-style: bbf.csl
+
+# BBF expand-div (lua filter) specs
+# XXX would prefer to define these in boilerplate.md but the include
+#     filter loses formatting, so define them here for now
+bbfRevisionHistorySpec:
+  optional: true
+  before: |
+    ### %bbfIssue% History {.unnumbered .unlisted .new-page}
+  headers:
+    - Issue Number!!!
+    - Approval Date!!!!
+    - Issue Editor!!!!!
+    - Changes!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  labels:
+    - number
+    - approval
+    - editors
+    - changes
+  after: |
+    Comments or questions about this Broadband Forum %bbfType% should be
+    directed to <info@broadband-forum.org>.
+
+bbfEditorsSpec:
+  optional: true
+  before: |
+    ### Editors {.unnumbered .unlisted}
+
+bbfWADsSpec:
+  optional: true
+  before: |
+    ### %bbfWorkArea% Work Area Director(s) {.unnumbered .unlisted}
+
+bbfPSLsSpec:
+  optional: true
+  before: |
+    ### %bbfProjectStream% Project Stream Leader(s) {.unnumbered .unlisted}
+
+# USP-specific div template specs (USP does its own thing)
+uspRevisionHistorySpec:
+  optional: true
+  before: |
+    ### %bbfIssue% History {.unnumbered .unlisted .new-page}
+  headers:
+    - Issue Number
+    - Changes!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  labels:
+    - number
+    - changes
+  after: |
+    Comments or questions about this Broadband Forum %bbfType% should be
+    directed to <info@broadband-forum.org>.
+
+uspEditorsSpec:
+  optional: true
+  before: |
+    ### Editors {.unnumbered .unlisted}
+  headers:
+    - Name!!!!!!!!
+    - Company!!
+    - Email!!!!!!!!!
+    - Role!!!!!!!!!!!!!!!
+
+uspWADsSpec:
+  optional: true
+  before: |
+    ### %bbfWorkArea% Work Area Directors {.unnumbered .unlisted}
+  headers:
+    - Name!!!!!!!!
+    - Company!!
+    - Email!!!!!!!!!
+    - Role!!!!!!!!!!!!!!!
+
+uspPSLsSpec:
+  optional: true
+  before: |
+    ### %bbfProjectStream% Project Stream Leaders {.unnumbered .unlisted}
+  headers:
+    - Name!!!!!!!!
+    - Company!!
+    - Email!!!!!!!!!
+    - Role!!!!!!!!!!!!!!!
+
+uspAcknowledgmentsSpec:
+  optional: true
+  before: |
+    ### Acknowledgments {.unnumbered .unlisted}
+    The following individuals are being acknowledged for their efforts in the
+    testing and development of this specification.
+  headers:
+    - Name!!!!!!!!!!!!!!!!!!
+    - Company!!!!
+    - Email!!!!!!!!!!
