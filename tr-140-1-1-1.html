@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -136,7 +139,7 @@
               var a1_groups = a1.match(regex).groups;
               var b1_groups = b1.match(regex).groups;
               var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'), 
+                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
                   parseInt(a1_groups.version || 0)];
               var b1_tuple =  [
                   b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
@@ -261,7 +264,7 @@
 
   <style>
   .chevron {
-      color: blue;
+      color: var(--link-color);
       cursor: pointer;
   }
 
@@ -299,7 +302,12 @@
   <!-- Global styles (that affect the entire document) -->
 
   <style>
-  :root {
+  /* light mode support */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background-color: white;
+      --foreground-color: black;
+      --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
       --command-color: #66cdaa;
@@ -315,10 +323,33 @@
       --stripe-color-deprecated: #eeeeee;
       --stripe-color-obsoleted: #dddddd;
       --stripe-color-deleted: #cccccc;
+    }
+  }
+
+  /* dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: black;
+      --foreground-color: white;
+      --link-color: lightblue;
+      --parameter-color: black;
+      --object-color: #bbbb44;
+      --command-color: #56bd9a;
+      --event-color: #56bd9a;
+      --argument-container-color: #777777;
+      --argument-object-color: #dfa0ab;
+      --argument-parameter-color: #bfa4a1;
+      --mountable-object-color: #b3e0ff;
+      --mountpoint-object-color: #3da8ef;
+      --stripe-color-deprecated: #555555;
+      --stripe-color-obsoleted: #444444;
+      --stripe-color-deleted: #333333;
+    }
   }
 
   body, table {
-      background-color: white;
+      background-color: var(--background-color);
+      color: var(--foreground-color);
       font-family: helvetica, arial, sans-serif;
       font-size: 9pt;
   }
@@ -335,8 +366,8 @@
       font-size: 10pt;
   }
 
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
+  a:link, a:visited {
+      color: var(--link-color);
   }
 
   sup {
@@ -719,6 +750,37 @@
       hyphenate-character: "";
   }
 
+  /* word wrap/break column 1 (Name) */
+  .data-model-table td:first-child {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 27ch;
+  }
+
+  /* word wrap/break column 2 (Base Type) */
+  .data-model-table td:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 3 (Write) */
+  .data-model-table td:nth-child(3) {
+      min-width: 1ch;
+  }
+
+  /* word wrap/break column 5 (Object Default) */
+  .data-model-table td:nth-child(5) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 6 (Version) */
+  .data-model-table td:nth-child(6) {
+      min-width: 6ch;
+  }
+
   /* center column 1 (Abbreviation) */
   .profile-notation-table th:nth-child(1),
   .profile-notation-table td:nth-child(1) {
@@ -745,7 +807,7 @@
 <col style="width: 25.0%;"></col></colgroup>
 <tbody>
 <tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></img></a></td>
+<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
 <td class="centered" rowspan="1"><p></p>
 
 <h1 id="tr-069-storageservice11-service-object-definition-corrigendum-1" class="unnumbered unlisted">TR-069 StorageService:1.1 Service Object definition (Corrigendum 1)</h1>
@@ -925,7 +987,7 @@ the <strong>Version</strong> column.</p>
 <th>Version</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.">Storage­Service.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.">StorageService.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
 <td>The Service Object for a Storage Service device.</td>
@@ -939,42 +1001,42 @@ the <strong>Version</strong> column.</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.PhysicalMediumNumberOfEntries">Physical­Medium­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMediumNumberOfEntries">PhysicalMediumNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of instances of <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.{i}.</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.StorageArrayNumberOfEntries">Storage­Array­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.StorageArrayNumberOfEntries">StorageArrayNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of instances of <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.{i}.</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolumeNumberOfEntries">Logical­Volume­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolumeNumberOfEntries">LogicalVolumeNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of instances of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume.{i}.</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.UserAccountNumberOfEntries">User­Account­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.UserAccountNumberOfEntries">UserAccountNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of instances of <em><a href="#D.StorageService:1.StorageService.UserAccount.">UserAccount.{i}.</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.UserGroupNumberOfEntries">User­Group­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.UserGroupNumberOfEntries">UserGroupNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of instances of <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.{i}.</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.Capabilities.">Storage­Service.­{i}.­Capabilities.</span></td>
+<td><span id="D.StorageService:1.StorageService.Capabilities.">StorageService.{i}.Capabilities.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>The overall capabilities of a Storage Service device. This is a constant read-only object, meaning that only a firmware upgrade will cause these values to be altered.
@@ -1017,90 +1079,90 @@ Note that when TR-140 was originally published there was a typo in this object n
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols">Supported­Network­Protocols</span></td>
-<td>string­[]</td>
+<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols">SupportedNetworkProtocols</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Supported application-level network protocols. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols.SMB">SMB</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols.NFS">NFS</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols.AFP">AFP</span>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols.SMB"><em>SMB</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols.NFS"><em>NFS</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols.AFP"><em>AFP</em></span>
 The list MAY include vendor-specific protocols, which MUST be in the format defined in [<a href="#R.TR-106">TR-106</a>]. For example: “X_EXAMPLE-COM_MyProt.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">Supported­File­System­Types</span></td>
-<td>string­[]</td>
+<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">SupportedFileSystemTypes</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Supported FileSystems Types. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT16">FAT16</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT32">FAT32</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.NTFS">NTFS</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS">HFS</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS">HFS+</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HSFJ">HSFJ</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext2">ext2</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext3">ext3</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.XFS">XFS</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.REISER">REISER</span>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT16"><em>FAT16</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT32"><em>FAT32</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.NTFS"><em>NTFS</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS"><em>HFS</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS"><em>HFS+</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HSFJ"><em>HSFJ</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext2"><em>ext2</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext3"><em>ext3</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.XFS"><em>XFS</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.REISER"><em>REISER</em></span>
 The list MAY include vendor-specific protocols, which MUST be in the format defined in [<a href="#R.TR-106">TR-106</a>]. For example: “X_EXAMPLE-COM_MyType.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes">Supported­Raid­Types</span></td>
-<td>string­[]</td>
+<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes">SupportedRaidTypes</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Supported RAID types. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID0">RAID0</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID1">RAID1</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID2">RAID2</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID3">RAID3</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID4">RAID4</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID5">RAID5</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID6">RAID6</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID10">RAID10</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID01">RAID0+1</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID30">RAID30</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID50">RAID50</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID60">RAID60</span>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID0"><em>RAID0</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID1"><em>RAID1</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID2"><em>RAID2</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID3"><em>RAID3</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID4"><em>RAID4</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID5"><em>RAID5</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID6"><em>RAID6</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID10"><em>RAID10</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID01"><em>RAID0+1</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID30"><em>RAID30</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID50"><em>RAID50</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes.RAID60"><em>RAID60</em></span>
 The list MAY include vendor-specific protocols, which MUST be in the format defined in [<a href="#R.TR-106">TR-106</a>]. For example:“X_EXAMPLE-COM_MyRaid.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.Capabilities.VolumeEncryptionCapable">Volume­Encryption­Capable</span></td>
+<td><span id="D.StorageService:1.StorageService.Capabilities.VolumeEncryptionCapable">VolumeEncryptionCapable</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Does this device have the ability to encrypt and decrypt Logical Volumes as they are stored and retrieved?</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.NetInfo.">Storage­Service.­{i}.­Net­Info.</span></td>
+<td><span id="D.StorageService:1.StorageService.NetInfo.">StorageService.{i}.NetInfo.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object provides general LAN network information about this device.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.NetInfo.HostName">Host­Name</span></td>
-<td>string­(:64)</td>
+<td><span id="D.StorageService:1.StorageService.NetInfo.HostName">HostName</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Logical name which identifies the device on the local network. This is the first segment of a fully qualified domain name (FQDN). Combining <em>HostName</em>, a &ldquo;.&rdquo; and the <em><a href="#D.StorageService:1.StorageService.NetInfo.DomainName">DomainName</a></em> will result in a fully qualified domain name.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.NetInfo.DomainName">Domain­Name</span></td>
-<td>string­(:255)</td>
+<td><span id="D.StorageService:1.StorageService.NetInfo.DomainName">DomainName</span></td>
+<td>string(:255)</td>
 <td>W</td>
 <td>Domain name for the device on the local network. Combining <em><a href="#D.StorageService:1.StorageService.NetInfo.HostName">HostName</a></em>, a &ldquo;.&rdquo; and <em>DomainName</em> will result in a fully qualified domain name (FQDN). For example, if the HostName contains &ldquo;myLaptop&rdquo; and the DomainName contains &ldquo;dsl.sp1.com&rdquo;, then the FQDN would be &ldquo;myLaptop.dsl.sp1.com&rdquo;.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.UserGroup.">Storage­Service.­{i}.­User­Group.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.UserGroup.">StorageService.{i}.UserGroup.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object provides information about each user group configured on this device, which allows the grouping of user accounts for easier maintenance of permissions.</p>
@@ -1116,14 +1178,14 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.UserGroup.GroupName">Group­Name</span></td>
-<td>string­(:64)</td>
+<td><span id="D.StorageService:1.StorageService.UserGroup.GroupName">GroupName</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>The unique name of the group.</td>
 <td></td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.UserAccount.">Storage­Service.­{i}.­User­Account.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.UserAccount.">StorageService.{i}.UserAccount.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object provides information about each user configured on this device, which provides a means for controlling access to the device.</p>
@@ -1140,14 +1202,14 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.UserAccount.Username">Username</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td>The unique name of the user. Also used for authentication.</td>
 <td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.UserAccount.Password">Password</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td><p>Password used to authenticate the user when connecting to the Storage Service Device.</p>
 
@@ -1155,28 +1217,28 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.UserAccount.UserGroupParticipation">User­Group­Participation</span></td>
-<td>string­(:1024)[]</td>
+<td><span id="D.StorageService:1.StorageService.UserAccount.UserGroupParticipation">UserGroupParticipation</span></td>
+<td>string[](:1024)</td>
 <td>W</td>
-<td>Comma-separated list (maximum number of characters per item 1024) of strings. Each list item MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.</a></em> table. If the referenced object is deleted, the corresponding item MUST be removed from the list. Represents a User Group that this User Account is a member of. Each <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.</td>
+<td>Comma-separated list (maximum number of characters 1024) of strings. Each list item MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.</a></em> table. If the referenced object is deleted, the corresponding item MUST be removed from the list. Represents a User Group that this User Account is a member of. Each <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.</td>
 <td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.UserAccount.AllowFTPAccess">Allow­FTPAccess</span></td>
+<td><span id="D.StorageService:1.StorageService.UserAccount.AllowFTPAccess">AllowFTPAccess</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enables or disables access via FTP (including SSH FTP access) for this user.</td>
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.UserAccount.AllowHTTPAccess">Allow­HTTPAccess</span></td>
+<td><span id="D.StorageService:1.StorageService.UserAccount.AllowHTTPAccess">AllowHTTPAccess</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enables or disables access via HTTP (including HTTPS access) for this user.</td>
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.NetworkServer.">Storage­Service.­{i}.­Network­Server.</span></td>
+<td><span id="D.StorageService:1.StorageService.NetworkServer.">StorageService.{i}.NetworkServer.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the control of network layer protocols authorization enforcement.</td>
@@ -1204,14 +1266,14 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.NetworkServer.NetworkProtocolAuthReq">Network­Protocol­Auth­Req</span></td>
+<td><span id="D.StorageService:1.StorageService.NetworkServer.NetworkProtocolAuthReq">NetworkProtocolAuthReq</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>If this parameter is set to <em>false</em> then the device MUST NOT attempt to request login credentials or authenticate access from network layer protocols such as AFP, NFS, and SMB. If this parameter is set to <em>true</em> then the device MUST attempt to request login credentials or authenticate access from network layer protocols such as AFP, NFS, and SMB by using an instance of <em><a href="#D.StorageService:1.StorageService.UserAccount.">UserAccount.{i}.</a></em> found on this device.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.FTPServer.">Storage­Service.­{i}.­FTPServer.</span></td>
+<td><span id="D.StorageService:1.StorageService.FTPServer.">StorageService.{i}.FTPServer.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the configuration of the FTP server.</td>
@@ -1231,28 +1293,28 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td><p>The current status of this FTP server. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.FTPServer.Status.Enabled">Enabled</span></li>
-<li><span id="D.StorageService:1.StorageService.FTPServer.Status.Disabled">Disabled</span></li>
-<li><span id="D.StorageService:1.StorageService.FTPServer.Status.Error">Error</span></li></ul></td>
+<li><span id="D.StorageService:1.StorageService.FTPServer.Status.Enabled"><em>Enabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.FTPServer.Status.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.FTPServer.Status.Error"><em>Error</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.FTPServer.MaxNumUsers">Max­Num­Users</span></td>
-<td>unsigned­Int­(1:32)</td>
+<td><span id="D.StorageService:1.StorageService.FTPServer.MaxNumUsers">MaxNumUsers</span></td>
+<td>unsignedInt(1:32)</td>
 <td>W</td>
 <td>Maximum number of users allowed to log in to the device at once via FTP.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.FTPServer.IdleTime">Idle­Time</span></td>
-<td>unsigned­Int­(0:600)</td>
+<td><span id="D.StorageService:1.StorageService.FTPServer.IdleTime">IdleTime</span></td>
+<td>unsignedInt(0:600)</td>
 <td>W</td>
 <td>Maximum amount of time in <em>seconds</em> that the FTP socket will remain open without any activity. If set to 0 an infinite timeout will apply.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.FTPServer.PortNumber">Port­Number</span></td>
-<td>unsigned­Int­(0:65535)</td>
+<td><span id="D.StorageService:1.StorageService.FTPServer.PortNumber">PortNumber</span></td>
+<td>unsignedInt(0:65535)</td>
 <td>W</td>
 <td><p>The port number that the FTP server is listening on.</p>
 
@@ -1260,7 +1322,7 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.FTPServer.AnonymousUser.">Storage­Service.­{i}.­FTPServer.­Anonymous­User.</span></td>
+<td><span id="D.StorageService:1.StorageService.FTPServer.AnonymousUser.">StorageService.{i}.FTPServer.AnonymousUser.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the configuration of anonymous FTP access.</td>
@@ -1274,21 +1336,21 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.FTPServer.AnonymousUser.StartingFolder">Starting­Folder</span></td>
-<td>string­(:256)</td>
+<td><span id="D.StorageService:1.StorageService.FTPServer.AnonymousUser.StartingFolder">StartingFolder</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The value MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.</a></em> table. Represents the home directory for anonymous FTP access. The <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.FTPServer.AnonymousUser.ReadOnlyAccess">Read­Only­Access</span></td>
+<td><span id="D.StorageService:1.StorageService.FTPServer.AnonymousUser.ReadOnlyAccess">ReadOnlyAccess</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>If this is set to <em>true</em>, then the anonymous user is limited to only retrieval of files from the Storage Service (no deletions, copies, creations or uploads). If this is set to <em>false</em>, then the anonymous user has full permissions within the folder specified in <em><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.StartingFolder">StartingFolder</a></em>. This SHOULD default to True.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.SFTPServer.">Storage­Service.­{i}.­SFTPServer.</span></td>
+<td><span id="D.StorageService:1.StorageService.SFTPServer.">StorageService.{i}.SFTPServer.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the configuration of the SSH FTP server.</td>
@@ -1308,28 +1370,28 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td><p>The current status of this SSH FTP server. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.SFTPServer.Status.Enabled">Enabled</span></li>
-<li><span id="D.StorageService:1.StorageService.SFTPServer.Status.Disabled">Disabled</span></li>
-<li><span id="D.StorageService:1.StorageService.SFTPServer.Status.Error">Error</span></li></ul></td>
+<li><span id="D.StorageService:1.StorageService.SFTPServer.Status.Enabled"><em>Enabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.SFTPServer.Status.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.SFTPServer.Status.Error"><em>Error</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.SFTPServer.MaxNumUsers">Max­Num­Users</span></td>
-<td>unsigned­Int­(1:32)</td>
+<td><span id="D.StorageService:1.StorageService.SFTPServer.MaxNumUsers">MaxNumUsers</span></td>
+<td>unsignedInt(1:32)</td>
 <td>W</td>
 <td>Maximum number of users allowed to log in to the device at once via SFTP.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.SFTPServer.IdleTime">Idle­Time</span></td>
-<td>unsigned­Int­(0:600)</td>
+<td><span id="D.StorageService:1.StorageService.SFTPServer.IdleTime">IdleTime</span></td>
+<td>unsignedInt(0:600)</td>
 <td>W</td>
 <td>Maximum amount of time in <em>seconds</em> that the SFTP socket will remain open without any activity. If set to 0 an infinite timeout will apply.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.SFTPServer.PortNumber">Port­Number</span></td>
-<td>unsigned­Int­(0:65535)</td>
+<td><span id="D.StorageService:1.StorageService.SFTPServer.PortNumber">PortNumber</span></td>
+<td>unsignedInt(0:65535)</td>
 <td>W</td>
 <td><p>The port number that the SSH FTP server is listening on.</p>
 
@@ -1337,7 +1399,7 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.HTTPServer.">Storage­Service.­{i}.­HTTPServer.</span></td>
+<td><span id="D.StorageService:1.StorageService.HTTPServer.">StorageService.{i}.HTTPServer.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the configuration of the HTTP server.</td>
@@ -1357,35 +1419,35 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td><p>The current status of this HTTP server. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.HTTPServer.Status.Enabled">Enabled</span></li>
-<li><span id="D.StorageService:1.StorageService.HTTPServer.Status.Disabled">Disabled</span></li>
-<li><span id="D.StorageService:1.StorageService.HTTPServer.Status.Error">Error</span></li></ul></td>
+<li><span id="D.StorageService:1.StorageService.HTTPServer.Status.Enabled"><em>Enabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.HTTPServer.Status.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.HTTPServer.Status.Error"><em>Error</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPServer.MaxNumUsers">Max­Num­Users</span></td>
-<td>unsigned­Int­(1:32)</td>
+<td><span id="D.StorageService:1.StorageService.HTTPServer.MaxNumUsers">MaxNumUsers</span></td>
+<td>unsignedInt(1:32)</td>
 <td>W</td>
 <td>Maximum number of users allowed to log in to the device at once via HTTP.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPServer.IdleTime">Idle­Time</span></td>
-<td>unsigned­Int­(0:600)</td>
+<td><span id="D.StorageService:1.StorageService.HTTPServer.IdleTime">IdleTime</span></td>
+<td>unsignedInt(0:600)</td>
 <td>W</td>
 <td>Maximum amount of time in <em>seconds</em> that the HTTP socket will remain open without any activity. If set to 0 an infinite timeout will apply.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPServer.HTTPWritingEnabled">HTTPWriting­Enabled</span></td>
+<td><span id="D.StorageService:1.StorageService.HTTPServer.HTTPWritingEnabled">HTTPWritingEnabled</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Is support for the HTTP PUT/POST mechanism (WebDAV) enabled?</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPServer.PortNumber">Port­Number</span></td>
-<td>unsigned­Int­(0:65535)</td>
+<td><span id="D.StorageService:1.StorageService.HTTPServer.PortNumber">PortNumber</span></td>
+<td>unsignedInt(0:65535)</td>
 <td>W</td>
 <td><p>The port number that the HTTP server is listening on.</p>
 
@@ -1393,14 +1455,14 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPServer.AuthenticationReq">Authentication­Req</span></td>
+<td><span id="D.StorageService:1.StorageService.HTTPServer.AuthenticationReq">AuthenticationReq</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>If <em>true</em>, HTTP will require login prior to access (basic or digest authentication).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.HTTPSServer.">Storage­Service.­{i}.­HTTPSServer.</span></td>
+<td><span id="D.StorageService:1.StorageService.HTTPSServer.">StorageService.{i}.HTTPSServer.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the configuration of the HTTPS server.</td>
@@ -1420,35 +1482,35 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td><p>The current status of this HTTPS server. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.HTTPSServer.Status.Enabled">Enabled</span></li>
-<li><span id="D.StorageService:1.StorageService.HTTPSServer.Status.Disabled">Disabled</span></li>
-<li><span id="D.StorageService:1.StorageService.HTTPSServer.Status.Error">Error</span></li></ul></td>
+<li><span id="D.StorageService:1.StorageService.HTTPSServer.Status.Enabled"><em>Enabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.HTTPSServer.Status.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.StorageService:1.StorageService.HTTPSServer.Status.Error"><em>Error</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPSServer.MaxNumUsers">Max­Num­Users</span></td>
-<td>unsigned­Int­(1:32)</td>
+<td><span id="D.StorageService:1.StorageService.HTTPSServer.MaxNumUsers">MaxNumUsers</span></td>
+<td>unsignedInt(1:32)</td>
 <td>W</td>
 <td>Maximum number of users allowed to log in to the device at once via HTTPS.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPSServer.IdleTime">Idle­Time</span></td>
-<td>unsigned­Int­(0:600)</td>
+<td><span id="D.StorageService:1.StorageService.HTTPSServer.IdleTime">IdleTime</span></td>
+<td>unsignedInt(0:600)</td>
 <td>W</td>
 <td>Maximum amount of time in <em>seconds</em> that the HTTPS socket will remain open without any activity. If set to 0 an infinite timeout will apply.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPSServer.HTTPWritingEnabled">HTTPWriting­Enabled</span></td>
+<td><span id="D.StorageService:1.StorageService.HTTPSServer.HTTPWritingEnabled">HTTPWritingEnabled</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Is support for the HTTP PUT/POST mechanism (WebDAV) enabled?</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPSServer.PortNumber">Port­Number</span></td>
-<td>unsigned­Int­(0:65535)</td>
+<td><span id="D.StorageService:1.StorageService.HTTPSServer.PortNumber">PortNumber</span></td>
+<td>unsignedInt(0:65535)</td>
 <td>W</td>
 <td><p>The port number that the HTTPS server is listening on.</p>
 
@@ -1456,14 +1518,14 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.HTTPSServer.AuthenticationReq">Authentication­Req</span></td>
+<td><span id="D.StorageService:1.StorageService.HTTPSServer.AuthenticationReq">AuthenticationReq</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>If <em>true</em>, HTTPS will require login prior to access (basic or digest authentication).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.">Storage­Service.­{i}.­Physical­Medium.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.">StorageService.{i}.PhysicalMedium.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
 <td><p>This object provides information about each physical medium connected to this device.</p>
@@ -1473,71 +1535,71 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.PhysicalMedium.Name">Name</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td>A user-friendly name for this physical storage medium.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.PhysicalMedium.Vendor">Vendor</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>R</td>
 <td>The vendor of this physical storage medium.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.PhysicalMedium.Model">Model</span></td>
-<td>string­(:128)</td>
+<td>string(:128)</td>
 <td>R</td>
 <td>The model name/number of this physical storage medium.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SerialNumber">Serial­Number</span></td>
-<td>string­(:64)</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SerialNumber">SerialNumber</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>The serial number of this physical storage medium.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.FirmwareVersion">Firmware­Version</span></td>
-<td>string­(:64)</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.FirmwareVersion">FirmwareVersion</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>The firmware version for firmware contained within the physical medium’s controller.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType">Connection­Type</span></td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType">ConnectionType</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>The method of connection to this storage device. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB1.1">USB 1.1</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB2.0">USB 2.0</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394">IEEE1394</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394b">IEEE1394b</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IDE">IDE</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.EIDE">EIDE</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA33">ATA/33</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA66">ATA/66</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA100">ATA/100</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA133">ATA/133</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA150">SATA/150</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA300">SATA/300</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SCSI-1">SCSI-1</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FastSCSI">Fast SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Fast-WideSCSI">Fast-Wide SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraSCSI">Ultra SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraWideSCSI">Ultra Wide SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2SCSI">Ultra2 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2WideSCSI">Ultra2 Wide SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra3SCSI">Ultra3 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-320SCSI">Ultra-320 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-640SCSI">Ultra-640 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA">SSA</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA-40">SSA-40</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FibreChannel">Fibre Channel</span>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB1.1"><em>USB 1.1</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB2.0"><em>USB 2.0</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394"><em>IEEE1394</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394b"><em>IEEE1394b</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IDE"><em>IDE</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.EIDE"><em>EIDE</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA33"><em>ATA/33</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA66"><em>ATA/66</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA100"><em>ATA/100</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA133"><em>ATA/133</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA150"><em>SATA/150</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA300"><em>SATA/300</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SCSI-1"><em>SCSI-1</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FastSCSI"><em>Fast SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Fast-WideSCSI"><em>Fast-Wide SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraSCSI"><em>Ultra SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraWideSCSI"><em>Ultra Wide SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2SCSI"><em>Ultra2 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2WideSCSI"><em>Ultra2 Wide SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra3SCSI"><em>Ultra3 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-320SCSI"><em>Ultra-320 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-640SCSI"><em>Ultra-640 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA"><em>SSA</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA-40"><em>SSA-40</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FibreChannel"><em>Fibre Channel</em></span>
 The parameter MAY instead be a vendor-specific connection type, which MUST be in the format defined in [<a href="#R.TR-106">TR-106</a>]. For example:
 &ldquo;X_EXAMPLE-COM_MyConnType&rdquo;</li></ul></td>
 <td>-</td>
@@ -1551,7 +1613,7 @@ The parameter MAY instead be a vendor-specific connection type, which MUST be in
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.PhysicalMedium.Capacity">Capacity</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The formatted capacity of the physical storage medium in <em>MB</em>.</td>
 <td>-</td>
@@ -1563,14 +1625,14 @@ The parameter MAY instead be a vendor-specific connection type, which MUST be in
 <td><p>The general activity status of this physical storage medium. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Status.Online">Online</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Status.Standby">Standby</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Status.Offline">Offline</span></li></ul></td>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Status.Online"><em>Online</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Status.Standby"><em>Standby</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Status.Offline"><em>Offline</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.PhysicalMedium.Uptime">Uptime</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Time since boot in <em>hours</em>. This MAY reflect S.M.A.R.T. PowerOnHours.</td>
 <td>-</td>
@@ -1589,32 +1651,32 @@ The parameter MAY instead be a vendor-specific connection type, which MUST be in
 <td><p>The general health of this physical storage medium. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Health.OK">OK</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Health.Failing">Failing</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Health.Error">Error</span>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Health.OK"><em>OK</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Health.Failing"><em>Failing</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Health.Error"><em>Error</em></span>
 Note: Health MAY be obtained from S.M.A.R.T. data where available.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.HotSwappable">Hot­Swappable</span></td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.HotSwappable">HotSwappable</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Is this physical medium capable of being removed while the device is powered up? Hot-Swappable storage does not imply Removable storage; hot-swappable is an operation taken only when the disk has failed and needs to be replaced. The data on the hot-swapped storage will not remain intact.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.StorageArray.">Storage­Service.­{i}.­Storage­Array.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.StorageArray.">StorageService.{i}.StorageArray.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object provides information about each storage array (RAID) configured on this device.
-Creating an instance of this object generates a disabled <em>StorageService.{i}.StorageArray.{i}.</em> instance. Before this new <em>StorageService.{i}.StorageArray.{i}.</em> instance can be enabled (via a SetParameterValues command), it MUST have the following parameters configured: <em><a href="#D.StorageService:1.StorageService.StorageArray.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.StorageArray.RaidType">RaidType</a></em>, and <em><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</a></em>. Once an instance is enabled the following parameters become immutable for the life of the instance: <em><a href="#D.StorageService:1.StorageService.StorageArray.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.StorageArray.RaidType">RaidType</a></em>, and <em><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</a></em>.</p>
+Creating an instance of this object generates a disabled <em>StorageArray</em> instance. Before this new <em>StorageArray</em> instance can be enabled (via a SetParameterValues command), it MUST have the following parameters configured: <em><a href="#D.StorageService:1.StorageService.StorageArray.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.StorageArray.RaidType">RaidType</a></em>, and <em><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</a></em>. Once an instance is enabled the following parameters become immutable for the life of the instance: <em><a href="#D.StorageService:1.StorageService.StorageArray.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.StorageArray.RaidType">RaidType</a></em>, and <em><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</a></em>.</p>
 
 <p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</a></em>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.StorageArray.Name">Name</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td>A user-friendly name for this Storage Array.
 Once this instance becomes enabled, this parameter will be immutable for the life of the instance.</td>
@@ -1627,13 +1689,13 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td><p>The current status of this StorageArray. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Rebuilding">Rebuilding</span> (Indicates a drive participating in an array is replaced, while the data striping and/or redundancy of the array are reestablished on the new disk. In this state, data operations to the array will function properly, but its performance could be significantly diminished)</li>
-<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Initializing">Initializing</span> (The state when the RAID array is being first constructed, and the data striping and/or redundancy of the array are first being established. In this state, data operations to the array will function properly, but its performance could be significantly diminished and the redundancy might not be fully established)</li>
-<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Offline">Offline</span> (Indicates the RAID array is not available. This might occur because the administrator explicitly has disabled the array, or because underlying elements of the array, such as the physical disks, are not ready)</li>
-<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Online">Online</span> (Indicates the RAID array is fully operational)</li>
-<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Error">Error</span> (Indicates an error condition exists within the RAID array. In this state, data operations to the array are not possible, and data loss might have occurred)</li>
-<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Degraded">Degraded</span> (Indicates the loss of a drive only in a Raid Type of more than 2 drives, that can support multiple failures. Data redundancy continues to be available but with degraded capability)</li>
-<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Critical">Critical</span> (Indicates the loss of data redundancy, and a possible degraded state. The array continues to perform read/write operations)</li></ul></td>
+<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Rebuilding"><em>Rebuilding</em></span> (Indicates a drive participating in an array is replaced, while the data striping and/or redundancy of the array are reestablished on the new disk. In this state, data operations to the array will function properly, but its performance could be significantly diminished)</li>
+<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Initializing"><em>Initializing</em></span> (The state when the RAID array is being first constructed, and the data striping and/or redundancy of the array are first being established. In this state, data operations to the array will function properly, but its performance could be significantly diminished and the redundancy might not be fully established)</li>
+<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Offline"><em>Offline</em></span> (Indicates the RAID array is not available. This might occur because the administrator explicitly has disabled the array, or because underlying elements of the array, such as the physical disks, are not ready)</li>
+<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Online"><em>Online</em></span> (Indicates the RAID array is fully operational)</li>
+<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Error"><em>Error</em></span> (Indicates an error condition exists within the RAID array. In this state, data operations to the array are not possible, and data loss might have occurred)</li>
+<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Degraded"><em>Degraded</em></span> (Indicates the loss of a drive only in a Raid Type of more than 2 drives, that can support multiple failures. Data redundancy continues to be available but with degraded capability)</li>
+<li><span id="D.StorageService:1.StorageService.StorageArray.Status.Critical"><em>Critical</em></span> (Indicates the loss of data redundancy, and a possible degraded state. The array continues to perform read/write operations)</li></ul></td>
 <td>Offline</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1644,7 +1706,7 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.StorageArray.RaidType">Raid­Type</span></td>
+<td><span id="D.StorageService:1.StorageService.StorageArray.RaidType">RaidType</span></td>
 <td>string</td>
 <td>W</td>
 <td>The value MUST be a member of the list reported by the <em><a href="#D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes">Capabilities.SupportedRaidTypes</a></em> parameter. Note that after creation of the Storage Array, any subsequent writes to this parameter MUST be ignored as array type migration is not supported. To identify which RAID Types are supported, see <em><a href="#D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes">Capabilities.SupportedRaidTypes</a></em>.
@@ -1652,36 +1714,36 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>Linear</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.StorageArray.UsableCapacity">Usable­Capacity</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.StorageArray.UsableCapacity">UsableCapacity</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The total Usable Capacity of the Storage Array in <em>MB</em>. This is computed by the system based on <em><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</a></em> and <em><a href="#D.StorageService:1.StorageService.StorageArray.RaidType">RaidType</a></em>. Disk size is a consideration, as many RAID Types use the smallest drive in the group for calculations.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">Physical­Medium­Reference</span></td>
-<td>string­(:1024)[]</td>
+<td><span id="D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</span></td>
+<td>string[](:1024)</td>
 <td>W</td>
-<td>Comma-separated list (maximum number of characters per item 1024) of strings. Each list item MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.</a></em> table. Represents the physical medium used by this RAID. Each Physical Medium referenced by this parameter MUST exist within the same StorageService instance. A <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.{i}.</a></em> MUST only be referenced by one <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.{i}.</a></em> instance.
+<td>Comma-separated list (maximum number of characters 1024) of strings. Each list item MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.</a></em> table. Represents the physical medium used by this RAID. Each Physical Medium referenced by this parameter MUST exist within the same StorageService instance. A <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.{i}.</a></em> MUST only be referenced by one <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.{i}.</a></em> instance.
 Once this instance becomes enabled, this parameter will be immutable for the life of the instance.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.">Storage­Service.­{i}.­Logical­Volume.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.">StorageService.{i}.LogicalVolume.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
-<td><p>This object provides information about each logical volume configured on this device. A logical volume can reside either on an instance of a single <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.{i}.</a></em> or on an instance of a single <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.{i}.</a></em> instance, but it can not span multiple instances of either. <em><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</a></em> is used to define where this <em>StorageService.{i}.LogicalVolume.{i}.</em> instance resides.
-Creating an instance of this object generates a disabled <em>StorageService.{i}.LogicalVolume.{i}.</em> instance. Before this new <em>StorageService.{i}.LogicalVolume.{i}.</em> instance can be enabled (via a SetParameterValues command), it MUST have the following parameters configured: <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</a></em>, and <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></em>. Once an instance is enabled the following parameters become immutable for the life of the instance: <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</a></em>, and <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></em>.</p>
+<td><p>This object provides information about each logical volume configured on this device. A logical volume can reside either on an instance of a single <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.{i}.</a></em> or on an instance of a single <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.{i}.</a></em> instance, but it can not span multiple instances of either. <em><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</a></em> is used to define where this <em>LogicalVolume</em> instance resides.
+Creating an instance of this object generates a disabled <em>LogicalVolume</em> instance. Before this new <em>LogicalVolume</em> instance can be enabled (via a SetParameterValues command), it MUST have the following parameters configured: <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</a></em>, and <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></em>. Once an instance is enabled the following parameters become immutable for the life of the instance: <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></em>, <em><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</a></em>, and <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></em>.</p>
 
 <p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></em>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Name">Name</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td>The name of the partition for this logical volume.
-Once this instance becomes enabled, this parameter will be immutable for the life of the instance. This parameter acts as the unique identifier for the instance, thus the device MUST NOT allow multiple <em>StorageService.{i}.LogicalVolume.{i}.</em> instances to use the same <em>Name</em>.</td>
+Once this instance becomes enabled, this parameter will be immutable for the life of the instance. This parameter acts as the unique identifier for the instance, thus the device MUST NOT allow multiple <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume</a></em> instances to use the same <em>Name</em>.</td>
 <td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1691,58 +1753,58 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td><p>The current status of this Logical Volume. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.LogicalVolume.Status.Offline">Offline</span></li>
-<li><span id="D.StorageService:1.StorageService.LogicalVolume.Status.Online">Online</span></li>
-<li><span id="D.StorageService:1.StorageService.LogicalVolume.Status.Error">Error</span>
-The default <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Status.Offline">Offline</a></em> status will exist until this <em>StorageService.{i}.LogicalVolume.{i}.</em> is enabled.</li></ul></td>
+<li><span id="D.StorageService:1.StorageService.LogicalVolume.Status.Offline"><em>Offline</em></span></li>
+<li><span id="D.StorageService:1.StorageService.LogicalVolume.Status.Online"><em>Online</em></span></li>
+<li><span id="D.StorageService:1.StorageService.LogicalVolume.Status.Error"><em>Error</em></span>
+The default <a href="#D.StorageService:1.StorageService.LogicalVolume.Status.Offline"><em>Offline</em></a> status will exist until this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume</a></em> is enabled.</li></ul></td>
 <td>Offline</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Enable">Enable</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>Enables or disables this <em>StorageService.{i}.LogicalVolume.{i}.</em> instance.</td>
+<td>Enables or disables this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume</a></em> instance.</td>
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">Physical­Reference</span></td>
-<td>string­(:256)</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</span></td>
+<td>string(:256)</td>
 <td>W</td>
-<td>The value MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.</a></em> or <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.</a></em> tables. Represents the physical medium or RAID where this <em>StorageService.{i}.LogicalVolume.{i}.</em> resides. The <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.{i}.</a></em> or <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.
+<td>The value MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.</a></em> or <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.</a></em> tables. Represents the physical medium or RAID where this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume</a></em> resides. The <em><a href="#D.StorageService:1.StorageService.PhysicalMedium.">PhysicalMedium.{i}.</a></em> or <em><a href="#D.StorageService:1.StorageService.StorageArray.">StorageArray.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.
 An AddObject followed by an enabling SetParameterValues on <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></em>, <em>PhysicalReference</em>, and <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></em> will cause the formatting of this logical partition and these parameters to become immutable for the life of this instance.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.FileSystem">File­System</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.FileSystem">FileSystem</span></td>
 <td>string</td>
 <td>R</td>
-<td>The value MUST be a member of the list reported by the <em><a href="#D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">Capabilities.SupportedFileSystemTypes</a></em> parameter. The file system for this <em>StorageService.{i}.LogicalVolume.{i}.</em> as it is currently formatted.</td>
+<td>The value MUST be a member of the list reported by the <em><a href="#D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">Capabilities.SupportedFileSystemTypes</a></em> parameter. The file system for this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume</a></em> as it is currently formatted.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>The Capacity of the Logical Volume in <em>MB</em>.
 Once this instance becomes enabled, this parameter will be immutable for the life of the instance.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.UsedSpace">Used­Space</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.UsedSpace">UsedSpace</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The Amount of Used Space on the Logical Volume in <em>MB</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.ThresholdLimit">Threshold­Limit</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.ThresholdLimit">ThresholdLimit</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>This value is specified in <em>MB</em> and controls when <em><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdReached">ThresholdReached</a></em> will have its value altered. If the value of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.UsedSpace">UsedSpace</a></em> plus the value of <em>ThresholdLimit</em>r is greater than or equal to the value of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></em> then the value of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdReached">ThresholdReached</a></em> will be <em>true</em>, otherwise it will be <em>false</em>. Setting the value of this parameter to 0 will disable the Thresholding mechanism.</td>
 <td>0</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.ThresholdReached">Threshold­Reached</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.ThresholdReached">ThresholdReached</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>When <em><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdLimit">ThresholdLimit</a></em> &gt; 0 and <em><a href="#D.StorageService:1.StorageService.LogicalVolume.UsedSpace">UsedSpace</a></em> + <em><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdLimit">ThresholdLimit</a></em> &gt;= <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></em> this will be <em>true</em>, else <em>false</em>.</td>
@@ -1756,31 +1818,31 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.FolderNumberOfEntries">Folder­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.FolderNumberOfEntries">FolderNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
-<td>The number of instances of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.{i}.</a></em> on this <em>StorageService.{i}.LogicalVolume.{i}.</em>.</td>
+<td>The number of instances of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.{i}.</a></em> on this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object provides information about each top-level folder configured on this logical volume. Each top-level folder allows the configuration of quotas and access permissions.
-Creating an instance of this object generates a disabled <em>StorageService.{i}.LogicalVolume.{i}.Folder.{i}.</em> instance. Before this new <em>StorageService.{i}.LogicalVolume.{i}.Folder.{i}.</em> instance can be enabled (via a SetParameterValues command), it MUST have the <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></em> configured. Folder instances are unique per <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume.{i}.</a></em> and the unique key for this object is <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></em> which also means that once an instance is enabled <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></em> becomes immutable for the life of the instance.</p>
+Creating an instance of this object generates a disabled <em>Folder</em> instance. Before this new <em>Folder</em> instance can be enabled (via a SetParameterValues command), it MUST have the <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></em> configured. Folder instances are unique per <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume.{i}.</a></em> and the unique key for this object is <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></em> which also means that once an instance is enabled <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></em> becomes immutable for the life of the instance.</p>
 
 <p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></em>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Setting of this variable will add a new folder. The full hierarchical pathname of the folder MUST be specified.
 All folders created on the Logical Volume will appear here, created locally or via AddObject.
 The local directory name will be formatted as a UNIX-style directory name, for example: /home/ftp
 The presence of a trailing `/’ character is inconsequential, meaning that /home/ftp/ is the same as /home/ftp.
-Once this instance becomes enabled, this parameter will be immutable for the life of the instance. This parameter acts as the unique identifier for the instance, thus the device MUST NOT allow multiple <em>StorageService.{i}.LogicalVolume.{i}.Folder.{i}.</em> instances within a <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume.{i}.</a></em> to use the same <em>Name</em>.</td>
+Once this instance becomes enabled, this parameter will be immutable for the life of the instance. This parameter acts as the unique identifier for the instance, thus the device MUST NOT allow multiple <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">Folder</a></em> instances within a <em><a href="#D.StorageService:1.StorageService.LogicalVolume.">LogicalVolume.{i}.</a></em> to use the same <em>Name</em>.</td>
 <td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1791,8 +1853,8 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">User­Account­Access</span></td>
-<td>unsigned­Int­(0:3)</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">UserAccountAccess</span></td>
+<td>unsignedInt(0:3)</td>
 <td>W</td>
 <td>What are the User authentication requirements of this folder? The following bitmap is used.
 
@@ -1804,34 +1866,27 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>2</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccessNumberOfEntries">User­Access­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccessNumberOfEntries">UserAccessNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of instances of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.">LogicalVolume.{i}.Folder.{i}.UserAccess.{i}.</a></em> on this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.{i}.</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccessNumberOfEntries">Group­Access­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccessNumberOfEntries">GroupAccessNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of instances of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.">LogicalVolume.{i}.Folder.{i}.GroupAccess.{i}.</a></em> on this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.{i}.</a></em></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­User­Access.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.UserAccess.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object provides information about each user account configured for access permissions on this folder.</p>
 
 <p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.UserReference">UserReference</a></em>.</p></td>
 <td>-</td>
-<td>1.0</td></tr>
-<tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.UserReference">User­Reference</span></td>
-<td>string­(:256)</td>
-<td>W</td>
-<td>The value MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.UserAccount.">UserAccount.</a></em> table. Represents a user that has access to this folder. The instance of <em><a href="#D.StorageService:1.StorageService.UserAccount.">UserAccount.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.</td>
-<td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.Enable">Enable</span></td>
@@ -1841,8 +1896,15 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.UserReference">UserReference</span></td>
+<td>string(:256)</td>
+<td>W</td>
+<td>The value MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.UserAccount.">UserAccount.</a></em> table. Represents a user that has access to this folder. The instance of <em><a href="#D.StorageService:1.StorageService.UserAccount.">UserAccount.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.</td>
+<td></td>
+<td>1.0</td></tr>
+<tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.Permissions">Permissions</span></td>
-<td>unsigned­Int­(0:7)</td>
+<td>unsignedInt(0:7)</td>
 <td>W</td>
 <td>What permissions the user account has over this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.{i}.</a></em>. This is an integer value like the xNIX systems use for access permissions, meaning that it is a 3-bit field with the following structure:
 
@@ -1853,20 +1915,13 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>7</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­Group­Access.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.GroupAccess.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object provides information about each user group configured for access permissions on this folder.</p>
 
 <p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.GroupReference">GroupReference</a></em>.</p></td>
 <td>-</td>
-<td>1.0</td></tr>
-<tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.GroupReference">Group­Reference</span></td>
-<td>string­(:256)</td>
-<td>W</td>
-<td>The value MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.</a></em> table. Represents a user group that is a collection of User Accounts that have access to this folder. The <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.</td>
-<td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.Enable">Enable</span></td>
@@ -1878,8 +1933,15 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.GroupReference">GroupReference</span></td>
+<td>string(:256)</td>
+<td>W</td>
+<td>The value MUST be the Path Name of a row in the <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.</a></em> table. Represents a user group that is a collection of User Accounts that have access to this folder. The <em><a href="#D.StorageService:1.StorageService.UserGroup.">UserGroup.{i}.</a></em> referenced by this parameter MUST exist within the same StorageService instance.</td>
+<td></td>
+<td>1.0</td></tr>
+<tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.Permissions">Permissions</span></td>
-<td>unsigned­Int­(0:7)</td>
+<td>unsignedInt(0:7)</td>
 <td>W</td>
 <td>What permissions the group members have over this <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">LogicalVolume.{i}.Folder.{i}.</a></em> instance. This is an integer value like the xNIX systems use for access permissions, meaning that it is a 3-bit field with the following structure:
 
@@ -1890,7 +1952,7 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>7</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­Quota.</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.Quota.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the configuration of per-folder storage quota management.</td>
@@ -1905,35 +1967,35 @@ Once this instance becomes enabled, this parameter will be immutable for the lif
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.Capacity">Capacity</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>Maximum size in <em>MB</em> of the quota for this folder.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.UsedSpace">Used­Space</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.UsedSpace">UsedSpace</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Current size in <em>MB</em> of this folder.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdLimit">Threshold­Limit</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdLimit">ThresholdLimit</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>This value is specified in <em>MB</em> and controls when <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdReached">ThresholdReached</a></em> will have its value altered. If the value of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.UsedSpace">UsedSpace</a></em> plus the value of this parameter is greater than or equal to the value of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.Capacity">Capacity</a></em> then the value of <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdReached">ThresholdReached</a></em> will be <em>true</em>, otherwise it will be <em>false</em>. Setting the value of this parameter to 0 will disable the Thresholding mechanism.</td>
 <td>0</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdReached">Threshold­Reached</span></td>
+<td><span id="D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdReached">ThresholdReached</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>When <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdLimit">ThresholdLimit</a></em> &gt; 0 and <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.UsedSpace">UsedSpace</a></em> + <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdLimit">ThresholdLimit</a></em> &gt;= <em><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.Capacity">Capacity</a></em> this will be <em>true</em>, else <em>false</em>.</td>
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageServiceNumberOfEntries">Storage­Service­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageServiceNumberOfEntries">StorageServiceNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Number of entries in <em><a href="#D.StorageService:1.StorageService.">StorageService</a></em>.</td>
 <td>-</td>
@@ -2028,19 +2090,19 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.">Storage­Service.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.">StorageService.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.PhysicalMediumNumberOfEntries">Physical­Medium­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageService.PhysicalMediumNumberOfEntries">PhysicalMediumNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolumeNumberOfEntries">Logical­Volume­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolumeNumberOfEntries">LogicalVolumeNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.Capabilities.">Storage­Service.­{i}.­Capabilities.</a></td>
+<td><a href="#D.StorageService:1.StorageService.Capabilities.">StorageService.{i}.Capabilities.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.Capabilities.FTPCapable">FTPCapable</a></td>
@@ -2058,25 +2120,25 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.Capabilities.HTTPWritable">HTTPWritable</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols">Supported­Network­Protocols</a></td>
+<td><a href="#D.StorageService:1.StorageService.Capabilities.SupportedNetworkProtocols">SupportedNetworkProtocols</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">Supported­File­System­Types</a></td>
+<td><a href="#D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">SupportedFileSystemTypes</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.Capabilities.VolumeEncryptionCapable">Volume­Encryption­Capable</a></td>
+<td><a href="#D.StorageService:1.StorageService.Capabilities.VolumeEncryptionCapable">VolumeEncryptionCapable</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.NetInfo.">Storage­Service.­{i}.­Net­Info.</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetInfo.">StorageService.{i}.NetInfo.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.NetInfo.HostName">Host­Name</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetInfo.HostName">HostName</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.NetInfo.DomainName">Domain­Name</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetInfo.DomainName">DomainName</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.NetworkServer.">Storage­Service.­{i}.­Network­Server.</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetworkServer.">StorageService.{i}.NetworkServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.NetworkServer.AFPEnable">AFPEnable</a></td>
@@ -2088,10 +2150,10 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.NetworkServer.SMBEnable">SMBEnable</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.NetworkServer.NetworkProtocolAuthReq">Network­Protocol­Auth­Req</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetworkServer.NetworkProtocolAuthReq">NetworkProtocolAuthReq</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.">Storage­Service.­{i}.­Physical­Medium.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.">StorageService.{i}.PhysicalMedium.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.PhysicalMedium.Name">Name</a></td>
@@ -2103,13 +2165,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.PhysicalMedium.Model">Model</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.SerialNumber">Serial­Number</a></td>
+<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.SerialNumber">SerialNumber</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.FirmwareVersion">Firmware­Version</a></td>
+<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.FirmwareVersion">FirmwareVersion</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.ConnectionType">Connection­Type</a></td>
+<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.ConnectionType">ConnectionType</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.PhysicalMedium.Removable">Removable</a></td>
@@ -2124,10 +2186,10 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.PhysicalMedium.SMARTCapable">SMARTCapable</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.HotSwappable">Hot­Swappable</a></td>
+<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.HotSwappable">HotSwappable</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.">Storage­Service.­{i}.­Logical­Volume.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.">StorageService.{i}.LogicalVolume.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></td>
@@ -2139,25 +2201,25 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Enable">Enable</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">Physical­Reference</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.PhysicalReference">PhysicalReference</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.FileSystem">File­System</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.FileSystem">FileSystem</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.UsedSpace">Used­Space</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.UsedSpace">UsedSpace</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Encrypted">Encrypted</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.FolderNumberOfEntries">Folder­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.FolderNumberOfEntries">FolderNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></td>
@@ -2166,7 +2228,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Enable">Enable</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">User­Account­Access</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">UserAccountAccess</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.UserAccess:1">UserAccess:1 Profile</h3>
@@ -2184,19 +2246,19 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.">Storage­Service.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.">StorageService.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.UserAccountNumberOfEntries">User­Account­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccountNumberOfEntries">UserAccountNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.NetworkServer.">Storage­Service.­{i}.­Network­Server.</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetworkServer.">StorageService.{i}.NetworkServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.NetworkServer.NetworkProtocolAuthReq">Network­Protocol­Auth­Req</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetworkServer.NetworkProtocolAuthReq">NetworkProtocolAuthReq</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.UserAccount.">Storage­Service.­{i}.­User­Account.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccount.">StorageService.{i}.UserAccount.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.UserAccount.Enable">Enable</a></td>
@@ -2208,19 +2270,19 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.UserAccount.Password">Password</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">User­Account­Access</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">UserAccountAccess</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccessNumberOfEntries">User­Access­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccessNumberOfEntries">UserAccessNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­User­Access.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.UserAccess.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.UserReference">User­Reference</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.UserReference">UserReference</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.Permissions">Permissions</a></td>
@@ -2241,31 +2303,31 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.">Storage­Service.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.">StorageService.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.UserGroupNumberOfEntries">User­Group­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserGroupNumberOfEntries">UserGroupNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.UserGroup.">Storage­Service.­{i}.­User­Group.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserGroup.">StorageService.{i}.UserGroup.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.UserGroup.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.UserGroup.GroupName">Group­Name</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserGroup.GroupName">GroupName</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.UserAccount.">Storage­Service.­{i}.­User­Account.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccount.">StorageService.{i}.UserAccount.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.UserAccount.UserGroupParticipation">User­Group­Participation</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccount.UserGroupParticipation">UserGroupParticipation</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­Group­Access.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.GroupAccess.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.GroupReference">Group­Reference</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.GroupReference">GroupReference</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.Permissions">Permissions</a></td>
@@ -2286,7 +2348,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.FTPServer.">Storage­Service.­{i}.­FTPServer.</a></td>
+<td><a href="#D.StorageService:1.StorageService.FTPServer.">StorageService.{i}.FTPServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.FTPServer.Enable">Enable</a></td>
@@ -2295,25 +2357,25 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.FTPServer.Status">Status</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.FTPServer.MaxNumUsers">Max­Num­Users</a></td>
+<td><a href="#D.StorageService:1.StorageService.FTPServer.MaxNumUsers">MaxNumUsers</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.FTPServer.IdleTime">Idle­Time</a></td>
+<td><a href="#D.StorageService:1.StorageService.FTPServer.IdleTime">IdleTime</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.FTPServer.PortNumber">Port­Number</a></td>
+<td><a href="#D.StorageService:1.StorageService.FTPServer.PortNumber">PortNumber</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.">Storage­Service.­{i}.­FTPServer.­Anonymous­User.</a></td>
+<td><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.">StorageService.{i}.FTPServer.AnonymousUser.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.StartingFolder">Starting­Folder</a></td>
+<td><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.StartingFolder">StartingFolder</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.ReadOnlyAccess">Read­Only­Access</a></td>
+<td><a href="#D.StorageService:1.StorageService.FTPServer.AnonymousUser.ReadOnlyAccess">ReadOnlyAccess</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.SFTPServer:1">SFTPServer:1 Profile</h3>
@@ -2331,13 +2393,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.UserAccount.">Storage­Service.­{i}.­User­Account.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccount.">StorageService.{i}.UserAccount.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.UserAccount.AllowFTPAccess">Allow­FTPAccess</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccount.AllowFTPAccess">AllowFTPAccess</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.SFTPServer.">Storage­Service.­{i}.­SFTPServer.</a></td>
+<td><a href="#D.StorageService:1.StorageService.SFTPServer.">StorageService.{i}.SFTPServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.SFTPServer.Enable">Enable</a></td>
@@ -2346,13 +2408,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.SFTPServer.Status">Status</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.SFTPServer.MaxNumUsers">Max­Num­Users</a></td>
+<td><a href="#D.StorageService:1.StorageService.SFTPServer.MaxNumUsers">MaxNumUsers</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.SFTPServer.IdleTime">Idle­Time</a></td>
+<td><a href="#D.StorageService:1.StorageService.SFTPServer.IdleTime">IdleTime</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.SFTPServer.PortNumber">Port­Number</a></td>
+<td><a href="#D.StorageService:1.StorageService.SFTPServer.PortNumber">PortNumber</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.HTTPServer:1">HTTPServer:1 Profile</h3>
@@ -2370,7 +2432,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.HTTPServer.">Storage­Service.­{i}.­HTTPServer.</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPServer.">StorageService.{i}.HTTPServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.HTTPServer.Enable">Enable</a></td>
@@ -2379,19 +2441,19 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.HTTPServer.Status">Status</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPServer.MaxNumUsers">Max­Num­Users</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPServer.MaxNumUsers">MaxNumUsers</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPServer.IdleTime">Idle­Time</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPServer.IdleTime">IdleTime</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPServer.HTTPWritingEnabled">HTTPWriting­Enabled</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPServer.HTTPWritingEnabled">HTTPWritingEnabled</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPServer.PortNumber">Port­Number</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPServer.PortNumber">PortNumber</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPServer.AuthenticationReq">Authentication­Req</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPServer.AuthenticationReq">AuthenticationReq</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.HTTPSServer:1">HTTPSServer:1 Profile</h3>
@@ -2409,13 +2471,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.UserAccount.">Storage­Service.­{i}.­User­Account.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccount.">StorageService.{i}.UserAccount.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.UserAccount.AllowHTTPAccess">Allow­HTTPAccess</a></td>
+<td><a href="#D.StorageService:1.StorageService.UserAccount.AllowHTTPAccess">AllowHTTPAccess</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.HTTPSServer.">Storage­Service.­{i}.­HTTPSServer.</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPSServer.">StorageService.{i}.HTTPSServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.HTTPSServer.Enable">Enable</a></td>
@@ -2424,19 +2486,19 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.HTTPSServer.Status">Status</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPSServer.MaxNumUsers">Max­Num­Users</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPSServer.MaxNumUsers">MaxNumUsers</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPSServer.IdleTime">Idle­Time</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPSServer.IdleTime">IdleTime</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPSServer.HTTPWritingEnabled">HTTPWriting­Enabled</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPSServer.HTTPWritingEnabled">HTTPWritingEnabled</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPSServer.PortNumber">Port­Number</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPSServer.PortNumber">PortNumber</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.HTTPSServer.AuthenticationReq">Authentication­Req</a></td>
+<td><a href="#D.StorageService:1.StorageService.HTTPSServer.AuthenticationReq">AuthenticationReq</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.VolumeConfig:1">VolumeConfig:1 Profile</h3>
@@ -2454,13 +2516,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.">Storage­Service.­{i}.­Physical­Medium.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.PhysicalMedium.">StorageService.{i}.PhysicalMedium.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.PhysicalMedium.Name">Name</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.">Storage­Service.­{i}.­Logical­Volume.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.">StorageService.{i}.LogicalVolume.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Name">Name</a></td>
@@ -2469,13 +2531,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.FileSystem">File­System</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.FileSystem">FileSystem</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Name">Name</a></td>
@@ -2484,7 +2546,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">User­Account­Access</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccountAccess">UserAccountAccess</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.RAID:1">RAID:1 Profile</h3>
@@ -2502,19 +2564,19 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.">Storage­Service.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.">StorageService.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.StorageArrayNumberOfEntries">Storage­Array­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageService.StorageArrayNumberOfEntries">StorageArrayNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.Capabilities.">Storage­Service.­{i}.­Capabilities.</a></td>
+<td><a href="#D.StorageService:1.StorageService.Capabilities.">StorageService.{i}.Capabilities.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes">Supported­Raid­Types</a></td>
+<td><a href="#D.StorageService:1.StorageService.Capabilities.SupportedRaidTypes">SupportedRaidTypes</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.StorageArray.">Storage­Service.­{i}.­Storage­Array.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.StorageArray.">StorageService.{i}.StorageArray.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.StorageArray.Name">Name</a></td>
@@ -2526,13 +2588,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.StorageArray.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.StorageArray.RaidType">Raid­Type</a></td>
+<td><a href="#D.StorageService:1.StorageService.StorageArray.RaidType">RaidType</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.StorageArray.UsableCapacity">Usable­Capacity</a></td>
+<td><a href="#D.StorageService:1.StorageService.StorageArray.UsableCapacity">UsableCapacity</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">Physical­Medium­Reference</a></td>
+<td><a href="#D.StorageService:1.StorageService.StorageArray.PhysicalMediumReference">PhysicalMediumReference</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.FolderQuota:1">FolderQuota:1 Profile</h3>
@@ -2550,7 +2612,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­Quota.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.Quota.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.Enable">Enable</a></td>
@@ -2559,13 +2621,13 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.Capacity">Capacity</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.UsedSpace">Used­Space</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.UsedSpace">UsedSpace</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdLimit">Threshold­Limit</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdLimit">ThresholdLimit</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdReached">Threshold­Reached</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.Quota.ThresholdReached">ThresholdReached</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.VolumeThresh:1">VolumeThresh:1 Profile</h3>
@@ -2583,16 +2645,16 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.">Storage­Service.­{i}.­Logical­Volume.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.">StorageService.{i}.LogicalVolume.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Capacity">Capacity</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdLimit">Threshold­Limit</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdLimit">ThresholdLimit</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdReached">Threshold­Reached</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.ThresholdReached">ThresholdReached</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.NetServer:1">NetServer:1 Profile</h3>
@@ -2610,7 +2672,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.NetworkServer.">Storage­Service.­{i}.­Network­Server.</a></td>
+<td><a href="#D.StorageService:1.StorageService.NetworkServer.">StorageService.{i}.NetworkServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.NetworkServer.AFPEnable">AFPEnable</a></td>
@@ -2637,7 +2699,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="parameter">
-<td><a href="#D.StorageService:1.StorageServiceNumberOfEntries">Storage­Service­Number­Of­Entries</a></td>
+<td><a href="#D.StorageService:1.StorageServiceNumberOfEntries">StorageServiceNumberOfEntries</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.StorageService:1.UserAccess:2">UserAccess:2 Profile</h3>
@@ -2655,7 +2717,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­User­Access.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.UserAccess.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.UserAccess.Enable">Enable</a></td>
@@ -2676,7 +2738,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.">Storage­Service.­{i}.­Logical­Volume.­{i}.­Folder.­{i}.­Group­Access.­{i}.</a></td>
+<td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.">StorageService.{i}.LogicalVolume.{i}.Folder.{i}.GroupAccess.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.StorageService:1.StorageService.LogicalVolume.Folder.GroupAccess.Enable">Enable</a></td>
@@ -2684,8 +2746,7 @@ The minimum REQUIRED version for this profile is StorageService:1.0.</p>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.0 (2023-06-14 version) on 2023-06-14
-at 11:09:25 UTC.<br/>report.py –output &lt;stdout&gt; –format markdown tr-140-1-1-1.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:39:32 UTC.<br/>report.py –output &lt;stdout&gt; –format markdown tr-140-1-1-1.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 

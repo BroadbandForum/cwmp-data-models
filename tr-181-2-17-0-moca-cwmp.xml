@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [MoCA CWMP]
+
+  Copyright (c) 2023, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-17-0-moca-cwmp"
+    file="tr-181-2-17-0-moca-cwmp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="DiagnosticsState"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-moca.xml" spec="urn:broadband-forum-org:tr-181-2-17-moca">
+    <component name="MoCA"/>
+    <component name="MoCAAcaInput"/>
+    <component name="MoCAAcaOutput"/>
+  </import>
+
+  <component name="MoCATraps">
+
+    <parameter base="PhyThreshold">
+      <description action="append">
+        If transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to this value, and subsequently the transmit PHY rate of one pair of MoCA Nodes is less than this value, send {{param|BelowPhyThresholdTrap}} if {{param|PhyThresholdTrapEnable}} is {{true}}.
+
+        If transmit PHY rate between one or more pairs of MoCA Nodes are less than this value, and subsequently the transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to this value, send {{param|AbovePhyThresholdTrap}} if {{param|PhyThresholdTrapEnable}} is {{true}}.
+
+        See {{bibref|MoCAv2.0|Section 3, Unusable Link definition}}.
+      </description>
+    </parameter>
+
+    <parameter base="PhyThresholdTrapEnable">
+      <description action="prefix">
+        If transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to {{param|PhyThreshold}}, and subsequently the transmit PHY rate of one pair of MoCA Node is less than {{param|PhyThreshold}}, send {{param|BelowPhyThresholdTrap}} if this value is {{true}}, do not send {{param|BelowPhyThresholdTrap}} if this value is {{false}}.
+
+        If transmit PHY rate between one or more pairs of MoCA Nodes are less than {{param|PhyThreshold}}, and subsequently the transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to {{param|PhyThreshold}}, send {{param|AbovePhyThresholdTrap}} if this value is {{true}}, do not send {{param|AbovePhyThresholdTrap}} if this value is {{false}}.
+
+        Only one MoCA Node in the MoCA network should set {{param}} to {{true}}.
+      </description>
+    </parameter>
+
+    <parameter base="StatusChangeEnable">
+      <description action="replace">
+        If {{param}} is {{true}} and {{param|Status}} changes, then the trap {{param|StatusChangeTrap}} is sent.
+      </description>
+    </parameter>
+
+    <parameter base="NumNodesChangeEnable">
+      <description action="prefix">
+        If {{param}} is {{true}} and {{param|NumNodes}} changes, then the trap {{param|NumNodesChangeTrap}} is sent.
+      </description>
+    </parameter>
+
+    <parameter name="BelowPhyThresholdTrap" access="readOnly" id="mocaTrapBelowPhyThreshold/1.3.6.1.4.1.31621.1.2.0.1" version="2.17">
+      <description>
+        If transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to {{param|PhyThreshold}}, and subsequently the transmit PHY rate of one pair of MoCA Nodes drops below {{param|PhyThreshold}}, send this notification if {{param|PhyThresholdTrapEnable}} is {{true}}.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="AbovePhyThresholdTrap" access="readOnly" id="mocaTrapAbovePhyThreshold/1.3.6.1.4.1.31621.1.2.0.2" version="2.17">
+      <description>
+        If transmit PHY rate between one or more pairs of MoCA Nodes are less than {{param|PhyThreshold}}, and subsequently the transmit PHY rate between all pairs of MoCA Nodes goes above or is equal to {{param|PhyThreshold}}, send this notification if {{param|PhyThresholdTrapEnable}} is {{true}}.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="StatusChangeTrap" access="readOnly" id="mocaTrapIfStatusChange/1.3.6.1.4.1.31621.1.2.0.3" version="2.17">
+      <description>
+        This trap is sent when {{param|StatusChangeEnable}} is {{true}} and {{param|Status}} changes value.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="NumNodesChangeTrap" access="readOnly" id="mocaTrapIfNumNodesChange/1.3.6.1.4.1.31621.1.2.0.4" version="2.17">
+      <description>
+        This trap is sent when {{param|NumNodesChangeEnable}} is {{true}} and {{param|NumNodes}} changes value.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MrRstSuccessTrap" access="readOnly" id="mocaTrapMrRstSuccess/1.3.6.1.4.1.31621.1.2.0.5" version="2.17">
+      <description>
+        An MR Entry Node reports that the network got reset successfully (MRRST_SUCCESS Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MrRstFailTrap" access="readOnly" id="mocaTrapMrRstFail/1.3.6.1.4.1.31621.1.2.0.6" version="2.17">
+      <description>
+        An MR Entry Node reports that the network reset did not complete successfully (MRRST_FAIL Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MrNetworkSuccessTrap" access="readOnly" id="mocaTrapMrNetworkSuccess/1.3.6.1.4.1.31621.1.2.0.7" version="2.17">
+      <description>
+        An MR Entry Node reports that the network got reformed successfully following the MR transaction (MRNETWORK_SUCCESS Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MrNetworkFailTrap" access="readOnly" id="mocaTrapMrNetworkFail/1.3.6.1.4.1.31621.1.2.0.8" version="2.17">
+      <description>
+        An MR Entry Node reports that the MR transaction failed, and the network did not get reformed (MRNETWORK_FAIL Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateBcstRecTrap" access="readOnly" id="mocaTrapPowerStateBcstRec/1.3.6.1.4.1.31621.1.2.0.9" version="2.17">
+      <description>
+        When the MoCA Node is in Power State M1 or M2, indicates that the MoCA Node has received a Broadcast data MSDU, which is available at the data interface (POWER_STATEBCST_REC Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateM0NcTrap" access="readOnly" id="mocaTrapPowerStateM0Nc/1.3.6.1.4.1.31621.1.2.0.10" version="2.17">
+      <description>
+        When a MoCA Node is in Power State M1, indicates that it is going to move to Power State M0 due to the NCs instruction.
+
+        This parameter is a counter that is incremented whenever the event occurs (POWER_STATEM0_NC Event).
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateNc1xTrap" access="readOnly" id="mocaTrapPowerStateNc1x/1.3.6.1.4.1.31621.1.2.0.11" version="2.17">
+      <description>
+        When the MoCA Node is in Power State M1/M2/M3, indicates that MoCA 1 Node is the NC (POWER_STATENC_1X Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateNetVerTrap" access="readOnly" id="mocaTrapPowerStateNetVer/1.3.6.1.4.1.31621.1.2.0.12" version="2.17">
+      <description>
+        When the MoCA Node is in Power State M2 or M3, indicates that the network MoCA version is changed (POWER_STATENET_VER Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateRespTrap" access="readOnly" id="mocaTrapPowerStateResp/1.3.6.1.4.1.31621.1.2.0.13" version="2.17">
+      <description>
+        Carries the response of the MoCA Node to a request (through POWER_STATEREQ) to transition into a desired Power State (POWER_STATERESP Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateUcstPenTrap" access="readOnly" id="mocaTrapPowerStateUcstPen/1.3.6.1.4.1.31621.1.2.0.14" version="2.17">
+      <description>
+        When the MoCA Node is in Power State M2, indicates that a Unicast data MSDU destined to the MoCA Node is pending (POWER_STATEUCST_PEN Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateTrnsReqTrap" access="readOnly" id="mocaTrapPowerStateTrnsReq/1.3.6.1.4.1.31621.1.2.0.15" version="2.17">
+      <description>
+        When a MoCA Node is in Power State M1 or M2, requests to transition to Power State M0 (POWER_STATETRNS_REQ Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStateWupUrTrap" access="readOnly" id="mocaTrapPowerStateWupUr/1.3.6.1.4.1.31621.1.2.0.16" version="2.17">
+      <description>
+        When the MoCA Node is in Power State M2, this reports a wakeup request from NC due to unspecified reasons (POWER_STATEWUP_UR Event).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="LmoStatusTrap" access="readOnly" id="mocaTrapLmoStatus/1.3.6.1.4.1.31621.1.2.0.17" version="2.17">
+      <description>
+        When {{param|LmoTrapEnable}} is enabled, reports that the MoCA Node is starting LMO (Link Maintenance Operation).
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="LinkFailureTrap" access="readOnly" id="mocaTrapLinkFailure/1.3.6.1.4.1.31621.1.2.0.18" version="2.17">
+      <description>
+        Indicates a link failure.  If the failure was an Admission or LMO failure, {{param|LinkState}} indicates when the link was dropped within the sequence.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter base="ConnectedNodesChangeTrapEn">
+      <description action="prefix">
+        Used to enable {{param|ConnectedNodesChangeTrap}}.
+      </description>
+    </parameter>
+
+    <parameter name="ConnectedNodesChangeTrap" access="readOnly" id="moca25TrapConnectedNodesChange/1.3.6.1.4.1.31621.1.3.0.1" version="2.17">
+      <description>
+        This trap is sent when {{param|ConnectedNodesChangeTrapEn}} is {{true}} and {{param|ConnectedNodesInfo}} changes value.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter base="MgntEntityNetwIePayloadRecTrapEn">
+      <description action="prefix">
+        Used to enable {{param|MgntEntityNetwIePayloadRecTrap}}.
+      </description>
+    </parameter>
+
+    <parameter name="MgntEntityNetwIePayloadRecTrap" access="readOnly" id="moca25TrapMgntEntityNetwIePayloadRec/1.3.6.1.4.1.31621.1.3.0.2" version="2.17">
+      <description>
+        This trap is sent when {{param|MgntEntityNetwIePayloadRecTrapEn}} is {{true}} and {{param|MgntEntityNetIePayloadRx}} changes value.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter base="MpsTrapEn">
+      <description action="replace">
+        Used to enable the MPS-related traps: {{param|MpsInitScanRecTrap}}, {{param|MpsPairFailTrap}}, and {{param|MpsPrivacyChangedTrap}}.
+      </description>
+    </parameter>
+
+    <parameter name="MpsInitScanRecTrap" access="readOnly" id="moca25TrapMpsInitScanRec/1.3.6.1.4.1.31621.1.3.0.3" version="2.17">
+      <description>
+        This trap is sent when {{param|MpsTrapEn}} is {{true}} and {{param|MpsInitScanPayload}} changes value.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MpsPairFailTrap" access="readOnly" id="moca25TrapMpsPairFail/1.3.6.1.4.1.31621.1.3.0.4" version="2.17">
+      <description>
+        This trap is sent when {{param|MpsTrapEn}} is {{true}}, indicates a MPS pairing failure.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MpsPrivacyChangedTrap" access="readOnly" id="moca25TrapMpsPrivacyChanged/1.3.6.1.4.1.31621.1.3.0.5" version="2.17">
+      <description>
+        This trap is sent when {{param|MpsTrapEn}} is {{true}}, indicates that the Node's privacy settings (PRIVACYEN and/or PSWD) have been changed by MPS.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter base="NcPrivSupportedRecTrapEn">
+      <description action="prefix">
+        Used to enable {{param|NcPrivacySupportedRecTrap}}.
+      </description>
+    </parameter>
+
+    <parameter name="NcPrivacySupportedRecTrap" access="readOnly" id="moca25TrapNcPrivacySupportedRec/1.3.6.1.4.1.31621.1.3.0.6" version="2.17">
+      <description>
+        This trap is sent when {{param|NcPrivSupportedRecTrapEn}} is {{true}} and {{param|PrivacyNc}} changes value.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter base="NetworkNameRecTrapEn">
+      <description action="prefix">
+        Used to enable {{param|NetworkNameRecTrap}}.
+      </description>
+    </parameter>
+
+    <parameter name="NetworkNameRecTrap" access="readOnly" id="moca25TrapNetworkNameRec/1.3.6.1.4.1.31621.1.3.0.7" version="2.17">
+      <description>
+        This trap is sent when {{param|NetworkNameRecTrapEn}} is {{true}} and {{param|NetworkNamePayload}} changes value.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="NodeDropAdmFailureTrap" access="readOnly" id="moca25TrapNodeDropAdmFailure/1.3.6.1.4.1.31621.1.3.0.8" version="2.17">
+      <description>
+        This trap is sent when {{param|NodeDropTrapEn}} is {{true}}, indicates that the Node drops from the network due to admission failure.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter base="NodeDropTrapEn">
+      <description action="replace">
+        Used to enable {{param|NodeDropAdmFailureTrap}}, {{param|NodeDropNcTrap}}, {{param|NodeDropMpsTriggeredTrap}}, and {{param|NodeDropNcChgTrap}}.
+      </description>
+    </parameter>
+
+    <parameter name="NodeDropNcTrap" access="readOnly" id="moca25TrapTrapNodeDropNc/1.3.6.1.4.1.31621.1.3.0.9" version="2.17">
+      <description>
+        This trap is sent when {{param|NodeDropTrapEn}} is {{true}}, indicates that the Node is dropped by the NC as indicated in the NODE_BITMASK and LOW_POWER_NODE_BITMASK.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="NodeDropMpsTriggeredTrap" access="readOnly" id="moca25TrapNodeDropMpsTriggered/1.3.6.1.4.1.31621.1.3.0.10" version="2.17">
+      <description>
+        This trap is sent when {{param|NodeDropTrapEn}} is {{true}}, indicates that MPS is locally triggered when the Node is un-Paired.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="NodeDropNcChgTrap" access="readOnly" id="moca25TrapNodeDropNcChg/1.3.6.1.4.1.31621.1.3.0.11" version="2.17">
+      <description>
+        This trap is sent when {{param|NodeDropTrapEn}} is {{true}}}, indicates that there is a NC change when the Node is Non-Secured Admitted Node.
+
+        This parameter is a counter that is incremented whenever the event occurs.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="MoCACWMP">
+
+    <object base="Device.MoCA.Interface.{i}." access="readOnly" minEntries="0" maxEntries="unbounded">
+      <component ref="MoCATraps" dmr:previousParameter="PacketAggregationCapability"/>
+    </object>
+
+    <object base="Device.MoCA.Interface.{i}.Reset.">
+
+      <parameter base="StatusTrapEnable">
+        <description action="replace">
+          Used to enable {{param|#.MrRstSuccessTrap}} and {{param|#.MrRstFailTrap}} that the network reset was completed successfully or failed for MR transaction status trap.
+        </description>
+      </parameter>
+
+      <parameter base="NetworkTrapEnable">
+        <description action="replace">
+          Used to enable {{param|#.MrNetworkSuccessTrap}} and {{param|#.MrNetworkFailTrap}} that the network was reformed or not reformed successfully following the MR transaction.
+        </description>
+      </parameter>
+    </object>
+
+    <object name="Device.MoCA.Interface.{i}.Aca." access="readOnly" version="2.17" minEntries="1" maxEntries="1" id="mocaIfAcaTable/1.3.6.1.4.1.31621.1.2.1.5"
+      dmr:previousObject="Device.MoCA.Interface.{i}.Sapm.{i}.">
+      <description>
+        This diagnostic test corresponds to the MoCA ACA (Alternate Channel Assessment) operation. When this test is {{enum|Requested|DiagnosticsState}} the managed MoCA Node will initiate a MoCA On Demand LMO (Link Maintenance Operation).
+      </description>
+
+      <parameter name="DiagnosticsState" access="readWrite" id="mocaIfAcaInitiate/1.3.6.1.4.1.31621.1.2.1.5.1.5
+                                                                mocaIfAcaStatus/1.3.6.1.4.1.31621.1.2.1.5.1.6
+      mocaIfAcaStatusCompletedTrap/1.3.6.1.4.1.31621.1.2.1.5.1.9">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested">
+              <description>
+                ACA operation requested and in progress.
+              </description>
+            </enumeration>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly">
+              <description>
+                ACA operation completed successfully.
+              </description>
+            </enumeration>
+            <enumeration value="Error" access="readOnly">
+              <description>
+                ACA operation failed (''fail'').
+              </description>
+            </enumeration>
+            <enumeration value="Error_BadChannel" access="readOnly">
+              <description>
+                ACA operation failed because of bad channel (''failBADCHANNEL'').
+              </description>
+            </enumeration>
+            <enumeration value="Error_NoEvmProbe" access="readOnly">
+              <description>
+                ACA operation failed because there was no Evm probe detected (''failNOEVMPROBE'').
+              </description>
+            </enumeration>
+          </dataType>
+        </syntax>
+      </parameter>
+      <component ref="MoCAAcaInput"/>
+      <component ref="MoCAAcaOutput"/>
+    </object>
+
+    <profile name="MoCA_Aca:1" version="2.17" id="mocaIfAcaOptionalGroup/1.3.6.1.4.1.31621.1.2.2.2.5">
+      <description>
+        Parameters to control ACA (Alternate Channel Assessment) for the MoCA interface.
+      </description>
+      <object ref="Device.MoCA.Interface.{i}.Aca." requirement="present">
+        <parameter ref="DiagnosticsState" requirement="readWrite"/>
+        <parameter ref="NodeID" requirement="readWrite"/>
+        <parameter ref="Type" requirement="readWrite"/>
+        <parameter ref="Channel" requirement="readWrite"/>
+        <parameter ref="ReportNodeMask" requirement="readWrite"/>
+        <parameter ref="TotalRxPower" requirement="readOnly"/>
+        <parameter ref="PowerProfile" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MoCA_Trap:1" version="2.17" id="mocaTrapOptionalGroup/1.3.6.1.4.1.31621.1.2.2.2.19">
+      <description>
+        Notifications for bandwidth threshold in the MoCA network.
+      </description>
+      <object ref="Device.MoCA.Interface.{i}." requirement="present">
+        <parameter ref="BelowPhyThresholdTrap" requirement="readOnly"/>
+        <parameter ref="AbovePhyThresholdTrap" requirement="readOnly"/>
+        <parameter ref="StatusChangeTrap" requirement="readOnly"/>
+        <parameter ref="NumNodesChangeTrap" requirement="readOnly"/>
+        <parameter ref="MrRstSuccessTrap" requirement="readOnly"/>
+        <parameter ref="MrRstSuccessTrap" requirement="readOnly"/>
+        <parameter ref="MrNetworkSuccessTrap" requirement="readOnly"/>
+        <parameter ref="MrNetworkFailTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateBcstRecTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateM0NcTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateNc1xTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateNc1xTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateRespTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateUcstPenTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateTrnsReqTrap" requirement="readOnly"/>
+        <parameter ref="PowerStateWupUrTrap" requirement="readOnly"/>
+        <parameter ref="LmoStatusTrap" requirement="readOnly"/>
+        <parameter ref="LinkFailureTrap" requirement="readOnly"/>
+        <parameter ref="ConnectedNodesChangeTrap" requirement="readOnly"/>
+        <parameter ref="MgntEntityNetwIePayloadRecTrap" requirement="readOnly"/>
+        <parameter ref="MpsInitScanRecTrap" requirement="readOnly"/>
+        <parameter ref="MpsPairFailTrap" requirement="readOnly"/>
+        <parameter ref="MpsPrivacyChangedTrap" requirement="readOnly"/>
+        <parameter ref="NcPrivacySupportedRecTrap" requirement="readOnly"/>
+        <parameter ref="NetworkNameRecTrap" requirement="readOnly"/>
+        <parameter ref="NodeDropAdmFailureTrap" requirement="readOnly"/>
+        <parameter ref="NodeDropNcTrap" requirement="readOnly"/>
+        <parameter ref="NodeDropMpsTriggeredTrap" requirement="readOnly"/>
+        <parameter ref="NodeDropNcChgTrap" requirement="readOnly"/>
+      </object>
+    </profile>
+
+    <profile name="MoCA_Mandatory:1" version="2.17" id="mocaMIBCompliance/1.3.6.1.4.1.31621.1.2.2.1.1"
+      extends="MoCA_Status:1
+               MoCA_Stats:1
+               MoCA_FlowStats:1
+               MoCA_Node:1
+               MoCA_Mesh:1">
+      <description>
+        The compliance statement for the mandatory groups.
+      </description>
+    </profile>
+  </component>
+
+  <model name="MoCACWMP:2.17">
+    <component ref="Root"/>
+    <component ref="MoCA"/>
+    <component ref="MoCACWMP"/>
+  </model>
+</dm:document>

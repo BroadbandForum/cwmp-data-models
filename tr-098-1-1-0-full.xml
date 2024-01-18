@@ -298,15 +298,6 @@
         The top-level object for an Internet Gateway Device.
       </description>
 
-      <parameter name="LANDeviceNumberOfEntries" access="readOnly">
-        <description>
-          Number of instances of {{object|LANDevice}}.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
       <parameter name="DeviceSummary" access="readOnly" forcedInform="true"
           dmr:previousParameter="">
         <description>
@@ -316,6 +307,15 @@
           <string>
             <size maxLength="1024"/>
           </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LANDeviceNumberOfEntries" access="readOnly">
+        <description>
+          Number of instances of {{object|LANDevice}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
         </syntax>
       </parameter>
 
@@ -517,7 +517,9 @@
 
       <parameter name="FirstUseDate" access="readOnly">
         <description>
-          Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection.  The CPE MAY reset this date after a factory reset.{{np}}If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.
+          Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection.  The CPE MAY reset this date after a factory reset.
+
+          If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.
         </description>
         <syntax>
           <dateTime/>
@@ -549,7 +551,9 @@
         access="readOnly" minEntries="0" maxEntries="unbounded"
         numEntriesParameter="VendorConfigFileNumberOfEntries">
       <description>
-        Every instance of this object is a Vendor Configuration File, and contains parameters associated with the Vendor Configuration File.{{np}}This table of Vendor Configuration Files is for information only and does not allow the ACS to operate on these files in any way.
+        Every instance of this object is a Vendor Configuration File, and contains parameters associated with the Vendor Configuration File.
+
+        This table of Vendor Configuration Files is for information only and does not allow the ACS to operate on these files in any way.
         Whenever the CPE successfully downloads a configuration file as a result of the Download RPC with the FileType argument of ''3 Vendor Configuration File'', the CPE MUST update this table.  If the name of the file (determined as described in the definition of the {{param|Name}} parameter) differs from that of any existing instance, then the CPE MUST create a new instance to represent this file.  If instead, the name of the file is identical to that of an existing instance, then the CPE MUST update the content of the existing instance with the new version, date, and (optionally) description of the file.{{nokeys}}
       </description>
       <uniqueKey>
@@ -558,7 +562,9 @@
 
       <parameter name="Name" access="readOnly">
         <description>
-          Name of the vendor configuration file.{{np}}If the CPE is able to obtain the name of the configuration file from the file itself, then the value of this parameter MUST be set to that name.
+          Name of the vendor configuration file.
+
+          If the CPE is able to obtain the name of the configuration file from the file itself, then the value of this parameter MUST be set to that name.
           Otherwise, if the CPE can extract the file name from the URL used to download the configuration file, then the value of this parameter MUST be set to that name.
           Otherwise, the value of this parameter MUST be set to the value of the TargetFileName argument of the Download RPC used to download this configuration file.
         </description>
@@ -571,7 +577,9 @@
 
       <parameter name="Version" access="readOnly">
         <description>
-          A string identifying the configuration file version currently used in the CPE.{{np}}If the CPE is able to obtain the version of the configuration file from the file itself, then the value of this parameter MUST be set to the obtained value.
+          A string identifying the configuration file version currently used in the CPE.
+
+          If the CPE is able to obtain the version of the configuration file from the file itself, then the value of this parameter MUST be set to the obtained value.
           Otherwise, the value of this parameter MUST be {{empty}}.
         </description>
         <syntax>
@@ -654,7 +662,9 @@
       <parameter name="Username" access="readWrite">
         <description>
           Username used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
-          This username is used only for HTTP-based authentication of the CPE.{{np}}Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
+          This username is used only for HTTP-based authentication of the CPE.
+
+          Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
         </description>
         <syntax>
           <string>
@@ -666,7 +676,9 @@
       <parameter name="Password" access="readWrite">
         <description>
           Password used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
-          This password is used only for HTTP-based authentication of the CPE.{{np}}Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
+          This password is used only for HTTP-based authentication of the CPE.
+
+          Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
         </description>
         <syntax hidden="true">
           <string>
@@ -1379,7 +1391,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of the forwarding entry.{{np}}{{enum}}
+          Indicates the status of the forwarding entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -1394,7 +1408,9 @@
 
       <parameter name="Type" access="readWrite" status="deprecated">
         <description>
-          Indicates the type of route.{{np}}{{enum}}
+          Indicates the type of route.
+
+          {{enum}}
           This parameter is DEPRECATED because its value could conflict with {{param|DestIPAddress}} and/or {{param|DestSubnetMask}}.
         </description>
         <syntax>
@@ -1409,7 +1425,9 @@
 
       <parameter name="DestIPAddress" access="readWrite">
         <description>
-          Destination address.  {{empty}} or a value of "0.0.0.0" indicates no destination address is specified.{{np}}A Forwarding table entry for which {{param}} and {{param|DestSubnetMask}} are both {{empty}} or "0.0.0.0" is a default route.
+          Destination address.  {{empty}} or a value of "0.0.0.0" indicates no destination address is specified.
+
+          A Forwarding table entry for which {{param}} and {{param|DestSubnetMask}} are both {{empty}} or "0.0.0.0" is a default route.
         </description>
         <syntax>
           <dataType ref="IPAddress"/>
@@ -1419,7 +1437,9 @@
 
       <parameter name="DestSubnetMask" access="readWrite">
         <description>
-          Destination subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no destination subnet mask is specified.{{np}}If a destination subnet mask is specified, the {{param}} is ANDed with the destination address before comparing with the {{param|DestIPAddress}}.  Otherwise, the full destination address is used as is.
+          Destination subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no destination subnet mask is specified.
+
+          If a destination subnet mask is specified, the {{param}} is ANDed with the destination address before comparing with the {{param|DestIPAddress}}.  Otherwise, the full destination address is used as is.
           A Forwarding table entry for which {{param|DestIPAddress}} and {{param}} are both {{empty}} or "0.0.0.0" is a default route.
         </description>
         <syntax>
@@ -1440,7 +1460,9 @@
 
       <parameter name="SourceSubnetMask" access="readWrite">
         <description>
-          Source subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no source subnet mask is specified.{{np}}If a source subnet mask is specified, the {{param}} is ANDed with the source address before comparing with the {{param|SourceIPAddress}}.  Otherwise, the full source address is used as is.
+          Source subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no source subnet mask is specified.
+
+          If a source subnet mask is specified, the {{param}} is ANDed with the source address before comparing with the {{param|SourceIPAddress}}.  Otherwise, the full source address is used as is.
         </description>
         <syntax>
           <dataType ref="IPAddress"/>
@@ -1450,7 +1472,9 @@
 
       <parameter name="GatewayIPAddress" access="readWrite">
         <description>
-          IP address of the gateway.{{np}}Only one of {{param}} and {{param|Interface}} SHOULD be configured for a route.
+          IP address of the gateway.
+
+          Only one of {{param}} and {{param|Interface}} SHOULD be configured for a route.
           If both are configured, {{param}} and {{param|Interface}} MUST be self-consistent.
         </description>
         <syntax>
@@ -1461,7 +1485,9 @@
 
       <parameter name="Interface" access="readWrite">
         <description>
-          Specifies the egress interface associated with this entry.  The content is the full hierarchical parameter name of the layer-3 connection object.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANPPPConnection.1''.{{np}}Only one of {{param|GatewayIPAddress}} and {{param}} SHOULD be configured for a route.
+          Specifies the egress interface associated with this entry.  The content is the full hierarchical parameter name of the layer-3 connection object.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANPPPConnection.1''.
+
+          Only one of {{param|GatewayIPAddress}} and {{param}} SHOULD be configured for a route.
           If both are configured, {{param|GatewayIPAddress}} and {{param}} MUST be self-consistent.
           For a route that was configured by setting {{param|GatewayIPAddress}} but not {{param}}, read access to {{param}} MUST return the full hierarchical parameter name for the route's egress interface.
         </description>
@@ -1568,7 +1594,9 @@
           The following is a WAN interface example:
           : ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANPPPConnection.1''
           The following is a LAN interface example:
-          : ''InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1''{{np}}The value of this parameter MUST be either a valid interface or {{empty}}.  An attempt to set this parameter to a different value MUST be rejected as an invalid parameter value.
+          : ''InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.IPInterface.1''
+
+          The value of this parameter MUST be either a valid interface or {{empty}}.  An attempt to set this parameter to a different value MUST be rejected as an invalid parameter value.
           If {{empty}} is specified, the CPE MUST use the interface as directed by its routing policy (Forwarding table entries) to determine the appropriate interface.
         </description>
         <syntax>
@@ -1753,7 +1781,9 @@
 
       <parameter name="DHCPRelay" access="readOnly" status="deprecated">
         <description>
-          Indicates if the DHCP server performs the role of a server (0) or a relay (1) on the LAN interface.{{np}}This parameter is DEPRECATED because the functionality that it describes is not well-defined.  The CPE MAY set it to the value that it thinks most appropriate, based on its configuration.
+          Indicates if the DHCP server performs the role of a server (0) or a relay (1) on the LAN interface.
+
+          This parameter is DEPRECATED because the functionality that it describes is not well-defined.  The CPE MAY set it to the value that it thinks most appropriate, based on its configuration.
         </description>
         <syntax>
           <boolean/>
@@ -1993,7 +2023,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -2119,7 +2151,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -2262,7 +2296,9 @@
 
       <parameter name="Enable" access="readWrite">
         <description>
-          Enables or disables this interface.{{np}}When there are multiple ''WLANConfiguration'' instances, e.g. each instance supports a different 802.11 standard or has a different security configuration, this parameter can be used to control which of the instances are currently enabled.
+          Enables or disables this interface.
+
+          When there are multiple ''WLANConfiguration'' instances, e.g. each instance supports a different 802.11 standard or has a different security configuration, this parameter can be used to control which of the instances are currently enabled.
         </description>
         <syntax>
           <boolean/>
@@ -2271,7 +2307,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -2420,7 +2458,9 @@
 
       <parameter name="BasicEncryptionModes" access="readWrite">
         <description>
-          Encryption modes that are available when basic 802.11 is enabled. {{enum|WEPEncryption}} implies that all wireless clients can use WEP for data encryption.{{np}}{{enum}}
+          Encryption modes that are available when basic 802.11 is enabled. {{enum|WEPEncryption}} implies that all wireless clients can use WEP for data encryption.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support basic 802.11 then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
         </description>
         <syntax>
@@ -2434,7 +2474,9 @@
 
       <parameter name="BasicAuthenticationMode" access="readWrite">
         <description>
-          Authentication modes that are available when basic 802.11 is enabled.{{np}}{{enum}}
+          Authentication modes that are available when basic 802.11 is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support basic 802.11 then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
         </description>
         <syntax>
@@ -2451,7 +2493,9 @@
 
       <parameter name="WPAEncryptionModes" access="readWrite">
         <description>
-          Encryption modes that are available when WPA is enabled.{{np}}{{enum}}
+          Encryption modes that are available when WPA is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support WPA then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
           The DEPRECATED values are those that combine WEP with TKIP and/or AES, which is not permitted by the WPA specifications.
         </description>
@@ -2473,7 +2517,9 @@
 
       <parameter name="WPAAuthenticationMode" access="readWrite">
         <description>
-          Authentication modes that are available when WPA is enabled.{{np}}{{enum}}
+          Authentication modes that are available when WPA is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support WPA then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
         </description>
         <syntax>
@@ -2487,7 +2533,9 @@
 
       <parameter name="IEEE11iEncryptionModes" access="readWrite">
         <description>
-          Encryption modes that are available when 802.11i is enabled.{{np}}{{enum}}
+          Encryption modes that are available when 802.11i is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support 802.11i then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
           ''IEEE11i'' SHOULD be taken to refer to both the 802.11i specification and to the WPA2 specification (any WPA2-certified device will implement all mandatory parts of the 802.11i standard).
           The DEPRECATED values are those that combine WEP with TKIP and/or AES, which is not permitted by the WPA2 specifications.
@@ -2510,7 +2558,9 @@
 
       <parameter name="IEEE11iAuthenticationMode" access="readWrite">
         <description>
-          Authentication modes that are available when 802.11i is enabled.{{np}}{{enum}}
+          Authentication modes that are available when 802.11i is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support 802.11i then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
           ''IEEE11i'' SHOULD be taken to refer to both the 802.11i specification and to the WPA2 specification (any WPA2-certified device will implement all mandatory parts of the 802.11i standard).
         </description>
@@ -3218,7 +3268,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Status of the DSL physical link.{{np}}{{enum}}
+          Status of the DSL physical link.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -4288,7 +4340,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -4394,7 +4448,9 @@
       <parameter name="ConnectionServiceNumberOfEntries" access="readOnly"
           status="obsoleted">
         <description>
-          Number of table entries in the ConnectionService table.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.  The CPE MAY return a value of 0 for this parameter, regardless of the number of connection services, in which case no {{object|ConnectionService}} instances will exist.
+          Number of table entries in the ConnectionService table.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.  The CPE MAY return a value of 0 for this parameter, regardless of the number of connection services, in which case no {{object|ConnectionService}} instances will exist.
         </description>
         <syntax>
           <unsignedInt/>
@@ -4408,7 +4464,9 @@
         numEntriesParameter="ConnectionServiceNumberOfEntries"
         status="obsoleted">
       <description>
-        This table contains an entry for each connection service.{{np}}This object is OBSOLETED because it is within an OBSOLETED object.
+        This table contains an entry for each connection service.
+
+        This object is OBSOLETED because it is within an OBSOLETED object.
       </description>
       <uniqueKey>
         <parameter ref="WANConnectionService"/>
@@ -4417,7 +4475,9 @@
       <parameter name="WANConnectionDevice" access="readOnly"
           status="obsoleted">
         <description>
-          Specifies a WAN connection device object associated with this connection instance.  The content is the full hierarchical parameter name of the WAN connection device.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2''.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.
+          Specifies a WAN connection device object associated with this connection instance.  The content is the full hierarchical parameter name of the WAN connection device.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2''.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
           <string>
@@ -4429,7 +4489,9 @@
       <parameter name="WANConnectionService" access="readOnly"
           status="obsoleted">
         <description>
-          Specifies a WAN connection object associated with this connection instance.  The content is the full hierarchical parameter name of the layer-3 connection object.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANPPPConnection.1''.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.
+          Specifies a WAN connection object associated with this connection instance.  The content is the full hierarchical parameter name of the layer-3 connection object.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2.WANPPPConnection.1''.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
           <string>
@@ -4444,7 +4506,9 @@
           Destination address of the WANConnectionDevice entry.  One of:
           * ''PVC: VPI/VCI''
           * ''SVC: ATM connection name''
-          * ''SVC: ATM address''{{np}}The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
+          * ''SVC: ATM address''
+
+          The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
           This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
@@ -4466,7 +4530,9 @@
 
       <parameter name="ConnectionType" access="readOnly" status="obsoleted">
         <description>
-          Connection Type of the ''WANPPPConnection'' or ''WANIPConnection'' entry. One of ''PossibleConnectionTypes'' as described in ''WAN**Connection'' service.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.
+          Connection Type of the ''WANPPPConnection'' or ''WANIPConnection'' entry. One of ''PossibleConnectionTypes'' as described in ''WAN**Connection'' service.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
           <string/>
@@ -4475,7 +4541,9 @@
 
       <parameter name="Name" access="readOnly" status="obsoleted">
         <description>
-          User-readable name of the connection.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.
+          User-readable name of the connection.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
           <string>
@@ -4669,7 +4737,9 @@
 
       <parameter name="LinkType" access="readWrite">
         <description>
-          Indicates the type of DSL connection and refers to the complete stack of protocol used for this connection.{{np}}{{enum}}
+          Indicates the type of DSL connection and refers to the complete stack of protocol used for this connection.
+
+          {{enum}}
           The value ''PPPoE'' has always been DEPRECATED and ''EoA'' should be used instead (see {{bibref|TR-098a1|Annex B}}).  The ACS MUST NOT set this parameter to ''PPPoE'' and the CPE MUST reject attempts to do so.
         </description>
         <syntax>
@@ -4733,7 +4803,9 @@
           Destination address of this link.  One of:
           * ''PVC: VPI/VCI''
           * ''SVC: ATM connection name''
-          * ''SVC: ATM address''{{np}}The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
+          * ''SVC: ATM address''
+
+          The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
         </description>
         <syntax>
           <string>
@@ -4858,7 +4930,9 @@
       <parameter name="AAL5CRCErrors" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Count of the AAL5 layer cyclic redundancy check errors.{{np}}This parameter is DEPRECATED because it overlaps with the {{param|ATMCRCErrors}} parameter. If present, it MUST have the same value as the {{param|ATMCRCErrors}} parameter if AAL5 is in use, or 0 if AAL5 is not in use.
+          Count of the AAL5 layer cyclic redundancy check errors.
+
+          This parameter is DEPRECATED because it overlaps with the {{param|ATMCRCErrors}} parameter. If present, it MUST have the same value as the {{param|ATMCRCErrors}} parameter if AAL5 is in use, or 0 if AAL5 is not in use.
         </description>
         <syntax>
           <unsignedInt/>
@@ -5423,7 +5497,9 @@
 
       <parameter name="ConnectionTrigger" access="readWrite">
         <description>
-          Trigger used to establish the IP connection.{{np}}{{enum}}
+          Trigger used to establish the IP connection.
+
+          {{enum}}
           The above values are defined as follows:
           * {{enum|OnDemand}}: If this IP connection is disconnected for any reason, it is to remain disconnected until the CPE has one or more packets to communicate over this connection, at which time the CPE automatically attempts to reestablish the connection.
           * {{enum|AlwaysOn}}: If this IP connection is disconnected for any reason, the CPE automatically attempts to reestablish the connection (and continues to attempt to reestablish the connection as long it remains disconnected).
@@ -5578,7 +5654,9 @@
 
       <parameter name="PortMappingProtocol" access="readWrite">
         <description>
-          The protocol of the port mapping.{{np}}{{enum}}
+          The protocol of the port mapping.
+
+          {{enum}}
           At most one entry in this table can exist with all of the same values for {{param|RemoteHost}}, {{param|ExternalPort}}, and {{param}}.
         </description>
         <syntax>
@@ -5978,7 +6056,9 @@
 
       <parameter name="MACAddress" access="readWrite">
         <description>
-          The physical address of the ''WANPPPConnection'' if applicable.  Configurable only if {{param|MACAddressOverride}} is present and {{true}}.{{np}}If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{empty}}.
+          The physical address of the ''WANPPPConnection'' if applicable.  Configurable only if {{param|MACAddressOverride}} is present and {{true}}.
+
+          If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{empty}}.
         </description>
         <syntax>
           <dataType ref="MACAddress"/>
@@ -5987,7 +6067,9 @@
 
       <parameter name="MACAddressOverride" access="readWrite">
         <description>
-          Whether the value of {{param|MACAddress}} parameter can be overridden. If {{false}}, the CPE's default value is used (or restored if it had previously been overridden).{{np}}If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{false}}.
+          Whether the value of {{param|MACAddress}} parameter can be overridden. If {{false}}, the CPE's default value is used (or restored if it had previously been overridden).
+
+          If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{false}}.
         </description>
         <syntax>
           <boolean/>
@@ -6210,7 +6292,9 @@
 
       <parameter name="PortMappingProtocol" access="readWrite">
         <description>
-          The protocol of the port mapping.{{np}}{{enum}}
+          The protocol of the port mapping.
+
+          {{enum}}
           At most one entry in this table can exist with all of the same values for {{param|RemoteHost}}, {{param|ExternalPort}}, and {{param}}.
         </description>
         <syntax>
@@ -6405,7 +6489,9 @@
 
       <parameter name="BridgeStatus" access="readOnly">
         <description>
-          The status of this Bridge table entry.{{np}}{{enum}}
+          The status of this Bridge table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -6476,7 +6562,9 @@
 
       <parameter name="FilterStatus" access="readOnly">
         <description>
-          The status of this Filter table entry.{{np}}{{enum}}
+          The status of this Filter table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -6806,7 +6894,9 @@
 
       <parameter name="MarkingStatus" access="readOnly">
         <description>
-          The status of this Marking table entry.{{np}}{{enum}}
+          The status of this Marking table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -7146,7 +7236,9 @@
 
       <parameter name="ClassificationKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each classification entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each classification entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -7165,7 +7257,9 @@
 
       <parameter name="ClassificationStatus" access="readOnly">
         <description>
-          The status of this classifier.{{np}}{{enum}}
+          The status of this classifier.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -7939,7 +8033,9 @@
 
       <parameter name="AppKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each App table entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each App table entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -7958,7 +8054,9 @@
 
       <parameter name="AppStatus" access="readOnly">
         <description>
-          The status of this App table entry.{{np}}{{enum}}
+          The status of this App table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -8069,7 +8167,9 @@
 
       <parameter name="FlowKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each Flow table entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each Flow table entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -8088,7 +8188,9 @@
 
       <parameter name="FlowStatus" access="readOnly">
         <description>
-          The status of this Flow table entry.{{np}}{{enum}}
+          The status of this Flow table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -8223,7 +8325,9 @@
 
       <parameter name="PolicerKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each policer entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each policer entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -8242,7 +8346,9 @@
 
       <parameter name="PolicerStatus" access="readOnly">
         <description>
-          The status of this policer.{{np}}{{enum}}
+          The status of this policer.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -8426,12 +8532,16 @@
         access="readWrite" minEntries="0" maxEntries="unbounded"
         numEntriesParameter="QueueNumberOfEntries">
       <description>
-        Queue table.{{np}}This table can contain hardware queues.  The CPE MAY refuse to allow hardware queues to be deleted.
+        Queue table.
+
+        This table can contain hardware queues.  The CPE MAY refuse to allow hardware queues to be deleted.
       </description>
 
       <parameter name="QueueKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each queue entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each queue entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -8450,7 +8560,9 @@
 
       <parameter name="QueueStatus" access="readOnly">
         <description>
-          The status of this queue.{{np}}{{enum}}
+          The status of this queue.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -8483,7 +8595,9 @@
 
       <parameter name="QueueBufferLength" access="readOnly">
         <description>
-          Number of bytes in the buffer.{{np}}Queue buffer size for all egress interfaces for which this queue exists.  If the buffer size is not the same for all such egress interfaces, this parameter MUST be 0.
+          Number of bytes in the buffer.
+
+          Queue buffer size for all egress interfaces for which this queue exists.  If the buffer size is not the same for all such egress interfaces, this parameter MUST be 0.
         </description>
         <syntax>
           <unsignedInt/>

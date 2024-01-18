@@ -704,7 +704,9 @@
 
       <parameter name="ManufacturerOUI" access="readOnly">
         <description>
-          Organizationally unique identifier of the device manufacturer.  Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros.  The value MUST be a valid OUI as defined in {{bibref|OUI}}.{{np}}This value MUST remain fixed over the lifetime of the device, including across firmware updates.
+          Organizationally unique identifier of the device manufacturer.  Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros.  The value MUST be a valid OUI as defined in {{bibref|OUI}}.
+
+          This value MUST remain fixed over the lifetime of the device, including across firmware updates.
         </description>
         <syntax>
           <string>
@@ -737,7 +739,9 @@
 
       <parameter name="ProductClass" access="readOnly">
         <description>
-          Identifier of the class of product for which the serial number applies.  That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the {{param|SerialNumber}} parameter is unique.{{np}}This value MUST remain fixed over the lifetime of the device, including across firmware updates.
+          Identifier of the class of product for which the serial number applies.  That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the {{param|SerialNumber}} parameter is unique.
+
+          This value MUST remain fixed over the lifetime of the device, including across firmware updates.
         </description>
         <syntax>
           <string>
@@ -748,7 +752,9 @@
 
       <parameter name="SerialNumber" access="readOnly">
         <description>
-          Serial number of the CPE.{{np}}This value MUST remain fixed over the lifetime of the device, including across firmware updates.
+          Serial number of the CPE.
+
+          This value MUST remain fixed over the lifetime of the device, including across firmware updates.
         </description>
         <syntax>
           <string>
@@ -852,7 +858,9 @@
 
       <parameter name="FirstUseDate" access="readOnly" activeNotify="canDeny">
         <description>
-          Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection.  The CPE MAY reset this date after a factory reset.{{np}}If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.
+          Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection.  The CPE MAY reset this date after a factory reset.
+
+          If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.
         </description>
         <syntax>
           <dateTime/>
@@ -1295,7 +1303,9 @@
       <parameter name="Username" access="readWrite">
         <description>
           Username used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
-          This username is used only for HTTP-based authentication of the CPE.{{np}}Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
+          This username is used only for HTTP-based authentication of the CPE.
+
+          Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
         </description>
         <syntax>
           <string>
@@ -1308,7 +1318,9 @@
         <description>
           Password used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
           This password is used only for HTTP-based authentication of the CPE.
-          When read, this parameter returns {{empty}}, regardless of the actual value.{{np}}Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
+          When read, this parameter returns {{empty}}, regardless of the actual value.
+
+          Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
         </description>
         <syntax hidden="true">
           <string>
@@ -1680,7 +1692,9 @@
 
       <parameter name="ConfigFile" access="readWrite">
         <description>
-          A dump of the currently running configuration on the CPE.  This parameter enables the ability to backup and restore the last known good state of the CPE.  It returns a vendor-specific document that defines the state of the CPE.  The document MUST be capable of restoring the CPE's state when written back to the CPE using SetParameterValues.{{np}}An alternative to this parameter, e.g. when the configuration file is larger than the parameter size limit, is to use the Upload and Download RPCs with a FileType of ''1 Vendor Configuration File''.
+          A dump of the currently running configuration on the CPE.  This parameter enables the ability to backup and restore the last known good state of the CPE.  It returns a vendor-specific document that defines the state of the CPE.  The document MUST be capable of restoring the CPE's state when written back to the CPE using SetParameterValues.
+
+          An alternative to this parameter, e.g. when the configuration file is larger than the parameter size limit, is to use the Upload and Download RPCs with a FileType of ''1 Vendor Configuration File''.
         </description>
         <syntax>
           <string>
@@ -5870,15 +5884,6 @@
         The top-level object for an Internet Gateway Device.
       </description>
 
-      <parameter name="LANDeviceNumberOfEntries" access="readOnly">
-        <description>
-          Number of instances of {{object|LANDevice}}.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
       <parameter name="DeviceSummary" access="readOnly" forcedInform="true"
           dmr:previousParameter="">
         <description>
@@ -5888,6 +5893,15 @@
           <string>
             <size maxLength="1024"/>
           </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LANDeviceNumberOfEntries" access="readOnly">
+        <description>
+          Number of instances of {{object|LANDevice}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
         </syntax>
       </parameter>
 
@@ -5919,139 +5933,6 @@
       </parameter>
     </object>
 
-    <object
-        name="InternetGatewayDevice.WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection.{i}.DHCPClient."
-        access="readOnly" minEntries="1" maxEntries="1" dmr:previousObject="">
-      <description>
-        This object contains DHCP client configuration parameters.
-      </description>
-
-      <parameter name="SentDHCPOptionNumberOfEntries" access="readOnly">
-        <description>
-          The number of entries in the {{object|SentDHCPOption}} table.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
-      <parameter name="ReqDHCPOptionNumberOfEntries" access="readOnly">
-        <description>
-          The number of entries in the {{object|ReqDHCPOption}} table.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-    </object>
-
-    <object
-        name="InternetGatewayDevice.WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection.{i}.DHCPClient.SentDHCPOption.{i}."
-        access="readWrite" minEntries="0" maxEntries="unbounded"
-        numEntriesParameter="SentDHCPOptionNumberOfEntries"
-        enableParameter="Enable">
-      <description>
-        Each instance of this object represents a DHCP option that MUST, if enabled, be sent in DHCP client requests.  All sent DHCP options MUST be listed.
-      </description>
-      <uniqueKey>
-        <parameter ref="Tag"/>
-      </uniqueKey>
-
-      <parameter name="Enable" access="readWrite">
-        <description>
-          Enables or disables this SentDHCPOption table entry.
-        </description>
-        <syntax>
-          <boolean/>
-          <default type="object" value="false"/>
-        </syntax>
-      </parameter>
-
-      <parameter name="Tag" access="readWrite">
-        <description>
-          Option tag as defined in RFC 2132 {{bibref|RFC2132}}.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <range minInclusive="1" maxInclusive="254"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="Value" access="readWrite">
-        <description>
-          Base64 encoded option value.
-        </description>
-        <syntax>
-          <base64>
-            <size minLength="0" maxLength="255"/>
-          </base64>
-          <default type="object" value=""/>
-        </syntax>
-      </parameter>
-    </object>
-
-    <object
-        name="InternetGatewayDevice.WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection.{i}.DHCPClient.ReqDHCPOption.{i}."
-        access="readWrite" minEntries="0" maxEntries="unbounded"
-        numEntriesParameter="ReqDHCPOptionNumberOfEntries"
-        enableParameter="Enable">
-      <description>
-        Each instance of this object represents a DHCP option that MUST, if enabled, be requested in DHCP client requests. All requested DHCP options MUST be listed.
-      </description>
-      <uniqueKey>
-        <parameter ref="Tag"/>
-      </uniqueKey>
-
-      <parameter name="Enable" access="readWrite">
-        <description>
-          Enables or disables this ReqDHCPOption table entry.
-        </description>
-        <syntax>
-          <boolean/>
-          <default type="object" value="false"/>
-        </syntax>
-      </parameter>
-
-      <parameter name="Order" access="readWrite">
-        <description>
-          Position of the option in the DHCP client request.  A value of 1 indicates the first entry.
-          When this value is modified, if the value matches that of an existing entry, the Order value for the existing entry and all lower Order entries is incremented to ensure uniqueness of this value. A deletion causes Order values to be compacted. When a value is changed, incrementing occurs before compaction.
-          The value on creation of a ReqDHCPOption table entry MUST be one greater than the largest current value.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <range minInclusive="1"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="Tag" access="readWrite">
-        <description>
-          Option tag as defined in RFC 2132 {{bibref|RFC2132}}.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <range minInclusive="1" maxInclusive="254"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="Value" access="readOnly">
-        <description>
-          Base64 encoded most recently received DHCP option value.
-          If no option value has been received, then the value MUST represent {{empty}}.
-          Received DHCP option values MAY, but need not, persist across CPE reboots.
-        </description>
-        <syntax>
-          <base64>
-            <size minLength="0" maxLength="255"/>
-          </base64>
-          <default type="object" value=""/>
-        </syntax>
-      </parameter>
-    </object>
-
     <object name="InternetGatewayDevice.Services." access="readOnly"
         minEntries="1" maxEntries="1" dmr:previousObject="">
       <description>
@@ -6078,7 +5959,9 @@
 
       <parameter name="ManufacturerOUI" access="readOnly">
         <description>
-          Organizationally unique identifier of the device manufacturer.  Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros.  The value MUST be a valid OUI as defined in {{bibref|OUI}}.{{np}}This value MUST remain fixed over the lifetime of the device, including across firmware updates.
+          Organizationally unique identifier of the device manufacturer.  Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros.  The value MUST be a valid OUI as defined in {{bibref|OUI}}.
+
+          This value MUST remain fixed over the lifetime of the device, including across firmware updates.
         </description>
         <syntax>
           <string>
@@ -6111,7 +5994,9 @@
 
       <parameter name="ProductClass" access="readOnly">
         <description>
-          Identifier of the class of product for which the serial number applies.  That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the {{param|SerialNumber}} parameter is unique.{{np}}This value MUST remain fixed over the lifetime of the device, including across firmware updates.
+          Identifier of the class of product for which the serial number applies.  That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the {{param|SerialNumber}} parameter is unique.
+
+          This value MUST remain fixed over the lifetime of the device, including across firmware updates.
         </description>
         <syntax>
           <string>
@@ -6122,7 +6007,9 @@
 
       <parameter name="SerialNumber" access="readOnly">
         <description>
-          Serial number of the CPE.{{np}}This value MUST remain fixed over the lifetime of the device, including across firmware updates.
+          Serial number of the CPE.
+
+          This value MUST remain fixed over the lifetime of the device, including across firmware updates.
         </description>
         <syntax>
           <string>
@@ -6240,7 +6127,9 @@
 
       <parameter name="FirstUseDate" access="readOnly">
         <description>
-          Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection.  The CPE MAY reset this date after a factory reset.{{np}}If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.
+          Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection.  The CPE MAY reset this date after a factory reset.
+
+          If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.
         </description>
         <syntax>
           <dateTime/>
@@ -6272,7 +6161,9 @@
         access="readOnly" minEntries="0" maxEntries="unbounded"
         numEntriesParameter="VendorConfigFileNumberOfEntries">
       <description>
-        Every instance of this object is a Vendor Configuration File, and contains parameters associated with the Vendor Configuration File.{{np}}This table of Vendor Configuration Files is for information only and does not allow the ACS to operate on these files in any way.
+        Every instance of this object is a Vendor Configuration File, and contains parameters associated with the Vendor Configuration File.
+
+        This table of Vendor Configuration Files is for information only and does not allow the ACS to operate on these files in any way.
         Whenever the CPE successfully downloads a configuration file as a result of the Download RPC with the FileType argument of ''3 Vendor Configuration File'', the CPE MUST update this table.  If the name of the file (determined as described in the definition of the {{param|Name}} parameter) differs from that of any existing instance, then the CPE MUST create a new instance to represent this file.  If instead, the name of the file is identical to that of an existing instance, then the CPE MUST update the content of the existing instance with the new version, date, and (optionally) description of the file.{{nokeys}}
       </description>
       <uniqueKey>
@@ -6281,7 +6172,9 @@
 
       <parameter name="Name" access="readOnly">
         <description>
-          Name of the vendor configuration file.{{np}}If the CPE is able to obtain the name of the configuration file from the file itself, then the value of this parameter MUST be set to that name.
+          Name of the vendor configuration file.
+
+          If the CPE is able to obtain the name of the configuration file from the file itself, then the value of this parameter MUST be set to that name.
           Otherwise, if the CPE can extract the file name from the URL used to download the configuration file, then the value of this parameter MUST be set to that name.
           Otherwise, the value of this parameter MUST be set to the value of the TargetFileName argument of the Download RPC used to download this configuration file.
         </description>
@@ -6294,7 +6187,9 @@
 
       <parameter name="Version" access="readOnly">
         <description>
-          A string identifying the configuration file version currently used in the CPE.{{np}}If the CPE is able to obtain the version of the configuration file from the file itself, then the value of this parameter MUST be set to the obtained value.
+          A string identifying the configuration file version currently used in the CPE.
+
+          If the CPE is able to obtain the version of the configuration file from the file itself, then the value of this parameter MUST be set to the obtained value.
           Otherwise, the value of this parameter MUST be {{empty}}.
         </description>
         <syntax>
@@ -6746,7 +6641,9 @@
 
       <parameter name="ConfigFile" access="readWrite">
         <description>
-          A dump of the currently running configuration on the CPE.  This parameter enables the ability to backup and restore the last known good state of the CPE.  It returns a vendor-specific document that defines the state of the CPE.  The document MUST be capable of restoring the CPE's state when written back to the CPE using SetParameterValues.{{np}}An alternative to this parameter, e.g. when the configuration file is larger than the parameter size limit, is to use the Upload and Download RPCs with a FileType of ''1 Vendor Configuration File''.
+          A dump of the currently running configuration on the CPE.  This parameter enables the ability to backup and restore the last known good state of the CPE.  It returns a vendor-specific document that defines the state of the CPE.  The document MUST be capable of restoring the CPE's state when written back to the CPE using SetParameterValues.
+
+          An alternative to this parameter, e.g. when the configuration file is larger than the parameter size limit, is to use the Upload and Download RPCs with a FileType of ''1 Vendor Configuration File''.
         </description>
         <syntax>
           <string>
@@ -6762,6 +6659,19 @@
         This object contains parameters relating to the CPE's association with an ACS.
       </description>
 
+      <parameter name="EnableCWMP" access="readWrite" dmr:previousParameter="">
+        <description>
+          Enables and disables the CPE's support for CWMP.
+          {{false}} means that CWMP support in the CPE is disabled, in which case the device MUST NOT send any Inform messages to the ACS or accept any Connection Request notifications from the ACS.
+          {{true}} means that CWMP support on the CPE is enabled.
+          The factory default value MUST be {{true}}.
+          The subscriber can re-enable the CPE's CWMP support either by performing a factory reset or by using a LAN-side protocol to change the value of this parameter back to {{true}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
       <parameter name="URL" access="readWrite">
         <description>
           URL, as defined in {{bibref|RFC3986}}, for the CPE to connect to the ACS using the CPE WAN Management Protocol.
@@ -6776,23 +6686,12 @@
         </syntax>
       </parameter>
 
-      <parameter name="EnableCWMP" access="readWrite" dmr:previousParameter="">
-        <description>
-          Enables and disables the CPE's support for CWMP.
-          {{false}} means that CWMP support in the CPE is disabled, in which case the device MUST NOT send any Inform messages to the ACS or accept any Connection Request notifications from the ACS.
-          {{true}} means that CWMP support on the CPE is enabled.
-          The factory default value MUST be {{true}}.
-          The subscriber can re-enable the CPE's CWMP support either by performing a factory reset or by using a LAN-side protocol to change the value of this parameter back to {{true}}.
-        </description>
-        <syntax>
-          <boolean/>
-        </syntax>
-      </parameter>
-
       <parameter name="Username" access="readWrite">
         <description>
           Username used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
-          This username is used only for HTTP-based authentication of the CPE.{{np}}Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
+          This username is used only for HTTP-based authentication of the CPE.
+
+          Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
         </description>
         <syntax>
           <string>
@@ -6804,7 +6703,9 @@
       <parameter name="Password" access="readWrite">
         <description>
           Password used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
-          This password is used only for HTTP-based authentication of the CPE.{{np}}Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
+          This password is used only for HTTP-based authentication of the CPE.
+
+          Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value.  If an ACS modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.
         </description>
         <syntax hidden="true">
           <string>
@@ -7219,6 +7120,15 @@
         This object contains parameters relating an NTP or SNTP time client in the CPE.
       </description>
 
+      <parameter name="Enable" access="readWrite" dmr:previousParameter="">
+        <description>
+          Enables or disables the NTP or SNTP time client.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
       <parameter name="NTPServer1" access="readWrite">
         <description>
           First NTP timeserver.  Either a host name or IP address.
@@ -7227,15 +7137,6 @@
           <string>
             <size maxLength="64"/>
           </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="Enable" access="readWrite" dmr:previousParameter="">
-        <description>
-          Enables or disables the NTP or SNTP time client.
-        </description>
-        <syntax>
-          <boolean/>
         </syntax>
       </parameter>
 
@@ -7310,7 +7211,9 @@
 
       <parameter name="LocalTimeZoneName" access="readWrite">
         <description>
-          Name of the local time zone (human readable string).{{np}}The name SHOULD be encoded according to IEEE 1003.1 (POSIX).  The following is an example value: ''EST+5EDT,M4.1.0/2,M10.5.0/2''
+          Name of the local time zone (human readable string).
+
+          The name SHOULD be encoded according to IEEE 1003.1 (POSIX).  The following is an example value: ''EST+5EDT,M4.1.0/2,M10.5.0/2''
         </description>
         <syntax>
           <string>
@@ -7322,7 +7225,9 @@
       <parameter name="DaylightSavingsUsed" access="readWrite"
           status="obsoleted">
         <description>
-          Whether or not daylight savings time is in use in the CPE's local time zone.{{np}}This parameter is OBSOLETED because the information that it represents is fully covered by {{param|LocalTimeZoneName}}.
+          Whether or not daylight savings time is in use in the CPE's local time zone.
+
+          This parameter is OBSOLETED because the information that it represents is fully covered by {{param|LocalTimeZoneName}}.
         </description>
         <syntax>
           <boolean/>
@@ -7377,21 +7282,21 @@
         This object contains parameters relating to the user interface of the CPE.
       </description>
 
-      <parameter name="PasswordRequired" access="readWrite">
+      <parameter name="UserDatabaseSupported" access="readOnly"
+          dmr:previousParameter="">
         <description>
           Present only if the CPE provides a password-protected LAN-side user interface.
-          Indicates whether or not the local user interface MUST require a password to be chosen by the user.  If {{false}}, the choice of whether or not a password is used is left to the user.
+          Indicates whether or not the CPE supports a user database that provides per-user passwords that can be used for accessing the local user interface.
         </description>
         <syntax>
           <boolean/>
         </syntax>
       </parameter>
 
-      <parameter name="UserDatabaseSupported" access="readOnly"
-          dmr:previousParameter="">
+      <parameter name="PasswordRequired" access="readWrite">
         <description>
           Present only if the CPE provides a password-protected LAN-side user interface.
-          Indicates whether or not the CPE supports a user database that provides per-user passwords that can be used for accessing the local user interface.
+          Indicates whether or not the local user interface MUST require a password to be chosen by the user.  If {{false}}, the choice of whether or not a password is used is left to the user.
         </description>
         <syntax>
           <boolean/>
@@ -7846,7 +7751,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of the forwarding entry.{{np}}{{enum}}
+          Indicates the status of the forwarding entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -7872,7 +7779,9 @@
 
       <parameter name="Type" access="readWrite" status="deprecated">
         <description>
-          Indicates the type of route.{{np}}{{enum}}
+          Indicates the type of route.
+
+          {{enum}}
           This parameter is DEPRECATED because its value could conflict with {{param|DestIPAddress}} and/or {{param|DestSubnetMask}}.
         </description>
         <syntax>
@@ -7887,7 +7796,9 @@
 
       <parameter name="DestIPAddress" access="readWrite">
         <description>
-          Destination address.  {{empty}} or a value of "0.0.0.0" indicates no destination address is specified.{{np}}A Forwarding table entry for which {{param}} and {{param|DestSubnetMask}} are both {{empty}} or "0.0.0.0" is a default route.
+          Destination address.  {{empty}} or a value of "0.0.0.0" indicates no destination address is specified.
+
+          A Forwarding table entry for which {{param}} and {{param|DestSubnetMask}} are both {{empty}} or "0.0.0.0" is a default route.
         </description>
         <syntax>
           <dataType ref="IPAddress"/>
@@ -7897,7 +7808,9 @@
 
       <parameter name="DestSubnetMask" access="readWrite">
         <description>
-          Destination subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no destination subnet mask is specified.{{np}}If a destination subnet mask is specified, the {{param}} is ANDed with the destination address before comparing with the {{param|DestIPAddress}}.  Otherwise, the full destination address is used as is.
+          Destination subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no destination subnet mask is specified.
+
+          If a destination subnet mask is specified, the {{param}} is ANDed with the destination address before comparing with the {{param|DestIPAddress}}.  Otherwise, the full destination address is used as is.
           A Forwarding table entry for which {{param|DestIPAddress}} and {{param}} are both {{empty}} or "0.0.0.0" is a default route.
         </description>
         <syntax>
@@ -7918,7 +7831,9 @@
 
       <parameter name="SourceSubnetMask" access="readWrite">
         <description>
-          Source subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no source subnet mask is specified.{{np}}If a source subnet mask is specified, the {{param}} is ANDed with the source address before comparing with the {{param|SourceIPAddress}}.  Otherwise, the full source address is used as is.
+          Source subnet mask.  {{empty}} or a value of "0.0.0.0" indicates no source subnet mask is specified.
+
+          If a source subnet mask is specified, the {{param}} is ANDed with the source address before comparing with the {{param|SourceIPAddress}}.  Otherwise, the full source address is used as is.
         </description>
         <syntax>
           <dataType ref="IPAddress"/>
@@ -8216,18 +8131,10 @@
         name="InternetGatewayDevice.LANDevice.{i}.LANHostConfigManagement."
         access="readOnly" minEntries="1" maxEntries="1">
       <description>
-        This object enables reporting of LAN-related device information and setting and configuring LAN IP addressing.{{np}}The DHCP parameters in this object define the behavior of the default DHCP server, i.e. the behavior for DHCP requests that do not match any of the DHCP conditional serving pool entries.
-      </description>
+        This object enables reporting of LAN-related device information and setting and configuring LAN IP addressing.
 
-      <parameter name="DHCPServerConfigurable" access="readWrite">
-        <description>
-          Enables the configuration of the DHCP server on the LAN interface.  If this variable is set to {{false}}, the CPE SHOULD restore its default DHCP server settings.
-        </description>
-        <syntax>
-          <boolean/>
-          <default type="object" value="true"/>
-        </syntax>
-      </parameter>
+        The DHCP parameters in this object define the behavior of the default DHCP server, i.e. the behavior for DHCP requests that do not match any of the DHCP conditional serving pool entries.
+      </description>
 
       <parameter name="MACAddress" access="readOnly" dmr:previousParameter="">
         <description>
@@ -8236,6 +8143,16 @@
         </description>
         <syntax>
           <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DHCPServerConfigurable" access="readWrite">
+        <description>
+          Enables the configuration of the DHCP server on the LAN interface.  If this variable is set to {{false}}, the CPE SHOULD restore its default DHCP server settings.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
         </syntax>
       </parameter>
 
@@ -8261,7 +8178,9 @@
 
       <parameter name="MinAddress" access="readWrite">
         <description>
-          Specifies first address in the pool to be assigned by the DHCP server on the LAN interface.{{np}}This parameter MUST have a valid value before the DHCP server can be enabled.
+          Specifies first address in the pool to be assigned by the DHCP server on the LAN interface.
+
+          This parameter MUST have a valid value before the DHCP server can be enabled.
         </description>
         <syntax>
           <dataType ref="IPAddress"/>
@@ -8270,7 +8189,9 @@
 
       <parameter name="MaxAddress" access="readWrite">
         <description>
-          Specifies last address in the pool to be assigned by the DHCP server on the LAN interface.{{np}}This parameter MUST have a valid value before the DHCP server can be enabled.
+          Specifies last address in the pool to be assigned by the DHCP server on the LAN interface.
+
+          This parameter MUST have a valid value before the DHCP server can be enabled.
         </description>
         <syntax>
           <dataType ref="IPAddress"/>
@@ -8292,7 +8213,9 @@
 
       <parameter name="SubnetMask" access="readWrite">
         <description>
-          Specifies the client's network subnet mask.{{np}}This parameter MUST have a valid value before the DHCP server can be enabled.
+          Specifies the client's network subnet mask.
+
+          This parameter MUST have a valid value before the DHCP server can be enabled.
         </description>
         <syntax>
           <dataType ref="IPAddress"/>
@@ -9061,7 +8984,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -9136,7 +9061,9 @@
         name="InternetGatewayDevice.LANDevice.{i}.LANEthernetInterfaceConfig.{i}.Stats."
         access="readOnly" minEntries="1" maxEntries="1">
       <description>
-        This object contains statistics for an Ethernet LAN interface on a CPE device.{{np}}Note that these statistics refer to the link layer, not to the physical layer.
+        This object contains statistics for an Ethernet LAN interface on a CPE device.
+
+        Note that these statistics refer to the link layer, not to the physical layer.
       </description>
 
       <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
@@ -9323,7 +9250,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -9422,7 +9351,9 @@
         name="InternetGatewayDevice.LANDevice.{i}.LANUSBInterfaceConfig.{i}.Stats."
         access="readOnly" minEntries="1" maxEntries="1">
       <description>
-        This object contains statistics for a USB LAN interface on a CPE device.{{np}}Note that these statistics refer to the link layer, not to the physical layer.
+        This object contains statistics for a USB LAN interface on a CPE device.
+
+        Note that these statistics refer to the link layer, not to the physical layer.
       </description>
 
       <parameter name="BytesSent" access="readOnly" activeNotify="canDeny">
@@ -9601,7 +9532,9 @@
 
       <parameter name="Enable" access="readWrite">
         <description>
-          Enables or disables this interface.{{np}}When there are multiple ''WLANConfiguration'' instances, e.g. each instance supports a different 802.11 standard or has a different security configuration, this parameter can be used to control which of the instances are currently enabled.
+          Enables or disables this interface.
+
+          When there are multiple ''WLANConfiguration'' instances, e.g. each instance supports a different 802.11 standard or has a different security configuration, this parameter can be used to control which of the instances are currently enabled.
         </description>
         <syntax>
           <boolean/>
@@ -9610,7 +9543,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -9777,7 +9712,9 @@
 
       <parameter name="BasicEncryptionModes" access="readWrite">
         <description>
-          Encryption modes that are available when basic 802.11 is enabled. {{enum|WEPEncryption}} implies that all wireless clients can use WEP for data encryption.{{np}}{{enum}}
+          Encryption modes that are available when basic 802.11 is enabled. {{enum|WEPEncryption}} implies that all wireless clients can use WEP for data encryption.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support basic 802.11 then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
         </description>
         <syntax>
@@ -9791,7 +9728,9 @@
 
       <parameter name="BasicAuthenticationMode" access="readWrite">
         <description>
-          Authentication modes that are available when basic 802.11 is enabled.{{np}}{{enum}}
+          Authentication modes that are available when basic 802.11 is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support basic 802.11 then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
         </description>
         <syntax>
@@ -9808,7 +9747,9 @@
 
       <parameter name="WPAEncryptionModes" access="readWrite">
         <description>
-          Encryption modes that are available when WPA is enabled.{{np}}{{enum}}
+          Encryption modes that are available when WPA is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support WPA then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
           The DEPRECATED values are those that combine WEP with TKIP and/or AES, which is not permitted by the WPA specifications.
         </description>
@@ -9830,7 +9771,9 @@
 
       <parameter name="WPAAuthenticationMode" access="readWrite">
         <description>
-          Authentication modes that are available when WPA is enabled.{{np}}{{enum}}
+          Authentication modes that are available when WPA is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support WPA then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
         </description>
         <syntax>
@@ -9844,7 +9787,9 @@
 
       <parameter name="IEEE11iEncryptionModes" access="readWrite">
         <description>
-          Encryption modes that are available when 802.11i is enabled.{{np}}{{enum}}
+          Encryption modes that are available when 802.11i is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support 802.11i then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
           ''IEEE11i'' SHOULD be taken to refer to both the 802.11i specification and to the WPA2 specification (any WPA2-certified device will implement all mandatory parts of the 802.11i standard).
           The DEPRECATED values are those that combine WEP with TKIP and/or AES, which is not permitted by the WPA2 specifications.
@@ -9867,7 +9812,9 @@
 
       <parameter name="IEEE11iAuthenticationMode" access="readWrite">
         <description>
-          Authentication modes that are available when 802.11i is enabled.{{np}}{{enum}}
+          Authentication modes that are available when 802.11i is enabled.
+
+          {{enum}}
           If this ''WLANConfiguration'' instance does not support 802.11i then this parameter MUST NOT be present in this instance of the ''WLANConfiguration'' object.
           ''IEEE11i'' SHOULD be taken to refer to both the 802.11i specification and to the WPA2 specification (any WPA2-certified device will implement all mandatory parts of the 802.11i standard).
         </description>
@@ -11227,7 +11174,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Status of the DSL physical link.{{np}}{{enum}}
+          Status of the DSL physical link.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -11263,7 +11212,9 @@
 
       <parameter name="ModulationType" access="readOnly" status="deprecated">
         <description>
-          Indicates the type of modulation used on the connection.{{np}}{{enum}}
+          Indicates the type of modulation used on the connection.
+
+          {{enum}}
           This parameter, which was inherited from WANDSLLinkConfig, is DEPRECATED because it is in general not clear which standards correspond to which of the the above enumerated values.
           It is RECOMMENDED that the {{param|StandardUsed}} parameter be used to indicate which standard is in use.
         </description>
@@ -11326,7 +11277,9 @@
 
       <parameter name="DataPath" access="readOnly">
         <description>
-          Indicates whether the data path is fast (lower latency) or interleaved (lower error rate).{{np}}{{enum}}
+          Indicates whether the data path is fast (lower latency) or interleaved (lower error rate).
+
+          {{enum}}
           Note1:  This parameter is only applicable to G.992.1.
           Note2:  For an ADSL1-capable multimode device operating in a mode other than ADSL1, the value of this parameter SHOULD be set to {{enum|None}}.
         </description>
@@ -11362,7 +11315,9 @@
       <parameter name="UpstreamCurrRate" access="readOnly"
           activeNotify="canDeny">
         <description>
-          The current physical layer aggregate data rate (expressed in Kbps) of the upstream DSL connection.{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value 4294967295 (the maximum for its data type).
+          The current physical layer aggregate data rate (expressed in Kbps) of the upstream DSL connection.
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -11372,7 +11327,9 @@
       <parameter name="DownstreamCurrRate" access="readOnly"
           activeNotify="canDeny">
         <description>
-          The current physical layer aggregate data rate (expressed in Kbps) of the downstream DSL connection.{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value 4294967295 (the maximum for its data type).
+          The current physical layer aggregate data rate (expressed in Kbps) of the downstream DSL connection.
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -11382,7 +11339,9 @@
       <parameter name="UpstreamMaxRate" access="readOnly"
           activeNotify="canDeny">
         <description>
-          The current attainable rate (expressed in Kbps) of the upstream DSL channel.{{np}}Note:  This parameter is related to the G.997.1 parameter ATTNDRus, which is measured in bits/s.  See ITU-T Recommendation G.997.1.
+          The current attainable rate (expressed in Kbps) of the upstream DSL channel.
+
+          Note:  This parameter is related to the G.997.1 parameter ATTNDRus, which is measured in bits/s.  See ITU-T Recommendation G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -11392,7 +11351,9 @@
       <parameter name="DownstreamMaxRate" access="readOnly"
           activeNotify="canDeny">
         <description>
-          The current attainable rate (expressed in Kbps) of the downstream DSL channel.{{np}}Note:  This parameter is related to the G.997.1 parameter ATTNDRds, which is measured in bits/s.  See ITU-T Recommendation G.997.1.
+          The current attainable rate (expressed in Kbps) of the downstream DSL channel.
+
+          Note:  This parameter is related to the G.997.1 parameter ATTNDRds, which is measured in bits/s.  See ITU-T Recommendation G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -11462,7 +11423,9 @@
 
       <parameter name="ATURVendor" access="readOnly">
         <description>
-          ATU-R vendor identifier as defined in G.994.1 and T1.413.  In the case of G.994.1 this corresponds to the four-octet provider code, which MUST be represented as eight hexadecimal digits.{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "00000000".
+          ATU-R vendor identifier as defined in G.994.1 and T1.413.  In the case of G.994.1 this corresponds to the four-octet provider code, which MUST be represented as eight hexadecimal digits.
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "00000000".
         </description>
         <syntax>
           <string>
@@ -11473,7 +11436,9 @@
 
       <parameter name="ATURCountry" access="readOnly">
         <description>
-          T.35 country code of the ATU-R vendor as defined in G.994.1, where the two-octet value defined in G.994.1 MUST be represented as four hexadecimal digits.{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "0000".
+          T.35 country code of the ATU-R vendor as defined in G.994.1, where the two-octet value defined in G.994.1 MUST be represented as four hexadecimal digits.
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "0000".
         </description>
         <syntax>
           <string>
@@ -11484,7 +11449,9 @@
 
       <parameter name="ATURANSIStd" access="readOnly">
         <description>
-          ATU-R T1.413 Revision Number as defined in T1.413 Issue 2.{{np}}When T1.413 modulation is not in use, the parameter value SHOULD be 0.
+          ATU-R T1.413 Revision Number as defined in T1.413 Issue 2.
+
+          When T1.413 modulation is not in use, the parameter value SHOULD be 0.
         </description>
         <syntax>
           <unsignedInt/>
@@ -11493,7 +11460,9 @@
 
       <parameter name="ATURANSIRev" access="readOnly">
         <description>
-          ATU-R Vendor Revision Number as defined in T1.413 Issue 2.{{np}}When T1.413 modulation is not in use, the parameter value SHOULD be 0.
+          ATU-R Vendor Revision Number as defined in T1.413 Issue 2.
+
+          When T1.413 modulation is not in use, the parameter value SHOULD be 0.
         </description>
         <syntax>
           <unsignedInt/>
@@ -11502,7 +11471,9 @@
 
       <parameter name="ATUCVendor" access="readOnly">
         <description>
-          ATU-C vendor identifier as defined in G.994.1 and T1.413.  In the case of G.994.1 this corresponds to the four-octet provider code, which MUST be represented as eight hexadecimal digits.{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "00000000".
+          ATU-C vendor identifier as defined in G.994.1 and T1.413.  In the case of G.994.1 this corresponds to the four-octet provider code, which MUST be represented as eight hexadecimal digits.
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "00000000".
         </description>
         <syntax>
           <string>
@@ -11513,7 +11484,9 @@
 
       <parameter name="ATUCCountry" access="readOnly">
         <description>
-          T.35 country code of the ATU-C vendor as defined in G.994.1, where the two-octet value defined in G.994.1 MUST be represented as four hexadecimal digits.{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "0000".
+          T.35 country code of the ATU-C vendor as defined in G.994.1, where the two-octet value defined in G.994.1 MUST be represented as four hexadecimal digits.
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, it MUST have the value "0000".
         </description>
         <syntax>
           <string>
@@ -11524,7 +11497,9 @@
 
       <parameter name="ATUCANSIStd" access="readOnly">
         <description>
-          ATU-C T1.413 Revision Number as defined in T1.413 Issue 2.{{np}}When T1.413 modulation is not in use, the parameter value SHOULD be 0.
+          ATU-C T1.413 Revision Number as defined in T1.413 Issue 2.
+
+          When T1.413 modulation is not in use, the parameter value SHOULD be 0.
         </description>
         <syntax>
           <unsignedInt/>
@@ -11533,7 +11508,9 @@
 
       <parameter name="ATUCANSIRev" access="readOnly">
         <description>
-          ATU-C Vendor Revision Number as defined in T1.413 Issue 2.{{np}}When T1.413 modulation is not in use, the parameter value SHOULD be 0.
+          ATU-C Vendor Revision Number as defined in T1.413 Issue 2.
+
+          When T1.413 modulation is not in use, the parameter value SHOULD be 0.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12065,7 +12042,9 @@
       <parameter name="CellDelin" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Total number of cell-delineation errors (total seconds with NCD or LCD failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
+          Total number of cell-delineation errors (total seconds with NCD or LCD failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12075,7 +12054,9 @@
       <parameter name="LinkRetrain" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Total number of link-retrain errors (Full Initialization Count as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
+          Total number of link-retrain errors (Full Initialization Count as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12085,7 +12066,9 @@
       <parameter name="InitErrors" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Total number of initialization errors (LINIT failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not defined in G.997.1.
+          Total number of initialization errors (LINIT failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not defined in G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12104,7 +12087,9 @@
       <parameter name="LossOfFraming" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Total number of loss-of-framing errors (LOF failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not defined in G.997.1.
+          Total number of loss-of-framing errors (LOF failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not defined in G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12113,7 +12098,9 @@
 
       <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
         <description>
-          Total number of errored seconds (ES-L as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of errored seconds (ES-L as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12123,7 +12110,9 @@
       <parameter name="SeverelyErroredSecs" access="readOnly"
           activeNotify="canDeny">
         <description>
-          Total number of severely errored seconds (SES-L as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of severely errored seconds (SES-L as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12132,7 +12121,9 @@
 
       <parameter name="FECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Total number of FEC errors detected (FEC-C as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of FEC errors detected (FEC-C as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12141,7 +12132,9 @@
 
       <parameter name="ATUCFECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Total number of FEC errors detected by the ATU-C (FEC-CFE as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of FEC errors detected by the ATU-C (FEC-CFE as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12150,7 +12143,9 @@
 
       <parameter name="HECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Total number of HEC errors detected (HEC-P as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of HEC errors detected (HEC-P as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12159,7 +12154,9 @@
 
       <parameter name="ATUCHECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Total number of HEC errors detected by the ATU-C (HEC-PFE as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of HEC errors detected by the ATU-C (HEC-PFE as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12168,7 +12165,9 @@
 
       <parameter name="CRCErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Total number of CRC errors detected (CV-C as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of CRC errors detected (CV-C as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12177,7 +12176,9 @@
 
       <parameter name="ATUCCRCErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Total number of CRC errors detected by the ATU-C (CV-CFE as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Total number of CRC errors detected by the ATU-C (CV-CFE as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12257,7 +12258,9 @@
       <parameter name="CellDelin" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of cell-delineation errors since the most recent DSL Showtime (total seconds with NCD or LCD failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
+          Number of cell-delineation errors since the most recent DSL Showtime (total seconds with NCD or LCD failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12267,7 +12270,9 @@
       <parameter name="LinkRetrain" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of link-retrain errors since the most recent DSL Showtime (Full Initialization Count as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
+          Number of link-retrain errors since the most recent DSL Showtime (Full Initialization Count as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12277,7 +12282,9 @@
       <parameter name="InitErrors" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of initialization errors since the most recent DSL Showtime (LINIT failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not defined in G.997.1.
+          Number of initialization errors since the most recent DSL Showtime (LINIT failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not defined in G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12296,7 +12303,9 @@
       <parameter name="LossOfFraming" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of loss-of-framing errors since the most recent DSL Showtime (LOF failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not defined in G.997.1.
+          Number of loss-of-framing errors since the most recent DSL Showtime (LOF failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not defined in G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12305,7 +12314,9 @@
 
       <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of errored seconds since the most recent DSL Showtime (ES-L as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of errored seconds since the most recent DSL Showtime (ES-L as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12315,7 +12326,9 @@
       <parameter name="SeverelyErroredSecs" access="readOnly"
           activeNotify="canDeny">
         <description>
-          Number of severely errored seconds since the most recent DSL Showtime (SES-L as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of severely errored seconds since the most recent DSL Showtime (SES-L as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12324,7 +12337,9 @@
 
       <parameter name="FECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of FEC errors detected since the most recent DSL Showtime (FEC-C as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of FEC errors detected since the most recent DSL Showtime (FEC-C as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12333,7 +12348,9 @@
 
       <parameter name="ATUCFECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of FEC errors detected by the ATU-C since the most recent DSL Showtime (FEC-CFE as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of FEC errors detected by the ATU-C since the most recent DSL Showtime (FEC-CFE as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12342,7 +12359,9 @@
 
       <parameter name="HECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of HEC errors detected since the most recent DSL Showtime (HEC-P as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of HEC errors detected since the most recent DSL Showtime (HEC-P as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12351,7 +12370,9 @@
 
       <parameter name="ATUCHECErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of HEC errors detected by the ATU-C since the most recent DSL Showtime (HEC-PFE as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of HEC errors detected by the ATU-C since the most recent DSL Showtime (HEC-PFE as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12360,7 +12381,9 @@
 
       <parameter name="CRCErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of CRC errors detected since the most recent DSL Showtime (CV-C as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of CRC errors detected since the most recent DSL Showtime (CV-C as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12369,7 +12392,9 @@
 
       <parameter name="ATUCCRCErrors" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of CRC errors detected by the ATU-C since the most recent DSL Showtime (CV-CFE as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of CRC errors detected by the ATU-C since the most recent DSL Showtime (CV-CFE as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -12449,7 +12474,9 @@
       <parameter name="CellDelin" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of cell-delineation errors since the second most recent DSL Showtime (total seconds with NCD or LCD failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
+          Number of cell-delineation errors since the second most recent DSL Showtime (total seconds with NCD or LCD failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12459,7 +12486,9 @@
       <parameter name="LinkRetrain" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of link-retrain errors since the second most recent DSL Showtime (Full Initialization Count as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
+          Number of link-retrain errors since the second most recent DSL Showtime (Full Initialization Count as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not available at either the G or the S/T interface.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12469,7 +12498,9 @@
       <parameter name="InitErrors" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of initialization errors since the second most recent DSL Showtime (LINIT failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not defined in G.997.1.
+          Number of initialization errors since the second most recent DSL Showtime (LINIT failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not defined in G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12488,7 +12519,9 @@
       <parameter name="LossOfFraming" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Number of loss-of-framing errors since the second most recent DSL Showtime (LOF failures as defined in ITU-T Rec. G.997.1).{{np}}This parameter is DEPRECATED because it is not defined in G.997.1.
+          Number of loss-of-framing errors since the second most recent DSL Showtime (LOF failures as defined in ITU-T Rec. G.997.1).
+
+          This parameter is DEPRECATED because it is not defined in G.997.1.
         </description>
         <syntax>
           <unsignedInt/>
@@ -12497,7 +12530,9 @@
 
       <parameter name="ErroredSecs" access="readOnly" activeNotify="canDeny">
         <description>
-          Number of errored seconds since the second most recent DSL Showtime (ES-L as defined in ITU-T Rec. G.997.1).{{np}}Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
+          Number of errored seconds since the second most recent DSL Showtime (ES-L as defined in ITU-T Rec. G.997.1).
+
+          Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1.  If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).
         </description>
         <syntax>
           <unsignedInt/>
@@ -13306,7 +13341,9 @@
 
       <parameter name="Status" access="readOnly">
         <description>
-          Indicates the status of this interface.{{np}}{{enum}}
+          Indicates the status of this interface.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -13439,7 +13476,9 @@
       <parameter name="ConnectionServiceNumberOfEntries" access="readOnly"
           status="obsoleted">
         <description>
-          Number of table entries in the ConnectionService table.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.  The CPE MAY return a value of 0 for this parameter, regardless of the number of connection services, in which case no {{object|ConnectionService}} instances will exist.
+          Number of table entries in the ConnectionService table.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.  The CPE MAY return a value of 0 for this parameter, regardless of the number of connection services, in which case no {{object|ConnectionService}} instances will exist.
         </description>
         <syntax>
           <unsignedInt/>
@@ -13453,7 +13492,9 @@
         numEntriesParameter="ConnectionServiceNumberOfEntries"
         status="obsoleted">
       <description>
-        This table contains an entry for each connection service.{{np}}This object is OBSOLETED because it is within an OBSOLETED object.
+        This table contains an entry for each connection service.
+
+        This object is OBSOLETED because it is within an OBSOLETED object.
       </description>
       <uniqueKey>
         <parameter ref="WANConnectionService"/>
@@ -13462,7 +13503,9 @@
       <parameter name="WANConnectionDevice" access="readOnly"
           status="obsoleted">
         <description>
-          Specifies a WAN connection device object associated with this connection instance.  The content is the full hierarchical parameter name of the WAN connection device.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2''.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.
+          Specifies a WAN connection device object associated with this connection instance.  The content is the full hierarchical parameter name of the WAN connection device.  Example: ''InternetGatewayDevice.WANDevice.1.WANConnectionDevice.2''.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
           <string>
@@ -13490,7 +13533,9 @@
           Destination address of the WANConnectionDevice entry.  One of:
           * ''PVC: VPI/VCI''
           * ''SVC: ATM connection name''
-          * ''SVC: ATM address''{{np}}The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
+          * ''SVC: ATM address''
+
+          The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
           This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
@@ -13514,7 +13559,9 @@
 
       <parameter name="ConnectionType" access="readOnly" status="obsoleted">
         <description>
-          Connection Type of the ''WANPPPConnection'' or ''WANIPConnection'' entry. One of ''PossibleConnectionTypes'' as described in ''WAN**Connection'' service.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.
+          Connection Type of the ''WANPPPConnection'' or ''WANIPConnection'' entry. One of ''PossibleConnectionTypes'' as described in ''WAN**Connection'' service.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
           <string>
@@ -13525,7 +13572,9 @@
 
       <parameter name="Name" access="readOnly" status="obsoleted">
         <description>
-          User-readable name of the connection.{{np}}This parameter is OBSOLETED because it is within an OBSOLETED object.
+          User-readable name of the connection.
+
+          This parameter is OBSOLETED because it is within an OBSOLETED object.
         </description>
         <syntax>
           <string>
@@ -13565,7 +13614,9 @@
 
       <parameter name="ACTPSDds" access="readOnly" activeNotify="canDeny">
         <description>
-          Downstream actual power spectral density.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.{{np}}Note:  See ITU-T Recommendation G.997.1.
+          Downstream actual power spectral density.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.
+
+          Note:  See ITU-T Recommendation G.997.1.
         </description>
         <syntax>
           <int/>
@@ -13574,7 +13625,9 @@
 
       <parameter name="ACTPSDus" access="readOnly" activeNotify="canDeny">
         <description>
-          Upstream actual power spectral density.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.{{np}}Note:  See ITU-T Recommendation G.997.1.
+          Upstream actual power spectral density.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.
+
+          Note:  See ITU-T Recommendation G.997.1.
         </description>
         <syntax>
           <int/>
@@ -13583,7 +13636,9 @@
 
       <parameter name="ACTATPds" access="readOnly" activeNotify="canDeny">
         <description>
-          Downstream actual aggregate transmitter power.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.{{np}}Note:  See ITU-T Recommendation G.997.1.
+          Downstream actual aggregate transmitter power.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.
+
+          Note:  See ITU-T Recommendation G.997.1.
         </description>
         <syntax>
           <int/>
@@ -13592,7 +13647,9 @@
 
       <parameter name="ACTATPus" access="readOnly" activeNotify="canDeny">
         <description>
-          Upstream actual aggregate transmitter power.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.{{np}}Note:  See ITU-T Recommendation G.997.1.
+          Upstream actual aggregate transmitter power.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.
+
+          Note:  See ITU-T Recommendation G.997.1.
         </description>
         <syntax>
           <int/>
@@ -13601,7 +13658,9 @@
 
       <parameter name="HLINSCds" access="readOnly" activeNotify="canDeny">
         <description>
-          Downstream linear representation scale.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.{{np}}Note:  See ITU-T Recommendation G.997.1. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.
+          Downstream linear representation scale.  Interpretation of the value is as defined in ITU-T Rec. G.997.1.
+
+          Note:  See ITU-T Recommendation G.997.1. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.
         </description>
         <syntax>
           <int/>
@@ -14093,7 +14152,9 @@
           Destination address of this link.  One of:
           * ''PVC: VPI/VCI''
           * ''SVC: ATM connection name''
-          * ''SVC: ATM address''{{np}}The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
+          * ''SVC: ATM address''
+
+          The "PVC:" or "SVC:" prefix is part of the parameter value and MUST be followed by 0 or 1 space characters.  For example, possible values for this parameter are "PVC:8/23" or "PVC: 0/35".
         </description>
         <syntax>
           <string>
@@ -14220,7 +14281,9 @@
       <parameter name="AAL5CRCErrors" access="readOnly" activeNotify="canDeny"
           status="deprecated">
         <description>
-          Count of the AAL5 layer cyclic redundancy check errors.{{np}}This parameter is DEPRECATED because it overlaps with the {{param|ATMCRCErrors}} parameter. If present, it MUST have the same value as the {{param|ATMCRCErrors}} parameter if AAL5 is in use, or 0 if AAL5 is not in use.
+          Count of the AAL5 layer cyclic redundancy check errors.
+
+          This parameter is DEPRECATED because it overlaps with the {{param|ATMCRCErrors}} parameter. If present, it MUST have the same value as the {{param|ATMCRCErrors}} parameter if AAL5 is in use, or 0 if AAL5 is not in use.
         </description>
         <syntax>
           <unsignedInt/>
@@ -14771,7 +14834,9 @@
         numEntriesParameter="WANIPConnectionNumberOfEntries"
         enableParameter="Enable">
       <description>
-        This object enables configuration of IP connections on the WAN interface of a CPE.{{np}}If the ''Layer2Bridging'' object is implemented, the view that it provides of the CPE's underlying bridging configuration MUST be consistent with the view provided by any ''LANDevice'' and ''WAN**Connection'' objects.  The implications of this are explained in {{bibref|TR-098a2|Annex A.6}}.
+        This object enables configuration of IP connections on the WAN interface of a CPE.
+
+        If the ''Layer2Bridging'' object is implemented, the view that it provides of the CPE's underlying bridging configuration MUST be consistent with the view provided by any ''LANDevice'' and ''WAN**Connection'' objects.  The implications of this are explained in {{bibref|TR-098a2|Annex A.6}}.
       </description>
       <uniqueKey>
         <parameter ref="ExternalIPAddress"/>
@@ -14802,7 +14867,9 @@
 
       <parameter name="ConnectionStatus" access="readOnly">
         <description>
-          Current status of the connection.{{np}}{{enum}}
+          Current status of the connection.
+
+          {{enum}}
           The value {{enum|Disconneting}} is DEPRECATED because it is a typo.  The ACS MUST treat {{enum|Disconneting}} and {{enum|Disconnecting}} the same.
         </description>
         <syntax>
@@ -15033,7 +15100,9 @@
 
       <parameter name="ConnectionTrigger" access="readWrite">
         <description>
-          Trigger used to establish the IP connection.{{np}}{{enum}}
+          Trigger used to establish the IP connection.
+
+          {{enum}}
           The above values are defined as follows:
           * {{enum|OnDemand}}: If this IP connection is disconnected for any reason, it is to remain disconnected until the CPE has one or more packets to communicate over this connection, at which time the CPE automatically attempts to reestablish the connection.
           * {{enum|AlwaysOn}}: If this IP connection is disconnected for any reason, the CPE automatically attempts to reestablish the connection (and continues to attempt to reestablish the connection as long it remains disconnected).
@@ -15098,6 +15167,139 @@
         <syntax>
           <unsignedInt/>
           <default type="object" value="0" status="deleted"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="InternetGatewayDevice.WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection.{i}.DHCPClient."
+        access="readOnly" minEntries="1" maxEntries="1" dmr:previousObject="">
+      <description>
+        This object contains DHCP client configuration parameters.
+      </description>
+
+      <parameter name="SentDHCPOptionNumberOfEntries" access="readOnly">
+        <description>
+          The number of entries in the {{object|SentDHCPOption}} table.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReqDHCPOptionNumberOfEntries" access="readOnly">
+        <description>
+          The number of entries in the {{object|ReqDHCPOption}} table.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="InternetGatewayDevice.WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection.{i}.DHCPClient.SentDHCPOption.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="SentDHCPOptionNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this object represents a DHCP option that MUST, if enabled, be sent in DHCP client requests.  All sent DHCP options MUST be listed.
+      </description>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this SentDHCPOption table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag as defined in RFC 2132 {{bibref|RFC2132}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readWrite">
+        <description>
+          Base64 encoded option value.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="0" maxLength="255"/>
+          </base64>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object
+        name="InternetGatewayDevice.WANDevice.{i}.WANConnectionDevice.{i}.WANIPConnection.{i}.DHCPClient.ReqDHCPOption.{i}."
+        access="readWrite" minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="ReqDHCPOptionNumberOfEntries"
+        enableParameter="Enable">
+      <description>
+        Each instance of this object represents a DHCP option that MUST, if enabled, be requested in DHCP client requests. All requested DHCP options MUST be listed.
+      </description>
+      <uniqueKey>
+        <parameter ref="Tag"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this ReqDHCPOption table entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Order" access="readWrite">
+        <description>
+          Position of the option in the DHCP client request.  A value of 1 indicates the first entry.
+          When this value is modified, if the value matches that of an existing entry, the Order value for the existing entry and all lower Order entries is incremented to ensure uniqueness of this value. A deletion causes Order values to be compacted. When a value is changed, incrementing occurs before compaction.
+          The value on creation of a ReqDHCPOption table entry MUST be one greater than the largest current value.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Tag" access="readWrite">
+        <description>
+          Option tag as defined in RFC 2132 {{bibref|RFC2132}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          Base64 encoded most recently received DHCP option value.
+          If no option value has been received, then the value MUST represent {{empty}}.
+          Received DHCP option values MAY, but need not, persist across CPE reboots.
+        </description>
+        <syntax>
+          <base64>
+            <size minLength="0" maxLength="255"/>
+          </base64>
+          <default type="object" value=""/>
         </syntax>
       </parameter>
     </object>
@@ -15189,7 +15391,9 @@
 
       <parameter name="PortMappingProtocol" access="readWrite">
         <description>
-          The protocol of the port mapping.{{np}}{{enum}}
+          The protocol of the port mapping.
+
+          {{enum}}
           At most one entry in this table can exist with all of the same values for {{param|RemoteHost}}, {{param|ExternalPort}}, and {{param}}.
         </description>
         <syntax>
@@ -15424,7 +15628,9 @@
         numEntriesParameter="WANPPPConnectionNumberOfEntries"
         enableParameter="Enable">
       <description>
-        This object enables configuration of PPP connections on the WAN interface of a CPE.{{np}}If the ''Layer2Bridging'' object is implemented, the view that it provides of the CPE's underlying bridging configuration MUST be consistent with the view provided by any ''LANDevice'' and ''WAN**Connection'' objects.  The implications of this are explained in {{bibref|TR-098a2|Annex A.6}}.
+        This object enables configuration of PPP connections on the WAN interface of a CPE.
+
+        If the ''Layer2Bridging'' object is implemented, the view that it provides of the CPE's underlying bridging configuration MUST be consistent with the view provided by any ''LANDevice'' and ''WAN**Connection'' objects.  The implications of this are explained in {{bibref|TR-098a2|Annex A.6}}.
       </description>
       <uniqueKey>
         <parameter ref="ExternalIPAddress"/>
@@ -15753,7 +15959,9 @@
 
       <parameter name="MACAddress" access="readWrite">
         <description>
-          The physical address of the ''WANPPPConnection'' if applicable.  Configurable only if {{param|MACAddressOverride}} is present and {{true}}.{{np}}If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{empty}}.
+          The physical address of the ''WANPPPConnection'' if applicable.  Configurable only if {{param|MACAddressOverride}} is present and {{true}}.
+
+          If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{empty}}.
         </description>
         <syntax>
           <dataType ref="MACAddress"/>
@@ -15762,7 +15970,9 @@
 
       <parameter name="MACAddressOverride" access="readWrite">
         <description>
-          Whether the value of {{param|MACAddress}} parameter can be overridden. If {{false}}, the CPE's default value is used (or restored if it had previously been overridden).{{np}}If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{false}}.
+          Whether the value of {{param|MACAddress}} parameter can be overridden. If {{false}}, the CPE's default value is used (or restored if it had previously been overridden).
+
+          If {{param|TransportType}} is {{enum|PPPoA|TransportType}}, the value of this parameter is irrelevant and MUST be {{false}}.
         </description>
         <syntax>
           <boolean/>
@@ -15995,7 +16205,9 @@
 
       <parameter name="PortMappingProtocol" access="readWrite">
         <description>
-          The protocol of the port mapping.{{np}}{{enum}}
+          The protocol of the port mapping.
+
+          {{enum}}
           At most one entry in this table can exist with all of the same values for {{param|RemoteHost}}, {{param|ExternalPort}}, and {{param}}.
         </description>
         <syntax>
@@ -16380,7 +16592,9 @@
 
       <parameter name="BridgeStatus" access="readOnly">
         <description>
-          The status of this Bridge table entry.{{np}}{{enum}}
+          The status of this Bridge table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -16579,7 +16793,9 @@
         numEntriesParameter="FilterNumberOfEntries"
         enableParameter="FilterEnable">
       <description>
-        Filter table containing filter entries each of which is associated with one Bridge as specified by a ''Bridge'' table entry.{{np}}For both 802.1D {{bibref|802.1D-2004}} and 802.1Q {{bibref|802.1Q-2005}} Bridges, this table is used for the following:
+        Filter table containing filter entries each of which is associated with one Bridge as specified by a ''Bridge'' table entry.
+
+        For both 802.1D {{bibref|802.1D-2004}} and 802.1Q {{bibref|802.1Q-2005}} Bridges, this table is used for the following:
         # If the Bridge Port table is not supported, it implicitly specifies the Bridge interfaces (in collaboration with the Marking table).
         # It specifies destination MAC address classification rules.
         For an 802.1Q Bridge, this table is also used for the following:
@@ -16614,8 +16830,12 @@
 
       <parameter name="FilterStatus" access="readOnly">
         <description>
-          The status of this Filter table entry.{{np}}{{enum}}
-          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.{{np}}If the Bridge Port table is supported, but none of its entries correspond to {{param|FilterInterface}}, or if such an entry exists but is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.
+          The status of this Filter table entry.
+
+          {{enum}}
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+
+          If the Bridge Port table is supported, but none of its entries correspond to {{param|FilterInterface}}, or if such an entry exists but is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.
           If the Bridge VLAN table is supported, but none of its entries correspond to {{param|VLANIDFilter}}, or if such an entry exists but is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.
         </description>
         <syntax>
@@ -16728,7 +16948,9 @@
       <parameter name="EthertypeFilterExclude" access="readWrite">
         <description>
           If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge is defined to admit only those packets that match one of the {{param|EthertypeFilterList}} entries (in either the Ethernet or SNAP Type header).  If the {{param|EthertypeFilterList}} is empty, no packets are admitted.
-          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge is defined to admit all packets except those packets that match one of the {{param|EthertypeFilterList}} entries (in either the Ethernet or SNAP Type header).  If the {{param|EthertypeFilterList}} is empty, packets are admitted regardless of Ethertype.{{np}}Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on Ethertype.
+          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge is defined to admit all packets except those packets that match one of the {{param|EthertypeFilterList}} entries (in either the Ethernet or SNAP Type header).  If the {{param|EthertypeFilterList}} is empty, packets are admitted regardless of Ethertype.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on Ethertype.
         </description>
         <syntax>
           <boolean/>
@@ -16756,7 +16978,9 @@
       <parameter name="SourceMACAddressFilterExclude" access="readWrite">
         <description>
           If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches one of the {{param|SourceMACAddressFilterList}} entries.  If the {{param|SourceMACAddressFilterList}} is empty, no packets are admitted.
-          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches one of the {{param|SourceMACAddressFilterList}} entries.  If the {{param|SourceMACAddressFilterList}} is empty, packets are admitted regardless of MAC address.{{np}}Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
+          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches one of the {{param|SourceMACAddressFilterList}} entries.  If the {{param|SourceMACAddressFilterList}} is empty, packets are admitted regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
         </description>
         <syntax>
           <boolean/>
@@ -16809,7 +17033,9 @@
           access="readWrite">
         <description>
           If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromVendorClassIDFilter}}.  If {{param|SourceMACFromVendorClassIDFilter}} is {{empty}}, no packets are admitted.
-          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromVendorClassIDFilter}}.  If the {{param|SourceMACFromVendorClassIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.{{np}}Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
+          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromVendorClassIDFilter}}.  If the {{param|SourceMACFromVendorClassIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
         </description>
         <syntax>
           <boolean/>
@@ -16876,7 +17102,9 @@
       <parameter name="SourceMACFromClientIDFilterExclude" access="readWrite">
         <description>
           If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromClientIDFilter}}.  If {{param|SourceMACFromClientIDFilter}} is {{empty}}, no packets are admitted.
-          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromClientIDFilter}}.  If the {{param|SourceMACFromClientIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.{{np}}Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
+          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromClientIDFilter}}.  If the {{param|SourceMACFromClientIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
         </description>
         <syntax>
           <boolean/>
@@ -16926,7 +17154,9 @@
           access="readWrite">
         <description>
           If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromUserClassIDFilter}}.  If {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, no packets are admitted.
-          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromUserClassIDFilter}}.  If the {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.{{np}}Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
+          If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromUserClassIDFilter}}.  If the {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.
+
+          Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2005}} support classification based on source MAC address.
         </description>
         <syntax>
           <boolean/>
@@ -17014,8 +17244,12 @@
 
       <parameter name="MarkingStatus" access="readOnly">
         <description>
-          The status of this Marking table entry.{{np}}{{enum}}
-          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.{{np}}If the Bridge Port table is supported, but none of its entries correspond to {{param|MarkingInterface}}, or if such an entry exists but is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.
+          The status of this Marking table entry.
+
+          {{enum}}
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
+
+          If the Bridge Port table is supported, but none of its entries correspond to {{param|MarkingInterface}}, or if such an entry exists but is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.
         </description>
         <syntax>
           <string>
@@ -17347,7 +17581,9 @@
 
       <parameter name="DefaultQueue" access="readWrite">
         <description>
-          Instance number of the {{object|Queue}} table entry for traffic not associated with any specified classifier.{{np}}A value of 0xffffffff (-1) indicates a null queue (permitted in data model versions 1.4 and later).
+          Instance number of the {{object|Queue}} table entry for traffic not associated with any specified classifier.
+
+          A value of 0xffffffff (-1) indicates a null queue (permitted in data model versions 1.4 and later).
         </description>
         <syntax>
           <unsignedInt/>
@@ -17402,7 +17638,9 @@
 
       <parameter name="ClassificationKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each classification entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each classification entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -17421,7 +17659,9 @@
 
       <parameter name="ClassificationStatus" access="readOnly">
         <description>
-          The status of this classifier.{{np}}{{enum}}
+          The status of this classifier.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -17437,7 +17677,9 @@
       <parameter name="ClassificationOrder" access="readWrite">
         <description>
           Position of the classification entry in the order of precedence.  A value of 1 indicates the first entry considered.  For each packet, the highest ordered entry that matches the classification criteria is applied.  All lower order entries are ignored.
-          When this value is modified, if the value matches that of an existing entry, the Order value for the existing entry and all lower Order entries is incremented (lowered in precedence) to ensure uniqueness of this value. A deletion causes Order values to be compacted. When a value is changed, incrementing occurs before compaction.{{np}}The value on creation of a Classification table entry MUST be one greater than the largest current value.
+          When this value is modified, if the value matches that of an existing entry, the Order value for the existing entry and all lower Order entries is incremented (lowered in precedence) to ensure uniqueness of this value. A deletion causes Order values to be compacted. When a value is changed, incrementing occurs before compaction.
+
+          The value on creation of a Classification table entry MUST be one greater than the largest current value.
         </description>
         <syntax>
           <unsignedInt>
@@ -18387,7 +18629,9 @@
 
       <parameter name="AppKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each App table entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each App table entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -18406,7 +18650,9 @@
 
       <parameter name="AppStatus" access="readOnly">
         <description>
-          The status of this App table entry.{{np}}{{enum}}
+          The status of this App table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -18484,7 +18730,9 @@
       <parameter name="AppDefaultQueue" access="readWrite">
         <description>
           Instance number of the Queue table entry for traffic associated with this App table entry, but not associated with any specified flow.
-          A value of -1 indicates a null queue.{{np}}{{param|AppDefaultTrafficClass}} and {{param}} MUST NOT both be specified.
+          A value of -1 indicates a null queue.
+
+          {{param|AppDefaultTrafficClass}} and {{param}} MUST NOT both be specified.
         </description>
         <syntax>
           <int>
@@ -18532,7 +18780,9 @@
 
       <parameter name="FlowKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each Flow table entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each Flow table entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -18551,7 +18801,9 @@
 
       <parameter name="FlowStatus" access="readOnly">
         <description>
-          The status of this Flow table entry.{{np}}{{enum}}
+          The status of this Flow table entry.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -18653,7 +18905,9 @@
       <parameter name="FlowQueue" access="readWrite">
         <description>
           Instance number of the Queue table entry for traffic that falls in this flow.
-          A value of -1 indicates a null queue.{{np}}{{param|FlowTrafficClass}} and {{param}} MUST NOT both be specified.
+          A value of -1 indicates a null queue.
+
+          {{param|FlowTrafficClass}} and {{param}} MUST NOT both be specified.
         </description>
         <syntax>
           <int>
@@ -18701,7 +18955,9 @@
 
       <parameter name="PolicerKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each policer entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each policer entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -18720,7 +18976,9 @@
 
       <parameter name="PolicerStatus" access="readOnly">
         <description>
-          The status of this policer.{{np}}{{enum}}
+          The status of this policer.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -19022,12 +19280,16 @@
         access="readWrite" minEntries="0" maxEntries="unbounded"
         numEntriesParameter="QueueNumberOfEntries">
       <description>
-        Queue table.{{np}}This table can contain hardware queues.  The CPE MAY refuse to allow hardware queues to be deleted.
+        Queue table.
+
+        This table can contain hardware queues.  The CPE MAY refuse to allow hardware queues to be deleted.
       </description>
 
       <parameter name="QueueKey" access="readOnly" status="obsoleted">
         <description>
-          Unique key for each queue entry.{{np}}This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
+          Unique key for each queue entry.
+
+          This parameter is OBSOLETED because it serves no purpose (no other parameter references it).
         </description>
         <syntax>
           <unsignedInt/>
@@ -19046,7 +19308,9 @@
 
       <parameter name="QueueStatus" access="readOnly">
         <description>
-          The status of this queue.{{np}}{{enum}}
+          The status of this queue.
+
+          {{enum}}
           The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.
         </description>
         <syntax>
@@ -19096,7 +19360,9 @@
 
       <parameter name="QueueBufferLength" access="readOnly">
         <description>
-          Number of bytes in the buffer.{{np}}Queue buffer size for all egress interfaces for which this queue exists.  If the buffer size is not the same for all such egress interfaces, this parameter MUST be 0.
+          Number of bytes in the buffer.
+
+          Queue buffer size for all egress interfaces for which this queue exists.  If the buffer size is not the same for all such egress interfaces, this parameter MUST be 0.
         </description>
         <syntax>
           <unsignedInt/>

@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -136,7 +139,7 @@
               var a1_groups = a1.match(regex).groups;
               var b1_groups = b1.match(regex).groups;
               var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'), 
+                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
                   parseInt(a1_groups.version || 0)];
               var b1_tuple =  [
                   b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
@@ -261,7 +264,7 @@
 
   <style>
   .chevron {
-      color: blue;
+      color: var(--link-color);
       cursor: pointer;
   }
 
@@ -299,7 +302,12 @@
   <!-- Global styles (that affect the entire document) -->
 
   <style>
-  :root {
+  /* light mode support */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background-color: white;
+      --foreground-color: black;
+      --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
       --command-color: #66cdaa;
@@ -315,10 +323,33 @@
       --stripe-color-deprecated: #eeeeee;
       --stripe-color-obsoleted: #dddddd;
       --stripe-color-deleted: #cccccc;
+    }
+  }
+
+  /* dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: black;
+      --foreground-color: white;
+      --link-color: lightblue;
+      --parameter-color: black;
+      --object-color: #bbbb44;
+      --command-color: #56bd9a;
+      --event-color: #56bd9a;
+      --argument-container-color: #777777;
+      --argument-object-color: #dfa0ab;
+      --argument-parameter-color: #bfa4a1;
+      --mountable-object-color: #b3e0ff;
+      --mountpoint-object-color: #3da8ef;
+      --stripe-color-deprecated: #555555;
+      --stripe-color-obsoleted: #444444;
+      --stripe-color-deleted: #333333;
+    }
   }
 
   body, table {
-      background-color: white;
+      background-color: var(--background-color);
+      color: var(--foreground-color);
       font-family: helvetica, arial, sans-serif;
       font-size: 9pt;
   }
@@ -335,8 +366,8 @@
       font-size: 10pt;
   }
 
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
+  a:link, a:visited {
+      color: var(--link-color);
   }
 
   sup {
@@ -719,6 +750,37 @@
       hyphenate-character: "";
   }
 
+  /* word wrap/break column 1 (Name) */
+  .data-model-table td:first-child {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 27ch;
+  }
+
+  /* word wrap/break column 2 (Base Type) */
+  .data-model-table td:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 3 (Write) */
+  .data-model-table td:nth-child(3) {
+      min-width: 1ch;
+  }
+
+  /* word wrap/break column 5 (Object Default) */
+  .data-model-table td:nth-child(5) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 6 (Version) */
+  .data-model-table td:nth-child(6) {
+      min-width: 6ch;
+  }
+
   /* center column 1 (Abbreviation) */
   .profile-notation-table th:nth-child(1),
   .profile-notation-table td:nth-child(1) {
@@ -729,6 +791,14 @@
   .profile-requirements-table th:nth-child(2),
   .profile-requirements-table td:nth-child(2) {
       text-align: center;
+  }
+  </style>
+
+  <style>
+  /* enabled if the --show option was specified (to avoid confusion between
+     links and inserted text) */
+  a:link, a:visited, a:hover, a:active {
+      color: inherit;
   }
   </style>
   <!--[if lt IE 9]>
@@ -926,7 +996,7 @@ the <strong>Version</strong> column.</p>
 <div class="diffs"><p><strong>Changes in 1.3:</strong></p>
 
 <ul>
-<li>Changed attribute <em>name</em> from <em>StorageService:1.2</em> to <em>StorageService:1.3</em></li></ul></div>
+<li>Changed attribute <em>name</em> = <em>StorageService:1.2</em> ⇒ <em>StorageService:1.3</em></li></ul></div>
 
 <table class="full-width partial-border data-model-table">
 <thead>
@@ -939,7 +1009,7 @@ the <strong>Version</strong> column.</p>
 <th>Version</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.">Storage­Service.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.">StorageService.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
 <td><p>The Service Object for a Storage Service device.</p>
@@ -948,7 +1018,7 @@ the <strong>Version</strong> column.</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.Capabilities.">Storage­Service.­{i}.­Capabilities.</span></td>
+<td><span id="D.StorageService:1.StorageService.Capabilities.">StorageService.{i}.Capabilities.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>The overall capabilities of a Storage Service device. This is a constant read-only object, meaning that only a firmware upgrade will cause these values to be altered.
@@ -956,17 +1026,17 @@ Note that when TR-140 was originally published there was a typo in this object n
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">Supported­File­System­Types</span></td>
-<td>string­[]</td>
+<td><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes">SupportedFileSystemTypes</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Supported FileSystems Types. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT16">FAT16</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT32">FAT32</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.NTFS">NTFS</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ReFs">ReFs</span> (Resilient File System - Microsoft)</li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS">HFS</span> (</li></ul>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT16"><em>FAT16</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.FAT32"><em>FAT32</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.NTFS"><em>NTFS</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ReFs"><em>ReFs</em></span> (Resilient File System - Microsoft)</li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS"><em>HFS</em></span> (</li></ul>
 
 <p>Mac OS Standard format</p>
 
@@ -978,7 +1048,7 @@ Note that when TR-140 was originally published there was a typo in this object n
 <p>)</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS">HFS+</span> (</li></ul>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HFS"><em>HFS+</em></span> (</li></ul>
 
 <p>Mac OS Extended format</p>
 
@@ -990,7 +1060,7 @@ Note that when TR-140 was originally published there was a typo in this object n
 <p>)</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HSFJ">HSFJ</span> (</li></ul>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.HSFJ"><em>HSFJ</em></span> (</li></ul>
 
 <p>Journaled Mac OS Extended format</p>
 
@@ -1002,11 +1072,11 @@ Note that when TR-140 was originally published there was a typo in this object n
 <p>)</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext2">ext2</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext3">ext3</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext4">ext4</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.XFS">XFS</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.REISER">REISER</span> (</li></ul>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext2"><em>ext2</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext3"><em>ext3</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ext4"><em>ext4</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.XFS"><em>XFS</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.REISER"><em>REISER</em></span> (</li></ul>
 
 <p>ReiserFS</p>
 
@@ -1018,11 +1088,11 @@ Note that when TR-140 was originally published there was a typo in this object n
 <p>)</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.Reiser4">Reiser4</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.btrfs">btrfs</span></li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ZFS">ZFS</span> (Zetta File System)</li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.EncFs">EncFs</span> (Encrypted File System)</li>
-<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.exFAT">exFAT</span> (Extended File Allocation Table for Flash memory)
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.Reiser4"><em>Reiser4</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.btrfs"><em>btrfs</em></span></li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.ZFS"><em>ZFS</em></span> (Zetta File System)</li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.EncFs"><em>EncFs</em></span> (Encrypted File System)</li>
+<li><span id="D.StorageService:1.StorageService.Capabilities.SupportedFileSystemTypes.exFAT"><em>exFAT</em></span> (Extended File Allocation Table for Flash memory)
 The list MAY include vendor-specific protocols, which MUST be in the format defined in [<a href="#R.TR-106">TR-106</a>]. For example: “X_EXAMPLE-COM_MyType.</li></ul>
 
 <div class="diffs"><p><strong>Changes in 1.3:</strong></p>
@@ -1038,7 +1108,7 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.">Storage­Service.­{i}.­Physical­Medium.­{i}.</span></td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.">StorageService.{i}.PhysicalMedium.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
 <td><p>This object provides information about each physical medium connected to this device.</p>
@@ -1053,26 +1123,26 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType">Connection­Type</span></td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType">ConnectionType</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>The method of connection to this storage device. Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB1.1">USB 1.1</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB2.0">USB 2.0</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB3.0">USB 3.0</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB3.1">USB 3.1</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394">IEEE1394</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394b">IEEE1394b</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IDE">IDE</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.EIDE">EIDE</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA33">ATA/33</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA66">ATA/66</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA100">ATA/100</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA133">ATA/133</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA150">SATA/150</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA300">SATA/300</span> (</li></ul>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB1.1"><em>USB 1.1</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB2.0"><em>USB 2.0</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB3.0"><em>USB 3.0</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.USB3.1"><em>USB 3.1</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394"><em>IEEE1394</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IEEE1394b"><em>IEEE1394b</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.IDE"><em>IDE</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.EIDE"><em>EIDE</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA33"><em>ATA/33</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA66"><em>ATA/66</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA100"><em>ATA/100</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.ATA133"><em>ATA/133</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA150"><em>SATA/150</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA300"><em>SATA/300</em></span> (</li></ul>
 
 <p>SATA 3.0 Gbit/s</p>
 
@@ -1084,25 +1154,25 @@ The list MAY include vendor-specific protocols, which MUST be in the format defi
 <p>)</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA600">SATA/600</span> (SATA 6.0 Gbit/s)</li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA1969">SATA/1969</span> (SATA 16.0 Gbit/s)</li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SCSI-1">SCSI-1</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FastSCSI">Fast SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Fast-WideSCSI">Fast-Wide SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraSCSI">Ultra SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraWideSCSI">Ultra Wide SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2SCSI">Ultra2 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2WideSCSI">Ultra2 Wide SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra3SCSI">Ultra3 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-320SCSI">Ultra-320 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-640SCSI">Ultra-640 SCSI</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-1">SAS-1</span> (serial attached SCSI 3.0 Gbit/s)</li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-2">SAS-2</span> (serial attached SCSI 6.0 Gbit/s)</li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-3">SAS-3</span> (serial attached SCSI 12.0 Gbit/s)</li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-4">SAS-4</span> (serial attached SCSI 22.5 Gbit/s)</li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA">SSA</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA-40">SSA-40</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FibreChannel">Fibre Channel</span>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA600"><em>SATA/600</em></span> (SATA 6.0 Gbit/s)</li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SATA1969"><em>SATA/1969</em></span> (SATA 16.0 Gbit/s)</li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SCSI-1"><em>SCSI-1</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FastSCSI"><em>Fast SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Fast-WideSCSI"><em>Fast-Wide SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraSCSI"><em>Ultra SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.UltraWideSCSI"><em>Ultra Wide SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2SCSI"><em>Ultra2 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra2WideSCSI"><em>Ultra2 Wide SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra3SCSI"><em>Ultra3 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-320SCSI"><em>Ultra-320 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.Ultra-640SCSI"><em>Ultra-640 SCSI</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-1"><em>SAS-1</em></span> (serial attached SCSI 3.0 Gbit/s)</li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-2"><em>SAS-2</em></span> (serial attached SCSI 6.0 Gbit/s)</li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-3"><em>SAS-3</em></span> (serial attached SCSI 12.0 Gbit/s)</li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SAS-4"><em>SAS-4</em></span> (serial attached SCSI 22.5 Gbit/s)</li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA"><em>SSA</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.SSA-40"><em>SSA-40</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.ConnectionType.FibreChannel"><em>Fibre Channel</em></span>
 The parameter MAY instead be a vendor-specific connection type, which MUST be in the format defined in [<a href="#R.TR-106">TR-106</a>]. For example:
 &ldquo;X_EXAMPLE-COM_MyConnType&rdquo;</li></ul>
 
@@ -1126,21 +1196,21 @@ The parameter MAY instead be a vendor-specific connection type, which MUST be in
 <td><p>Specifies the type of the physical medium Enumeration of:</p>
 
 <ul>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Type.HDD">HDD</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Type.SSD">SSD</span></li>
-<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Type.SSHD">SSHD</span> (Hybrid Drive)</li></ul></td>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Type.HDD"><em>HDD</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Type.SSD"><em>SSD</em></span></li>
+<li><span id="D.StorageService:1.StorageService.PhysicalMedium.Type.SSHD"><em>SSHD</em></span> (Hybrid Drive)</li></ul></td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="object inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.">Storage­Service.­{i}.­Physical­Medium.­{i}.­SMART.</span></td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.">StorageService.{i}.PhysicalMedium.{i}.SMART.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object provides SMART data information about the physical medium. SMART attributes are not standardized, but many vendors provide the data below.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.ReallocatedSectorsCount">Reallocated­Sectors­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.ReallocatedSectorsCount">ReallocatedSectorsCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Count of reallocated sectors. When the hard drive finds a read/write/verification error, it marks this sector as &ldquo;reallocated&rdquo; and transfers data to a special reserved area (spare area).
 This process is also known as remapping, and &ldquo;reallocated&rdquo; sectors are called remaps. However, as the number of reallocated sectors increases, the read/write speed tends to decrease.
@@ -1148,86 +1218,86 @@ The raw value represents a count of the number of bad sectors that have been fou
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.PowerOnHours">Power­On­Hours</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.PowerOnHours">PowerOnHours</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Count of hours in power-on state. It shows total count of <em>hours</em> in power-on state.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.SpinRetryCount">Spin­Retry­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.SpinRetryCount">SpinRetryCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Count of retry of spin start attempts. This attribute stores a total count of the spin start attempts to reach the fully operational speed (under the condition that the first attempt was unsuccessful). An increase of this attribute value is a sign of problems in the hard disk mechanical subsystem.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.PowerCycleCount">Power­Cycle­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.PowerCycleCount">PowerCycleCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The count of full hard disk power on/off cycles.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
 <td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.Temperature">Temperature</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Current internal temperature in <em>degrees C</em>.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.ReallocationEventCount">Reallocation­Event­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.ReallocationEventCount">ReallocationEventCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Count of remap operations. The raw value of this attribute shows the total count of attempts to transfer data from reallocated sectors to a spare area.
 Both successful and unsuccessful attempts are counted.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.CurrentPendingSectorCount">Current­Pending­Sector­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.CurrentPendingSectorCount">CurrentPendingSectorCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Count of &ldquo;unstable&rdquo; sectors (waiting to be remapped, because of unrecoverable read errors). If an unstable sector is subsequently read successfully, the sector is remapped and this value is decreased.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.UncorrectableSectorCount">Uncorrectable­Sector­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.UncorrectableSectorCount">UncorrectableSectorCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The total number of uncorrectable errors when reading/writing a sector.
 A rise in the value of this attribute indicates defects of the disk surface and/or problems in the mechanical subsystem.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.ReadErrors">Read­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.ReadErrors">ReadErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of unrecoverable read errors.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.SoftReadErrors">Soft­Read­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.SoftReadErrors">SoftReadErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of off-track errors.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.WriteErrors">Write­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.WriteErrors">WriteErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of errors when writing a sector.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.SparesRemaining">Spares­Remaining</span></td>
-<td>unsigned­Int­(0:100)</td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.SparesRemaining">SparesRemaining</span></td>
+<td>unsignedInt(0:100)</td>
 <td>R</td>
 <td>Percentage of the spare sectors that can be used for reallocations remaining.</td>
 <td>-</td>
 <td>1.3</td></tr>
 <tr class="parameter inserted">
-<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.PredictedFailure">Predicted­Failure</span></td>
+<td><span id="D.StorageService:1.StorageService.PhysicalMedium.SMART.PredictedFailure">PredictedFailure</span></td>
 <td>int</td>
 <td>R</td>
 <td>Estimated number of <em>days</em> until the failure model in the device predicts the drive will fail. -1 means the failure model is unable to make a prediction.</td>
@@ -1311,8 +1381,7 @@ A rise in the value of this attribute indicates defects of the disk surface and/
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.0 (2023-06-14 version) on 2023-06-14
-at 11:18:04 UTC.<br/>report.py –include ../../install/cwmp –output &lt;stdout&gt; –transform diff –format markdown tr-140-1-2-0.xml tr-140-1-3-1-cwmp.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:48:54 UTC.<br/>report.py –include ../../install/cwmp –output &lt;stdout&gt; –transform diff –format markdown tr-140-1-2-0.xml tr-140-1-3-1-cwmp.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 

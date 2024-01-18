@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -136,7 +139,7 @@
               var a1_groups = a1.match(regex).groups;
               var b1_groups = b1.match(regex).groups;
               var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'), 
+                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
                   parseInt(a1_groups.version || 0)];
               var b1_tuple =  [
                   b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
@@ -261,7 +264,7 @@
 
   <style>
   .chevron {
-      color: blue;
+      color: var(--link-color);
       cursor: pointer;
   }
 
@@ -299,7 +302,12 @@
   <!-- Global styles (that affect the entire document) -->
 
   <style>
-  :root {
+  /* light mode support */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background-color: white;
+      --foreground-color: black;
+      --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
       --command-color: #66cdaa;
@@ -315,10 +323,33 @@
       --stripe-color-deprecated: #eeeeee;
       --stripe-color-obsoleted: #dddddd;
       --stripe-color-deleted: #cccccc;
+    }
+  }
+
+  /* dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: black;
+      --foreground-color: white;
+      --link-color: lightblue;
+      --parameter-color: black;
+      --object-color: #bbbb44;
+      --command-color: #56bd9a;
+      --event-color: #56bd9a;
+      --argument-container-color: #777777;
+      --argument-object-color: #dfa0ab;
+      --argument-parameter-color: #bfa4a1;
+      --mountable-object-color: #b3e0ff;
+      --mountpoint-object-color: #3da8ef;
+      --stripe-color-deprecated: #555555;
+      --stripe-color-obsoleted: #444444;
+      --stripe-color-deleted: #333333;
+    }
   }
 
   body, table {
-      background-color: white;
+      background-color: var(--background-color);
+      color: var(--foreground-color);
       font-family: helvetica, arial, sans-serif;
       font-size: 9pt;
   }
@@ -335,8 +366,8 @@
       font-size: 10pt;
   }
 
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
+  a:link, a:visited {
+      color: var(--link-color);
   }
 
   sup {
@@ -719,6 +750,37 @@
       hyphenate-character: "";
   }
 
+  /* word wrap/break column 1 (Name) */
+  .data-model-table td:first-child {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 27ch;
+  }
+
+  /* word wrap/break column 2 (Base Type) */
+  .data-model-table td:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 3 (Write) */
+  .data-model-table td:nth-child(3) {
+      min-width: 1ch;
+  }
+
+  /* word wrap/break column 5 (Object Default) */
+  .data-model-table td:nth-child(5) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 6 (Version) */
+  .data-model-table td:nth-child(6) {
+      min-width: 6ch;
+  }
+
   /* center column 1 (Abbreviation) */
   .profile-notation-table th:nth-child(1),
   .profile-notation-table td:nth-child(1) {
@@ -745,7 +807,7 @@
 <col style="width: 25.0%;"></col></colgroup>
 <tbody>
 <tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
+<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></img></a></td>
 <td class="centered" rowspan="1"><p></p>
 
 <h1 id="component-objects-for-cwmp-tr-069-device12-and" class="unnumbered unlisted">Component objects for CWMP: TR-069 Device:1.2 and</h1>
@@ -977,36 +1039,36 @@ the <strong>Version</strong> column.</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.">Capabilities.­Performance­Diagnostic.</span></td>
+<td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.">Capabilities.PerformanceDiagnostic.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>The capabilities of the Performance Diagnostics (<em>DownloadDiagnostics</em> and <em>UploadDiagnostics</em>) for the device.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports">Download­Transports</span></td>
-<td>string­[]</td>
+<td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports">DownloadTransports</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Supported <em>DownloadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports.HTTP">HTTP</span></li>
-<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports.FTP">FTP</span> (OPTIONAL)</li></ul></td>
+<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports.HTTP"><em>HTTP</em></span></li>
+<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports.FTP"><em>FTP</em></span> (OPTIONAL)</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports">Upload­Transports</span></td>
-<td>string­[]</td>
+<td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports">UploadTransports</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Supported <em>UploadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports.HTTP">HTTP</span></li>
-<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports.FTP">FTP</span> (OPTIONAL)</li></ul></td>
+<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports.HTTP"><em>HTTP</em></span></li>
+<li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports.FTP"><em>FTP</em></span> (OPTIONAL)</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-143:1.DownloadDiagnostics.">Download­Diagnostics.</span></td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.">DownloadDiagnostics.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object defines the diagnostics configuration for a HTTP and FTP DownloadDiagnostics Test.
@@ -1014,38 +1076,38 @@ Files received in the DownloadDiagnostics do not require file storage on the CPE
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState">Diagnostics­State</span></td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState">DiagnosticsState</span></td>
 <td>string</td>
 <td>W</td>
 <td><p>Indicate the availability of diagnostic data. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None">None</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested">Requested</span></li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Completed">Completed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_InitConnectionFailed">Error_InitConnectionFailed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_NoResponse">Error_NoResponse</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_TransferFailed">Error_TransferFailed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_PasswordRequestFailed">Error_PasswordRequestFailed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_LoginFailed">Error_LoginFailed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_NoTransferMode">Error_NoTransferMode</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_NoPASV">Error_NoPASV</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_IncorrectSize">Error_IncorrectSize</span> (READONLY)</li>
-<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_Timeout">Error_Timeout</span> (READONLY)
-If the ACS sets the value of this parameter to <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested">Requested</a></em>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested">Requested</a></em>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested">Requested</a></em>.
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></span></li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Completed"><em>Completed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_InitConnectionFailed"><em>Error_InitConnectionFailed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_NoResponse"><em>Error_NoResponse</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_TransferFailed"><em>Error_TransferFailed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_PasswordRequestFailed"><em>Error_PasswordRequestFailed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_LoginFailed"><em>Error_LoginFailed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_NoTransferMode"><em>Error_NoTransferMode</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_NoPASV"><em>Error_NoPASV</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_IncorrectSize"><em>Error_IncorrectSize</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Error_Timeout"><em>Error_Timeout</em></span> (READONLY)
+If the ACS sets the value of this parameter to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>.
 When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
-When the test is completed, the value of this parameter MUST be either <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Completed">Completed</a></em> (if the test completed successfully), or one of the <em>Error</em> values listed above.
-If the value of this parameter is anything other than <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Completed">Completed</a></em>, the values of the results parameters for this test are indeterminate.
+When the test is completed, the value of this parameter MUST be either <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a> (if the test completed successfully), or one of the <em>Error</em> values listed above.
+If the value of this parameter is anything other than <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a>, the values of the results parameters for this test are indeterminate.
 When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code <em>8 DIAGNOSTICS COMPLETE</em> in the Inform message.
-After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None">None</a></em>.
-Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, setting this parameter to <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested">Requested</a></em> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, setting this parameter to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.Interface">Interface</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The value MUST be the Path Name of the IP-layer interface over which the test is to be performed.
 The value of this parameter MUST be either a valid interface or an empty string. An attempt to set this parameter to a different value MUST be rejected as an invalid parameter value.
@@ -1053,8 +1115,8 @@ If an empty string is specified, the CPE MUST use the default routing interface.
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.DownloadDiagnostics.DownloadURL">Download­URL</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.DownloadURL">DownloadURL</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The URL as defined in [<a href="#R.RFC3986">RFC3986</a>], for the CPE to perform the download on. This parameter MUST be in the form of a valid HTTP [<a href="#R.RFC2616">RFC2616</a>] or FTP [<a href="#R.RFC959">RFC959</a>] URL.
 
@@ -1066,15 +1128,15 @@ If an empty string is specified, the CPE MUST use the default routing interface.
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.DSCP">DSCP</span></td>
-<td>unsigned­Int­(0:63)</td>
+<td>unsignedInt(0:63)</td>
 <td>W</td>
 <td>The DiffServ code point for marking packets transmitted in the test.
 The default value SHOULD be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.DownloadDiagnostics.EthernetPriority">Ethernet­Priority</span></td>
-<td>unsigned­Int­(0:7)</td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.EthernetPriority">EthernetPriority</span></td>
+<td>unsignedInt(0:7)</td>
 <td>W</td>
 <td>Ethernet priority code for marking packets transmitted in the test (if applicable).
 The default value SHOULD be zero.</td>
@@ -1082,7 +1144,7 @@ The default value SHOULD be zero.</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.ROMTime">ROMTime</span></td>
-<td>date­Time</td>
+<td>dateTime</td>
 <td>R</td>
 <td>Request time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1094,7 +1156,7 @@ For example: 2008-04-09T15:01:05.123456
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</span></td>
-<td>date­Time</td>
+<td>dateTime</td>
 <td>R</td>
 <td>Begin of transmission time in UTC, which MUST be specified to microsecond precision
 For example: 2008-04-09T15:01:05.123456
@@ -1106,7 +1168,7 @@ For example: 2008-04-09T15:01:05.123456
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</span></td>
-<td>date­Time</td>
+<td>dateTime</td>
 <td>R</td>
 <td>End of transmission in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1117,22 +1179,22 @@ For example: 2008-04-09T15:01:05.123456
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.DownloadDiagnostics.TestBytesReceived">Test­Bytes­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.TestBytesReceived">TestBytesReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The test traffic received in bytes during the FTP/HTTP transaction including FTP/HTTP headers, between <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</a></em>,</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.DownloadDiagnostics.TotalBytesReceived">Total­Bytes­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.TotalBytesReceived">TotalBytesReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The total number of bytes received on the Interface between <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.DownloadDiagnostics.TCPOpenRequestTime">TCPOpen­Request­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Request time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1144,8 +1206,8 @@ Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.DownloadDiagnostics.TCPOpenResponseTime">TCPOpen­Response­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-143:1.DownloadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Response time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1157,7 +1219,7 @@ Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-143:1.UploadDiagnostics.">Upload­Diagnostics.</span></td>
+<td><span id="D.TR-143:1.UploadDiagnostics.">UploadDiagnostics.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object defines the diagnostics configuration for a HTTP or FTP UploadDiagnostics test.
@@ -1165,38 +1227,38 @@ Files sent by the UploadDiagnostics do not require file storage on the CPE devic
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState">Diagnostics­State</span></td>
+<td><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState">DiagnosticsState</span></td>
 <td>string</td>
 <td>W</td>
 <td><p>Indicate the availability of diagnostic data. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.None">None</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested">Requested</span></li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Completed">Completed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_InitConnectionFailed">Error_InitConnectionFailed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoResponse">Error_NoResponse</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_PasswordRequestFailed">Error_PasswordRequestFailed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_LoginFailed">Error_LoginFailed</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoTransferMode">Error_NoTransferMode</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoPASV">Error_NoPASV</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoCWD">Error_NoCWD</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoSTOR">Error_NoSTOR</span> (READONLY)</li>
-<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoTransferComplete">Error_NoTransferComplete</span> (READONLY)
-If the ACS sets the value of this parameter to <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested">Requested</a></em>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested">Requested</a></em>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested">Requested</a></em>.
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></span></li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Completed"><em>Completed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_InitConnectionFailed"><em>Error_InitConnectionFailed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoResponse"><em>Error_NoResponse</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_PasswordRequestFailed"><em>Error_PasswordRequestFailed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_LoginFailed"><em>Error_LoginFailed</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoTransferMode"><em>Error_NoTransferMode</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoPASV"><em>Error_NoPASV</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoCWD"><em>Error_NoCWD</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoSTOR"><em>Error_NoSTOR</em></span> (READONLY)</li>
+<li><span id="D.TR-143:1.UploadDiagnostics.DiagnosticsState.Error_NoTransferComplete"><em>Error_NoTransferComplete</em></span> (READONLY)
+If the ACS sets the value of this parameter to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>.
 When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
-When the test is completed, the value of this parameter MUST be either <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Completed">Completed</a></em> (if the test completed successfully), or one of the <em>Error</em> values listed above.
-If the value of this parameter is anything other than <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Completed">Completed</a></em>, the values of the results parameters for this test are indeterminate.
+When the test is completed, the value of this parameter MUST be either <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a> (if the test completed successfully), or one of the <em>Error</em> values listed above.
+If the value of this parameter is anything other than <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a>, the values of the results parameters for this test are indeterminate.
 When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code <em>8 DIAGNOSTICS COMPLETE</em> in the Inform message.
-After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None">None</a></em>.
-Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, setting this parameter to <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested">Requested</a></em> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, setting this parameter to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.Interface">Interface</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The value MUST be the Path Name of the IP-layer interface over which the test is to be performed.
 The value of this parameter MUST be either a valid interface or an empty string. An attempt to set this parameter to a different value MUST be rejected as an invalid parameter value.
@@ -1204,8 +1266,8 @@ If an empty string is specified, the CPE MUST use the default routing interface.
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UploadDiagnostics.UploadURL">Upload­URL</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-143:1.UploadDiagnostics.UploadURL">UploadURL</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The URL as defined in [<a href="#R.RFC3986">RFC3986</a>], for the CPE to Upload to. This parameter MUST be in the form of a valid HTTP [<a href="#R.RFC2616">RFC2616</a>] or FTP [<a href="#R.RFC959">RFC959</a>] URL.
 
@@ -1217,23 +1279,23 @@ If an empty string is specified, the CPE MUST use the default routing interface.
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.DSCP">DSCP</span></td>
-<td>unsigned­Int­(0:63)</td>
+<td>unsignedInt(0:63)</td>
 <td>W</td>
 <td>DiffServ code point for marking packets transmitted in the test.
 The default value SHOULD be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UploadDiagnostics.EthernetPriority">Ethernet­Priority</span></td>
-<td>unsigned­Int­(0:7)</td>
+<td><span id="D.TR-143:1.UploadDiagnostics.EthernetPriority">EthernetPriority</span></td>
+<td>unsignedInt(0:7)</td>
 <td>W</td>
 <td>Ethernet priority code for marking packets transmitted in the test (if applicable).
 The default value SHOULD be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UploadDiagnostics.TestFileLength">Test­File­Length</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.UploadDiagnostics.TestFileLength">TestFileLength</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>The size of the file (in bytes) to be uploaded to the server.
 The CPE MUST insure the appropriate number of bytes are sent.</td>
@@ -1241,7 +1303,7 @@ The CPE MUST insure the appropriate number of bytes are sent.</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.ROMTime">ROMTime</span></td>
-<td>date­Time</td>
+<td>dateTime</td>
 <td>R</td>
 <td>Request time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1253,7 +1315,7 @@ For example: 2008-04-09T15:01:05.123456
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</span></td>
-<td>date­Time</td>
+<td>dateTime</td>
 <td>R</td>
 <td>Begin of transmission time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1265,7 +1327,7 @@ For example: 2008-04-09T15:01:05.123456
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</span></td>
-<td>date­Time</td>
+<td>dateTime</td>
 <td>R</td>
 <td>End of transmission in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1276,15 +1338,15 @@ For example: 2008-04-09T15:01:05.123456
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UploadDiagnostics.TotalBytesSent">Total­Bytes­Sent</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.UploadDiagnostics.TotalBytesSent">TotalBytesSent</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The total number of bytes sent on the Interface between <em><a href="#D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UploadDiagnostics.TCPOpenRequestTime">TCPOpen­Request­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-143:1.UploadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Request time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1296,8 +1358,8 @@ Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UploadDiagnostics.TCPOpenResponseTime">TCPOpen­Response­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-143:1.UploadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Response time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1309,7 +1371,7 @@ Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-143:1.UDPEchoConfig.">UDPEcho­Config.</span></td>
+<td><span id="D.TR-143:1.UDPEchoConfig.">UDPEchoConfig.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object allows the CPE to be configured to perform the UDP Echo Service defined in [<a href="#R.RFC862">RFC862</a>] and UDP Echo Plus Service defined in [<a href="#R.TR-143">Appendix A.1/TR-143</a>].</td>
@@ -1324,7 +1386,7 @@ Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoConfig.Interface">Interface</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The value MUST be the Path Name of IP-layer interface over which the CPE MUST listen and receive UDP echo requests on.
 The value of this parameter MUST be either a valid interface or an empty string. An attempt to set this parameter to a different value MUST be rejected as an invalid parameter value.
@@ -1333,64 +1395,64 @@ Note: Interfaces behind a NAT MAY require port forwarding rules configured in th
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.SourceIPAddress">Source­IPAddress</span></td>
-<td><span title="IPAddress">string­(:45)</span></td>
+<td><span id="D.TR-143:1.UDPEchoConfig.SourceIPAddress">SourceIPAddress</span></td>
+<td><span title="IPAddress">string(:45)</span></td>
 <td>W</td>
 <td>[<a href="#T.IPAddress">IPAddress</a>] The Source IP address of the UDP echo packet. The CPE MUST only respond to a UDP echo from this source IP address.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoConfig.UDPPort">UDPPort</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>The UDP port on which the UDP server MUST listen and respond to UDP echo requests.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.EchoPlusEnabled">Echo­Plus­Enabled</span></td>
+<td><span id="D.TR-143:1.UDPEchoConfig.EchoPlusEnabled">EchoPlusEnabled</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>If <em>true</em> the CPE will perform necessary packet processing for UDP Echo Plus packets.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.EchoPlusSupported">Echo­Plus­Supported</span></td>
+<td><span id="D.TR-143:1.UDPEchoConfig.EchoPlusSupported">EchoPlusSupported</span></td>
 <td>boolean</td>
 <td>R</td>
 <td><em>true</em> if UDP Echo Plus is supported.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.PacketsReceived">Packets­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.UDPEchoConfig.PacketsReceived">PacketsReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Incremented upon each valid UDP echo packet received.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.PacketsResponded">Packets­Responded</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.UDPEchoConfig.PacketsResponded">PacketsResponded</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Incremented for each UDP echo response sent.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.BytesReceived">Bytes­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.UDPEchoConfig.BytesReceived">BytesReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of UDP received bytes including payload and UDP header after the UDPEchoConfig is enabled.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.BytesResponded">Bytes­Responded</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-143:1.UDPEchoConfig.BytesResponded">BytesResponded</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of UDP responded bytes, including payload and UDP header sent after the UDPEchoConfig is enabled.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.TimeFirstPacketReceived">Time­First­Packet­Received</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-143:1.UDPEchoConfig.TimeFirstPacketReceived">TimeFirstPacketReceived</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456,
@@ -1398,8 +1460,8 @@ The time that the server receives the first UDP echo packet after the UDPEchoCon
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-143:1.UDPEchoConfig.TimeLastPacketReceived">Time­Last­Packet­Received</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-143:1.UDPEchoConfig.TimeLastPacketReceived">TimeLastPacketReceived</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
@@ -1532,28 +1594,28 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.">Capabilities.­Performance­Diagnostic.</a></td>
+<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.">Capabilities.PerformanceDiagnostic.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports">Download­Transports</a></td>
+<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports">DownloadTransports</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.">Download­Diagnostics.</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.">DownloadDiagnostics.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState">Diagnostics­State</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState">DiagnosticsState</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.DownloadURL">Download­URL</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.DownloadURL">DownloadURL</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.DownloadDiagnostics.DSCP">DSCP</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.EthernetPriority">Ethernet­Priority</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.EthernetPriority">EthernetPriority</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.DownloadDiagnostics.ROMTime">ROMTime</a></td>
@@ -1565,10 +1627,10 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <td><a href="#D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.TestBytesReceived">Test­Bytes­Received</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.TestBytesReceived">TestBytesReceived</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.TotalBytesReceived">Total­Bytes­Received</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.TotalBytesReceived">TotalBytesReceived</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.TR-143:1.DownloadTCP:1">DownloadTCP:1 Profile</h3>
@@ -1586,13 +1648,13 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.">Download­Diagnostics.</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.">DownloadDiagnostics.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.TCPOpenRequestTime">TCPOpen­Request­Time</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.DownloadDiagnostics.TCPOpenResponseTime">TCPOpen­Response­Time</a></td>
+<td><a href="#D.TR-143:1.DownloadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.TR-143:1.Upload:1">Upload:1 Profile</h3>
@@ -1610,28 +1672,28 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.">Capabilities.­Performance­Diagnostic.</a></td>
+<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.">Capabilities.PerformanceDiagnostic.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports">Upload­Transports</a></td>
+<td><a href="#D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports">UploadTransports</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.TR-143:1.UploadDiagnostics.">Upload­Diagnostics.</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.">UploadDiagnostics.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState">Diagnostics­State</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState">DiagnosticsState</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UploadDiagnostics.UploadURL">Upload­URL</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.UploadURL">UploadURL</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.UploadDiagnostics.DSCP">DSCP</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UploadDiagnostics.EthernetPriority">Ethernet­Priority</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.EthernetPriority">EthernetPriority</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.UploadDiagnostics.ROMTime">ROMTime</a></td>
@@ -1643,10 +1705,10 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <td><a href="#D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UploadDiagnostics.TestFileLength">Test­File­Length</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.TestFileLength">TestFileLength</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UploadDiagnostics.TotalBytesSent">Total­Bytes­Sent</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.TotalBytesSent">TotalBytesSent</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.TR-143:1.UploadTCP:1">UploadTCP:1 Profile</h3>
@@ -1664,13 +1726,13 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-143:1.UploadDiagnostics.">Upload­Diagnostics.</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.">UploadDiagnostics.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UploadDiagnostics.TCPOpenRequestTime">TCPOpen­Request­Time</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UploadDiagnostics.TCPOpenResponseTime">TCPOpen­Response­Time</a></td>
+<td><a href="#D.TR-143:1.UploadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.TR-143:1.UDPEcho:1">UDPEcho:1 Profile</h3>
@@ -1688,7 +1750,7 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-143:1.UDPEchoConfig.">UDPEcho­Config.</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.">UDPEchoConfig.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.UDPEchoConfig.Enable">Enable</a></td>
@@ -1697,31 +1759,31 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <td><a href="#D.TR-143:1.UDPEchoConfig.Interface">Interface</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.SourceIPAddress">Source­IPAddress</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.SourceIPAddress">SourceIPAddress</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-143:1.UDPEchoConfig.UDPPort">UDPPort</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.PacketsReceived">Packets­Received</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.PacketsReceived">PacketsReceived</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.PacketsResponded">Packets­Responded</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.PacketsResponded">PacketsResponded</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.BytesReceived">Bytes­Received</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.BytesReceived">BytesReceived</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.BytesResponded">Bytes­Responded</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.BytesResponded">BytesResponded</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.TimeFirstPacketReceived">Time­First­Packet­Received</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.TimeFirstPacketReceived">TimeFirstPacketReceived</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.TimeLastPacketReceived">Time­Last­Packet­Received</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.TimeLastPacketReceived">TimeLastPacketReceived</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.EchoPlusSupported">Echo­Plus­Supported</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.EchoPlusSupported">EchoPlusSupported</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.TR-143:1.UDPEchoPlus:1">UDPEchoPlus:1 Profile</h3>
@@ -1739,16 +1801,15 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-143:1.UDPEchoConfig.">UDPEcho­Config.</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.">UDPEchoConfig.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-143:1.UDPEchoConfig.EchoPlusEnabled">Echo­Plus­Enabled</a></td>
+<td><a href="#D.TR-143:1.UDPEchoConfig.EchoPlusEnabled">EchoPlusEnabled</a></td>
 <td>W</td></tr></tbody></table>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.0 (2023-06-14 version) on 2023-06-14
-at 11:15:25 UTC.<br/>report.py –filter model=None –output &lt;stdout&gt; –transform automodel –format markdown tr-143-1-0-1.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:45:42 UTC.<br/>report.py –filter model=None –output &lt;stdout&gt; –transform automodel –format markdown tr-143-1-0-1.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 

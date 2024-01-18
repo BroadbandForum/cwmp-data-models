@@ -1,0 +1,1003 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Device:2 Root Data Model: Common Object definitions [Syslog]
+
+Copyright (c) 2023, Broadband Forum
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the following
+conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The above license is used as a license under copyright only.
+Please reference the Forum IPR Policy for patent licensing terms
+<https://www.broadband-forum.org/ipr-policy>.
+
+Any moral rights which are necessary to exercise under the above
+license grant are also deemed granted under this license.
+
+Comments or questions about this Broadband Forum data model should be
+directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  urn:broadband-forum-org:cwmp:datamodel-1-10
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-1-0
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-17-0-syslog"
+  file="tr-181-2-17-0-syslog.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias-2-0"/>
+    <dataType name="IPAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Syslog">
+    <object name="Device.Syslog." access="readOnly" version="2.17">
+      <description>
+        This object contains global parameters relating to the syslog
+        implementations that is active in the Device.
+        Based on {{bibref|YANGSYSLOG|A YANG Data Model for Syslog Configuration}}.
+      </description>
+
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the Syslog service.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the syslog service operational state.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                Indicates that the Syslog service is disabled.
+              </description>
+            </enumeration>
+            <enumeration value="Enabled">
+              <description>
+                Indicates that the Syslog service is enabled.
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>
+                Indicates that the Syslog service has encountered an error.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="FilterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TemplateNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Syslog.Filter.{i}." access="readWrite"
+      numEntriesParameter="FilterNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.17">
+      <description>
+        This table defines the processing used to select
+        log messages by comparing syslog message with the provided rules.
+
+        A rule can consist either of {{param|FacilityLevel}} - {{param|Severity}} and or {{param|PatternMatch}}.
+
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias-2-0" version="2.17"/>
+
+      <parameter name="FacilityLevel" access="readWrite">
+        <description>
+          Only the log messages with following Facility levels must be logged.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Kern">
+              <description>
+                Kernel messages (0).
+              </description>
+            </enumeration>
+            <enumeration value="User">
+              <description>
+                User-level messages (1).
+              </description>
+            </enumeration>
+            <enumeration value="Mail">
+              <description>
+                Mail system messages (2).
+              </description>
+            </enumeration>
+            <enumeration value="Daemon">
+              <description>
+                System daemons messages (3).
+              </description>
+            </enumeration>
+            <enumeration value="Auth">
+              <description>
+                Security/authorization messages (4).
+              </description>
+            </enumeration>
+            <enumeration value="Syslog">
+              <description>
+                Messages generated internally by syslogd (5).
+              </description>
+            </enumeration>
+            <enumeration value="LPR">
+              <description>
+                Line printer subsystem messages (6).
+              </description>
+            </enumeration>
+            <enumeration value="News">
+              <description>
+                Network news subsystem (7).
+              </description>
+            </enumeration>
+            <enumeration value="UUCP">
+              <description>
+                UUCP subsystem messages (8).
+              </description>
+            </enumeration>
+            <enumeration value="Cron">
+              <description>
+                Clock daemon messages (9).
+              </description>
+            </enumeration>
+            <enumeration value="AuthPriv">
+              <description>
+                Security/authorization messages (10).
+              </description>
+            </enumeration>
+            <enumeration value="FTP">
+              <description>
+                FTP daemon messages (11).
+              </description>
+            </enumeration>
+            <enumeration value="NTP">
+              <description>
+                NTP subsystem messages (12).
+              </description>
+            </enumeration>
+            <enumeration value="Audit">
+              <description>
+                Log audit messages (13).
+              </description>
+            </enumeration>
+            <enumeration value="Console">
+              <description>
+                Log alert messages (14).
+              </description>
+            </enumeration>
+            <enumeration value="Cron2">
+              <description>
+                Second clock daemon messages (15).
+              </description>
+            </enumeration>
+            <enumeration value="Local0">
+              <description>
+                Local use 0 messages (16).
+              </description>
+            </enumeration>
+            <enumeration value="Local1">
+              <description>
+                Local use 1 messages (17).
+              </description>
+            </enumeration>
+            <enumeration value="Local2">
+              <description>
+                local use 2 messages (18).
+              </description>
+            </enumeration>
+            <enumeration value="Local3">
+              <description>
+                local use 3 messages (19).
+              </description>
+            </enumeration>
+            <enumeration value="Local4">
+              <description>
+                local use 4 messages (20).
+              </description>
+            </enumeration>
+            <enumeration value="Local5">
+              <description>
+                local use 5 messages (21).
+              </description>
+            </enumeration>
+            <enumeration value="Local6">
+              <description>
+                local use 6 messages (22).
+              </description>
+            </enumeration>
+            <enumeration value="Local7">
+              <description>
+                local use 7 messages (23).
+              </description>
+            </enumeration>
+            <enumeration value="All">
+              <description>
+                All facilities are selected.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="All"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Severity" access="readWrite">
+        <description>
+          Specifies the Severity level filter rules.
+
+          Defines the processing used to select log messages by comparing syslog message severity using
+          the following processing rules:
+          - if 'none', do not match.
+          - if 'all', match.
+          - else compare message severity with the specified severity according to the default compare rule (all
+          messages of the specified severity and greater match).
+
+          This must be used inconjuction with {{param|SeverityCompare}} and {{param|SeverityCompareAction}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Emergency">
+              <description>
+                Indicates that the system is unusable.
+              </description>
+            </enumeration>
+            <enumeration value="Alert">
+              <description>
+                Indicating that an action must be taken immediately.
+              </description>
+            </enumeration>
+            <enumeration value="Critical">
+              <description>
+                Indicates a critical condition.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                Indicates a errors condition.
+              </description>
+            </enumeration>
+            <enumeration value="Warning">
+              <description>
+                Indicates a warning condition.
+              </description>
+            </enumeration>
+            <enumeration value="Notice">
+              <description>
+                Indicates a informational message.
+              </description>
+            </enumeration>
+            <enumeration value="Debug">
+              <description>
+                Indicates a debug-level message.
+              </description>
+            </enumeration>
+            <enumeration value="All">
+              <description>
+                All severities are selected.
+              </description>
+            </enumeration>
+            <enumeration value="None">
+              <description>
+                No filtering will be applied.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="All"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SeverityCompare" access="readWrite">
+        <description>
+          Describes the comparison method that must be applied when a syslog message is received.
+          Not applicable when severity {{enum|All|Severity}} and {{enum|None|Severity}} is configured.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Equal">
+              <description>
+                Specifies that the severity comparison operation will be equals.
+              </description>
+            </enumeration>
+            <enumeration value="EqualOrHigher">
+              <description>
+                Specifies that the severity comparison operation will be equals or higher."
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="EqualOrHigher"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SeverityCompareAction" access="readWrite">
+        <description>
+          Specifies the process of handling a syslog message based on specified conditions.
+          It defines the action that will be taken when the criteria of both {{param|Severity}} and {{param|SeverityCompare}} are met,
+          determining the response to the syslog message.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Log">
+              <description>
+                When the selected comparison is true the syslog message will be logged.
+              </description>
+            </enumeration>
+            <enumeration value="Block">
+              <description>
+                When the selected comparison is true the syslog message will not be logged.
+              </description>
+            </enumeration>
+            <enumeration value="Stop">
+              <description>
+                When the select comparison is true the syslog message will not be logged and no further processing will occur."
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Log"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PatternMatch" access="readWrite">
+        <description>
+          Regular expression pattern designed to match a syslog message that must be logged.
+          The format is implementation specific.
+        </description>
+        <syntax>
+          <string/>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Syslog.Source.{i}." access="readWrite"
+      numEntriesParameter="SourceNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.17">
+      <description>
+        This table describes where and how the syslog service receives log messages.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias-2-0" version="2.17"/>
+
+      <parameter name="KernelMessages" access="readWrite">
+        <description>
+          This option enables the collection of kernel log messages that are specific to the Device.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SystemMessages" access="readWrite">
+        <description>
+          This option enables the collection of the system log messages that are specific to the Device.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Severity" access="readWrite">
+        <description>
+          Specifies the default Severity.
+          When an incoming message lacks a valid syslog header, this parameter can be used to configure the required Severity level.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Emergency">
+              <description>
+                Indicates that the system is unusable.
+              </description>
+            </enumeration>
+            <enumeration value="Alert">
+              <description>
+                Indicating that an action must be taken immediately.
+              </description>
+            </enumeration>
+            <enumeration value="Critical">
+              <description>
+                Indicates a critical condition.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                Indicates a errors condition.
+              </description>
+            </enumeration>
+            <enumeration value="Warning">
+              <description>
+                Indicates a warning condition.
+              </description>
+            </enumeration>
+            <enumeration value="Notice">
+              <description>
+                Indicates a informational message.
+              </description>
+            </enumeration>
+            <enumeration value="Debug">
+              <description>
+                Indicates a debug-level message.
+              </description>
+            </enumeration>
+            <enumeration value="All">
+              <description>
+                All severities are selected.
+              </description>
+            </enumeration>
+            <enumeration value="None">
+              <description>
+                No filtering will be applied.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="All"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FacilityLevel" access="readWrite">
+        <description>
+          Specifies the default Facility Level.
+          When an incoming message lacks a valid syslog header, this parameter can be used to configure the required Facility level.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Kern">
+              <description>
+                Kernel messages (0).
+              </description>
+            </enumeration>
+            <enumeration value="User">
+              <description>
+                User-level messages (1).
+              </description>
+            </enumeration>
+            <enumeration value="Mail">
+              <description>
+                Mail system messages (2).
+              </description>
+            </enumeration>
+            <enumeration value="Daemon">
+              <description>
+                System daemons messages (3).
+              </description>
+            </enumeration>
+            <enumeration value="Auth">
+              <description>
+                Security/authorization messages (4).
+              </description>
+            </enumeration>
+            <enumeration value="Syslog">
+              <description>
+                Messages generated internally by syslogd (5).
+              </description>
+            </enumeration>
+            <enumeration value="LPR">
+              <description>
+                Line printer subsystem messages (6).
+              </description>
+            </enumeration>
+            <enumeration value="News">
+              <description>
+                Network news subsystem (7).
+              </description>
+            </enumeration>
+            <enumeration value="UUCP">
+              <description>
+                UUCP subsystem messages (8).
+              </description>
+            </enumeration>
+            <enumeration value="Cron">
+              <description>
+                Clock daemon messages (9).
+              </description>
+            </enumeration>
+            <enumeration value="AuthPriv">
+              <description>
+                Security/authorization messages (10).
+              </description>
+            </enumeration>
+            <enumeration value="FTP">
+              <description>
+                FTP daemon messages (11).
+              </description>
+            </enumeration>
+            <enumeration value="NTP">
+              <description>
+                NTP subsystem messages (12).
+              </description>
+            </enumeration>
+            <enumeration value="Audit">
+              <description>
+                Log audit messages (13).
+              </description>
+            </enumeration>
+            <enumeration value="Console">
+              <description>
+                Log alert messages (14).
+              </description>
+            </enumeration>
+            <enumeration value="Cron2">
+              <description>
+                Second clock daemon messages (15).
+              </description>
+            </enumeration>
+            <enumeration value="Local0">
+              <description>
+                Local use 0 messages (16).
+              </description>
+            </enumeration>
+            <enumeration value="Local1">
+              <description>
+                Local use 1 messages (17).
+              </description>
+            </enumeration>
+            <enumeration value="Local2">
+              <description>
+                local use 2 messages (18).
+              </description>
+            </enumeration>
+            <enumeration value="Local3">
+              <description>
+                local use 3 messages (19).
+              </description>
+            </enumeration>
+            <enumeration value="Local4">
+              <description>
+                local use 4 messages (20).
+              </description>
+            </enumeration>
+            <enumeration value="Local5">
+              <description>
+                local use 5 messages (21).
+              </description>
+            </enumeration>
+            <enumeration value="Local6">
+              <description>
+                local use 6 messages (22).
+              </description>
+            </enumeration>
+            <enumeration value="Local7">
+              <description>
+                local use 7 messages (23).
+              </description>
+            </enumeration>
+            <enumeration value="All">
+              <description>
+                All facilities are selected.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="All"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Syslog.Source.{i}.Network." access="readOnly" version="2.17">
+      <description>
+        This object describes the configuration parameters for receiving syslog information on a network socket.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the functionality to receive syslog information on a network socket.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+        <parameter name="Interface" access="readWrite">
+          <description>
+            The IP or Logical Interface on which the syslog information will be received.
+            When {{empty}} is specified the syslog service will listen to all available network interfaces.
+            Example:
+
+            * ''Device.IP.Interface.1''.
+
+            * ''Device.Logical.Interface.1''.
+
+            {{template|INTERFACE-ROUTING}}
+          </description>
+          <syntax>
+            <string>
+              <size maxLength="256"/>
+              <pathRef refType="strong" targetType="row"/>
+            </string>
+            <default type="object" value=""/>
+          </syntax>
+        </parameter>
+
+        <parameter name="Port" access="readWrite">
+          <description>
+            Specifies the port number on which the syslog information will be received.
+          </description>
+          <syntax>
+            <unsignedInt>
+              <range minInclusive="1" maxInclusive="65535"/>
+            </unsignedInt>
+            <default type="object" value="1099"/>
+          </syntax>
+        </parameter>
+
+        <parameter name="Protocol" access="readWrite">
+          <description>
+            The protocol to be used for receiving syslog information.
+          </description>
+          <syntax>
+            <string>
+              <enumeration value="TCP">
+                <description>
+                  {{bibref|RFC6587|Transmission of Syslog Messages over TCP}}.
+                </description>
+              </enumeration>
+              <enumeration value="UDP">
+                <description>
+                  {{bibref|RFC5426|Transmission of Syslog Messages over UDP}}.
+                </description>
+              </enumeration>
+              <enumeration value="TLS">
+                <description>
+                  {{bibref|RFC5425|Transport Layer Security (TLS) Transport Mapping for Syslog}}.
+                </description>
+              </enumeration>
+            </string>
+            <default type="object" value="UDP"/>
+          </syntax>
+        </parameter>
+      </object>
+
+      <object name="Device.Syslog.Template.{i}." access="readWrite"
+        numEntriesParameter="TemplateNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.17">
+        <description>
+          This table the describes the templates that can be referenced by objects that can use the template syntax.
+          With templates, you have the flexibility to establish uniform message formats or even define standard filenames for different objects.
+        </description>
+        <uniqueKey functional="false">
+          <parameter ref="Alias"/>
+        </uniqueKey>
+
+        <component ref="Alias-2-0" version="2.17"/>
+
+        <parameter name="Expression" access="readWrite">
+          <description>
+            Describes the template syntax used for transforming the syslog message.
+            The format is implementation specific and can consist of strings, macros, and template functions.
+          </description>
+          <syntax>
+            <string/>
+            <default type="object" value=""/>
+          </syntax>
+        </parameter>
+
+        <parameter name="EscapeMessage" access="readWrite">
+          <description>
+            Enabling this option will cause the following characters to be escaped ', " and \. in the syslog message.
+          </description>
+          <syntax>
+            <boolean/>
+            <default type="object" value="false"/>
+          </syntax>
+        </parameter>
+      </object>
+
+      <object name="Device.Syslog.Action.{i}." access="readWrite"
+        numEntriesParameter="ActionNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.17">
+        <description>
+          This object describes the log action parameters for syslog.
+        </description>
+        <uniqueKey functional="false">
+          <parameter ref="Alias"/>
+        </uniqueKey>
+
+        <component ref="Alias-2-0" version="2.17"/>
+
+        <parameter name="SourceRef" access="readWrite">
+          <description>
+            Mandatory parameter.
+            Specifies one or multiple sources from where the log messages originate.
+          </description>
+          <syntax>
+            <list/>
+            <string>
+              <size maxLength="256"/>
+              <pathRef refType="strong" targetParent="#.Source." targetType="row"/>
+            </string>
+            <default type="object" value=""/>
+          </syntax>
+        </parameter>
+
+        <parameter name="FilterRef" access="readWrite">
+          <description>
+            The Filter associated with the {{object}} entry.
+
+            When referencing multiple Filter rules, it is mandatory to execute
+            them in the order listed within the parameter.
+            
+            Example: FilterRef=.Syslog.Filter.3,.Syslog.Filter.1
+            First filter rule 3 must be executed and then filter rule 1.
+
+            When no Filter is specified the log message will not be filtered.
+          </description>
+          <syntax>
+            <list/>
+            <string>
+              <size maxLength="256"/>
+              <pathRef refType="strong" targetParent="#.Filter." targetType="row"/>
+            </string>
+            <default type="object" value=""/>
+          </syntax>
+        </parameter>
+
+        <parameter name="TemplateRef" access="readWrite">
+          <description>
+            The Template associated with the {{object}} entry.
+
+            When no Template is specified the log message will not be altered by the template system.
+          </description>
+          <syntax>
+            <string>
+              <size maxLength="256"/>
+              <pathRef refType="strong" targetParent="#.Template." targetType="row"/>
+            </string>
+            <default type="object" value=""/>
+          </syntax>
+        </parameter>
+
+        <parameter name="StructuredData" access="readWrite">
+          <description>
+            This feature represents the ability to log messages in structured-data format.
+            Reference {{bibref|RFC5424|The Syslog Protocol}}.
+          </description>
+          <syntax>
+            <boolean/>
+            <default type="object" value="false"/>
+          </syntax>
+        </parameter>
+      </object>
+
+      <object name="Device.Syslog.Action.{i}.LogFile." access="readOnly" version="2.17">
+        <description>
+          This object describes the configuration parameters for file logging. If file-archive limits
+          are not supplied, it is assumed that the local implementation defined limits will be used.
+        </description>
+
+        <parameter name="Enable" access="readWrite">
+          <description>
+            Enables or disables the LogFile functionality.
+          </description>
+          <syntax>
+            <boolean/>
+          </syntax>
+        </parameter>
+
+        <parameter name="VendorLogFileRef" access="readOnly">
+          <description>
+            The reference to {{object|###.DeviceInfo.VendorLogFile}} is automatically constructed
+            and the {{object|###.DeviceInfo.VendorLogFile}} is populated with the information based on {{param|FilePath}}.
+
+            E.g. When {{param|FilePath}} = ''file:///var/log/messages''.
+            The following entry is automatically added to {{object|###.DeviceInfo.VendorLogFile}}: ''file:///var/log/messages''.
+          </description>
+          <syntax>
+            <string>
+              <pathRef refType="strong"
+                targetParent=".DeviceInfo.VendorLogFile." targetType="row"/>
+              </string>
+            </syntax>
+          </parameter>
+
+          <parameter name="FilePath" access="readWrite">
+            <description>
+              Destination path and filename of where to create and keep the logfiles.
+              Which MUST use the uri scheme file {{bibref|RFC8089|The file URI Scheme}}.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+        </object>
+
+        <object name="Device.Syslog.Action.{i}.LogRemote." access="readOnly" version="2.17">
+          <description>
+            This object describes the configuration parameters for forwarding syslog messages
+            to remote relays or collectors.
+          </description>
+
+          <parameter name="Enable" access="readWrite">
+            <description>
+              Enables or disables the LogRemote functionality.
+            </description>
+            <syntax>
+              <boolean/>
+            </syntax>
+          </parameter>
+
+          <parameter name="Address" access="readWrite">
+            <description>
+              Host name or IP address of the remote server.
+            </description>
+            <syntax>
+              <string/>
+              <default type="object" value=""/>
+            </syntax>
+          </parameter>
+
+          <parameter name="Protocol" access="readOnly">
+            <description>
+              Protocol to be used to deliver the syslog messages to the remote server.
+            </description>
+            <syntax>
+              <string>
+                <enumeration value="TCP">
+                  <description>
+                    {{bibref|RFC6587|Transmission of Syslog Messages over TCP}}.
+                  </description>
+                </enumeration>
+                <enumeration value="UDP">
+                  <description>
+                    {{bibref|RFC5426|Transmission of Syslog Messages over UDP}}.
+                  </description>
+                </enumeration>
+                <enumeration value="TLS">
+                  <description>
+                    {{bibref|RFC5425|Transport Layer Security (TLS) Transport Mapping for Syslog}}.
+                  </description>
+                </enumeration>
+              </string>
+            </syntax>
+          </parameter>
+
+          <parameter name="Port" access="readWrite">
+            <description>
+              Port number of the remote server.
+            </description>
+            <syntax>
+              <unsignedInt>
+                <range minInclusive="1" maxInclusive="65535"/>
+              </unsignedInt>
+              <default type="object" value="514"/>
+            </syntax>
+          </parameter>
+
+          <parameter name="Certificate" access="readWrite">
+            <description>
+              Certificate that must be used by the syslog service.
+            </description>
+            <syntax>
+              <string>
+                <pathRef refType="strong" targetParent=".Security.Certificate." targetType="row"/>
+              </string>
+              <default type="object" value=""/>
+            </syntax>
+          </parameter>
+
+          <parameter name="PeerVerify" access="readWrite">
+            <description>
+              Ensures authentic and secure connections by validating entity credentials such as certificates or tokens.
+              Only applicable when {{enum|TLS|Protocol}}
+
+              In order to validate a certificate, the entire certificate chain,
+              including the CA certificate, must be valid.
+              If any certificate in the chain is found to be invalid, the syslog service must reject the connection.
+            </description>
+            <syntax>
+              <boolean/>
+              <default type="object" value="false"/>
+            </syntax>
+          </parameter>
+        </object>
+      </component>
+
+      <component name="SyslogUSP">
+        <object base="Device.Syslog.Action.{i}." access="readWrite"
+          numEntriesParameter="ActionNumberOfEntries" minEntries="0"
+          maxEntries="unbounded">
+          <event name="LogEvent!" version="2.17">
+            <description>
+              Syslog event
+            </description>
+
+            <parameter name="LogLine">
+              <description>
+                Contains the complete syslog message.
+              </description>
+              <syntax>
+                <string/>
+              </syntax>
+            </parameter>
+          </event>
+        </object>
+      </component>
+
+      <model name="Syslog:2.17">
+        <component ref="Root"/>
+        <component ref="Syslog"/>
+      </model>
+    </dm:document>

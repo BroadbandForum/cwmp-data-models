@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -136,7 +139,7 @@
               var a1_groups = a1.match(regex).groups;
               var b1_groups = b1.match(regex).groups;
               var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'), 
+                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
                   parseInt(a1_groups.version || 0)];
               var b1_tuple =  [
                   b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
@@ -261,7 +264,7 @@
 
   <style>
   .chevron {
-      color: blue;
+      color: var(--link-color);
       cursor: pointer;
   }
 
@@ -299,7 +302,12 @@
   <!-- Global styles (that affect the entire document) -->
 
   <style>
-  :root {
+  /* light mode support */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background-color: white;
+      --foreground-color: black;
+      --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
       --command-color: #66cdaa;
@@ -315,10 +323,33 @@
       --stripe-color-deprecated: #eeeeee;
       --stripe-color-obsoleted: #dddddd;
       --stripe-color-deleted: #cccccc;
+    }
+  }
+
+  /* dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: black;
+      --foreground-color: white;
+      --link-color: lightblue;
+      --parameter-color: black;
+      --object-color: #bbbb44;
+      --command-color: #56bd9a;
+      --event-color: #56bd9a;
+      --argument-container-color: #777777;
+      --argument-object-color: #dfa0ab;
+      --argument-parameter-color: #bfa4a1;
+      --mountable-object-color: #b3e0ff;
+      --mountpoint-object-color: #3da8ef;
+      --stripe-color-deprecated: #555555;
+      --stripe-color-obsoleted: #444444;
+      --stripe-color-deleted: #333333;
+    }
   }
 
   body, table {
-      background-color: white;
+      background-color: var(--background-color);
+      color: var(--foreground-color);
       font-family: helvetica, arial, sans-serif;
       font-size: 9pt;
   }
@@ -335,8 +366,8 @@
       font-size: 10pt;
   }
 
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
+  a:link, a:visited {
+      color: var(--link-color);
   }
 
   sup {
@@ -719,6 +750,37 @@
       hyphenate-character: "";
   }
 
+  /* word wrap/break column 1 (Name) */
+  .data-model-table td:first-child {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 27ch;
+  }
+
+  /* word wrap/break column 2 (Base Type) */
+  .data-model-table td:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 3 (Write) */
+  .data-model-table td:nth-child(3) {
+      min-width: 1ch;
+  }
+
+  /* word wrap/break column 5 (Object Default) */
+  .data-model-table td:nth-child(5) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 6 (Version) */
+  .data-model-table td:nth-child(6) {
+      min-width: 6ch;
+  }
+
   /* center column 1 (Abbreviation) */
   .profile-notation-table th:nth-child(1),
   .profile-notation-table td:nth-child(1) {
@@ -745,7 +807,7 @@
 <col style="width: 25.0%;"></col></colgroup>
 <tbody>
 <tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
+<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></img></a></td>
 <td class="centered" rowspan="1"><p></p>
 
 <h1 id="tr-069-data-model-bibliographic-references" class="unnumbered unlisted">TR-069 Data Model Bibliographic References</h1>
@@ -1114,6 +1176,9 @@ GHz</em>, IEEE, December 2013.</td></tr>
 <tr>
 <td><a href="https://standards.ieee.org/getieee802/download/802.11b-1999.pdf">[<span id="R.802.11b-1999">802.11b-1999</span>]</a></td>
 <td>IEEE Std 802.11b-1999, <em>Higher Speed Physical Layer Extension in the 2.4 GHz band</em>, IEEE, 1999.</td></tr>
+<tr>
+<td><a href="https://standards.ieee.org/ieee/802.11be/7516/">[<span id="R.802.11be">802.11be</span>]</a></td>
+<td>IEEE Std 802.11be, <em>Enhancements for Exteremely High Throughput (EHT) WLAN - Draft</em>, IEEE, March 2019.</td></tr>
 <tr>
 <td><a href="https://standards.ieee.org/getieee802/download/802.11g-2003.pdf">[<span id="R.802.11g-2003">802.11g-2003</span>]</a></td>
 <td>IEEE Std 802.11g-2003, <em>Further Higher Data Rate Extension in the 2.4 GHz Band</em>, IEEE, 2003.</td></tr>
@@ -1844,6 +1909,9 @@ IPv6 (DHCPv6)</em>, IETF, 2003.</td></tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc3775">[<span id="R.RFC3775">RFC3775</span>]</a></td>
 <td>RFC 3775, <em>Mobility Support in IPv6</em>, IETF, 2004.</td></tr>
 <tr>
+<td><a href="https://www.rfc-editor.org/rfc/rfc3810">[<span id="R.RFC3810">RFC3810</span>]</a></td>
+<td>RFC 3810, <em>Multicast Listener Discovery Version 2 (MLDv2) for IPv6</em>, IETF, June 2004.</td></tr>
+<tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc3873">[<span id="R.RFC3873">RFC3873</span>]</a></td>
 <td>RFC 3873, <em>Stream Control Transmission Protocol (SCTP) Management Information Base
 (MIB)</em>, IETF, September 2004.</td></tr>
@@ -1974,6 +2042,15 @@ Location Object (PIDF-LO)</em>, IETF, February 2008.</td></tr>
 <td>RFC 5280, <em>Internet X.509 Public Key Infrastructure Certificate and Certificate
 Revocation List (CRL) Profile</em>, IETF, May 2008.</td></tr>
 <tr>
+<td><a href="https://www.rfc-editor.org/rfc/rfc5424">[<span id="R.RFC5424">RFC5424</span>]</a></td>
+<td>RFC 5424, <em>The Syslog Protocol</em>, IETF, May 2009.</td></tr>
+<tr>
+<td><a href="https://www.rfc-editor.org/rfc/rfc5425">[<span id="R.RFC5425">RFC5425</span>]</a></td>
+<td>RFC 5425, <em>Transport Layer Security (TLS) Transport Mapping for Syslog</em>, IETF, May 2009.</td></tr>
+<tr>
+<td><a href="https://www.rfc-editor.org/rfc/rfc5425">[<span id="R.RFC5426">RFC5426</span>]</a></td>
+<td>RFC 5426, <em>Transmission of Syslog Messages over UDP</em>, IETF, May 2009.</td></tr>
+<tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc5491">[<span id="R.RFC5491">RFC5491</span>]</a></td>
 <td>RFC 5491, <em>GEOPRIV Presence Information Data Format Location Object (PIDF-LO)
 Usage Clarification, Considerations, and Recommendations</em>, IETF, March 2009.</td></tr>
@@ -2006,6 +2083,9 @@ Protocol (SIP)</em>, IETF.</td></tr>
 <tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc6455">[<span id="R.RFC6455">RFC6455</span>]</a></td>
 <td>RFC 6455, <em>The WebSocket Protocol</em>, IETF, December 2011.</td></tr>
+<tr>
+<td><a href="https://www.rfc-editor.org/rfc/rfc6587">[<span id="R.RFC6587">RFC6587</span>]</a></td>
+<td>RFC 6587, <em>Transmission of Syslog Messages over TCP</em>, IETF, April 2012.</td></tr>
 <tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc6762">[<span id="R.RFC6762">RFC6762</span>]</a></td>
 <td>RFC 6762, <em>Multicast DNS</em>, IETF, February 2013.</td></tr>
@@ -2073,6 +2153,12 @@ Clients</em>, IETF, July 2015.</td></tr>
 <tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc793">[<span id="R.RFC793">RFC793</span>]</a></td>
 <td>RFC 793, <em>Transmission Control Protocol</em>, IETF, September 1981.</td></tr>
+<tr>
+<td><a href="https://www.rfc-editor.org/rfc/rfc8089">[<span id="R.RFC8089">RFC8089</span>]</a></td>
+<td>RFC 8089, <em>The &ldquo;file&rdquo; URI Scheme</em>, IETF, February 2017.</td></tr>
+<tr>
+<td><a href="https://www.rfc-editor.org/rfc/rfc8106">[<span id="R.RFC8106">RFC8106</span>]</a></td>
+<td>RFC 8106, <em>IPv6 Router Advertisement Options for DNS Configuration</em>, IETF, March 2017.</td></tr>
 <tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc8141">[<span id="R.RFC8141">RFC8141</span>]</a></td>
 <td>RFC 8141, <em>Uniform Resource Names (URNs)</em>, IETF, April 2017.</td></tr>
@@ -2361,8 +2447,8 @@ Monitoring</em>, Broadband Forum, December 2014.</td></tr>
 <td><a href="https://www.broadband-forum.org/download/TR-470.pdf">[<span id="R.TR-470">TR-470</span>]</a></td>
 <td>TR-470, <em>5G Wireless Wireline Convergence Architecture</em>, Broadband Forum, August 2020.</td></tr>
 <tr>
-<td><a href="https://www.broadband-forum.org/download/TR-471_Issue-2.pdf">[<span id="R.TR-471">TR-471</span>]</a></td>
-<td>TR-471, <em>Maximum IP-Layer Capacity Metric, Related Metrics, and Measurements</em>, Broadband Forum, December 2021.</td></tr>
+<td><a href="https://www.broadband-forum.org/download/TR-471_Issue-4.pdf">[<span id="R.TR-471">TR-471</span>]</a></td>
+<td>TR-471, <em>Maximum IP-Layer Capacity Metric, Related Metrics, and Measurements</em>, Broadband Forum, December 2023.</td></tr>
 <tr>
 <td>[<span id="R.UL-1310">UL-1310</span>]</td>
 <td>UL-1310, <em>Standard for Class 2 Power Units</em>, UL, 2011.</td></tr>
@@ -2423,6 +2509,9 @@ Public-key and attribute certificate frameworks</em>, ITU-T, 2012.</td></tr>
 <td><a href="https://www.itu.int/rec/T-REC-Y.1540">[<span id="R.Y.1540">Y.1540</span>]</a></td>
 <td>Y.1540, <em>IP packet transfer and availability performance parameters</em>, ITU-T.</td></tr>
 <tr>
+<td><a href="https://datatracker.ietf.org/doc/draft-ietf-netmod-syslog-model">[<span id="R.YANGSYSLOG">YANGSYSLOG</span>]</a></td>
+<td>draft-ietf-netmod-syslog-model, <em>A YANG Data Model for Syslog Configuration</em>, IETF, April 2023.</td></tr>
+<tr>
 <td><a href="https://www.z-wave.com">[<span id="R.Z-Wave">Z-Wave</span>]</a></td>
 <td>Z-Wave, <em>Z-Wave website</em>.</td></tr>
 <tr>
@@ -2437,8 +2526,7 @@ Public-key and attribute certificate frameworks</em>, ITU-T, 2012.</td></tr>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.0 (2023-06-14 version) on 2023-06-14
-at 11:15:27 UTC.<br/>report.py –output &lt;stdout&gt; –all –format markdown tr-069-biblio.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:45:45 UTC.<br/>report.py –output &lt;stdout&gt; –all –format markdown tr-069-biblio.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 

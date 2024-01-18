@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -136,7 +139,7 @@
               var a1_groups = a1.match(regex).groups;
               var b1_groups = b1.match(regex).groups;
               var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'), 
+                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
                   parseInt(a1_groups.version || 0)];
               var b1_tuple =  [
                   b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
@@ -261,7 +264,7 @@
 
   <style>
   .chevron {
-      color: blue;
+      color: var(--link-color);
       cursor: pointer;
   }
 
@@ -299,7 +302,12 @@
   <!-- Global styles (that affect the entire document) -->
 
   <style>
-  :root {
+  /* light mode support */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background-color: white;
+      --foreground-color: black;
+      --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
       --command-color: #66cdaa;
@@ -315,10 +323,33 @@
       --stripe-color-deprecated: #eeeeee;
       --stripe-color-obsoleted: #dddddd;
       --stripe-color-deleted: #cccccc;
+    }
+  }
+
+  /* dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: black;
+      --foreground-color: white;
+      --link-color: lightblue;
+      --parameter-color: black;
+      --object-color: #bbbb44;
+      --command-color: #56bd9a;
+      --event-color: #56bd9a;
+      --argument-container-color: #777777;
+      --argument-object-color: #dfa0ab;
+      --argument-parameter-color: #bfa4a1;
+      --mountable-object-color: #b3e0ff;
+      --mountpoint-object-color: #3da8ef;
+      --stripe-color-deprecated: #555555;
+      --stripe-color-obsoleted: #444444;
+      --stripe-color-deleted: #333333;
+    }
   }
 
   body, table {
-      background-color: white;
+      background-color: var(--background-color);
+      color: var(--foreground-color);
       font-family: helvetica, arial, sans-serif;
       font-size: 9pt;
   }
@@ -335,8 +366,8 @@
       font-size: 10pt;
   }
 
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
+  a:link, a:visited {
+      color: var(--link-color);
   }
 
   sup {
@@ -719,6 +750,37 @@
       hyphenate-character: "";
   }
 
+  /* word wrap/break column 1 (Name) */
+  .data-model-table td:first-child {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 27ch;
+  }
+
+  /* word wrap/break column 2 (Base Type) */
+  .data-model-table td:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 3 (Write) */
+  .data-model-table td:nth-child(3) {
+      min-width: 1ch;
+  }
+
+  /* word wrap/break column 5 (Object Default) */
+  .data-model-table td:nth-child(5) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 6 (Version) */
+  .data-model-table td:nth-child(6) {
+      min-width: 6ch;
+  }
+
   /* center column 1 (Abbreviation) */
   .profile-notation-table th:nth-child(1),
   .profile-notation-table td:nth-child(1) {
@@ -745,7 +807,7 @@
 <col style="width: 25.0%;"></col></colgroup>
 <tbody>
 <tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></img></a></td>
+<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
 <td class="centered" rowspan="1"><p></p>
 
 <h1 id="tr-069-data-model-data-types" class="unnumbered unlisted">TR-069 Data Model Data Types</h1>
@@ -758,7 +820,7 @@
 
 <h1 id="license">License</h1>
 
-<p>Copyright (c) 2008-2019, Broadband Forum</p>
+<p>Copyright (c) 2008-2023, Broadband Forum</p>
 
 <p>The undersigned members have elected to grant the copyright to
 their contributed material used in this software:<br/>    Copyright (c) 2017-2018 ARRIS Enterprises, LLC.</p>
@@ -944,29 +1006,29 @@ dB relative to 1 mW. For example, -12345 means -12.345 dBm, 0 means 0 dBm
 <p>Enumeration of:</p>
 
 <ul>
-<li><span id="D..None">None</span> (READONLY)</li>
-<li><span id="D..Requested">Requested</span></li>
-<li><span id="D..Canceled">Canceled</span> (OPTIONAL)</li>
-<li><span id="D..Complete">Complete</span> (READONLY)</li>
-<li><span id="D..Error">Error</span> (READONLY, OPTIONAL)</li></ul>
+<li><span id="D..None"><em>None</em></span> (READONLY)</li>
+<li><span id="D..Requested"><em>Requested</em></span></li>
+<li><span id="D..Canceled"><em>Canceled</em></span> (OPTIONAL)</li>
+<li><span id="D..Complete"><em>Complete</em></span> (READONLY)</li>
+<li><span id="D..Error"><em>Error</em></span> (READONLY, OPTIONAL)</li></ul>
 
-<p>If the ACS sets the value of this parameter to <em><a href="#D..Requested">Requested</a></em>, the
+<p>If the ACS sets the value of this parameter to <a href="#D..Requested"><em>Requested</em></a>, the
 CPE MUST initiate the corresponding diagnostic test. When writing, the
-only allowed values are <em><a href="#D..Requested">Requested</a></em> and <em><a href="#D..Canceled">Canceled</a></em>. To
+only allowed values are <a href="#D..Requested"><em>Requested</em></a> and <a href="#D..Canceled"><em>Canceled</em></a>. To
 ensure the use of the proper test parameters (the writable parameters in
 this object), the test parameters MUST be set, and any errors or
 inconsistencies in the test parameters MUST be detected, either prior to
 or at the same time as (in the same SetParameterValues) setting this
-parameter to <em><a href="#D..Requested">Requested</a></em>.</p>
+parameter to <a href="#D..Requested"><em>Requested</em></a>.</p>
 
 <p>When requested, the CPE SHOULD wait until after completion of the
 communication session with the ACS before starting the diagnostic test.</p>
 
 <p>When the test is completed, the value of this parameter MUST be either
-<em><a href="#D..Complete">Complete</a></em> (if the test completed successfully), or one of the
+<a href="#D..Complete"><em>Complete</em></a> (if the test completed successfully), or one of the
 <em>Error</em> values listed above.</p>
 
-<p>If the value of this parameter is anything other than <em><a href="#D..Complete">Complete</a></em>,
+<p>If the value of this parameter is anything other than <a href="#D..Complete"><em>Complete</em></a>,
 the values of the results parameters for this test are indeterminate.</p>
 
 <p>When the diagnostic initiated by the ACS is completed (successfully or
@@ -979,25 +1041,25 @@ message.</p>
 read-only parameters in this object) MUST be retained by the CPE until
 either this diagnostic is run again, or the CPE reboots. After a reboot,
 if the CPE has not retained the result parameters from the most recent
-test, it MUST set the value of this parameter to <em><a href="#D..None">None</a></em>.</p>
+test, it MUST set the value of this parameter to <a href="#D..None"><em>None</em></a>.</p>
 
 <p>Modifying any of the writable parameters in this object except for this
 one MUST result in the value of this parameter being set to
-<em><a href="#D..None">None</a></em>.</p>
+<a href="#D..None"><em>None</em></a>.</p>
 
 <p>While the test is in progress, modifying any of the writable parameters
 in this object except for this one MUST result in the test being
-terminated and the value of this parameter being set to <em><a href="#D..None">None</a></em>.</p>
+terminated and the value of this parameter being set to <a href="#D..None"><em>None</em></a>.</p>
 
 <p>While the test is in progress, setting this parameter to
-<em><a href="#D..Requested">Requested</a></em> (and possibly modifying other writable parameters in
+<a href="#D..Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in
 this object) MUST result in the test being terminated and then restarted
 using the current values of the test parameters.</p>
 
 <p>While the test is in progress, setting this parameter to
-<em><a href="#D..Canceled">Canceled</a></em> MUST result in the test being canceled and the value of
-this parameter being set to <em><a href="#D..None">None</a></em>. If the CPE does not support
-the <em><a href="#D..Canceled">Canceled</a></em> value, it MUST return a SPV error with &ldquo;Invalid
+<a href="#D..Canceled"><em>Canceled</em></a> MUST result in the test being canceled and the value of
+this parameter being set to <a href="#D..None"><em>None</em></a>. If the CPE does not support
+the <a href="#D..Canceled"><em>Canceled</em></a> value, it MUST return a SPV error with &ldquo;Invalid
 Parameter value&rdquo; (9007) to the ACS instead.</p></td></tr>
 <tr>
 <td><span id="T.IEEE_EUI64">IEEE_EUI64</span></td>
@@ -1015,8 +1077,8 @@ assigned by the organization with that company_id assignment.</li></ul>
 <p>Possible patterns:</p>
 
 <ul>
-<li><span id="D..">&lt;Empty&gt;</span> (an empty string)</li>
-<li>[([0-9A-Fa-f][0-9A-Fa-f]:){7}(<span id="D..0-9A-Fa-f0-9A-Fa-f:70-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])</span></li></ul></td></tr>
+<li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
+<li>[*([0-9A-Fa-f][0-9A-Fa-f]:){7}(<span id="D..0-9A-Fa-f0-9A-Fa-f:70-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])*</span></li></ul></td></tr>
 <tr>
 <td><span id="T.IPAddress">IPAddress</span></td>
 <td><a href="#T.string">string</a>(:45)</td>
@@ -1081,8 +1143,8 @@ an empty string unless otherwise specified by the parameter definition.</p></td>
 <p>Can be any IPv4 address that is permitted by the <em>IPAddress</em> data type. Possible patterns:</p>
 
 <ul>
-<li><span id="D..">&lt;Empty&gt;</span> (an empty string)</li>
-<li>[((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]).){3}(25[0-5]|2[0-4][0-9]|[01]?<span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-9">0-9]?[0-9])</span></li></ul></td></tr>
+<li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
+<li>[*((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]).){3}(25[0-5]|2[0-4][0-9]|[01]?<span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-9">0-9]?[0-9])*</span></li></ul></td></tr>
 <tr>
 <td><span id="T.IPv4Prefix">IPv4Prefix</span></td>
 <td><a href="#T.IPPrefix">IPPrefix</a>(:49)</td>
@@ -1091,9 +1153,9 @@ an empty string unless otherwise specified by the parameter definition.</p></td>
 <p>Can be any IPv4 prefix that is permitted by the <em>IPPrefix</em> data type. Possible patterns:</p>
 
 <ul>
-<li><span id="D..">&lt;Empty&gt;</span> (an empty string)</li>
-<li>[/(3[0-2]|<span id="D..30-20120-9">012]?[0-9])</span></li>
-<li>[((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]).){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])/(3[0-2]|<span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-930-20120-9">012]?[0-9])</span></li></ul></td></tr>
+<li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
+<li>[*/(3[0-2]|<span id="D..30-20120-9">012]?[0-9])*</span></li>
+<li>[*((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]).){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])/(3[0-2]|<span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-930-20120-9">012]?[0-9])*</span></li></ul></td></tr>
 <tr>
 <td><span id="T.IPv6Address">IPv6Address</span></td>
 <td><a href="#T.IPAddress">IPAddress</a>(:45)</td>
@@ -1120,8 +1182,25 @@ represented as empty strings unless otherwise specified by the parameter
 definition. Possible patterns:</p>
 
 <ul>
-<li><span id="D..">&lt;Empty&gt;</span> (an empty string)</li>
-<li>[([0-9A-Fa-f][0-9A-Fa-f]:){5}(<span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])</span></li></ul></td></tr>
+<li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
+<li>[*([0-9A-Fa-f][0-9A-Fa-f]:){5}(<span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])*</span></li></ul></td></tr>
+<tr>
+<td><span id="T.Order">Order</span></td>
+<td><a href="#T.unsignedInt">unsignedInt</a>(1:)</td>
+<td><p>Position of the <em>object</em> entry in the order of precedence. A value
+of <em>1</em> indicates the first entry to be considered (highest precedence).</p>
+
+<p>When a <em>object</em> instance is created, or when an existing <em>parameter</em>
+value is modified, if the value matches that of an existing
+entry, the <em>parameter</em> values for the existing entry and all lower
+<em>parameter</em> entries are incremented (lowered in precedence) to ensure
+uniqueness of this value. A deletion causes <em>parameter</em> values to be
+compacted. When a value is changed, incrementing occurs before
+compaction.</p>
+
+<p>If no <em>parameter</em> value is supplied on creation of a <em>object</em> instance,
+it MUST be assigned a value that is one more than the largest current
+value (lowest precedence).</p></td></tr>
 <tr>
 <td><span id="T.StatsCounter32">StatsCounter32</span></td>
 <td><a href="#T.unsignedInt">unsignedInt</a></td>
@@ -1176,14 +1255,14 @@ Ethernet frame.</p></td></tr>
 [<a href="#R.RFC8141">RFC8141</a>] (<em>urn</em> URI scheme). Possible patterns:</p>
 
 <ul>
-<li>[urn:[A-Za-z0-9]<span id="D..urn:A-Za-z0-9A-Za-z0-9-030A-Za-z0-9:.">A-Za-z0-9-]{0,30}[A-Za-z0-9]:.+</span></li></ul></td></tr>
+<li>[*urn:[A-Za-z0-9]<span id="D..urn:A-Za-z0-9A-Za-z0-9-030A-Za-z0-9:.">A-Za-z0-9-]{0,30}[A-Za-z0-9]:.+*</span></li></ul></td></tr>
 <tr>
 <td><span id="T.UUID">UUID</span></td>
 <td><a href="#T.string">string</a>(36)</td>
 <td><p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>]. Possible patterns:</p>
 
 <ul>
-<li>[[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-<span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912">A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}</span></li></ul></td></tr>
+<li>[*[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-<span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912">A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}*</span></li></ul></td></tr>
 <tr>
 <td><span id="T.ZigBeeNetworkAddress">ZigBeeNetworkAddress</span></td>
 <td><a href="#T.string">string</a>(:4)</td>
@@ -1192,8 +1271,8 @@ Ethernet frame.</p></td></tr>
 layer and used by the network layer for routing messages between devices. Possible patterns:</p>
 
 <ul>
-<li><span id="D..">&lt;Empty&gt;</span> (an empty string)</li>
-<li><span id="D..0-9A-Fa-f4">([0-9A-Fa-f]){4}</span></li></ul></td></tr></tbody></table>
+<li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
+<li><span id="D..0-9A-Fa-f4"><em>([0-9A-Fa-f]){4}</em></span></li></ul></td></tr></tbody></table>
 
 <h1 id="references">References</h1>
 
@@ -1245,8 +1324,7 @@ and Aggregation Plan</em>, IETF, 2006.</td></tr>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.0 (2023-06-14 version) on 2023-06-14
-at 11:15:26 UTC.<br/>report.py –output &lt;stdout&gt; –all –format markdown tr-106-types.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:45:44 UTC.<br/>report.py –output &lt;stdout&gt; –all –format markdown tr-106-types.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 

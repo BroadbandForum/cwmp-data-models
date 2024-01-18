@@ -2304,6 +2304,18 @@
         <parameter ref="DvbId"/>
       </uniqueKey>
 
+      <parameter name="Name" access="readOnly" dmr:previousParameter="">
+        <description>
+          Human-readable name associated with this service, e.g. read from the
+          DVB service information metadata.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
       <parameter name="DvbId" access="readOnly">
         <description>
           DVB Triplet {{bibref|TS102034}} that uniquely identifies the service
@@ -2321,18 +2333,6 @@
         <syntax>
           <string>
             <size maxLength="12"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="Name" access="readOnly" dmr:previousParameter="">
-        <description>
-          Human-readable name associated with this service, e.g. read from the
-          DVB service information metadata.
-        </description>
-        <syntax>
-          <string>
-            <size maxLength="256"/>
           </string>
         </syntax>
       </parameter>
@@ -3563,13 +3563,9 @@
         <parameter ref="Name"/>
       </uniqueKey>
 
-      <parameter name="Reference" access="readOnly">
+      <parameter name="Name" access="readOnly" dmr:previousParameter="">
         <description>
-          References the corresponding ''StorageService'' {{bibref|TR-140}}
-          instance, or an object contained within such an instance, e.g. a
-          ''PhysicalMedium'', ''LogicalVolume'' or ''Folder'' instance. The
-          value is the full hierarchical name of the corresponding object.
-          Example: ''Device.Services.StorageService.1''
+          Unique human-readable name associated with this storage instance.
         </description>
         <syntax>
           <string>
@@ -3578,9 +3574,13 @@
         </syntax>
       </parameter>
 
-      <parameter name="Name" access="readOnly" dmr:previousParameter="">
+      <parameter name="Reference" access="readOnly">
         <description>
-          Unique human-readable name associated with this storage instance.
+          References the corresponding ''StorageService'' {{bibref|TR-140}}
+          instance, or an object contained within such an instance, e.g. a
+          ''PhysicalMedium'', ''LogicalVolume'' or ''Folder'' instance. The
+          value is the full hierarchical name of the corresponding object.
+          Example: ''Device.Services.StorageService.1''
         </description>
         <syntax>
           <string>
@@ -5380,18 +5380,6 @@
         was last enabled or Total statistics were last reset.
       </description>
 
-      <parameter name="Reset" access="readWrite">
-        <description>
-          When set to {{true}}, resets Total statistics for this
-          ''ServiceMonitoring'' main stream instance. Setting it to {{false}}
-          has no effect. The value is not saved in device state and is always
-          {{false}} when read.
-        </description>
-        <syntax>
-          <boolean/>
-        </syntax>
-      </parameter>
-
       <parameter name="TotalSeconds" access="readOnly"
           dmr:previousParameter="">
         <description>
@@ -5405,6 +5393,18 @@
         </description>
         <syntax>
           <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Reset" access="readWrite">
+        <description>
+          When set to {{true}}, resets Total statistics for this
+          ''ServiceMonitoring'' main stream instance. Setting it to {{false}}
+          has no effect. The value is not saved in device state and is always
+          {{false}} when read.
+        </description>
+        <syntax>
+          <boolean/>
         </syntax>
       </parameter>
 
@@ -5427,16 +5427,6 @@
         stream instance.
       </description>
 
-      <parameter name="Overruns" access="readOnly" activeNotify="canDeny">
-        <description>
-          Total number of times the receive jitter buffer has overrun for this
-          AV stream.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
       <parameter name="TotalSeconds" access="readOnly"
           dmr:previousParameter="">
         <description>
@@ -5453,6 +5443,16 @@
 
           * De-jittering data collection is not appropriate or possible for
             this AV stream.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Overruns" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total number of times the receive jitter buffer has overrun for this
+          AV stream.
         </description>
         <syntax>
           <unsignedInt/>
@@ -5552,17 +5552,6 @@
         {{param|PacketsReceivedBeforeEC}} = {{param|PacketsReceived}}.
       </description>
 
-      <parameter name="PacketsExpected" access="readOnly"
-          activeNotify="canDeny">
-        <description>
-          Total number of RTP packets expected for this AV stream as described
-          in {{bibref|RFC3550|A.3}}.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
       <parameter name="TotalSeconds" access="readOnly"
           dmr:previousParameter="">
         <description>
@@ -5579,6 +5568,17 @@
 
           * RTP data collection is not appropriate or possible for this AV
             stream.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsExpected" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Total number of RTP packets expected for this AV stream as described
+          in {{bibref|RFC3550|A.3}}.
         </description>
         <syntax>
           <unsignedInt/>
@@ -5736,16 +5736,6 @@
         instance.
       </description>
 
-      <parameter name="TSPacketsReceived" access="readOnly"
-          activeNotify="canDeny">
-        <description>
-          Total number of MPEG2-TS packets received for this AV stream.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
       <parameter name="TotalSeconds" access="readOnly"
           dmr:previousParameter="">
         <description>
@@ -5762,6 +5752,16 @@
 
           * MPEG2 TS data collection is not appropriate or possible for this AV
             stream.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TSPacketsReceived" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          Total number of MPEG2-TS packets received for this AV stream.
         </description>
         <syntax>
           <unsignedInt/>
@@ -5824,17 +5824,6 @@
         ''ServiceMonitoring'' main stream instance.
       </description>
 
-      <parameter name="FrameRate" access="readOnly">
-        <description>
-          The latest frame rate at which the STB played out the video content
-          for this AV stream. Also the reported rate will be rounded off to the
-          nearest integer.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
       <parameter name="TotalSeconds" access="readOnly"
           dmr:previousParameter="">
         <description>
@@ -5851,6 +5840,17 @@
 
           * Video Decoder data collection is not appropriate or possible for
             this AV stream.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FrameRate" access="readOnly">
+        <description>
+          The latest frame rate at which the STB played out the video content
+          for this AV stream. Also the reported rate will be rounded off to the
+          nearest integer.
         </description>
         <syntax>
           <unsignedInt/>
@@ -6003,16 +6003,6 @@
         ''ServiceMonitoring'' main stream instance.
       </description>
 
-      <parameter name="DecodedFrames" access="readOnly" activeNotify="canDeny">
-        <description>
-          The number of audio frames that were decoded completely (errorless
-          frames) or partially (corrupted frames) for this AV stream.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
       <parameter name="TotalSeconds" access="readOnly"
           dmr:previousParameter="">
         <description>
@@ -6029,6 +6019,16 @@
 
           * Audio Decoder data collection is not appropriate or possible for
             this AV stream.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DecodedFrames" access="readOnly" activeNotify="canDeny">
+        <description>
+          The number of audio frames that were decoded completely (errorless
+          frames) or partially (corrupted frames) for this AV stream.
         </description>
         <syntax>
           <unsignedInt/>
@@ -6053,19 +6053,6 @@
         stream instance.
       </description>
 
-      <parameter name="MinimumVideoSystemResponse" access="readOnly">
-        <description>
-          Minimum time period (in {{units}}) between the instant of
-          transmitting an IGMP JOIN command or an RTSP SETUP command, and the
-          display of the first I frame for this AV stream.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <units value="milliseconds"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
       <parameter name="TotalSeconds" access="readOnly"
           dmr:previousParameter="">
         <description>
@@ -6085,6 +6072,19 @@
         </description>
         <syntax>
           <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinimumVideoSystemResponse" access="readOnly">
+        <description>
+          Minimum time period (in {{units}}) between the instant of
+          transmitting an IGMP JOIN command or an RTSP SETUP command, and the
+          display of the first I frame for this AV stream.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
         </syntax>
       </parameter>
 
@@ -7349,19 +7349,6 @@
         <parameter ref="MetricName"/>
       </uniqueKey>
 
-      <parameter name="MetricName" access="readOnly">
-        <description>
-          Indicates a unique identifier for this high-level metric.
-        </description>
-        <syntax>
-          <string>
-            <size maxLength="256"/>
-            <enumerationRef
-                targetParam=".Capabilities.ServiceMonitoring.HighLevelMetricNames"/>
-          </string>
-        </syntax>
-      </parameter>
-
       <parameter name="Enable" access="readWrite" dmr:previousParameter="">
         <description>
           Enables or disables this Metric instance.
@@ -7382,6 +7369,19 @@
             <enumeration value="Disabled"/>
             <enumeration value="Enabled"/>
             <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MetricName" access="readOnly">
+        <description>
+          Indicates a unique identifier for this high-level metric.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <enumerationRef
+                targetParam=".Capabilities.ServiceMonitoring.HighLevelMetricNames"/>
           </string>
         </syntax>
       </parameter>

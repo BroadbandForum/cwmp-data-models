@@ -7,6 +7,55 @@ can be found at <https://cwmp-data-models.broadband-forum.org>.
 
 [CWMP]: https://www.broadband-forum.org/technical/download/TR-069.pdf
 
+## 2024-01-18: [TR-106 Amendment 13] and [TR-181 Issue 2 Amendment 17]
+
+*Tags: [v1.6.8] (data models), 
+       [v2.17.0][TR-181-v2.17.0] (TR-181), 
+       [v1.13.0][TR-106-v1.13.0] (TR-106)*
+
+### TR-181
+* Added new parameters for Multi-flow and Multi-server testing
+  capability as defined in TR-471 Issue 4
+* Updated MoCA data model with MoCA Alliance 2.5 specification
+* Added Device.DNS.SD.Advertise object to to allow the configuration of
+  DNS-SD services that need to be advertised by the device
+* Added RDNSS and DNSSL options to the Device.RouterAdvertisement.InterfaceSetting.{i}. object
+* Added missing parameters from the Data Elements R2.1 specification
+* Added the Zone file concept to the Device.DNS. object
+* Added DNS caching configurability to the Device.DNS.Relay. object, allowing for control
+  over the cache settings, added a mechanism to allow the specification of the ingress (LAN side) interface(s)
+  to be used by the DNS forwarders
+* Added new InterfaceSetting object to Device.Firewall.
+* Added ModuleVersion parameter to InstallDU() and Update() commands
+* Added Origin parameter to PinHole, PortMapping and AccesssControl
+* Added PhysAddresMask parameter to AccessControl
+* Added LeaseDuration and RemainLeaseTime parameters to the DMZ and Pinhole objects
+* Added Device.Firewall.ConnectionTracking. object tree to configure ALGs
+* Added missing DSL xTU-C and xTU-R parameters to DSL objects
+* Added Device.Syslog. object tree to configure a syslog service
+* Added Support for password authentication in xPON
+* Added MaxNumberOfPortMappings and MaxNumberOfPortTriggers parameters to indicate system limits
+* Fixed the access of some UserInterface parameters and objects: Demoted Session and User to read-only, promoted Protocol to read-write
+* Fixed the access of a SSH parameter: Promoted AutoDisableDuration to read-write
+* Fixed the access of a USPServices parameter: Demoted Protocol to read-only
+* Added UDSAgent:1 and UDSController:1 profiles
+* Added Device.DeviceInfo.LogRotate.{i}. to setup a log rotation mechanism
+* Clarified descriptions of parameters in Device.SoftwareModules.ExecutionUnit.{i}.AutoRestart.
+* Added initial support for the 802.11be Wi-Fi 7 standard/mode in various places
+* Added OnBoardingComplete parameter to Device.LocalAgent.Controller.{i}.
+* Clarified suggested implementation of Device.PeriodicStatistics. concept
+* Added support for passing environment variables to software modules
+* Removed reference to an incorrect default port requirement from TR-471
+* Added EEEStatus parameter to Device.Ethernet.Interface.{i}.
+* Extended the key of Device.LocalAgent.Monitor.{i}.OnChange! ChangeSet.{i}.Parameter.{i}. output argument to include ChangeTime
+* Added objects and parameters to align with the work-in-progress DataElements R3 specification
+* Refactored scheduling related parameters into component for easier reuse and added Active and TimeLeft parameters
+* Added Device.SoftwareModules.ExecutionUnit.{i}.NetworkConfig. object and parameters
+* Added MaxSupportedDataDownlinkRate, MaxSupportedDataUplinkRate, SNR, and MaxSupportedBandwidth parameters to Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.
+* Replaced custom coded Order parameter type and descriptions with the new Order datatype and text template
+* Changed the default WebSocket port from 5683 to 8443
+* Added support for checksum reporting to TransferComplete! event
+
 ## 2023-06-14: [TR-106 Amendment 12] and [TR-181 Issue 2 Amendment 16]
 
 *Tags: [v1.6.7] (data models), 
@@ -232,15 +281,18 @@ version of the BBF report tool
 [TR-106 Amendment 10]: https://www.broadband-forum.org/download/TR-106_Amendment-10.pdf
 [TR-106 Amendment 11]: https://www.broadband-forum.org/download/TR-106_Amendment-11.pdf
 [TR-106 Amendment 12]: https://www.broadband-forum.org/download/TR-106_Amendment-12.pdf
+[TR-106 Amendment 13]: https://www.broadband-forum.org/download/TR-106_Amendment-13.pdf
 [TR-106-v1.7.0+]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.7.0+
 [TR-106-v1.10.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.10.0
 [TR-106-v1.11.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.11.0
 [TR-106-v1.12.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.12.0
+[TR-106-v1.13.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.13.0
 [TR-181 Issue 2 Amendment 12]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-12.pdf
 [TR-181 Issue 2 Amendment 13]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-13.pdf
 [TR-181 Issue 2 Amendment 14]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-14.pdf
 [TR-181 Issue 2 Amendment 15]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-15.pdf
 [TR-181 Issue 2 Amendment 16]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-16.pdf
+[TR-181 Issue 2 Amendment 17]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-17.pdf
 [TR-181-v2.12.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.12.0
 [TR-181-v2.13.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.13.0
 [TR-181-v2.14.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.14.0
@@ -248,6 +300,7 @@ version of the BBF report tool
 [TR-181-v2.15.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.15.0
 [TR-181-v2.15.1]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.15.1
 [TR-181-v2.16.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.16.0
+[TR-181-v2.17.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.17.0
 [v1.6.0]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0
 [v1.6.0+]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0+
 [v1.6.0c1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0c1
@@ -258,3 +311,4 @@ version of the BBF report tool
 [v1.6.5]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.5
 [v1.6.6]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.6
 [v1.6.7]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.7
+[v1.6.8]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.8

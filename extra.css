@@ -21,34 +21,72 @@ h4.hidden-header, h5.hidden-header, h6.hidden-header {
     margin-top: 1rem;
 }
 
-/* "note" div style */
+/* various "box" div styles */
 
-div.note {
-     margin-top: 10px;
-     margin-bottom: 10px;
-     margin-left: 10px;
-     margin-right: 10px;
-     background-color: #f1f8fc;
-     background-image: url(pencil.png);
-     background-size: 16px;
-     background-position: 10px 10px;
-     background-repeat: no-repeat;
-     border: solid 1px #3498db;
-     border-radius: 5px;
-     -moz-border-radius: 5px;
-     -webkit-border-radius: 5px;
-     line-height: 18px;
-     overflow: hidden;
-     padding-top: 5px;
-     padding-bottom: 5px;
-     padding-left: 35px;
-     padding-right: 5px;
-     opacity: 0.8;
+div.bug,
+div.note,
+div.see-also,
+div.tip {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    background-size: 12px;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    border-radius: 5px;
+    line-height: 1.2;
+    overflow: hidden;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 35px;
+    padding-right: 5px;
+    opacity: 0.8;
 }
 
-div.note p {
-     margin-top: 10px;
-     margin-bottom: 10px;
+div.bug p,
+div.note p,
+div.see-also p,
+div.tip p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+div.bug {
+    background-size: 24px;
+    background-position: 2px 10px;
+    background-color: #ffe;
+    background-image: url(bee.png);
+    border: solid 1px #ff8;
+}
+
+div.note {
+    background-color: #f1f8fc;
+    background-image: url(pencil.png);
+    border: solid 1px #3498db;
+}
+
+div.see-also::before {
+    content: "See also:";
+    font-weight: bold;
+}
+
+div.see-also {
+    background-color: #efe;
+    background-image: url(right.png);
+    border: solid 1px #8f8;
+}
+
+div.see-also ul {
+    margin-left: 10px;
+    margin-bottom: 0px;
+    padding-left: 10px;
+}
+
+div.tip {
+    background-color: #fee;
+    background-image: url(tick.png);
+    border: solid 1px #f88;
 }
 
 /* "subheading" div / span style (some Word docs use a Subheading style) */
@@ -100,10 +138,26 @@ div.code, span.code {
     font-size: 0.98em;
 }
 
-/* "borderless" div style (intended only for tables) */
+/* "borderless" table style */
 
-div.borderless table, div.borderless td {
-    border-style: none ;
+table.borderless, table.borderless th, table.borderless td {
+    padding-left: 0em;
+    border-style: none;
+}
+
+/* "boldfirst" (column) table style */
+
+table.boldfirst td:first-child {
+    font-weight: bold;
+}
+
+/* "codefirst" etc. (column) table style */
+
+table.codefirst td:nth-child(1),
+table.codesecond td:nth-child(2),
+table.codethird td:nth-child(3)
+{
+    font-family: 'Courier New', Courier, 'Liberation Mono', monospace;
 }
 
 /* "left" and "right" styles */
@@ -145,29 +199,67 @@ figcaption:hover > a.headerlink {
     display: inline;
 }
 
-/* experimental definition list support based on ideas from
-   https://www.the-art-of-web.com/css/format-dl */
-
-dl {
-    border: 3px double #ccc;
-    margin-bottom: 1em;
-}
+/* description lists */
 
 dt {
-    float: left;
-    clear: left;
-    width: 15%;
     font-weight: bold;
-    margin-bottom: .8em;
 }
 
-/* XXX need to work out how to handle multi-paragraph dd elements */
-dd {
-    margin: 0 0 .8em 2em;
+/* table-like description lists, modified from a comment at
+   https://clicknathan.com/web-design/styling-html-5-description-lists-
+     formerly-known-as-definition-lists-properly */
+
+/* XXX not the default; enabled by the dltable class
+
+/* XXX should so something similar for Typst? */
+
+.dltable dl {
+    --dl-width: 95%;
+    --dt-width: 15%;
+    --dd-width: calc(var(--dl-width) - var(--dt-width));
 }
 
-dd:last-child {
-    margin-bottom: 0;
+.dltable.narrow dl {
+    --dt-width: 10%;
+}
+
+.dltable.wide dl {
+    --dt-width: 25%;
+}
+
+.dltable dl {
+    display: flex;
+    flex-wrap: wrap;
+    width: var(--dl-width);
+}
+
+.dltable dl > * {
+    padding-top: 0.5em;
+}
+
+.dltable dt {
+    width: var(--dt-width);
+    text-align: left;
+}
+
+.dltable dd {
+    width: var(--dd-width);
+    padding-left: 1em;
+    margin-left: 0px;
+}
+
+.dltable dd + dd {
+    width: var(--dl-width);
+    padding-left: calc(var(--dt-width) + 1em);
+}
+
+.dltable dt + dt {
+    padding-right: var(--dd-width);
+}
+
+.dltable dt + dt + dd {
+    margin-top: -1.625em; /* own height including padding */
+    padding-left: calc(var(--dt-width) + 1em);
 }
 
 /* this makes elements invisible */

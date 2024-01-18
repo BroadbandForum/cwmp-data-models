@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -136,7 +139,7 @@
               var a1_groups = a1.match(regex).groups;
               var b1_groups = b1.match(regex).groups;
               var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'), 
+                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
                   parseInt(a1_groups.version || 0)];
               var b1_tuple =  [
                   b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
@@ -261,7 +264,7 @@
 
   <style>
   .chevron {
-      color: blue;
+      color: var(--link-color);
       cursor: pointer;
   }
 
@@ -299,7 +302,12 @@
   <!-- Global styles (that affect the entire document) -->
 
   <style>
-  :root {
+  /* light mode support */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background-color: white;
+      --foreground-color: black;
+      --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
       --command-color: #66cdaa;
@@ -315,10 +323,33 @@
       --stripe-color-deprecated: #eeeeee;
       --stripe-color-obsoleted: #dddddd;
       --stripe-color-deleted: #cccccc;
+    }
+  }
+
+  /* dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: black;
+      --foreground-color: white;
+      --link-color: lightblue;
+      --parameter-color: black;
+      --object-color: #bbbb44;
+      --command-color: #56bd9a;
+      --event-color: #56bd9a;
+      --argument-container-color: #777777;
+      --argument-object-color: #dfa0ab;
+      --argument-parameter-color: #bfa4a1;
+      --mountable-object-color: #b3e0ff;
+      --mountpoint-object-color: #3da8ef;
+      --stripe-color-deprecated: #555555;
+      --stripe-color-obsoleted: #444444;
+      --stripe-color-deleted: #333333;
+    }
   }
 
   body, table {
-      background-color: white;
+      background-color: var(--background-color);
+      color: var(--foreground-color);
       font-family: helvetica, arial, sans-serif;
       font-size: 9pt;
   }
@@ -335,8 +366,8 @@
       font-size: 10pt;
   }
 
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
+  a:link, a:visited {
+      color: var(--link-color);
   }
 
   sup {
@@ -719,6 +750,37 @@
       hyphenate-character: "";
   }
 
+  /* word wrap/break column 1 (Name) */
+  .data-model-table td:first-child {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 27ch;
+  }
+
+  /* word wrap/break column 2 (Base Type) */
+  .data-model-table td:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 3 (Write) */
+  .data-model-table td:nth-child(3) {
+      min-width: 1ch;
+  }
+
+  /* word wrap/break column 5 (Object Default) */
+  .data-model-table td:nth-child(5) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 6 (Version) */
+  .data-model-table td:nth-child(6) {
+      min-width: 6ch;
+  }
+
   /* center column 1 (Abbreviation) */
   .profile-notation-table th:nth-child(1),
   .profile-notation-table td:nth-child(1) {
@@ -745,7 +807,7 @@
 <col style="width: 25.0%;"></col></colgroup>
 <tbody>
 <tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></img></a></td>
+<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
 <td class="centered" rowspan="1"><p></p>
 
 <h1 id="femto-component-objects" class="unnumbered unlisted">Femto Component Objects</h1>
@@ -1054,14 +1116,14 @@ the <strong>Version</strong> column.</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.GPS.">FAP.­GPS.</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.">FAP.GPS.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains the parameters relating to the GPS scan.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ScanOnBoot">Scan­On­Boot</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ScanOnBoot">ScanOnBoot</span></td>
 <td>boolean</td>
 <td>W</td>
 <td><p>Enables or disables GPS scans during the device start up.</p>
@@ -1070,7 +1132,7 @@ the <strong>Version</strong> column.</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ScanPeriodically">Scan­Periodically</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ScanPeriodically">ScanPeriodically</span></td>
 <td>boolean</td>
 <td>W</td>
 <td><p>Enables or disables periodic GPS scans.</p>
@@ -1079,15 +1141,15 @@ the <strong>Version</strong> column.</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.PeriodicInterval">Periodic­Interval</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.GPS.PeriodicInterval">PeriodicInterval</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>When <em><a href="#D.TR-262:1.FAP.GPS.ScanPeriodically">ScanPeriodically</a></em> is <em>true</em>, this value indicates the interval in <em>seconds</em> which GPS scan is performed.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.PeriodicTime">Periodic­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-262:1.FAP.GPS.PeriodicTime">PeriodicTime</span></td>
+<td>dateTime</td>
 <td>W</td>
 <td>An absolute time reference in UTC to determine when the CPE will initiate the periodic GPS scan. Each GPS scan MUST occur at (or as soon as possible after) this reference time plus or minus an integer multiple of the <em><a href="#D.TR-262:1.FAP.GPS.PeriodicInterval">PeriodicInterval</a></em>.
 <em>PeriodicTime</em> is used only to set the &ldquo;phase&rdquo; of the GPS scan. The actual value of <em>PeriodicTime</em> can be arbitrarily far into the past or future.
@@ -1097,50 +1159,50 @@ If absolute time is not available to the CPE, its periodic GPS scan behavior MUS
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPS">Continuous­GPS</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPS">ContinuousGPS</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Whether or not the device SHOULD maintain a continuous GPS lock (e.g. as a frequency stability source).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ScanTimeout">Scan­Timeout</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.GPS.ScanTimeout">ScanTimeout</span></td>
+<td>unsignedInt</td>
 <td>W</td>
-<td>Specifies the time-out value in <em>seconds</em> since the scan started after which the scan will time out. A timed out scan is to be reported as <em><a href="#D.TR-262:1.FAP.GPS.ScanStatus.Error_TIMEOUT">Error_TIMEOUT</a></em> with <em><a href="#D.TR-262:1.FAP.GPS.ErrorDetails">ErrorDetails</a></em> indicating &ldquo;Timed out&rdquo;</td>
+<td>Specifies the time-out value in <em>seconds</em> since the scan started after which the scan will time out. A timed out scan is to be reported as <a href="#D.TR-262:1.FAP.GPS.ScanStatus.Error_TIMEOUT"><em>Error_TIMEOUT</em></a> with <em><a href="#D.TR-262:1.FAP.GPS.ErrorDetails">ErrorDetails</a></em> indicating &ldquo;Timed out&rdquo;</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ScanStatus">Scan­Status</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ScanStatus">ScanStatus</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>Indicates the current status of this scan. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Indeterminate">Indeterminate</span> (The scan has not been executed and there are no valid scan results available)</li>
-<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.InProgress">InProgress</span></li>
-<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Success">Success</span></li>
-<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Error">Error</span></li>
-<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Error_TIMEOUT">Error_TIMEOUT</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Indeterminate"><em>Indeterminate</em></span> (The scan has not been executed and there are no valid scan results available)</li>
+<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.InProgress"><em>InProgress</em></span></li>
+<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Success"><em>Success</em></span></li>
+<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Error"><em>Error</em></span></li>
+<li><span id="D.TR-262:1.FAP.GPS.ScanStatus.Error_TIMEOUT"><em>Error_TIMEOUT</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ErrorDetails">Error­Details</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.GPS.ErrorDetails">ErrorDetails</span></td>
+<td>string(:256)</td>
 <td>R</td>
-<td>Provides more detail when the <em><a href="#D.TR-262:1.FAP.GPS.ScanStatus">ScanStatus</a></em> is either <em><a href="#D.TR-262:1.FAP.GPS.ScanStatus.Error">Error</a></em> or <em><a href="#D.TR-262:1.FAP.GPS.ScanStatus.Error_TIMEOUT">Error_TIMEOUT</a></em>.</td>
+<td>Provides more detail when the <em><a href="#D.TR-262:1.FAP.GPS.ScanStatus">ScanStatus</a></em> is either <a href="#D.TR-262:1.FAP.GPS.ScanStatus.Error"><em>Error</em></a> or <a href="#D.TR-262:1.FAP.GPS.ScanStatus.Error_TIMEOUT"><em>Error_TIMEOUT</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.LastScanTime">Last­Scan­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-262:1.FAP.GPS.LastScanTime">LastScanTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>The date and time when the last GPS scan completed.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.LastSuccessfulScanTime">Last­Successful­Scan­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-262:1.FAP.GPS.LastSuccessfulScanTime">LastSuccessfulScanTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Specifies the date and time, when the GPS scan last completed successfully.
 This value is retained across reboot and is only reset after another scan completes successfully or <em><a href="#D.TR-262:1.FAP.GPS.GPSReset">GPSReset</a></em> is set to <em>true</em>.
@@ -1148,8 +1210,8 @@ The values for <em><a href="#D.TR-262:1.FAP.GPS.LockedLatitude">LockedLatitude</
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.LockedLatitude">Locked­Latitude</span></td>
-<td>int­(-­90000000:90000000)</td>
+<td><span id="D.TR-262:1.FAP.GPS.LockedLatitude">LockedLatitude</span></td>
+<td>int(-90000000:90000000)</td>
 <td>R</td>
 <td>This parameter specifies the latitude of the device’s position in degrees, multiplied by 1 million. The positive value signifies the direction, north of the equator. The negative value signifies the direction, south of the equator.
 Range is from: 90d00.00’ South (-90,000,000) to 90d00.00’ North (90,000,000).
@@ -1158,8 +1220,8 @@ This value is retained across reboots and is only reset after another scan compl
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.LockedLongitude">Locked­Longitude</span></td>
-<td>int­(-­180000000:180000000)</td>
+<td><span id="D.TR-262:1.FAP.GPS.LockedLongitude">LockedLongitude</span></td>
+<td>int(-180000000:180000000)</td>
 <td>R</td>
 <td>This parameter specifies the longitude of the device’s position in degrees, multiplied by 1 million. The positive value signifies the direction, east of the prime meridian. The negative value signifies the direction, west of the prime meridian.
 Range is from: 180d00.00’ West (-180,000,000) to 180d00.00’ East (180,000,000).
@@ -1168,8 +1230,8 @@ This value is retained across reboots and is only reset after another scan compl
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.NumberOfSatellites">Number­Of­Satellites</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.GPS.NumberOfSatellites">NumberOfSatellites</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of satellites that were locked during the test execution. The greater the number of satellites the better the precision of the results.
 This value is retained across reboots and is only reset after another scan completes successfully or <em><a href="#D.TR-262:1.FAP.GPS.GPSReset">GPSReset</a></em> is set to <em>true</em>. If a scan has never succeeded before, the value 0 is reported.</td>
@@ -1183,7 +1245,7 @@ This value is retained across reboots and is only reset after another scan compl
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.">FAP.­GPS.­Continuous­GPSStatus.</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.">FAP.GPS.ContinuousGPSStatus.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>When <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPS">ContinuousGPS</a></em> is <em>true</em>, the parameters in this object contain the GPS status as it is continuously monitored.
@@ -1191,14 +1253,14 @@ When <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPS">ContinuousGPS</a></em> is <
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.CurrentFix">Current­Fix</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.CurrentFix">CurrentFix</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>The value is <em>true</em> if the location fix is currently valid (i.e. GPS receiver is currently tracking satellite signals), otherwise it is <em>false</em>. After a reboot the value is <em>false</em> until the GPS receivers has a valid current position.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.GotFix">Got­Fix</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.GotFix">GotFix</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>The value is <em>true</em> if <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.CurrentFix">CurrentFix</a></em> has transitioned to <em>true</em> at least once since <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPS">ContinuousGPS</a></em> was enabled, otherwise it is <em>false</em>. After a reboot the value is <em>false</em> until <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.CurrentFix">CurrentFix</a></em> has transitioned to <em>true</em> again.
@@ -1206,7 +1268,7 @@ The GPS coordinates (<em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Latitu
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.TimingGood">Timing­Good</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.TimingGood">TimingGood</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>The value is <em>true</em> if the timing synchronization is good, otherwise it is <em>false</em>. After a reboot the value is <em>false</em> until the timing is synchronized again.</td>
@@ -1214,7 +1276,7 @@ The GPS coordinates (<em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Latitu
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Latitude">Latitude</span></td>
-<td>int­(-­90000000:90000000)</td>
+<td>int(-90000000:90000000)</td>
 <td>R</td>
 <td>This parameter represents the most recent latitude reading for the device’s position in degrees, multiplied by 1 million. The positive value signifies the direction, north of the equator. The negative value signifies the direction, south of the equator.
 Range is from: 90 deg 00.00’ South (-90,000,000) to 90 deg 00.00’ North (90,000,000).
@@ -1225,7 +1287,7 @@ If the parameter has never been set before, the value 0 is reported. The value S
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Longitude">Longitude</span></td>
-<td>int­(-­180000000:180000000)</td>
+<td>int(-180000000:180000000)</td>
 <td>R</td>
 <td>This parameter represents the most recent longitude reading for the device’s position in degrees, multiplied by 1 million. The positive value signifies the direction, east of the prime meridian. The negative value signifies the direction, west of the prime meridian.
 Range is from: 180d00.00’ West (-180,000,000) to 180d00.00’ East (180,000,000).
@@ -1236,7 +1298,7 @@ If the parameter has never been set before, the value 0 is reported. The value S
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Elevation">Elevation</span></td>
-<td>int­(-­5000000:25000000)</td>
+<td>int(-5000000:25000000)</td>
 <td>R</td>
 <td>This parameter represents the most recent elevation reading for the device’s position in <em>millimeters</em>, relative to the WGS84 ellipsoid. The positive value signifies the direction, above sea level. The negative value signifies the direction, below sea level.
 Range is from: 5,000.000 meters below sea level (-5,000,000) to 25,000.000 meters above sea level (25,000,000).
@@ -1245,69 +1307,69 @@ If the parameter has never been set before, the value 0 is reported. The value S
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LastFixTime">Last­Fix­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LastFixTime">LastFixTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>Represents the date and time when the last GPS Fix was acquired.
 The Unknown Time value defined in [<a href="#R.TR-106a4">Section 3.2/TR-106a4</a>] is used when <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.GotFix">GotFix</a></em> is <em>false</em>. This applies too after a reboot of the device until a valid location is determined and <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.GotFix">GotFix</a></em> transsitions to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LastFixDuration">Last­Fix­Duration</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LastFixDuration">LastFixDuration</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Number of <em>seconds</em> of continuous GPS fix time. After a reboot this value is reset to 0.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.FirstFixTimeout">First­Fix­Timeout</span></td>
-<td>int­(-­1:)</td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.FirstFixTimeout">FirstFixTimeout</span></td>
+<td>int(-1:)</td>
 <td>W</td>
 <td>Number of <em>seconds</em> to wait for first GPS fix before declaring a GPS fault.
 A value of -1 means that there is no timeout and no fault logging.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.SatellitesTracked">Satellites­Tracked</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.SatellitesTracked">SatellitesTracked</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of satellites the receiver is tracking.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.SatelliteTrackingInterval">Satellite­Tracking­Interval</span></td>
-<td>unsigned­Int­(60:3600)</td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.SatelliteTrackingInterval">SatelliteTrackingInterval</span></td>
+<td>unsignedInt(60:3600)</td>
 <td>W</td>
 <td>The interval in <em>seconds</em> at which the GPS tracking information gets reported.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.ReceiverStatus">Receiver­Status</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.ReceiverStatus">ReceiverStatus</span></td>
+<td>string(:256)</td>
 <td>R</td>
 <td>The output of the GPS receiver’s status.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType">Location­Type</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType">LocationType</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Indicates whether the <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Latitude">Latitude</a></em>, <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Longitude">Longitude</a></em>, and <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Elevation">Elevation</a></em> values are determined via a GPS Fix (where the value of this parameter would be <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Real">Real</a></em>) or via some other means (where the value of this parameter would be <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Reference">Reference</a></em>). Enumeration of:</p>
+<td><p>Indicates whether the <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Latitude">Latitude</a></em>, <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Longitude">Longitude</a></em>, and <em><a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.Elevation">Elevation</a></em> values are determined via a GPS Fix (where the value of this parameter would be <a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Real"><em>Real</em></a>) or via some other means (where the value of this parameter would be <a href="#D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Reference"><em>Reference</em></a>). Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Real">Real</span></li>
-<li><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Reference">Reference</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Real"><em>Real</em></span></li>
+<li><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LocationType.Reference"><em>Reference</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LockTimeOutDuration">Lock­Time­Out­Duration</span></td>
-<td>unsigned­Int­(120:86400)</td>
+<td><span id="D.TR-262:1.FAP.GPS.ContinuousGPSStatus.LockTimeOutDuration">LockTimeOutDuration</span></td>
+<td>unsignedInt(120:86400)</td>
 <td>W</td>
 <td>The timer duration, in <em>seconds</em>, for which the device waits for GPS to acquire lock.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.">FAP.­GPS.­AGPSServer­Config.</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.">FAP.GPS.AGPSServerConfig.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters for the configuration of the Assisted Global Positioning System (A-GPS) server. See also [<a href="#R.3GPP-TS.25.171">Section 3.2/3GPP-TS.25.171</a>]</td>
@@ -1317,33 +1379,33 @@ A value of -1 means that there is no timeout and no fault logging.</td>
 <td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.Enable">Enable</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>Enables or disables the <em>FAP.GPS.AGPSServerConfig.</em> entry.</td>
+<td>Enables or disables the <em><a href="#D.TR-262:1.FAP.GPS.AGPSServerConfig.">AGPSServerConfig</a></em> entry.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ServerURL">Server­URL</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ServerURL">ServerURL</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>A-GPS server host name or IP address.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ServerPort">Server­Port</span></td>
-<td>unsigned­Int­(:65535)</td>
+<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ServerPort">ServerPort</span></td>
+<td>unsignedInt(:65535)</td>
 <td>W</td>
 <td>The port to use when communicating to the A-GPS Server.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.Username">Username</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Username to be used by the device to authenticate with the A-GPS server. This string is set to an empty string if no authentication is used.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.Password">Password</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td><p>Password to be used by the device to authenticate with the A-GPS server. This string is set to an empty string if no authentication is used.</p>
 
@@ -1351,8 +1413,8 @@ A value of -1 means that there is no timeout and no fault logging.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ReferenceLatitude">Reference­Latitude</span></td>
-<td>int­(-­90000000:90000000)</td>
+<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ReferenceLatitude">ReferenceLatitude</span></td>
+<td>int(-90000000:90000000)</td>
 <td>W</td>
 <td>This parameter specifies the reference latitude for an A-GPS request position in degrees, multiplied by 1 million. The positive value signifies the direction, north of the equator. The negative value signifies the direction, south of the equator.
 Range is from: 90d00.00’ South (-90,000,000) to 90d00.00’ North (90,000,000).
@@ -1360,8 +1422,8 @@ Example: A latitude of 13d19.43’ N would be represented as 13,323,833, derived
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ReferenceLongitude">Reference­Longitude</span></td>
-<td>int­(-­180000000:180000000)</td>
+<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ReferenceLongitude">ReferenceLongitude</span></td>
+<td>int(-180000000:180000000)</td>
 <td>W</td>
 <td>This parameter specifies the reference longitude for an A-GPS request position in degrees, multiplied by 1 million. The positive value signifies the direction, east of the prime meridian. The negative value signifies the direction, west of the prime meridian.
 Range is from: 180d00.00’ West (-180,000,000) to 180d00.00’ East (180,000,000).
@@ -1369,7 +1431,7 @@ Example: A longitude of 13d19.43’ E would be represented as 13,323,833, derive
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ServerInUse">Server­In­Use</span></td>
+<td><span id="D.TR-262:1.FAP.GPS.AGPSServerConfig.ServerInUse">ServerInUse</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>The value is <em>true</em> if the device has successfully contacted and received A-GPS info from the A-GPS server, otherwise the value is <em>false</em>.
@@ -1377,49 +1439,49 @@ After a reboot the value is <em>false</em> until the server could be contacted a
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.Tunnel.">FAP.­Tunnel.</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.">FAP.Tunnel.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters relating to Tunneling.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfileNumberOfEntries">Crypto­Profile­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfileNumberOfEntries">CryptoProfileNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of entries in the <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.">CryptoProfile</a></em> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESANumberOfEntries">IKESANumber­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESANumberOfEntries">IKESANumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of entries in the <em><a href="#D.TR-262:1.FAP.Tunnel.IKESA.">IKESA</a></em> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.ChildSANumberOfEntries">Child­SANumber­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.ChildSANumberOfEntries">ChildSANumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of entries in the <em><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.">ChildSA</a></em> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.MaxVirtualInterfaces">Max­Virtual­Interfaces</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.MaxVirtualInterfaces">MaxVirtualInterfaces</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The maximum number of virtual interfaces.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterfaceNumberOfEntries">Virtual­Interface­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterfaceNumberOfEntries">VirtualInterfaceNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of entries in the <em><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.">VirtualInterface</a></em> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.UseForCWMP">Use­For­CWMP</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.UseForCWMP">UseForCWMP</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>If the SecGW parameters are configured then this parameter determines whether the CWMP traffic will be sent across the IPsec tunnel(s) or outside of the IPsec tunnel(s).
@@ -1428,21 +1490,21 @@ If <em>true</em> then the CWMP traffic will be sent across the IPsec tunnel(s).<
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.MaxChildSAPerIKE">Max­Child­SAPer­IKE</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.MaxChildSAPerIKE">MaxChildSAPerIKE</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Indicates the maximum number of child SAs per IKE session that the device is capable of supporting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.MaxIKESessions">Max­IKESessions</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.MaxIKESessions">MaxIKESessions</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Indicates the maximum number of IKE sessions the device is capable of supporting at any given time.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.">FAP.­Tunnel.­Crypto­Profile.­{i}.</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.">FAP.Tunnel.CryptoProfile.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object contains parameters relating to IKEv2 and IPsec crypto profiles, which are essentially a subset of the typical IPsec SPD. [<a href="#R.RFC4301">RFC4301</a>].
@@ -1461,16 +1523,31 @@ At most one enabled entry in this table can exist with the same values for all o
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.Alias">Alias</span></td>
-<td><span title="Alias">string­(:64)</span></td>
+<td><span title="Alias">string(:64)</span></td>
 <td>W</td>
-<td><p>[<a href="#T.Alias">Alias</a>]</p>
+<td><p>[<a href="#T.Alias">Alias</a>] A non-volatile handle used to reference this instance. Alias provides a
+mechanism for an ACS to label this instance for future reference.</p>
+
+<p>If the CPE supports the Alias-based Addressing feature as defined in
+[<a href="#R.TR-069">Section 3.6.1/TR-069</a>] and described in [<a href="#R.TR-069">Appendix II/TR-069</a>],
+the following mandatory constraints MUST be enforced:</p>
+
+<ul>
+<li>Its value MUST NOT be empty.</li>
+<li>Its value MUST start with a letter.</li>
+<li>If its value is not assigned by the ACS, it MUST start with a &ldquo;cpe-&rdquo;
+prefix.</li>
+<li>The CPE MUST NOT change the parameter value.</li></ul>
+
+<p>At most one entry in this table (regardless of whether or not it is enabled) can exist with a given value for <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.Alias">Alias</a></em>. On creation of a new table entry, the Agent MUST choose an initial value for <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.Alias">Alias</a></em> such that the new entry does not conflict with any existing entries.
+At most one enabled entry in this table can exist with the same values for all of <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.AuthMethod">AuthMethod</a></em>, <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEEncrypt">IKEEncrypt</a></em>, <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEPRF">IKEPRF</a></em>, <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEIntegrity">IKEIntegrity</a></em>, <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEDH">IKEDH</a></em>, <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt">ESPEncrypt</a></em> and <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPIntegrity">ESPIntegrity</a></em>.</p>
 
 <p>The Agent MUST choose an initial value that doesn’t conflict with any existing entries.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.AuthMethod">Auth­Method</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.AuthMethod">AuthMethod</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Specifies the Security mechanism and set of credentials used by the device to authenticate itself (either an instance of the <em>.Security.Certificate.</em> object defined in [<a href="#R.TR-157a5">TR-157a5</a>] or an instance of the <em>.Services.FAPService.{i}.Transport.Security.Secret.</em> object defined in [<a href="#R.TR-196i2">TR-196i2</a>]).
 The value MUST be the Path Name of a table row. If the value is an an empty string, the device chooses the authentication method based on local policy.
@@ -1478,88 +1555,88 @@ In order to configure the device for both device and hosting-party authenticatio
 <td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.MaxChildSA">Max­Child­SA</span></td>
-<td>unsigned­Int­(2,­4,­6,­8,­10)</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.MaxChildSA">MaxChildSA</span></td>
+<td>unsignedInt(2,4,6,8,10)</td>
 <td>W</td>
 <td>Controls the maximum number of child SAs that can be negotiated by a single IKE session.</td>
 <td>2</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEEncrypt">IKEEncrypt</span></td>
-<td>string­[]</td>
+<td>string[]</td>
 <td>W</td>
 <td><p>Comma-separated list of strings. IKEv2 encryption algorithm. [<a href="#R.RFC4307">RFC4307</a>]
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEEncrypt.3DES-CBC">3DES-CBC</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEEncrypt.AES-CBC">AES-CBC</span></li></ul></td>
-<td>AES-­CBC</td>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEEncrypt.3DES-CBC"><em>3DES-CBC</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEEncrypt.AES-CBC"><em>AES-CBC</em></span></li></ul></td>
+<td>AES-CBC</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEPRF">IKEPRF</span></td>
-<td>string­[]</td>
+<td>string[]</td>
 <td>W</td>
 <td><p>Comma-separated list of strings. IKEv2 pseudo-random function. [<a href="#R.RFC4307">RFC4307</a>]
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEPRF.HMAC-SHA1">HMAC-SHA1</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEPRF.AES-XCBC-PRF-128">AES-XCBC-PRF-128</span></li></ul></td>
-<td>HMAC-­SHA1</td>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEPRF.HMAC-SHA1"><em>HMAC-SHA1</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEPRF.AES-XCBC-PRF-128"><em>AES-XCBC-PRF-128</em></span></li></ul></td>
+<td>HMAC-SHA1</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEIntegrity">IKEIntegrity</span></td>
-<td>string­[]</td>
+<td>string[]</td>
 <td>W</td>
 <td><p>Comma-separated list of strings. IKEv2 integrity function. [<a href="#R.RFC4307">RFC4307</a>]
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEIntegrity.HMAC-SHA1-96">HMAC-SHA1-96</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEIntegrity.AES-XCBC-MAC-96">AES-XCBC-MAC-96</span></li></ul></td>
-<td>HMAC-­SHA1-­96</td>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEIntegrity.HMAC-SHA1-96"><em>HMAC-SHA1-96</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEIntegrity.AES-XCBC-MAC-96"><em>AES-XCBC-MAC-96</em></span></li></ul></td>
+<td>HMAC-SHA1-96</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEDH">IKEDH</span></td>
-<td>string­[]</td>
+<td>string[]</td>
 <td>W</td>
 <td><p>Comma-separated list of strings. IKEv2 pseudo-random function. [<a href="#R.RFC4307">RFC4307</a>]
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEDH.1024">1024</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEDH.2048">2048</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEDH.1024"><em>1024</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEDH.2048"><em>2048</em></span></li></ul></td>
 <td>2048</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt">ESPEncrypt</span></td>
-<td>string­[]</td>
+<td>string[]</td>
 <td>W</td>
 <td><p>Comma-separated list of strings. IPsec encryption algorithm. [<a href="#R.RFC4835">Section 3.1.1/RFC4835</a>]
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt.3DES-CBC">3DES-CBC</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt.AES-CBC">AES-CBC</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt.Null">Null</span></li></ul></td>
-<td>AES-­CBC</td>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt.3DES-CBC"><em>3DES-CBC</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt.AES-CBC"><em>AES-CBC</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPEncrypt.Null"><em>Null</em></span></li></ul></td>
+<td>AES-CBC</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPIntegrity">ESPIntegrity</span></td>
-<td>string­[]</td>
+<td>string[]</td>
 <td>W</td>
 <td><p>Comma-separated list of strings. IPsec integrity function. [<a href="#R.RFC4835">Section 3.1.1/RFC4835</a>]
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPIntegrity.HMAC-SHA1-96">HMAC-SHA1-96</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPIntegrity.AES-XCBC-MAC-96">AES-XCBC-MAC-96</span></li></ul></td>
-<td>HMAC-­SHA1-­96</td>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPIntegrity.HMAC-SHA1-96"><em>HMAC-SHA1-96</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.ESPIntegrity.AES-XCBC-MAC-96"><em>AES-XCBC-MAC-96</em></span></li></ul></td>
+<td>HMAC-SHA1-96</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IPsecWindowSize">IPsec­Window­Size</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IPsecWindowSize">IPsecWindowSize</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>The size of the Anti-Replay Window.
 If 0 Sequence Number Verification is disabled.
@@ -1567,24 +1644,24 @@ For UMTS devices, see [<a href="#R.3GPP-TS.32.582">3GPP-TS.32.582</a>] and [<a h
 <td>0</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKERekeyLifetime">IKERekey­Lifetime</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IKERekeyLifetime">IKERekeyLifetime</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>IKEv2 SA rekey timeout in <em>seconds</em>.
 For UMTS devices, see [<a href="#R.3GPP-TS.32.582">3GPP-TS.32.582</a>] and [<a href="#R.3GPP-TS.32.584">3GPP-TS.32.584</a>]. For LTE devices, see [<a href="#R.3GPP-TS.32.592">3GPP-TS.32.592</a>]. For CDMA2000 devices, see [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>].</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IPsecRekeyLifetimeByte">IPsec­Rekey­Lifetime­Byte</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IPsecRekeyLifetimeByte">IPsecRekeyLifetimeByte</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>IPsec SA rekey timeout in <em>Kilobytes</em>.
 For UMTS devices, see [<a href="#R.3GPP-TS.32.582">3GPP-TS.32.582</a>] and [<a href="#R.3GPP-TS.32.584">3GPP-TS.32.584</a>]. For LTE devices, see [<a href="#R.3GPP-TS.32.592">3GPP-TS.32.592</a>]. For CDMA2000 devices, see [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>].</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IPsecRekeyLifetimeTime">IPsec­Rekey­Lifetime­Time</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.IPsecRekeyLifetimeTime">IPsecRekeyLifetimeTime</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>IPsec SA rekey timeout in <em>seconds</em>.
 For UMTS devices, see [<a href="#R.3GPP-TS.32.582">3GPP-TS.32.582</a>] and [<a href="#R.3GPP-TS.32.584">3GPP-TS.32.584</a>]. For LTE devices, see [<a href="#R.3GPP-TS.32.592">3GPP-TS.32.592</a>]. For CDMA2000 devices, see [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>].</td>
@@ -1592,42 +1669,42 @@ For UMTS devices, see [<a href="#R.3GPP-TS.32.582">3GPP-TS.32.582</a>] and [<a h
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.DPDTimer">DPDTimer</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>DPD timeout in <em>seconds</em>.
 For UMTS devices, see [<a href="#R.3GPP-TS.32.582">3GPP-TS.32.582</a>] and [<a href="#R.3GPP-TS.32.584">3GPP-TS.32.584</a>]. For LTE devices, see [<a href="#R.3GPP-TS.32.592">3GPP-TS.32.592</a>]. For CDMA2000 devices, see [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>].</td>
 <td>300</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.NATTKeepaliveTimer">NATTKeepalive­Timer</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.NATTKeepaliveTimer">NATTKeepaliveTimer</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>NAT-T keepalive timeout in <em>seconds</em>.
 For UMTS devices, see [<a href="#R.3GPP-TS.32.582">3GPP-TS.32.582</a>] and [<a href="#R.3GPP-TS.32.584">3GPP-TS.32.584</a>]. For LTE devices, see [<a href="#R.3GPP-TS.32.592">3GPP-TS.32.592</a>]. For CDMA2000 devices, see [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>].</td>
 <td>180</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecMaxFragSize">Sec­Max­Frag­Size</span></td>
-<td>unsigned­Int­(256:1400)</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecMaxFragSize">SecMaxFragSize</span></td>
+<td>unsignedInt(256:1400)</td>
 <td>W</td>
 <td>Maximum fragment size, in <em>bytes</em>, from device before Encryption.
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>].</td>
 <td>1200</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecDFBit">Sec­DFBit</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecDFBit">SecDFBit</span></td>
 <td>string</td>
 <td>W</td>
 <td><p>Indicates if the &lsquo;Do Not Fragment&rsquo; bit needs to be turned on/off.
 For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecDFBit.On">On</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecDFBit.Off">Off</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecDFBit.On"><em>On</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.CryptoProfile.SecDFBit.Off"><em>Off</em></span></li></ul></td>
 <td>Off</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.">FAP.­Tunnel.­IKESA.­{i}.</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.">FAP.Tunnel.IKESA.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
 <td><p>IKE IPsec Security Association Table. This Table is a member of the IPsec Security Association Database (SAD). [<a href="#R.RFC4301">RFC4301</a>].</p>
@@ -1642,36 +1719,36 @@ For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. E
 <td><p>The status of this IKE SA entry. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Disabled">Disabled</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Active">Active</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Completed">Completed</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Progressing">Progressing</span></li>
-<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Error">Error</span> (This value MAY be used by the CPE to indicate a locally defined error condition, OPTIONAL)</li></ul></td>
+<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Active"><em>Active</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Completed"><em>Completed</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Progressing"><em>Progressing</em></span></li>
+<li><span id="D.TR-262:1.FAP.Tunnel.IKESA.Status.Error"><em>Error</em></span> (This value MAY be used by the CPE to indicate a locally defined error condition, OPTIONAL)</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.PeerAddress">Peer­Address</span></td>
-<td><span title="IPAddress">string­(:45)</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.PeerAddress">PeerAddress</span></td>
+<td><span title="IPAddress">string(:45)</span></td>
 <td>R</td>
 <td>[<a href="#T.IPAddress">IPAddress</a>] The IP address of the peer SecGW.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.CreationTime">Creation­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.CreationTime">CreationTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>The time that the current IKE SA was set up.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.IKESA.IPAddress">IPAddress</span></td>
-<td><span title="IPAddress">string­(:45)</span></td>
+<td><span title="IPAddress">string(:45)</span></td>
 <td>R</td>
 <td>[<a href="#T.IPAddress">IPAddress</a>] The current IP address assigned to this interface by IKEv2.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.SubnetMask">Subnet­Mask</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.SubnetMask">SubnetMask</span></td>
 <td>string</td>
 <td>R</td>
 <td>The current subnet mask assigned to this interface by IKEv2.</td>
@@ -1679,42 +1756,42 @@ For CDMA2000 devices, see also [<a href="#R.3GPP2-S.S0132">3GPP2-S.S0132</a>]. E
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.IKESA.DNSServers">DNSServers</span></td>
-<td><span title="IPAddress­(:256)[]">string­(:45)(:256)[]</span></td>
+<td><span title="IPAddress[](:256)">string(:45)[](:256)</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (maximum number of characters per item 256) of IP Addresses. Each item is an IP Address of a DNS server for this interface assigned to this interface by IKEv2.</td>
+<td>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (maximum number of characters 256) of IP Addresses. Each item is an IP Address of a DNS server for this interface assigned to this interface by IKEv2.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.IKESA.DHCPServers">DHCPServers</span></td>
-<td><span title="IPAddress­(:256)[]">string­(:45)(:256)[]</span></td>
+<td><span title="IPAddress[](:256)">string(:45)[](:256)</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (maximum number of characters per item 256) of IP Addresses. Each item is an IP address of a DHCP server for this interface.
+<td>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (maximum number of characters 256) of IP Addresses. Each item is an IP address of a DHCP server for this interface.
 A non empty list instructs the CPE to send any internal DHCP request to the address contained within this parameter.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.IntegrityErrors">Integrity­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.IntegrityErrors">IntegrityErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of inbound packets discarded by the IKE SA due to Integrity checking errors.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.OtherErrors">Other­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.OtherErrors">OtherErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of inbound packets discarded by the IKE SA due to other errors, such as anti-replay errors.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.AuthErrors">Auth­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.IKESA.AuthErrors">AuthErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of inbound packets discarded by the IKE SA due to authentication errors.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.">FAP.­Tunnel.­Child­SA.­{i}.</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.">FAP.Tunnel.ChildSA.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
 <td><p>Child IPsec Security Association Table. This Table is a member of the IPsec Security Association Database (SAD). [<a href="#R.RFC4301">RFC4301</a>].</p>
@@ -1723,21 +1800,21 @@ A non empty list instructs the CPE to send any internal DHCP request to the addr
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.ParentID">Parent­ID</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.ParentID">ParentID</span></td>
+<td>string(:256)</td>
 <td>R</td>
 <td>The value MUST be the Path Name of a row in the <em><a href="#D.TR-262:1.FAP.Tunnel.IKESA.">IKESA.</a></em> table. If the referenced object is deleted, the parameter value MUST be set to an empty string.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.SPI">SPI</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>SPI value of the Child SA.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.DirectionOutbound">Direction­Outbound</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.DirectionOutbound">DirectionOutbound</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Traffic Direction.
@@ -1746,35 +1823,35 @@ If <em>false</em> this Child SA refers to inbound traffic.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.CreationTime">Creation­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.CreationTime">CreationTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>The time that the current Child SA was set up.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.Traffic">Traffic</span></td>
-<td>unsigned­Int</td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The measured traffic in <em>bytes</em> transferred by the Child SA.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.IntegrityErrors">Integrity­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.IntegrityErrors">IntegrityErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of inbound <em>packets</em> discarded by the Child SA due to integrity checking errors.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.ReplayErrors">Replay­Errors</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.ChildSA.ReplayErrors">ReplayErrors</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of inbound <em>packets</em> discarded by the Child SA due to anti-replay errors.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterface.">FAP.­Tunnel.­Virtual­Interface.­{i}.</span></td>
+<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterface.">FAP.Tunnel.VirtualInterface.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>Virtual Interfaces used for associating the tunnel (ephemeral) childSA pairs with QoS Classification and Queue tables as defined in [<a href="#R.TR-098a2">TR-098a2</a>] (InternetGatewayDevice.QueueManagement.Classification.{i}. and InternetGatewayDevice.QueueManagement.Queue.{i}.) or [<a href="#R.TR-181i2">TR-181i2</a>] (Device.QoS.Classification.{i}. and Device.QoS.Queue.{i}.).</p>
@@ -1792,46 +1869,61 @@ At most one enabled entry in this table can exist with the same values for both 
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterface.Alias">Alias</span></td>
-<td><span title="Alias">string­(:64)</span></td>
+<td><span title="Alias">string(:64)</span></td>
 <td>W</td>
-<td><p>[<a href="#T.Alias">Alias</a>]</p>
+<td><p>[<a href="#T.Alias">Alias</a>] A non-volatile handle used to reference this instance. Alias provides a
+mechanism for an ACS to label this instance for future reference.</p>
+
+<p>If the CPE supports the Alias-based Addressing feature as defined in
+[<a href="#R.TR-069">Section 3.6.1/TR-069</a>] and described in [<a href="#R.TR-069">Appendix II/TR-069</a>],
+the following mandatory constraints MUST be enforced:</p>
+
+<ul>
+<li>Its value MUST NOT be empty.</li>
+<li>Its value MUST start with a letter.</li>
+<li>If its value is not assigned by the ACS, it MUST start with a &ldquo;cpe-&rdquo;
+prefix.</li>
+<li>The CPE MUST NOT change the parameter value.</li></ul>
+
+<p>At most one entry in this table (regardless of whether or not it is enabled) can exist with a given value for <em><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.Alias">Alias</a></em>. On creation of a new table entry, the Agent MUST choose an initial value for <em><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.Alias">Alias</a></em> such that the new entry does not conflict with any existing entries.
+At most one enabled entry in this table can exist with the same values for both <em><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.CryptoProfile">CryptoProfile</a></em> and <em><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.DSCPMarkPolicy">DSCPMarkPolicy</a></em>.</p>
 
 <p>The Agent MUST choose an initial value that doesn’t conflict with any existing entries.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterface.CryptoProfile">Crypto­Profile</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterface.CryptoProfile">CryptoProfile</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The value MUST be the Path Name of a row in the <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.">CryptoProfile.</a></em> table. If the referenced object is deleted, the parameter value MUST be set to an empty string. If multiple instances of VirtualInterface point to the same CryptoProfile instance, the associated <em><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.MaxChildSA">CryptoProfile.{i}.MaxChildSA</a></em> determines whether a new IKE session will be created (dynamically) to negotiate the child SA(s) for each of the virtual interfaces; otherwise, they are negotiated through the same IKE session.</td>
 <td></td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterface.DSCPMarkPolicy">DSCPMark­Policy</span></td>
-<td>int­(-­2:)</td>
+<td><span id="D.TR-262:1.FAP.Tunnel.VirtualInterface.DSCPMarkPolicy">DSCPMarkPolicy</span></td>
+<td>int(-2:)</td>
 <td>W</td>
 <td>DSCP to mark the outer IP header for traffic that is associated with this virtual interface.
 A value of -1 indicates copy from the incoming packet.
 A value of -2 indicates automatic marking of DSCP as defined for the UMTS QoS class [<a href="#R.3GPP-TS.23.107">3GPP-TS.23.107</a>] or CDMA2000 Subscriber QoS profile [<a href="#R.3GPP2-X.S0011">3GPP2-X.S0011</a>].
 De-tunneled packets are never re-marked.</td>
-<td>-­1</td>
+<td>-1</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.PerfMgmt.">FAP.­Perf­Mgmt.</span></td>
+<td><span id="D.TR-262:1.FAP.PerfMgmt.">FAP.PerfMgmt.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters relating to Performance Management in a Femto-related environment.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.PerfMgmt.ConfigNumberOfEntries">Config­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.PerfMgmt.ConfigNumberOfEntries">ConfigNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The number of entries in the <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.">Config</a></em> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.PerfMgmt.Config.">FAP.­Perf­Mgmt.­Config.­{i}.</span></td>
+<td><span id="D.TR-262:1.FAP.PerfMgmt.Config.">FAP.PerfMgmt.Config.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td><p>This object contains parameters relating to File Management configuration for uploading of Performance Files to a designated File Server. Each table entry can be referenced by zero or more radio-specific objects contained in the FAPService instances. The periodic upload will upload data for all of the radio-specific objects that reference it.</p>
@@ -1849,16 +1941,31 @@ At most one enabled entry in this table can exist with the same values for all o
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.PerfMgmt.Config.Alias">Alias</span></td>
-<td><span title="Alias">string­(:64)</span></td>
+<td><span title="Alias">string(:64)</span></td>
 <td>W</td>
-<td><p>[<a href="#T.Alias">Alias</a>]</p>
+<td><p>[<a href="#T.Alias">Alias</a>] A non-volatile handle used to reference this instance. Alias provides a
+mechanism for an ACS to label this instance for future reference.</p>
+
+<p>If the CPE supports the Alias-based Addressing feature as defined in
+[<a href="#R.TR-069">Section 3.6.1/TR-069</a>] and described in [<a href="#R.TR-069">Appendix II/TR-069</a>],
+the following mandatory constraints MUST be enforced:</p>
+
+<ul>
+<li>Its value MUST NOT be empty.</li>
+<li>Its value MUST start with a letter.</li>
+<li>If its value is not assigned by the ACS, it MUST start with a &ldquo;cpe-&rdquo;
+prefix.</li>
+<li>The CPE MUST NOT change the parameter value.</li></ul>
+
+<p>At most one entry in this table (regardless of whether or not it is enabled) can exist with a given value for <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.Alias">Alias</a></em>. On creation of a new table entry, the Agent MUST choose an initial value for <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.Alias">Alias</a></em> such that the new entry does not conflict with any existing entries.
+At most one enabled entry in this table can exist with the same values for all of <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.URL">URL</a></em>, <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadInterval">PeriodicUploadInterval</a></em> and <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadTime">PeriodicUploadTime</a></em>.</p>
 
 <p>The Agent MUST choose an initial value that doesn’t conflict with any existing entries.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.PerfMgmt.Config.URL">URL</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>URL specifying the destination file location. HTTP and HTTPS transports MUST be supported. Other transports MAY be supported.
 This argument specifies only the destination file location, and does not indicate in any way the name or location of the local file to be uploaded.</td>
@@ -1866,14 +1973,14 @@ This argument specifies only the destination file location, and does not indicat
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.PerfMgmt.Config.Username">Username</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Username to be used by the device to authenticate with the file server. This string is set to an empty string if no authentication is used.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.PerfMgmt.Config.Password">Password</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td><p>Password to be used by the device to authenticate with the file server. This string is set to an empty string if no authentication is used.</p>
 
@@ -1881,15 +1988,15 @@ This argument specifies only the destination file location, and does not indicat
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadInterval">Periodic­Upload­Interval</span></td>
-<td>unsigned­Int­(1:)</td>
+<td><span id="D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadInterval">PeriodicUploadInterval</span></td>
+<td>unsignedInt(1:)</td>
 <td>W</td>
 <td>The duration in <em>seconds</em> of the interval for which the device MUST create a Performance File and attempt to upload the file to <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.URL">URL</a></em> if <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.Enable">Enable</a></em> is <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadTime">Periodic­Upload­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadTime">PeriodicUploadTime</span></td>
+<td>dateTime</td>
 <td>W</td>
 <td>An absolute time reference in UTC to determine when the device will initiate the periodic file upload. Each file upload MUST occur at this reference time plus or minus an integer multiple of the <em><a href="#D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadInterval">PeriodicUploadInterval</a></em>.
 <em>PeriodicUploadTime</em> is used only to set the &ldquo;phase&rdquo; of the periodic uploads. The actual value of <em>PeriodicUploadTime</em> can be arbitrarily far into the past or future.
@@ -1899,7 +2006,7 @@ If absolute time is not available to the device, its periodic file upload behavi
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.">FAP.­Application­Platform.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.">FAP.ApplicationPlatform.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object defines the data model for the following Femtozone APIs.
@@ -1915,7 +2022,7 @@ Femto Awareness, SMS, MMS, and Terminal Location APIs are defined in the Release
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.ApplicationPlatform.Version">Version</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>R</td>
 <td>Version of Femto Application Platform running on this device</td>
 <td>-</td>
@@ -1934,42 +2041,42 @@ Femto Awareness, SMS, MMS, and Terminal Location APIs are defined in the Release
 <td><p>Current state of the Femto Application Platform. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Disabled">Disabled</span> (The Femto Application Platform is not available)</li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Enabled">Enabled</span> (The Femto Application Platform is available)</li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Reset">Reset</span> (The FemtoApplicationPlatform is in the process of being reset and will transition to the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Status.Disabled">Disabled</a></em> state when the reset operation is completed)</li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Initializing">Initializing</span> (The FemtoApplicationPlatform is being initialized and will transition to the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Status.Enabled">Enabled</a></em> state once the initialization is completed)</li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Disabled"><em>Disabled</em></span> (The Femto Application Platform is not available)</li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Enabled"><em>Enabled</em></span> (The Femto Application Platform is available)</li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Reset"><em>Reset</em></span> (The FemtoApplicationPlatform is in the process of being reset and will transition to the <a href="#D.TR-262:1.FAP.ApplicationPlatform.Status.Disabled"><em>Disabled</em></a> state when the reset operation is completed)</li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Status.Initializing"><em>Initializing</em></span> (The FemtoApplicationPlatform is being initialized and will transition to the <a href="#D.TR-262:1.FAP.ApplicationPlatform.Status.Enabled"><em>Enabled</em></a> state once the initialization is completed)</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.MaxNumberOfApplications">Max­Number­Of­Applications</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.MaxNumberOfApplications">MaxNumberOfApplications</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Determines how many Femtozone Applications can be supported by the Femto Application Platform simultaneously.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.CurrentNumberofApplications">Current­Numberof­Applications</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.CurrentNumberofApplications">CurrentNumberofApplications</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies how many Femtozone Applications are currently communicating with the Femto Application Platform.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.">FAP.­Application­Platform.­Capabilities.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.">FAP.ApplicationPlatform.Capabilities.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the capabilities of the Femtozone Application Platform and the Femtozone APIs.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.PresenceApplicationSupport">Presence­Application­Support</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.PresenceApplicationSupport">PresenceApplicationSupport</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Specifies whether the Femto Application Platform supports Presence-Based Femtozone Applications</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.FemtoAwarenessAPISupport">Femto­Awareness­APISupport</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.FemtoAwarenessAPISupport">FemtoAwarenessAPISupport</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Specifies whether the Femto Awareness API is supported on this device.</td>
@@ -1983,14 +2090,14 @@ Femto Awareness, SMS, MMS, and Terminal Location APIs are defined in the Release
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SubscribeToNotificationsOfSMSSentToApplicationSupport">Subscribe­To­Notifications­Of­SMSSent­To­Application­Support</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SubscribeToNotificationsOfSMSSentToApplicationSupport">SubscribeToNotificationsOfSMSSentToApplicationSupport</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Specifies whether the SubscribeToNotificationsOfSMSSentToApplication functionality is supported by the FAP SMS API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.QuerySMSDeliveryStatusSupport">Query­SMSDelivery­Status­Support</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.QuerySMSDeliveryStatusSupport">QuerySMSDeliveryStatusSupport</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Specifies whether the QuerySMSDeliveryStatus functionality is supported by the FAP SMS API.</td>
@@ -2004,94 +2111,94 @@ Femto Awareness, SMS, MMS, and Terminal Location APIs are defined in the Release
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.QueryMMSDeliveryStatusSupport">Query­MMSDelivery­Status­Support</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.QueryMMSDeliveryStatusSupport">QueryMMSDeliveryStatusSupport</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Specifies whether the QueryMMSDeliveryStatus functionality is supported by the FAP MMS API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SubscribeToNotificationsOfMMSSentToApplicationSupport">Subscribe­To­Notifications­Of­MMSSent­To­Application­Support</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SubscribeToNotificationsOfMMSSentToApplicationSupport">SubscribeToNotificationsOfMMSSentToApplicationSupport</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Specifies whether the SubscribeToNotificationsOfMMSSentToApplication functionality is supported by the FAP MMS API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.TerminalLocationAPISupport">Terminal­Location­APISupport</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.TerminalLocationAPISupport">TerminalLocationAPISupport</span></td>
 <td>boolean</td>
 <td>R</td>
 <td>Specifies whether the Terminal Location API is supported on this device.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported">Authentication­Methods­Supported</span></td>
-<td>string­[]</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported">AuthenticationMethodsSupported</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Specifies the supported methods that 3rd Party Applications can use to authenticate with the Femto Application Platform at initialization. Comma separated list of strings. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported.Basic">Basic</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported.Digest">Digest</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported.DigitalSignature">DigitalSignature</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported.Basic"><em>Basic</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported.Digest"><em>Digest</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported.DigitalSignature"><em>DigitalSignature</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported">Access­Levels­Supported</span></td>
-<td>string­[]</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported">AccessLevelsSupported</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Specifies the supported access levels that 3rd Party Applications can request when authenticating with the Femto Application Platform at initialization. This access level is with respect to resources within the Femto Application Platform only (not to be confused with Access Mode parameter in .FAPService.{i}.AccessMgmt). Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Guest">Guest</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Standard">Standard</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Restricted">Restricted</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Administrator">Administrator</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Debug">Debug</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Guest"><em>Guest</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Standard"><em>Standard</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Restricted"><em>Restricted</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Administrator"><em>Administrator</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AccessLevelsSupported.Debug"><em>Debug</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType">Send­SMSTarget­Address­Type</span></td>
-<td>string­[]</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType">SendSMSTargetAddressType</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Specifies the supported types of addresses SMSs can be sent to. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType.TelUri">TelUri</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType.AnonymousReference">AnonymousReference</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType.All">All</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType.TelUri"><em>TelUri</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType.AnonymousReference"><em>AnonymousReference</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendSMSTargetAddressType.All"><em>All</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType">Send­MMSTarget­Address­Type</span></td>
-<td>string­[]</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType">SendMMSTargetAddressType</span></td>
+<td>string[]</td>
 <td>R</td>
 <td><p>Comma-separated list of strings. Specifies the supported types of addresses MMSs can be sent to. Each list item is an enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType.TelUri">TelUri</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType.AnonymousReference">AnonymousReference</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType.All">All</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType.TelUri"><em>TelUri</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType.AnonymousReference"><em>AnonymousReference</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Capabilities.SendMMSTargetAddressType.All"><em>All</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.">FAP.­Application­Platform.­Control.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.">FAP.ApplicationPlatform.Control.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the operation of the Femtozone APIs.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.AuthenticationMethod">Authentication­Method</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.AuthenticationMethod">AuthenticationMethod</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Specifies how 3rd Party Applications have to authenticate against Femto APIs in order to use it. The value MUST be a member of the list reported by the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Capabilities.AuthenticationMethodsSupported">Capabilities.AuthenticationMethodsSupported</a></em> parameter.
 <em><strong>Note:</strong></em> The credentials are not part of the data model and have to be supplied externally.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TunnelInst">Tunnel­Inst</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TunnelInst">TunnelInst</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>This is the reference to the IPsec tunnel instance to be used by the Application Platform traffic.
 If InternetGatewayDevice:1 [<a href="#R.TR-098">TR-098</a>] or Device:1 [<a href="#R.TR-181i1">TR-181i1</a>]) is used as root data model the <em>TunnelInst</em> MUST point to a row in the <em>.FAP.Tunnel.IKESA.{i}.</em> table.
@@ -2100,7 +2207,7 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.">FAP.­Application­Platform.­Control.­Femto­Awareness.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.">FAP.ApplicationPlatform.Control.FemtoAwareness.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the Femto Awareness API.</td>
@@ -2114,7 +2221,7 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.QueueEnable">Queue­Enable</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.QueueEnable">QueueEnable</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable Request queueing for the API</td>
@@ -2127,47 +2234,47 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td><p>Determines how FAP handles simultaneous requests from different Applications to Femto Awareness API. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.Queueing.FiFo">FiFo</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.Queueing.Priority">Priority</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.Queueing.FiFo"><em>FiFo</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.Queueing.Priority"><em>Priority</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.MaxAPIUsersNumber">Max­APIUsers­Number</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.MaxAPIUsersNumber">MaxAPIUsersNumber</span></td>
+<td>unsignedInt(0:255)</td>
 <td>W</td>
 <td>Determines the Max Number of different Applications that can send Requests to Femto Awareness API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.FemtozoneID">Femtozone­ID</span></td>
-<td>string­(:256)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.FemtozoneID">FemtozoneID</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Specifies Identifier of the Femtozone.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.NotificationsUserIdentifierMSISDN">Notifications­User­Identifier­MSISDN</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.NotificationsUserIdentifierMSISDN">NotificationsUserIdentifierMSISDN</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Specifies whether the Mobile Station International Subscriber Directory Number (MSISDN) has to be used as UserIdentifier in Femto Awareness Notifications. A value of <em>true</em> means that the MSISDN is send as user identifier, a value of <em>false</em> means that an anonymous reference is used.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.SubscribeToNotificationsResponseCallbackData">Subscribe­To­Notifications­Response­Callback­Data</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.SubscribeToNotificationsResponseCallbackData">SubscribeToNotificationsResponseCallbackData</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Specifies whether the OPTIONAL Argument &ldquo;Callback Data&rdquo; has to be used in Responses to Requests to &ldquo;Subscribe To Femto Awareness Notifications&rdquo;.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.QueryFemtocellResponseTimezone">Query­Femtocell­Response­Timezone</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.QueryFemtocellResponseTimezone">QueryFemtocellResponseTimezone</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Specifies whether the OPTIONAL Argument &ldquo;Timezone&rdquo; has to be used in Responses to Requests to &ldquo;Query Femtocell Status&rdquo;.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.">FAP.­Application­Platform.­Control.­SMS.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.">FAP.ApplicationPlatform.Control.SMS.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the SMS API.</td>
@@ -2181,7 +2288,7 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.QueueEnable">Queue­Enable</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.QueueEnable">QueueEnable</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable Request queueing for the API</td>
@@ -2194,40 +2301,40 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td><p>Determines how FAP handles simultaneous requests from different Applications to SMS API. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.Queueing.FiFo">FiFo</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.Queueing.Priority">Priority</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.Queueing.FiFo"><em>FiFo</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.Queueing.Priority"><em>Priority</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MaxAPIUsersNumber">Max­APIUsers­Number</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MaxAPIUsersNumber">MaxAPIUsersNumber</span></td>
+<td>unsignedInt(0:255)</td>
 <td>W</td>
 <td>Determines the Max Number of different Applications that can send Requests to SMS API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MinSendSMSTimeInterval">Min­Send­SMSTime­Interval</span></td>
-<td>unsigned­Int­(0:3599)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MinSendSMSTimeInterval">MinSendSMSTimeInterval</span></td>
+<td>unsignedInt(0:3599)</td>
 <td>W</td>
 <td>Determines the Minimum Time Interval in <em>seconds</em> between two consecutive Send SMS Requests by the same Application.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.EnableQuerySMSDeliveryStatus">Enable­Query­SMSDelivery­Status</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.EnableQuerySMSDeliveryStatus">EnableQuerySMSDeliveryStatus</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable &ldquo;QuerySMSDeliveryStatus&rdquo; Operation on SMS API. When disabled, QuerySMSDeliveryStatus Requests to SMS API are ignored.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.EnableSubscribeToNotificationsOfMessageSentToApplication">Enable­Subscribe­To­Notifications­Of­Message­Sent­To­Application</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.EnableSubscribeToNotificationsOfMessageSentToApplication">EnableSubscribeToNotificationsOfMessageSentToApplication</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable &ldquo;SubscribeToNotificationsOfMessageSentToApplication&rdquo; Operation on SMS API. When disabled, SubscribeTo NotificationsOfMessageSentToApplication Requests to SMS API are ignored.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.">FAP.­Application­Platform.­Control.­MMS.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.">FAP.ApplicationPlatform.Control.MMS.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the MMS API.</td>
@@ -2241,7 +2348,7 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.QueueEnable">Queue­Enable</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.QueueEnable">QueueEnable</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable Request queueing for the API</td>
@@ -2254,40 +2361,40 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td><p>Determines how FAP handles simultaneous requests from different Applications to MMS API. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.Queueing.FiFo">FiFo</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.Queueing.Priority">Priority</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.Queueing.FiFo"><em>FiFo</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.Queueing.Priority"><em>Priority</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MaxAPIUsersNumber">Max­APIUsers­Number</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MaxAPIUsersNumber">MaxAPIUsersNumber</span></td>
+<td>unsignedInt(0:255)</td>
 <td>W</td>
 <td>Determines the Max Number of different Applications that can send Requests to MMS API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MinSendMMSTimeInterval">Min­Send­MMSTime­Interval</span></td>
-<td>unsigned­Int­(0:3599)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MinSendMMSTimeInterval">MinSendMMSTimeInterval</span></td>
+<td>unsignedInt(0:3599)</td>
 <td>W</td>
 <td>Determines the Minimum Time Interval in <em>seconds</em> between two consecutive Send MMS Requests by the same Application.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.EnableQueryMMSDeliveryStatus">Enable­Query­MMSDelivery­Status</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.EnableQueryMMSDeliveryStatus">EnableQueryMMSDeliveryStatus</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable &ldquo;QuerySMSDeliveryStatus&rdquo; Operation on MMS API. When disabled, QuerySMSDeliveryStatus Requests to MMS API are ignored.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.EnableSubscribeToNotificationsOfMessageSentToApplication">Enable­Subscribe­To­Notifications­Of­Message­Sent­To­Application</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.EnableSubscribeToNotificationsOfMessageSentToApplication">EnableSubscribeToNotificationsOfMessageSentToApplication</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable &ldquo;SubscribeTo NotificationsOfMessageSentToApplication&rdquo; Operation on MMS API. When disabled, SubscribeTo NotificationsOfMessageSentToApplication Requests to MMS API are ignored.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.">FAP.­Application­Platform.­Control.­Terminal­Location.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.">FAP.ApplicationPlatform.Control.TerminalLocation.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the TerminalLocation API.</td>
@@ -2301,7 +2408,7 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueueEnable">Queue­Enable</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueueEnable">QueueEnable</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Enable or disable Request queueing for the API</td>
@@ -2314,51 +2421,51 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td><p>Determines how FAP handles simultaneous requests from different Applications to TerminalLocation API. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.Queueing.FiFo">FiFo</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.Queueing.Priority">Priority</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.Queueing.FiFo"><em>FiFo</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.Queueing.Priority"><em>Priority</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.MaxAPIUsersNumber">Max­APIUsers­Number</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.MaxAPIUsersNumber">MaxAPIUsersNumber</span></td>
+<td>unsignedInt(0:255)</td>
 <td>W</td>
 <td>Determines the Max Number of different Applications that can send Requests to TerminalLocation API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress">Query­Mobile­Location­Response­Address</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress">QueryMobileLocationResponseAddress</span></td>
 <td>string</td>
 <td>W</td>
 <td><p>Specifies Terminal Address Format to be used in QueryMobileLocation Responses. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress.TelUri">TelUri</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress.AnonymousReference">AnonymousReference</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress.TelUri"><em>TelUri</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress.AnonymousReference"><em>AnonymousReference</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseLongitudeLatitude">Query­Mobile­Location­Response­Longitude­Latitude</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseLongitudeLatitude">QueryMobileLocationResponseLongitudeLatitude</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Include or exclude FAP Longitude and Latitude arguments in Responses to QueryMobileLocation Requests.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAltitude">Query­Mobile­Location­Response­Altitude</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAltitude">QueryMobileLocationResponseAltitude</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Include or exclude FAP Altitude argument in Responses to QueryMobileLocation Requests .</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseTimestamp">Query­Mobile­Location­Response­Timestamp</span></td>
-<td>unsigned­Int­(0:86399)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseTimestamp">QueryMobileLocationResponseTimestamp</span></td>
+<td>unsignedInt(0:86399)</td>
 <td>W</td>
 <td>Specifies Response Timestamp in <em>seconds</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.">FAP.­Application­Platform.­Monitoring.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.">FAP.ApplicationPlatform.Monitoring.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the monitoring of the Femtozone Application Platform and the Femtozone APIs.</td>
@@ -2372,28 +2479,28 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MonitoringInterval">Monitoring­Interval</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MonitoringInterval">MonitoringInterval</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>Specifies the interval in <em>seconds</em> used to collect the monitoring measurements.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.AuthenticationRequestsReceived">Authentication­Requests­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.AuthenticationRequestsReceived">AuthenticationRequestsReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the total number of authentication requests received by the Femto Application Platform. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.AuthenticationRequestsRejected">Authentication­Requests­Rejected</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.AuthenticationRequestsRejected">AuthenticationRequestsRejected</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of authentication requests received by the Femto Application Platform that were rejected. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.">FAP.­Application­Platform.­Monitoring.­Femto­Awareness.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.">FAP.ApplicationPlatform.Monitoring.FemtoAwareness.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the Monitoring of the FemtoAwareness API.</td>
@@ -2408,46 +2515,46 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.APIUsers">APIUsers</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of Applications using the Femto Awareness API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState">Queue­State</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState">QueueState</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>Specifies the state of the Femto Awareness API Queue. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState.Disabled">Disabled</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState.Ready">Ready</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState.Flushed">Flushed</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState.Ready"><em>Ready</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueState.Flushed"><em>Flushed</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueNum">Queue­Num</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueNum">QueueNum</span></td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of requests waiting in the Femto Awareness API Queue.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueReceived">Queue­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueReceived">QueueReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the Femto Awareness API Queue that have been received. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueDiscarded">Queue­Discarded</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.QueueDiscarded">QueueDiscarded</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the Femto Awareness API Queue that have been discarded. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.">FAP.­Application­Platform.­Monitoring.­SMS.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.">FAP.ApplicationPlatform.Monitoring.SMS.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the Monitoring of the SMS API.</td>
@@ -2462,46 +2569,46 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.APIUsers">APIUsers</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of Applications using the SMS API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState">Queue­State</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState">QueueState</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>Specifies the state of the SMS API Queue. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState.Disabled">Disabled</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState.Ready">Ready</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState.Flushed">Flushed</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState.Ready"><em>Ready</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueState.Flushed"><em>Flushed</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueNum">Queue­Num</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueNum">QueueNum</span></td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of requests waiting in the SMS API Queue.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueReceived">Queue­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueReceived">QueueReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the SMS API Queue that have been received. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueDiscarded">Queue­Discarded</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.SMS.QueueDiscarded">QueueDiscarded</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the SMS API Queue that have been discarded. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.">FAP.­Application­Platform.­Monitoring.­MMS.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.">FAP.ApplicationPlatform.Monitoring.MMS.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the Monitoring of the MMS API.</td>
@@ -2516,46 +2623,46 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.APIUsers">APIUsers</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of Applications using the MMS API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState">Queue­State</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState">QueueState</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>Specifies the state of the MMS API Queue. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState.Disabled">Disabled</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState.Ready">Ready</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState.Flushed">Flushed</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState.Ready"><em>Ready</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueState.Flushed"><em>Flushed</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueNum">Queue­Num</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueNum">QueueNum</span></td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of requests waiting in the MMS API Queue.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueReceived">Queue­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueReceived">QueueReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the MMS API Queue that have been received. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueDiscarded">Queue­Discarded</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.MMS.QueueDiscarded">QueueDiscarded</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the MMS API Queue that have been discarded. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.">FAP.­Application­Platform.­Monitoring.­Terminal­Location.</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.">FAP.ApplicationPlatform.Monitoring.TerminalLocation.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters related to the Monitoring of the TerminalLocation API.</td>
@@ -2570,40 +2677,40 @@ If the referenced object is deleted, the parameter value MUST be set to an empty
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.APIUsers">APIUsers</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of Applications using the Terminal Location API.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState">Queue­State</span></td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState">QueueState</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>Specifies the state of the Terminal Location API Queue. Enumeration of:</p>
 
 <ul>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState.Disabled">Disabled</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState.Ready">Ready</span></li>
-<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState.Flushed">Flushed</span></li></ul></td>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState.Disabled"><em>Disabled</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState.Ready"><em>Ready</em></span></li>
+<li><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueState.Flushed"><em>Flushed</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueNum">Queue­Num</span></td>
-<td>unsigned­Int­(0:255)</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueNum">QueueNum</span></td>
+<td>unsignedInt(0:255)</td>
 <td>R</td>
 <td>Specifies the current number of requests waiting in the Terminal Location API Queue.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueReceived">Queue­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueReceived">QueueReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the Terminal Location API Queue that have been received. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueDiscarded">Queue­Discarded</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.TR-262:1.FAP.ApplicationPlatform.Monitoring.TerminalLocation.QueueDiscarded">QueueDiscarded</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Specifies the number of requests in the Terminal Location API Queue that have been discarded. The counter will be reset whenever the device reboots or the <em><a href="#D.TR-262:1.FAP.ApplicationPlatform.Monitoring.Enable">Enable</a></em> parameter is set to <em>true</em>.</td>
 <td>-</td>
@@ -2739,46 +2846,46 @@ The minimum REQUIRED version for this profile is TR-262:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.GPS.">FAP.­GPS.</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.">FAP.GPS.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.ScanOnBoot">Scan­On­Boot</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.ScanOnBoot">ScanOnBoot</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.ScanPeriodically">Scan­Periodically</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.ScanPeriodically">ScanPeriodically</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.PeriodicInterval">Periodic­Interval</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.PeriodicInterval">PeriodicInterval</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.PeriodicTime">Periodic­Time</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.PeriodicTime">PeriodicTime</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.ContinuousGPS">Continuous­GPS</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.ContinuousGPS">ContinuousGPS</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.ScanTimeout">Scan­Timeout</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.ScanTimeout">ScanTimeout</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.ScanStatus">Scan­Status</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.ScanStatus">ScanStatus</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.ErrorDetails">Error­Details</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.ErrorDetails">ErrorDetails</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.LastScanTime">Last­Scan­Time</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.LastScanTime">LastScanTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.LastSuccessfulScanTime">Last­Successful­Scan­Time</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.LastSuccessfulScanTime">LastSuccessfulScanTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.LockedLatitude">Locked­Latitude</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.LockedLatitude">LockedLatitude</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.LockedLongitude">Locked­Longitude</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.LockedLongitude">LockedLongitude</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.GPS.NumberOfSatellites">Number­Of­Satellites</a></td>
+<td><a href="#D.TR-262:1.FAP.GPS.NumberOfSatellites">NumberOfSatellites</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.TR-262:1.FAP_Tunnel:1">FAP_Tunnel:1 Profile</h3>
@@ -2796,85 +2903,85 @@ The minimum REQUIRED version for this profile is TR-262:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.Tunnel.">FAP.­Tunnel.</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.">FAP.Tunnel.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.IKESANumberOfEntries">IKESANumber­Of­Entries</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.IKESANumberOfEntries">IKESANumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSANumberOfEntries">Child­SANumber­Of­Entries</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSANumberOfEntries">ChildSANumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.MaxVirtualInterfaces">Max­Virtual­Interfaces</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.MaxVirtualInterfaces">MaxVirtualInterfaces</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterfaceNumberOfEntries">Virtual­Interface­Number­Of­Entries</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterfaceNumberOfEntries">VirtualInterfaceNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.UseForCWMP">Use­For­CWMP</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.UseForCWMP">UseForCWMP</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.MaxChildSAPerIKE">Max­Child­SAPer­IKE</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.MaxChildSAPerIKE">MaxChildSAPerIKE</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.MaxIKESessions">Max­IKESessions</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.MaxIKESessions">MaxIKESessions</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.">FAP.­Tunnel.­IKESA.­{i}.</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.">FAP.Tunnel.IKESA.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.Status">Status</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.PeerAddress">Peer­Address</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.PeerAddress">PeerAddress</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.CreationTime">Creation­Time</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.CreationTime">CreationTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.IPAddress">IPAddress</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.SubnetMask">Subnet­Mask</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.IKESA.SubnetMask">SubnetMask</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.">FAP.­Tunnel.­Child­SA.­{i}.</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.">FAP.Tunnel.ChildSA.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.ParentID">Parent­ID</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.ParentID">ParentID</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.SPI">SPI</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.DirectionOutbound">Direction­Outbound</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.DirectionOutbound">DirectionOutbound</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.CreationTime">Creation­Time</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.ChildSA.CreationTime">CreationTime</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.">FAP.­Tunnel.­Virtual­Interface.­{i}.</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.">FAP.Tunnel.VirtualInterface.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.CryptoProfile">Crypto­Profile</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.CryptoProfile">CryptoProfile</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.DSCPMarkPolicy">DSCPMark­Policy</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.VirtualInterface.DSCPMarkPolicy">DSCPMarkPolicy</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.">FAP.­Tunnel.­Crypto­Profile.­{i}.</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.">FAP.Tunnel.CryptoProfile.{i}.</a></td>
 <td>C</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.AuthMethod">Auth­Method</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.AuthMethod">AuthMethod</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.MaxChildSA">Max­Child­SA</a></td>
+<td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.MaxChildSA">MaxChildSA</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.Tunnel.CryptoProfile.IKEEncrypt">IKEEncrypt</a></td>
@@ -2910,13 +3017,13 @@ The minimum REQUIRED version for this profile is TR-262:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.PerfMgmt.">FAP.­Perf­Mgmt.</a></td>
+<td><a href="#D.TR-262:1.FAP.PerfMgmt.">FAP.PerfMgmt.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.PerfMgmt.ConfigNumberOfEntries">Config­Number­Of­Entries</a></td>
+<td><a href="#D.TR-262:1.FAP.PerfMgmt.ConfigNumberOfEntries">ConfigNumberOfEntries</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.">FAP.­Perf­Mgmt.­Config.­{i}.</a></td>
+<td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.">FAP.PerfMgmt.Config.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.Enable">Enable</a></td>
@@ -2931,10 +3038,10 @@ The minimum REQUIRED version for this profile is TR-262:1.0.</p>
 <td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.Password">Password</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadInterval">Periodic­Upload­Interval</a></td>
+<td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadInterval">PeriodicUploadInterval</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadTime">Periodic­Upload­Time</a></td>
+<td><a href="#D.TR-262:1.FAP.PerfMgmt.Config.PeriodicUploadTime">PeriodicUploadTime</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.TR-262:1.FAP_ApplicationPlatform:1">FAP_ApplicationPlatform:1 Profile</h3>
@@ -2952,7 +3059,7 @@ The minimum REQUIRED version for this profile is TR-262:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.">FAP.­Application­Platform.</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.">FAP.ApplicationPlatform.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Version">Version</a></td>
@@ -2961,70 +3068,69 @@ The minimum REQUIRED version for this profile is TR-262:1.0.</p>
 <td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Enable">Enable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.MaxNumberOfApplications">Max­Number­Of­Applications</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.MaxNumberOfApplications">MaxNumberOfApplications</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.">FAP.­Application­Platform.­Control.</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.">FAP.ApplicationPlatform.Control.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.AuthenticationMethod">Authentication­Method</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.AuthenticationMethod">AuthenticationMethod</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.">FAP.­Application­Platform.­Control.­Femto­Awareness.</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.">FAP.ApplicationPlatform.Control.FemtoAwareness.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.APIEnable">APIEnable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.MaxAPIUsersNumber">Max­APIUsers­Number</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.MaxAPIUsersNumber">MaxAPIUsersNumber</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.FemtozoneID">Femtozone­ID</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.FemtoAwareness.FemtozoneID">FemtozoneID</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.">FAP.­Application­Platform.­Control.­SMS.</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.">FAP.ApplicationPlatform.Control.SMS.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.APIEnable">APIEnable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MaxAPIUsersNumber">Max­APIUsers­Number</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MaxAPIUsersNumber">MaxAPIUsersNumber</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MinSendSMSTimeInterval">Min­Send­SMSTime­Interval</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.SMS.MinSendSMSTimeInterval">MinSendSMSTimeInterval</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.">FAP.­Application­Platform.­Control.­MMS.</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.">FAP.ApplicationPlatform.Control.MMS.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.APIEnable">APIEnable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MaxAPIUsersNumber">Max­APIUsers­Number</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MaxAPIUsersNumber">MaxAPIUsersNumber</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MinSendMMSTimeInterval">Min­Send­MMSTime­Interval</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.MMS.MinSendMMSTimeInterval">MinSendMMSTimeInterval</a></td>
 <td>W</td></tr>
 <tr class="object">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.">FAP.­Application­Platform.­Control.­Terminal­Location.</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.">FAP.ApplicationPlatform.Control.TerminalLocation.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.APIEnable">APIEnable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.MaxAPIUsersNumber">Max­APIUsers­Number</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.MaxAPIUsersNumber">MaxAPIUsersNumber</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress">Query­Mobile­Location­Response­Address</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseAddress">QueryMobileLocationResponseAddress</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseLongitudeLatitude">Query­Mobile­Location­Response­Longitude­Latitude</a></td>
+<td><a href="#D.TR-262:1.FAP.ApplicationPlatform.Control.TerminalLocation.QueryMobileLocationResponseLongitudeLatitude">QueryMobileLocationResponseLongitudeLatitude</a></td>
 <td>W</td></tr></tbody></table>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.0 (2023-06-14 version) on 2023-06-14
-at 11:14:36 UTC.<br/>report.py –filter model=None –output &lt;stdout&gt; –transform automodel –format markdown tr-262-1-0-0.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:44:53 UTC.<br/>report.py –filter model=None –output &lt;stdout&gt; –transform automodel –format markdown tr-262-1-0-0.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 

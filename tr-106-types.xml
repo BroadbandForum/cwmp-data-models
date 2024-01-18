@@ -2,7 +2,7 @@
 <!--
   TR-069 Data Model Data Types
 
-  Copyright (c) 2008-2019, Broadband Forum
+  Copyright (c) 2008-2023, Broadband Forum
 
   The undersigned members have elected to grant the copyright to
   their contributed material used in this software:
@@ -127,9 +127,33 @@
     </description>
   </dataType>
 
-  <!-- For backwards compatibility, "Alias" means "_AliasCWMP" -->
+  <!-- For backwards compatibility with pre-USP models, "Alias" means "_AliasCWMP" -->
   <dataType name="Alias" base="_AliasCWMP"/>
 
+  <!-- When expanded, these components will use the Alias data type
+       that is in scope at the point of expansion -->
+  <component name="Alias-1-0">
+    <parameter name="Alias" access="writeOnceReadOnly" version="1.0">
+      <description>
+        {{datatype|expand}}
+      </description>
+      <syntax>
+        <dataType ref="Alias"/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="Alias-2-0">
+    <parameter name="Alias" access="writeOnceReadOnly" version="2.0">
+      <description>
+        {{datatype|expand}}
+      </description>
+      <syntax>
+        <dataType ref="Alias"/>
+      </syntax>
+    </parameter>
+  </component>
+  
   <dataType name="Dbm1000">
     <description>
       The value is measured in ''dBm/1000'', i.e. the value divided by 1000 is
@@ -349,6 +373,28 @@
       <pattern value=""/>
       <pattern value="([0-9A-Fa-f][0-9A-Fa-f]:){5}([0-9A-Fa-f][0-9A-Fa-f])"/>
     </string>
+  </dataType>
+
+  <dataType name="Order">
+    <description>
+      Position of the {{object}} entry in the order of precedence. A value
+      of ''1'' indicates the first entry to be considered (highest precedence).
+
+      When a {{object}} instance is created, or when an existing {{param}}
+      value is modified, if the value matches that of an existing
+      entry, the {{param}} values for the existing entry and all lower
+      {{param}} entries are incremented (lowered in precedence) to ensure
+      uniqueness of this value. A deletion causes {{param}} values to be
+      compacted. When a value is changed, incrementing occurs before
+      compaction.
+
+      If no {{param}} value is supplied on creation of a {{object}} instance,
+      it MUST be assigned a value that is one more than the largest current
+      value (lowest precedence).
+    </description>
+    <unsignedInt>
+      <range minInclusive="1"/>
+    </unsignedInt>
   </dataType>
 
   <dataType name="StatsCounter32">

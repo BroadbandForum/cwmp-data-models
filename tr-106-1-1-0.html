@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -136,7 +139,7 @@
               var a1_groups = a1.match(regex).groups;
               var b1_groups = b1.match(regex).groups;
               var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'), 
+                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
                   parseInt(a1_groups.version || 0)];
               var b1_tuple =  [
                   b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
@@ -261,7 +264,7 @@
 
   <style>
   .chevron {
-      color: blue;
+      color: var(--link-color);
       cursor: pointer;
   }
 
@@ -299,7 +302,12 @@
   <!-- Global styles (that affect the entire document) -->
 
   <style>
-  :root {
+  /* light mode support */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background-color: white;
+      --foreground-color: black;
+      --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
       --command-color: #66cdaa;
@@ -315,10 +323,33 @@
       --stripe-color-deprecated: #eeeeee;
       --stripe-color-obsoleted: #dddddd;
       --stripe-color-deleted: #cccccc;
+    }
+  }
+
+  /* dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: black;
+      --foreground-color: white;
+      --link-color: lightblue;
+      --parameter-color: black;
+      --object-color: #bbbb44;
+      --command-color: #56bd9a;
+      --event-color: #56bd9a;
+      --argument-container-color: #777777;
+      --argument-object-color: #dfa0ab;
+      --argument-parameter-color: #bfa4a1;
+      --mountable-object-color: #b3e0ff;
+      --mountpoint-object-color: #3da8ef;
+      --stripe-color-deprecated: #555555;
+      --stripe-color-obsoleted: #444444;
+      --stripe-color-deleted: #333333;
+    }
   }
 
   body, table {
-      background-color: white;
+      background-color: var(--background-color);
+      color: var(--foreground-color);
       font-family: helvetica, arial, sans-serif;
       font-size: 9pt;
   }
@@ -335,8 +366,8 @@
       font-size: 10pt;
   }
 
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
+  a:link, a:visited {
+      color: var(--link-color);
   }
 
   sup {
@@ -719,6 +750,37 @@
       hyphenate-character: "";
   }
 
+  /* word wrap/break column 1 (Name) */
+  .data-model-table td:first-child {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 27ch;
+  }
+
+  /* word wrap/break column 2 (Base Type) */
+  .data-model-table td:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 3 (Write) */
+  .data-model-table td:nth-child(3) {
+      min-width: 1ch;
+  }
+
+  /* word wrap/break column 5 (Object Default) */
+  .data-model-table td:nth-child(5) {
+      word-wrap: break-word;
+      word-break: break-all;
+      min-width: 12ch;
+  }
+
+  /* word wrap/break column 6 (Version) */
+  .data-model-table td:nth-child(6) {
+      min-width: 6ch;
+  }
+
   /* center column 1 (Abbreviation) */
   .profile-notation-table th:nth-child(1),
   .profile-notation-table td:nth-child(1) {
@@ -911,8 +973,8 @@ represented as empty strings unless otherwise specified by the parameter
 definition. Possible patterns:</p>
 
 <ul>
-<li><span id="D..">&lt;Empty&gt;</span> (an empty string)</li>
-<li>[([0-9A-Fa-f][0-9A-Fa-f]:){5}(<span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])</span></li></ul></td></tr></tbody></table>
+<li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
+<li>[*([0-9A-Fa-f][0-9A-Fa-f]:){5}(<span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])*</span></li></ul></td></tr></tbody></table>
 
 <h1 id="references">References</h1>
 
@@ -1018,21 +1080,21 @@ the <strong>Version</strong> column.</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceSummary">Device­Summary</span></td>
-<td>string­(:1024)</td>
+<td><span id="D.Device:1.Device.DeviceSummary">DeviceSummary</span></td>
+<td>string(:1024)</td>
 <td>R</td>
 <td>See [<a href="#R.TR-106">Section 3.7/TR-106</a>].</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.Services.">Device.­Services.</span></td>
+<td><span id="D.Device:1.Device.Services.">Device.Services.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains general services information.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.DeviceInfo.">Device.­Device­Info.</span></td>
+<td><span id="D.Device:1.Device.DeviceInfo.">Device.DeviceInfo.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains general device information.</td>
@@ -1040,112 +1102,112 @@ the <strong>Version</strong> column.</p>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.Manufacturer">Manufacturer</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>R</td>
 <td>The manufacturer of the CPE (human readable string).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.ManufacturerOUI">Manufacturer­OUI</span></td>
-<td>string­(:6)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.ManufacturerOUI">ManufacturerOUI</span></td>
+<td>string(:6)</td>
 <td>R</td>
 <td>Organizationally unique identifier of the device manufacturer. Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros. The value MUST be a valid OUI as defined in [<a href="#R.OUI">OUI</a>].</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.ModelName">Model­Name</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.ModelName">ModelName</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>Model name of the CPE (human readable string).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.Description">Description</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>R</td>
 <td>A full description of the CPE device (human readable string).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.ProductClass">Product­Class</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.ProductClass">ProductClass</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>Identifier of the class of product for which the serial number applies. That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the <em><a href="#D.Device:1.Device.DeviceInfo.SerialNumber">SerialNumber</a></em> parameter is unique.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.SerialNumber">Serial­Number</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.SerialNumber">SerialNumber</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>Serial number of the CPE.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.HardwareVersion">Hardware­Version</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.HardwareVersion">HardwareVersion</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>A string identifying the particular CPE model and version.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.SoftwareVersion">Software­Version</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.SoftwareVersion">SoftwareVersion</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>A string identifying the software version currently installed in the CPE.
 To allow version comparisons, this element SHOULD be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, <em>3.0.21</em> where the components mean: <em>Major.Minor.Build</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.EnabledOptions">Enabled­Options</span></td>
-<td>string­(:1024)[]</td>
+<td><span id="D.Device:1.Device.DeviceInfo.EnabledOptions">EnabledOptions</span></td>
+<td>string[](:1024)</td>
 <td>R</td>
-<td>Comma-separated list (maximum number of characters per item 1024) of strings. Comma-separated list of the OptionName of each Option that is currently enabled in the CPE. The OptionName of each is identical to the OptionName element of the OptionStruct described in [<a href="#R.TR-069a1">TR-069a1</a>]. Only those options are listed whose State indicates the option is enabled.</td>
+<td>Comma-separated list (maximum number of characters 1024) of strings. Comma-separated list of the OptionName of each Option that is currently enabled in the CPE. The OptionName of each is identical to the OptionName element of the OptionStruct described in [<a href="#R.TR-069a1">TR-069a1</a>]. Only those options are listed whose State indicates the option is enabled.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.AdditionalHardwareVersion">Additional­Hardware­Version</span></td>
-<td>string­(:64)[]</td>
+<td><span id="D.Device:1.Device.DeviceInfo.AdditionalHardwareVersion">AdditionalHardwareVersion</span></td>
+<td>string[](:64)</td>
 <td>R</td>
-<td>Comma-separated list (maximum number of characters per item 64) of strings. A comma separated list of any additional versions. Represents any additional hardware version information the vendor might wish to supply.</td>
+<td>Comma-separated list (maximum number of characters 64) of strings. A comma separated list of any additional versions. Represents any additional hardware version information the vendor might wish to supply.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.AdditionalSoftwareVersion">Additional­Software­Version</span></td>
-<td>string­(:64)[]</td>
+<td><span id="D.Device:1.Device.DeviceInfo.AdditionalSoftwareVersion">AdditionalSoftwareVersion</span></td>
+<td>string[](:64)</td>
 <td>R</td>
-<td>Comma-separated list (maximum number of characters per item 64) of strings. A comma separated list of any additional versions. Represents any additional software version information the vendor might wish to supply.</td>
+<td>Comma-separated list (maximum number of characters 64) of strings. A comma separated list of any additional versions. Represents any additional software version information the vendor might wish to supply.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.ProvisioningCode">Provisioning­Code</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.ProvisioningCode">ProvisioningCode</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Identifier of the primary service provider and other provisioning information, which MAY be used by the ACS to determine service provider-specific customization and provisioning parameters.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.DeviceStatus">Device­Status</span></td>
+<td><span id="D.Device:1.Device.DeviceInfo.DeviceStatus">DeviceStatus</span></td>
 <td>string</td>
 <td>R</td>
 <td><p>Current operational status of the device. Enumeration of:</p>
 
 <ul>
-<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Up">Up</span></li>
-<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Initializing">Initializing</span></li>
-<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Error">Error</span></li>
-<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Disabled">Disabled</span></li></ul></td>
+<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Up"><em>Up</em></span></li>
+<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Initializing"><em>Initializing</em></span></li>
+<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Error"><em>Error</em></span></li>
+<li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Disabled"><em>Disabled</em></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.UpTime">Up­Time</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.DeviceInfo.UpTime">UpTime</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Time in seconds since the CPE was last restarted.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.FirstUseDate">First­Use­Date</span></td>
-<td>date­Time</td>
+<td><span id="D.Device:1.Device.DeviceInfo.FirstUseDate">FirstUseDate</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td><p>Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection. The CPE MAY reset this date after a factory reset.</p>
 
@@ -1153,14 +1215,14 @@ To allow version comparisons, this element SHOULD be in the form of dot-delimite
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.DeviceInfo.DeviceLog">Device­Log</span></td>
-<td>string­(:32768)</td>
+<td><span id="D.Device:1.Device.DeviceInfo.DeviceLog">DeviceLog</span></td>
+<td>string(:32768)</td>
 <td>R</td>
 <td>Vendor-specific log(s).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.ManagementServer.">Device.­Management­Server.</span></td>
+<td><span id="D.Device:1.Device.ManagementServer.">Device.ManagementServer.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters relating to the CPE’s association with an ACS.</td>
@@ -1168,7 +1230,7 @@ To allow version comparisons, this element SHOULD be in the form of dot-delimite
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.URL">URL</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>URL, as defined in [<a href="#R.RFC3986">RFC3986</a>], for the CPE to connect to the ACS using the CPE WAN Management Protocol.
 This parameter MUST be in the form of a valid HTTP or HTTPS URL.
@@ -1178,7 +1240,7 @@ Note that on a factory reset of the CPE, the value of this parameter might be re
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.Username">Username</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td><p>Username used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
 This username is used only for HTTP-based authentication of the CPE.</p>
@@ -1188,7 +1250,7 @@ This username is used only for HTTP-based authentication of the CPE.</p>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.Password">Password</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td><p>Password used to authenticate the CPE when making a connection to the ACS using the CPE WAN Management Protocol.
 This password is used only for HTTP-based authentication of the CPE.
@@ -1200,22 +1262,22 @@ When read, this parameter returns an empty string, regardless of the actual valu
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.PeriodicInformEnable">Periodic­Inform­Enable</span></td>
+<td><span id="D.Device:1.Device.ManagementServer.PeriodicInformEnable">PeriodicInformEnable</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Whether or not the CPE MUST periodically send CPE information to the ACS using the Inform method call.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.PeriodicInformInterval">Periodic­Inform­Interval</span></td>
-<td>unsigned­Int­(1:)</td>
+<td><span id="D.Device:1.Device.ManagementServer.PeriodicInformInterval">PeriodicInformInterval</span></td>
+<td>unsignedInt(1:)</td>
 <td>W</td>
 <td>The duration in seconds of the interval for which the CPE MUST attempt to connect with the ACS and call the Inform method if <em><a href="#D.Device:1.Device.ManagementServer.PeriodicInformEnable">PeriodicInformEnable</a></em> is <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.PeriodicInformTime">Periodic­Inform­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.Device:1.Device.ManagementServer.PeriodicInformTime">PeriodicInformTime</span></td>
+<td>dateTime</td>
 <td>W</td>
 <td>An absolute time reference in UTC to determine when the CPE will initiate the periodic Inform method calls. Each Inform call MUST occur at this reference time plus or minus an integer multiple of the <em><a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval">PeriodicInformInterval</a></em>.
 <em>PeriodicInformTime</em> is used only to set the <em>phase</em> of the periodic Informs. The actual value of <em>PeriodicInformTime</em> can be arbitrarily far into the past or future.
@@ -1225,8 +1287,8 @@ If absolute time is not available to the CPE, its periodic Inform behavior MUST 
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.ParameterKey">Parameter­Key</span></td>
-<td>string­(:32)</td>
+<td><span id="D.Device:1.Device.ManagementServer.ParameterKey">ParameterKey</span></td>
+<td>string(:32)</td>
 <td>R</td>
 <td><em>ParameterKey</em> provides the ACS a reliable and extensible means to track changes made by the ACS. The value of <em>ParameterKey</em> MUST be equal to the value of the ParameterKey argument from the most recent successful SetParameterValues, AddObject, or DeleteObject method call from the ACS.
 The CPE MUST set <em>ParameterKey</em> to the value specified in the corresponding method arguments if and only if the method completes successfully and no fault response is generated. If a method call does not complete successfully (implying that the changes requested in the method did not take effect), the value of <em>ParameterKey</em> MUST NOT be modified.
@@ -1234,8 +1296,8 @@ The CPE MUST only modify the value of <em>ParameterKey</em> as a result of SetPa
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.ConnectionRequestURL">Connection­Request­URL</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.ManagementServer.ConnectionRequestURL">ConnectionRequestURL</span></td>
+<td>string(:256)</td>
 <td>R</td>
 <td>HTTP URL, as defined in [<a href="#R.RFC3986">RFC3986</a>], for an ACS to make a Connection Request notification to the CPE.
 In the form:
@@ -1246,15 +1308,15 @@ The <em>host</em> portion of the URL MAY be the IP address for the management in
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.ConnectionRequestUsername">Connection­Request­Username</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.ManagementServer.ConnectionRequestUsername">ConnectionRequestUsername</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Username used to authenticate an ACS making a Connection Request to the CPE.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.ConnectionRequestPassword">Connection­Request­Password</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.ManagementServer.ConnectionRequestPassword">ConnectionRequestPassword</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td><p>Password used to authenticate an ACS making a Connection Request to the CPE.
 When read, this parameter returns an empty string, regardless of the actual value.</p>
@@ -1263,7 +1325,7 @@ When read, this parameter returns an empty string, regardless of the actual valu
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.UpgradesManaged">Upgrades­Managed</span></td>
+<td><span id="D.Device:1.Device.ManagementServer.UpgradesManaged">UpgradesManaged</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Indicates whether or not the ACS will manage upgrades for the CPE. If <em>true</em>, the CPE SHOULD NOT use other means other than the ACS to seek out available upgrades. If <em>false</em>, the CPE MAY use other means for this purpose.
@@ -1271,24 +1333,24 @@ Note that an autonomous upgrade (reported via an &ldquo;10 AUTONOMOUS TRANSFER C
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.KickURL">Kick­URL</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.ManagementServer.KickURL">KickURL</span></td>
+<td>string(:256)</td>
 <td>R</td>
 <td>Present only for a CPE that supports the Kicked RPC method.
 LAN-accessible URL, as defined in [<a href="#R.RFC3986">RFC3986</a>], from which the CPE can be <em>kicked</em> to initiate the Kicked RPC method call. MUST be an absolute URL including a host name or IP address as would be used on the LAN side of the CPE.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.DownloadProgressURL">Download­Progress­URL</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.ManagementServer.DownloadProgressURL">DownloadProgressURL</span></td>
+<td>string(:256)</td>
 <td>R</td>
 <td>Present only for a CPE that provides a LAN-side web page to show progress during a file download.
 LAN-accessible URL, as defined in [<a href="#R.RFC3986">RFC3986</a>], to which a web-server associated with the ACS MAY redirect a user’s browser on initiation of a file download to observer the status of the download.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress">UDPConnection­Request­Address</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress">UDPConnectionRequestAddress</span></td>
+<td>string(:256)</td>
 <td>R</td>
 <td>Address and port to which an ACS MAY send a UDP Connection Request to the CPE (see [<a href="#R.TR-069a1">Annex G/TR-069a1</a>]).
 This parameter is represented in the form of an Authority element as defined in [<a href="#R.RFC3986">RFC3986</a>]. The value MUST be in one of the following two forms:
@@ -1302,8 +1364,8 @@ The second form of this parameter MAY be used only if the port value is equal to
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.UDPConnectionRequestAddressNotificationLimit">UDPConnection­Request­Address­Notification­Limit</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.ManagementServer.UDPConnectionRequestAddressNotificationLimit">UDPConnectionRequestAddressNotificationLimit</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>The minimum time, in seconds, between Active Notifications resulting from changes to the <em><a href="#D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress">UDPConnectionRequestAddress</a></em> (if Active Notification is enabled).</td>
 <td>-</td>
@@ -1316,16 +1378,16 @@ The second form of this parameter MAY be used only if the port value is equal to
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.STUNServerAddress">STUNServer­Address</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.ManagementServer.STUNServerAddress">STUNServerAddress</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Host name or IP address of the STUN server for the CPE to send Binding Requests if STUN is enabled via <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em>.
 If is an empty string and <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em> is <em>true</em>, the CPE MUST use the address of the ACS extracted from the host portion of the ACS URL.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.STUNServerPort">STUNServer­Port</span></td>
-<td>unsigned­Int­(0:65535)</td>
+<td><span id="D.Device:1.Device.ManagementServer.STUNServerPort">STUNServerPort</span></td>
+<td>unsignedInt(0:65535)</td>
 <td>W</td>
 <td>Port number of the STUN server for the CPE to send Binding Requests if STUN is enabled via <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em>.
 By default, this SHOULD be the equal to the default STUN port, 3478.</td>
@@ -1333,7 +1395,7 @@ By default, this SHOULD be the equal to the default STUN port, 3478.</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.STUNUsername">STUNUsername</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>If is not an empty string, the value of the STUN USERNAME attribute to be used in Binding Requests (only if message integrity has been requested by the STUN server).
 If is an empty string, the CPE MUST NOT send STUN Binding Requests with message integrity.</td>
@@ -1341,7 +1403,7 @@ If is an empty string, the CPE MUST NOT send STUN Binding Requests with message 
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.STUNPassword">STUNPassword</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td><p>The value of the STUN Password to be used in computing the MESSAGE-INTEGRITY attribute to be used in Binding Requests (only if message integrity has been requested by the STUN server).
 When read, this parameter returns an empty string, regardless of the actual value.</p>
@@ -1350,16 +1412,16 @@ When read, this parameter returns an empty string, regardless of the actual valu
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.STUNMaximumKeepAlivePeriod">STUNMaximum­Keep­Alive­Period</span></td>
-<td>int­(-­1:)</td>
+<td><span id="D.Device:1.Device.ManagementServer.STUNMaximumKeepAlivePeriod">STUNMaximumKeepAlivePeriod</span></td>
+<td>int(-1:)</td>
 <td>W</td>
 <td>If STUN Is enabled, the maximum period, in seconds, that STUN Binding Requests MUST be sent by the CPE for the purpose of maintaining the binding in the Gateway. This applies specifically to Binding Requests sent from the UDP Connection Request address and port.
 A value of -1 indicates that no maximum period is specified.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.ManagementServer.STUNMinimumKeepAlivePeriod">STUNMinimum­Keep­Alive­Period</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.ManagementServer.STUNMinimumKeepAlivePeriod">STUNMinimumKeepAlivePeriod</span></td>
+<td>unsignedInt</td>
 <td>W</td>
 <td>If STUN Is enabled, the minimum period, in seconds, that STUN Binding Requests can be sent by the CPE for the purpose of maintaining the binding in the Gateway. This limit applies only to Binding Requests sent from the UDP Connection Request address and port, and only those that do not contain the BINDING-CHANGE attribute. This limit does not apply to retransmissions following the procedures defined in [<a href="#R.RFC3489">RFC3489</a>].</td>
 <td>-</td>
@@ -1374,106 +1436,106 @@ When <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.GatewayInfo.">Device.­Gateway­Info.</span></td>
+<td><span id="D.Device:1.Device.GatewayInfo.">Device.GatewayInfo.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains information associated with a connected Internet Gateway Device.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.GatewayInfo.ManufacturerOUI">Manufacturer­OUI</span></td>
-<td>string­(:6)</td>
+<td><span id="D.Device:1.Device.GatewayInfo.ManufacturerOUI">ManufacturerOUI</span></td>
+<td>string(:6)</td>
 <td>R</td>
 <td>Organizationally unique identifier of the associated Internet Gateway Device. An empty string indicates that there is no associated Internet Gateway Device that has been detected.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.GatewayInfo.ProductClass">Product­Class</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.GatewayInfo.ProductClass">ProductClass</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>Identifier of the product class of the associated Internet Gateway Device. An empty string indicates either that there is no associated Internet Gateway Device that has been detected, or the Internet Gateway Device does not support the use of the product-class parameter.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.GatewayInfo.SerialNumber">Serial­Number</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.GatewayInfo.SerialNumber">SerialNumber</span></td>
+<td>string(:64)</td>
 <td>R</td>
 <td>Serial number of the associated Internet Gateway Device. An empty string indicates that there is no associated Internet Gateway Device that has been detected.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.Config.">Device.­Config.</span></td>
+<td><span id="D.Device:1.Device.Config.">Device.Config.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains general configuration parameters.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Config.PersistentData">Persistent­Data</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.Config.PersistentData">PersistentData</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Arbitrary user data that MUST persist across CPE reboots.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Config.ConfigFile">Config­File</span></td>
-<td>string­(:32768)</td>
+<td><span id="D.Device:1.Device.Config.ConfigFile">ConfigFile</span></td>
+<td>string(:32768)</td>
 <td>W</td>
 <td>A dump of the currently running configuration on the CPE. This parameter enables the ability to backup and restore the last known good state of the CPE. It returns a vendor-specific document that defines the state of the CPE. The document MUST be capable of restoring the CPE’s state when written back to the CPE using SetParameterValues.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.Time.">Device.­Time.</span></td>
+<td><span id="D.Device:1.Device.Time.">Device.Time.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters relating an NTP or SNTP time client in the CPE.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Time.NTPServer1">NTPServer­1</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.Time.NTPServer1">NTPServer1</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>First NTP timeserver. Either a host name or IP address.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Time.NTPServer2">NTPServer­2</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.Time.NTPServer2">NTPServer2</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Second NTP timeserver. Either a host name or IP address.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Time.NTPServer3">NTPServer­3</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.Time.NTPServer3">NTPServer3</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Third NTP timeserver. Either a host name or IP address.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Time.NTPServer4">NTPServer­4</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.Time.NTPServer4">NTPServer4</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Fourth NTP timeserver. Either a host name or IP address.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Time.NTPServer5">NTPServer­5</span></td>
-<td>string­(:64)</td>
+<td><span id="D.Device:1.Device.Time.NTPServer5">NTPServer5</span></td>
+<td>string(:64)</td>
 <td>W</td>
 <td>Fifth NTP timeserver. Either a host name or IP address.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Time.CurrentLocalTime">Current­Local­Time</span></td>
-<td>date­Time</td>
+<td><span id="D.Device:1.Device.Time.CurrentLocalTime">CurrentLocalTime</span></td>
+<td>dateTime</td>
 <td>R</td>
 <td>The current date and time in the CPE’s local time zone.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.Time.LocalTimeZone">Local­Time­Zone</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.Time.LocalTimeZone">LocalTimeZone</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The local time zone definition, encoded according to IEEE 1003.1 (POSIX). The following is an example value:
 
@@ -1482,14 +1544,14 @@ When <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.UserInterface.">Device.­User­Interface.</span></td>
+<td><span id="D.Device:1.Device.UserInterface.">Device.UserInterface.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters relating to the user interface of the CPE.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.PasswordRequired">Password­Required</span></td>
+<td><span id="D.Device:1.Device.UserInterface.PasswordRequired">PasswordRequired</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Present only if the CPE provides a password-protected LAN-side user interface.
@@ -1497,7 +1559,7 @@ Indicates whether or not the local user interface MUST require a password to be 
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.PasswordUserSelectable">Password­User­Selectable</span></td>
+<td><span id="D.Device:1.Device.UserInterface.PasswordUserSelectable">PasswordUserSelectable</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Present only if the CPE provides a password-protected LAN-side user interface and supports LAN-side Auto-Configuration.
@@ -1505,57 +1567,57 @@ Indicates whether or not a password to protect the local user interface of the C
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.UpgradeAvailable">Upgrade­Available</span></td>
+<td><span id="D.Device:1.Device.UserInterface.UpgradeAvailable">UpgradeAvailable</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Indicates that a CPE upgrade is available, allowing the CPE to display this information to the user.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.WarrantyDate">Warranty­Date</span></td>
-<td>date­Time</td>
+<td><span id="D.Device:1.Device.UserInterface.WarrantyDate">WarrantyDate</span></td>
+<td>dateTime</td>
 <td>W</td>
 <td>Indicates the date and time in UTC that the warranty associated with the CPE is to expire.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UserInterface.ISPName">ISPName</span></td>
-<td>string­(:64)</td>
+<td>string(:64)</td>
 <td>W</td>
 <td>The name of the customer’s ISP.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ISPHelpDesk">ISPHelp­Desk</span></td>
-<td>string­(:32)</td>
+<td><span id="D.Device:1.Device.UserInterface.ISPHelpDesk">ISPHelpDesk</span></td>
+<td>string(:32)</td>
 <td>W</td>
 <td>The help desk phone number of the ISP.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ISPHomePage">ISPHome­Page</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.UserInterface.ISPHomePage">ISPHomePage</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The URL of the ISP’s home page.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ISPHelpPage">ISPHelp­Page</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.UserInterface.ISPHelpPage">ISPHelpPage</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The URL of the ISP’s on-line support page.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UserInterface.ISPLogo">ISPLogo</span></td>
-<td>base­64(0:4095)</td>
+<td>base64(0:4095)</td>
 <td>W</td>
 <td>Base64 encoded GIF or JPEG image. The binary image is constrained to 4095 bytes or less.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ISPLogoSize">ISPLogo­Size</span></td>
-<td>unsigned­Int­(0:4095)</td>
+<td><span id="D.Device:1.Device.UserInterface.ISPLogoSize">ISPLogoSize</span></td>
+<td>unsignedInt(0:4095)</td>
 <td>W</td>
 <td>Un-encoded binary image size in bytes.
 If ISPLogoSize input value is 0 then the ISPLogo is cleared.
@@ -1563,77 +1625,77 @@ ISPLogoSize can also be used as a check to verify correct transfer and conversio
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ISPMailServer">ISPMail­Server</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.UserInterface.ISPMailServer">ISPMailServer</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The URL of the ISP’s mail server.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ISPNewsServer">ISPNews­Server</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.UserInterface.ISPNewsServer">ISPNewsServer</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The URL of the ISP’s news server.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.TextColor">Text­Color</span></td>
-<td>string­(:6)</td>
+<td><span id="D.Device:1.Device.UserInterface.TextColor">TextColor</span></td>
+<td>string(:6)</td>
 <td>W</td>
 <td>The color of text on the GUI screens in RGB hexidecimal notation (e.g., FF0088).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.BackgroundColor">Background­Color</span></td>
-<td>string­(:6)</td>
+<td><span id="D.Device:1.Device.UserInterface.BackgroundColor">BackgroundColor</span></td>
+<td>string(:6)</td>
 <td>W</td>
 <td>The color of the GUI screen backgrounds in RGB hexidecimal notation (e.g., FF0088).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ButtonColor">Button­Color</span></td>
-<td>string­(:6)</td>
+<td><span id="D.Device:1.Device.UserInterface.ButtonColor">ButtonColor</span></td>
+<td>string(:6)</td>
 <td>W</td>
 <td>The color of buttons on the GUI screens in RGB hexidecimal notation (e.g., FF0088).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.ButtonTextColor">Button­Text­Color</span></td>
-<td>string­(:6)</td>
+<td><span id="D.Device:1.Device.UserInterface.ButtonTextColor">ButtonTextColor</span></td>
+<td>string(:6)</td>
 <td>W</td>
 <td>The color of text on buttons on the GUI screens in RGB hexidecimal notation (e.g., FF0088).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.AutoUpdateServer">Auto­Update­Server</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.UserInterface.AutoUpdateServer">AutoUpdateServer</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The server the CPE can check to see if an update is available for direct download to it. This MUST NOT be used by the CPE if the <strong>{{param: non-existent ManagementServer.UpgradesManaged}}</strong> parameter is <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.UserUpdateServer">User­Update­Server</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.UserInterface.UserUpdateServer">UserUpdateServer</span></td>
+<td>string(:256)</td>
 <td>W</td>
 <td>The server where a user can check via a web browser if an update is available for download to a PC. This MUST NOT be used by the CPE if the <strong>{{param: non-existent ManagementServer.UpgradesManaged}}</strong> parameter is <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.AvailableLanguages">Available­Languages</span></td>
-<td>string­(:256)[]</td>
+<td><span id="D.Device:1.Device.UserInterface.AvailableLanguages">AvailableLanguages</span></td>
+<td>string[](:256)</td>
 <td>R</td>
-<td>Comma-separated list (maximum number of characters per item 256) of strings. Comma-separated list of user-interface languages that are available, where each language is specified according to RFC 3066 [<a href="#R.RFC3066">RFC3066</a>].</td>
+<td>Comma-separated list (maximum number of characters 256) of strings. Comma-separated list of user-interface languages that are available, where each language is specified according to RFC 3066 [<a href="#R.RFC3066">RFC3066</a>].</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.UserInterface.CurrentLanguage">Current­Language</span></td>
-<td>string­(:16)</td>
+<td><span id="D.Device:1.Device.UserInterface.CurrentLanguage">CurrentLanguage</span></td>
+<td>string(:16)</td>
 <td>W</td>
 <td>Current user-interface language, specified according to RFC 3066 [<a href="#R.RFC3066">RFC3066</a>].</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.LAN.">Device.­LAN.</span></td>
+<td><span id="D.Device:1.Device.LAN.">Device.LAN.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains parameters relating to IP-based LAN connectivity of a device.
@@ -1642,59 +1704,59 @@ For a device that contains multiple IP interfaces, the scope of this object is l
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.AddressingType">Addressing­Type</span></td>
+<td><span id="D.Device:1.Device.LAN.AddressingType">AddressingType</span></td>
 <td>string</td>
 <td>W</td>
 <td><p>The method used to assign an address to this interface. Enumeration of:</p>
 
 <ul>
-<li><span id="D.Device:1.Device.LAN.AddressingType.DHCP">DHCP</span></li>
-<li><span id="D.Device:1.Device.LAN.AddressingType.Static">Static</span>
+<li><span id="D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></span></li>
+<li><span id="D.Device:1.Device.LAN.AddressingType.Static"><em>Static</em></span>
 The ability to modify this parameter is OPTIONAL.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPAddress">IPAddress</span></td>
-<td><span title="IPAddress">string­(:45)</span></td>
+<td><span title="IPAddress">string(:45)</span></td>
 <td>W</td>
 <td>[<a href="#T.IPAddress">IPAddress</a>] The current IP address assigned to this interface.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <em><a href="#D.Device:1.Device.LAN.AddressingType.DHCP">DHCP</a></em>.</td>
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.SubnetMask">Subnet­Mask</span></td>
-<td><span title="IPAddress">string­(:45)</span></td>
+<td><span id="D.Device:1.Device.LAN.SubnetMask">SubnetMask</span></td>
+<td><span title="IPAddress">string(:45)</span></td>
 <td>W</td>
 <td>[<a href="#T.IPAddress">IPAddress</a>] The current subnet mask.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <em><a href="#D.Device:1.Device.LAN.AddressingType.DHCP">DHCP</a></em>.</td>
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.DefaultGateway">Default­Gateway</span></td>
+<td><span id="D.Device:1.Device.LAN.DefaultGateway">DefaultGateway</span></td>
 <td>string</td>
 <td>W</td>
 <td>The IP address of the current default gateway for this interface.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <em><a href="#D.Device:1.Device.LAN.AddressingType.DHCP">DHCP</a></em>.</td>
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.DNSServers">DNSServers</span></td>
-<td>string­(:256)[]</td>
+<td>string[](:256)</td>
 <td>W</td>
-<td>Comma-separated list (maximum number of characters per item 256) of strings. Comma-separated list of IP address of the DNS servers for this interface.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <em><a href="#D.Device:1.Device.LAN.AddressingType.DHCP">DHCP</a></em>.
+<td>Comma-separated list (maximum number of characters 256) of strings. Comma-separated list of IP address of the DNS servers for this interface.
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.
 If this parameter is modifiable, the device MAY ignore any DNS servers beyond the first two in the list.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.MACAddress">MACAddress</span></td>
-<td><span title="MACAddress">string­(:17)</span></td>
+<td><span title="MACAddress">string(:17)</span></td>
 <td>W</td>
 <td>[<a href="#T.MACAddress">MACAddress</a>] The physical address of this interface. Writable only if <em><a href="#D.Device:1.Device.LAN.MACAddressOverride">MACAddressOverride</a></em> is present and equal to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.MACAddressOverride">MACAddress­Override</span></td>
+<td><span id="D.Device:1.Device.LAN.MACAddressOverride">MACAddressOverride</span></td>
 <td>boolean</td>
 <td>W</td>
 <td>Whether the value of <em><a href="#D.Device:1.Device.LAN.MACAddress">MACAddress</a></em> parameter can be overridden.
@@ -1705,14 +1767,14 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.DHCPOptionNumberOfEntries">DHCPOption­Number­Of­Entries</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.DHCPOptionNumberOfEntries">DHCPOptionNumberOfEntries</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Number of entries in the DHCP option table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.LAN.DHCPOption.">Device.­LAN.­DHCPOption.­{i}.</span></td>
+<td><span id="D.Device:1.Device.LAN.DHCPOption.">Device.LAN.DHCPOption.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>W</td>
 <td>This object is for configuration of DHCP options. Each instance of this object represents a DHCP option to be included by the DHCP client in client requests. The DHCP client MAY include any other options not specified in this table.</td>
@@ -1731,28 +1793,28 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.DHCPOption.Tag">Tag</span></td>
-<td>unsigned­Int­(1:254)</td>
+<td>unsignedInt(1:254)</td>
 <td>W</td>
 <td>Tag of the DHCP option as defined in RFC 2132.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.DHCPOption.Value">Value</span></td>
-<td>base­64</td>
+<td>base64</td>
 <td>W</td>
 <td>Base64 encoded octet string to be used as the Value of the DHCP option if <em><a href="#D.Device:1.Device.LAN.DHCPOption.Request">Request</a></em> is <em>false</em>.</td>
 <td></td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.LAN.Stats.">Device.­LAN.­Stats.</span></td>
+<td><span id="D.Device:1.Device.LAN.Stats.">Device.LAN.Stats.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object contains statistics for the default IP interface.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.ConnectionUpTime">Connection­Up­Time</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.ConnectionUpTime">ConnectionUpTime</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>The time in seconds that this IP interface has been connected.
 
@@ -1762,297 +1824,297 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.TotalBytesSent">Total­Bytes­Sent</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.TotalBytesSent">TotalBytesSent</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP payload bytes sent over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.TotalBytesReceived">Total­Bytes­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.TotalBytesReceived">TotalBytesReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP payload bytes received over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.TotalPacketsSent">Total­Packets­Sent</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.TotalPacketsSent">TotalPacketsSent</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP packets sent over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.TotalPacketsReceived">Total­Packets­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.TotalPacketsReceived">TotalPacketsReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP packets received over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayInterval">Current­Day­Interval</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Number of seconds since the beginning of the period used for collection of CurrentDay statistics.
 The device MAY align the beginning of each CurrentDay interval with days in the UTC time zone, but is not required to do so.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayBytesSent">Current­Day­Bytes­Sent</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayBytesSent">CurrentDayBytesSent</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP payload bytes sent over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayBytesReceived">Current­Day­Bytes­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayBytesReceived">CurrentDayBytesReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP payload bytes received over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayPacketsSent">Current­Day­Packets­Sent</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayPacketsSent">CurrentDayPacketsSent</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP packets sent over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayPacketsReceived">Current­Day­Packets­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.CurrentDayPacketsReceived">CurrentDayPacketsReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP packets received over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourInterval">Quarter­Hour­Interval</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Number of seconds since the beginning of the period used for collection of QuarterHour statistics.
 The device MAY align the beginning of each QuarterHour interval with real-time quarter-hour intervals, but is not required to do so.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourBytesSent">Quarter­Hour­Bytes­Sent</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourBytesSent">QuarterHourBytesSent</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP payload bytes sent over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourBytesReceived">Quarter­Hour­Bytes­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourBytesReceived">QuarterHourBytesReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP payload bytes received over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourPacketsSent">Quarter­Hour­Packets­Sent</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourPacketsSent">QuarterHourPacketsSent</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP packets sent over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourPacketsReceived">Quarter­Hour­Packets­Received</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.Stats.QuarterHourPacketsReceived">QuarterHourPacketsReceived</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Total number of IP packets received over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.">Device.­LAN.­IPPing­Diagnostics.</span></td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.">Device.LAN.IPPingDiagnostics.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object defines access to an IP-layer ping test for the default IP interface.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState">Diagnostics­State</span></td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState">DiagnosticsState</span></td>
 <td>string</td>
 <td>W</td>
 <td><p>Indicates availability of diagnostic data. Enumeration of:</p>
 
 <ul>
-<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None">None</span></li>
-<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested">Requested</span></li>
-<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Complete">Complete</span></li>
-<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Error_CannotResolveHostName">Error_CannotResolveHostName</span></li>
-<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Error_Internal">Error_Internal</span></li>
-<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Error_Other">Error_Other</span>
-If the ACS sets the value of this parameter to <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested">Requested</a></em>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested">Requested</a></em>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested">Requested</a></em>.
+<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None"><em>None</em></span></li>
+<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested"><em>Requested</em></span></li>
+<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Complete"><em>Complete</em></span></li>
+<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Error_CannotResolveHostName"><em>Error_CannotResolveHostName</em></span></li>
+<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Error_Internal"><em>Error_Internal</em></span></li>
+<li><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Error_Other"><em>Error_Other</em></span>
+If the ACS sets the value of this parameter to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>.
 When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
-When the test is completed, the value of this parameter MUST be either <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Complete">Complete</a></em> (if the test completed successfully), or one of the <em>Error</em> values listed above.
-If the value of this parameter is anything other than <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Complete">Complete</a></em>, the values of the results parameters for this test are indeterminate.
+When the test is completed, the value of this parameter MUST be either <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Complete"><em>Complete</em></a> (if the test completed successfully), or one of the <em>Error</em> values listed above.
+If the value of this parameter is anything other than <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Complete"><em>Complete</em></a>, the values of the results parameters for this test are indeterminate.
 When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code <em>8 DIAGNOSTICS COMPLETE</em> in the Inform message.
-After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None">None</a></em>.
-Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, setting this parameter to <em><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested">Requested</a></em> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.Host">Host</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Host name or address of the host to ping.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.NumberOfRepetitions">Number­Of­Repetitions</span></td>
-<td>unsigned­Int­(1:)</td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.NumberOfRepetitions">NumberOfRepetitions</span></td>
+<td>unsignedInt(1:)</td>
 <td>W</td>
 <td>Number of repetitions of the ping test to perform before reporting the results.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.Timeout">Timeout</span></td>
-<td>unsigned­Int­(1:)</td>
+<td>unsignedInt(1:)</td>
 <td>W</td>
 <td>Timeout in milliseconds for the ping test.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DataBlockSize">Data­Block­Size</span></td>
-<td>unsigned­Int­(1:65535)</td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DataBlockSize">DataBlockSize</span></td>
+<td>unsignedInt(1:65535)</td>
 <td>W</td>
 <td>Size of the data block in bytes to be sent for each ping.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.DSCP">DSCP</span></td>
-<td>unsigned­Int­(0:63)</td>
+<td>unsignedInt(0:63)</td>
 <td>W</td>
 <td>DiffServ codepoint to be used for the test packets. By default the CPE SHOULD set this value to zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.SuccessCount">Success­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.SuccessCount">SuccessCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Result parameter indicating the number of successful pings (those in which a successful response was received prior to the timeout) in the most recent ping test.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.FailureCount">Failure­Count</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.FailureCount">FailureCount</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Result parameter indicating the number of failed pings in the most recent ping test.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.AverageResponseTime">Average­Response­Time</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.AverageResponseTime">AverageResponseTime</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Result parameter indicating the average response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.MinimumResponseTime">Minimum­Response­Time</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.MinimumResponseTime">MinimumResponseTime</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Result parameter indicating the minimum response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.MaximumResponseTime">Maximum­Response­Time</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.MaximumResponseTime">MaximumResponseTime</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Result parameter indicating the maximum response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.">Device.­LAN.­Trace­Route­Diagnostics.</span></td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.">Device.LAN.TraceRouteDiagnostics.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object is defines access to an IP-layer trace-route test for the default IP interface.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState">Diagnostics­State</span></td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState">DiagnosticsState</span></td>
 <td>string</td>
 <td>W</td>
 <td><p>Indicates availability of diagnostic data. Enumeration of:</p>
 
 <ul>
-<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None">None</span></li>
-<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested">Requested</span></li>
-<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Complete">Complete</span></li>
-<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_CannotResolveHostName">Error_CannotResolveHostName</span></li>
-<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_MaxHopCountExceeded">Error_MaxHopCountExceeded</span></li>
-<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_Internal">Error_Internal</span></li>
-<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_Other">Error_Other</span>
-If the ACS sets the value of this parameter to <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested">Requested</a></em>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested">Requested</a></em>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested">Requested</a></em>.
+<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None"><em>None</em></span></li>
+<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested"><em>Requested</em></span></li>
+<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Complete"><em>Complete</em></span></li>
+<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_CannotResolveHostName"><em>Error_CannotResolveHostName</em></span></li>
+<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_MaxHopCountExceeded"><em>Error_MaxHopCountExceeded</em></span></li>
+<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_Internal"><em>Error_Internal</em></span></li>
+<li><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Error_Other"><em>Error_Other</em></span>
+If the ACS sets the value of this parameter to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>, the CPE MUST initiate the corresponding diagnostic test. When writing, the only allowed value is <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>. To ensure the use of the proper test parameters (the writable parameters in this object), the test parameters MUST be set either prior to or at the same time as (in the same SetParameterValues) setting the <em>DiagnosticsState</em> to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a>.
 When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic.
-When the test is completed, the value of this parameter MUST be either <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Complete">Complete</a></em> (if the test completed successfully), or one of the <em>Error</em> values listed above.
-If the value of this parameter is anything other than <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Complete">Complete</a></em>, the values of the results parameters for this test are indeterminate.
+When the test is completed, the value of this parameter MUST be either <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Complete"><em>Complete</em></a> (if the test completed successfully), or one of the <em>Error</em> values listed above.
+If the value of this parameter is anything other than <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Complete"><em>Complete</em></a>, the values of the results parameters for this test are indeterminate.
 When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code <em>8 DIAGNOSTICS COMPLETE</em> in the Inform message.
-After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None">None</a></em>.
-Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None">None</a></em>.
-While the test is in progress, setting this parameter to <em><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested">Requested</a></em> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None"><em>None</em></a>.
+While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.Host">Host</span></td>
-<td>string­(:256)</td>
+<td>string(:256)</td>
 <td>W</td>
 <td>Host name or address of the host to find a route to.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.Timeout">Timeout</span></td>
-<td>unsigned­Int­(1:)</td>
+<td>unsignedInt(1:)</td>
 <td>W</td>
 <td>Timeout in milliseconds for the trace route test.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DataBlockSize">Data­Block­Size</span></td>
-<td>unsigned­Int­(1:65535)</td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DataBlockSize">DataBlockSize</span></td>
+<td>unsignedInt(1:65535)</td>
 <td>W</td>
 <td>Size of the data block in bytes to be sent for each trace route.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.MaxHopCount">Max­Hop­Count</span></td>
-<td>unsigned­Int­(1:64)</td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.MaxHopCount">MaxHopCount</span></td>
+<td>unsignedInt(1:64)</td>
 <td>W</td>
 <td>The maximum number of hop used in outgoing probe packets (max TTL). The default is 30 hops.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.DSCP">DSCP</span></td>
-<td>unsigned­Int­(0:63)</td>
+<td>unsignedInt(0:63)</td>
 <td>W</td>
 <td>DiffServ codepoint to be used for the test packets. By default the CPE SHOULD set this value to zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.ResponseTime">Response­Time</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.ResponseTime">ResponseTime</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Result parameter indicating the response time in milliseconds the most recent trace route test. If a route could not be determined, this value MUST be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.NumberOfRouteHops">Number­Of­Route­Hops</span></td>
-<td>unsigned­Int</td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.NumberOfRouteHops">NumberOfRouteHops</span></td>
+<td>unsignedInt</td>
 <td>R</td>
 <td>Result parameter indicating the number of hops within the discovered route. If a route could not be determined, this value MUST be zero.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.">Device.­LAN.­Trace­Route­Diagnostics.­Route­Hops.­{i}.</span></td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.">Device.LAN.TraceRouteDiagnostics.RouteHops.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
 <td>Result parameter indicating the components of the discovered route. If a route could not be determined, there will be no instances of this object.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
-<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.HopHost">Hop­Host</span></td>
-<td>string­(:256)</td>
+<td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.HopHost">HopHost</span></td>
+<td>string(:256)</td>
 <td>R</td>
 <td>Result parameter indicating the Host Name or IP Address of a hop along the discovered route.</td>
 <td>-</td>
@@ -2229,40 +2291,40 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <td><a href="#D.Device:1.Device.">Device.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceSummary">Device­Summary</a></td>
+<td><a href="#D.Device:1.Device.DeviceSummary">DeviceSummary</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.Device:1.Device.DeviceInfo.">Device.­Device­Info.</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.">Device.DeviceInfo.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.DeviceInfo.Manufacturer">Manufacturer</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceInfo.ManufacturerOUI">Manufacturer­OUI</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.ManufacturerOUI">ManufacturerOUI</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceInfo.ModelName">Model­Name</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.ModelName">ModelName</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.DeviceInfo.Description">Description</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceInfo.SerialNumber">Serial­Number</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.SerialNumber">SerialNumber</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceInfo.HardwareVersion">Hardware­Version</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.HardwareVersion">HardwareVersion</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceInfo.SoftwareVersion">Software­Version</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.SoftwareVersion">SoftwareVersion</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceInfo.DeviceStatus">Device­Status</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.DeviceStatus">DeviceStatus</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.DeviceInfo.UpTime">Up­Time</a></td>
+<td><a href="#D.Device:1.Device.DeviceInfo.UpTime">UpTime</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.Device:1.Device.ManagementServer.">Device.­Management­Server.</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.">Device.ManagementServer.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.ManagementServer.URL">URL</a></td>
@@ -2274,28 +2336,28 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <td><a href="#D.Device:1.Device.ManagementServer.Password">Password</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.PeriodicInformEnable">Periodic­Inform­Enable</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.PeriodicInformEnable">PeriodicInformEnable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval">Periodic­Inform­Interval</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval">PeriodicInformInterval</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.PeriodicInformTime">Periodic­Inform­Time</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.PeriodicInformTime">PeriodicInformTime</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.ParameterKey">Parameter­Key</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.ParameterKey">ParameterKey</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.ConnectionRequestURL">Connection­Request­URL</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.ConnectionRequestURL">ConnectionRequestURL</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.ConnectionRequestUsername">Connection­Request­Username</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.ConnectionRequestUsername">ConnectionRequestUsername</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.ConnectionRequestPassword">Connection­Request­Password</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.ConnectionRequestPassword">ConnectionRequestPassword</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.UpgradesManaged">Upgrades­Managed</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.UpgradesManaged">UpgradesManaged</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.Device:1.GatewayInfo:1">GatewayInfo:1 Profile</h3>
@@ -2313,16 +2375,16 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.Device:1.Device.GatewayInfo.">Device.­Gateway­Info.</a></td>
+<td><a href="#D.Device:1.Device.GatewayInfo.">Device.GatewayInfo.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.GatewayInfo.ManufacturerOUI">Manufacturer­OUI</a></td>
+<td><a href="#D.Device:1.Device.GatewayInfo.ManufacturerOUI">ManufacturerOUI</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.GatewayInfo.ProductClass">Product­Class</a></td>
+<td><a href="#D.Device:1.Device.GatewayInfo.ProductClass">ProductClass</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.GatewayInfo.SerialNumber">Serial­Number</a></td>
+<td><a href="#D.Device:1.Device.GatewayInfo.SerialNumber">SerialNumber</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.Device:1.Time:1">Time:1 Profile</h3>
@@ -2340,19 +2402,19 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.Device:1.Device.Time.">Device.­Time.</a></td>
+<td><a href="#D.Device:1.Device.Time.">Device.Time.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.Time.NTPServer1">NTPServer­1</a></td>
+<td><a href="#D.Device:1.Device.Time.NTPServer1">NTPServer1</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.Time.NTPServer2">NTPServer­2</a></td>
+<td><a href="#D.Device:1.Device.Time.NTPServer2">NTPServer2</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.Time.CurrentLocalTime">Current­Local­Time</a></td>
+<td><a href="#D.Device:1.Device.Time.CurrentLocalTime">CurrentLocalTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.Time.LocalTimeZone">Local­Time­Zone</a></td>
+<td><a href="#D.Device:1.Device.Time.LocalTimeZone">LocalTimeZone</a></td>
 <td>W</td></tr></tbody></table>
 
 <h3 id="P.Device:1.LAN:1">LAN:1 Profile</h3>
@@ -2370,19 +2432,19 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.Device:1.Device.LAN.">Device.­LAN.</a></td>
+<td><a href="#D.Device:1.Device.LAN.">Device.LAN.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.AddressingType">Addressing­Type</a></td>
+<td><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.IPAddress">IPAddress</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.SubnetMask">Subnet­Mask</a></td>
+<td><a href="#D.Device:1.Device.LAN.SubnetMask">SubnetMask</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.DefaultGateway">Default­Gateway</a></td>
+<td><a href="#D.Device:1.Device.LAN.DefaultGateway">DefaultGateway</a></td>
 <td>R</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.DNSServers">DNSServers</a></td>
@@ -2391,22 +2453,22 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <td><a href="#D.Device:1.Device.LAN.MACAddress">MACAddress</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.Device:1.Device.LAN.Stats.">Device.­LAN.­Stats.</a></td>
+<td><a href="#D.Device:1.Device.LAN.Stats.">Device.LAN.Stats.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.Stats.ConnectionUpTime">Connection­Up­Time</a></td>
+<td><a href="#D.Device:1.Device.LAN.Stats.ConnectionUpTime">ConnectionUpTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.Stats.TotalBytesSent">Total­Bytes­Sent</a></td>
+<td><a href="#D.Device:1.Device.LAN.Stats.TotalBytesSent">TotalBytesSent</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.Stats.TotalBytesReceived">Total­Bytes­Received</a></td>
+<td><a href="#D.Device:1.Device.LAN.Stats.TotalBytesReceived">TotalBytesReceived</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.Stats.TotalPacketsSent">Total­Packets­Sent</a></td>
+<td><a href="#D.Device:1.Device.LAN.Stats.TotalPacketsSent">TotalPacketsSent</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.Stats.TotalPacketsReceived">Total­Packets­Received</a></td>
+<td><a href="#D.Device:1.Device.LAN.Stats.TotalPacketsReceived">TotalPacketsReceived</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.Device:1.IPPing:1">IPPing:1 Profile</h3>
@@ -2424,40 +2486,40 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.">Device.­LAN.­IPPing­Diagnostics.</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.">Device.LAN.IPPingDiagnostics.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState">Diagnostics­State</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState">DiagnosticsState</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.Host">Host</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.NumberOfRepetitions">Number­Of­Repetitions</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.Timeout">Timeout</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DataBlockSize">Data­Block­Size</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DataBlockSize">DataBlockSize</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DSCP">DSCP</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.SuccessCount">Success­Count</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.SuccessCount">SuccessCount</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.FailureCount">Failure­Count</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.FailureCount">FailureCount</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.AverageResponseTime">Average­Response­Time</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.AverageResponseTime">AverageResponseTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.MinimumResponseTime">Minimum­Response­Time</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.MinimumResponseTime">MinimumResponseTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.MaximumResponseTime">Maximum­Response­Time</a></td>
+<td><a href="#D.Device:1.Device.LAN.IPPingDiagnostics.MaximumResponseTime">MaximumResponseTime</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.Device:1.TraceRoute:1">TraceRoute:1 Profile</h3>
@@ -2475,10 +2537,10 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.">Device.­LAN.­Trace­Route­Diagnostics.</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.">Device.LAN.TraceRouteDiagnostics.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState">Diagnostics­State</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState">DiagnosticsState</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.Host">Host</a></td>
@@ -2487,25 +2549,25 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.Timeout">Timeout</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DataBlockSize">Data­Block­Size</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DataBlockSize">DataBlockSize</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.MaxHopCount">Max­Hop­Count</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.MaxHopCount">MaxHopCount</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DSCP">DSCP</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.ResponseTime">Response­Time</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.ResponseTime">ResponseTime</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.NumberOfRouteHops">Number­Of­Route­Hops</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.NumberOfRouteHops">NumberOfRouteHops</a></td>
 <td>R</td></tr>
 <tr class="object">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.">Device.­LAN.­Trace­Route­Diagnostics.­Route­Hops.­{i}.</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.">Device.LAN.TraceRouteDiagnostics.RouteHops.{i}.</a></td>
 <td>P</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.HopHost">Hop­Host</a></td>
+<td><a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.HopHost">HopHost</a></td>
 <td>R</td></tr></tbody></table>
 
 <h3 id="P.Device:1.UDPConnReq:1">UDPConnReq:1 Profile</h3>
@@ -2523,22 +2585,22 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <th>Requirement</th></tr></thead>
 <tbody>
 <tr class="object">
-<td><a href="#D.Device:1.Device.ManagementServer.">Device.­Management­Server.</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.">Device.ManagementServer.</a></td>
 <td>-</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress">UDPConnection­Request­Address</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress">UDPConnectionRequestAddress</a></td>
 <td>R</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.UDPConnectionRequestAddressNotificationLimit">UDPConnection­Request­Address­Notification­Limit</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.UDPConnectionRequestAddressNotificationLimit">UDPConnectionRequestAddressNotificationLimit</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.STUNServerAddress">STUNServer­Address</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.STUNServerAddress">STUNServerAddress</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.STUNServerPort">STUNServer­Port</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.STUNServerPort">STUNServerPort</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.ManagementServer.STUNUsername">STUNUsername</a></td>
@@ -2547,10 +2609,10 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 <td><a href="#D.Device:1.Device.ManagementServer.STUNPassword">STUNPassword</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.STUNMaximumKeepAlivePeriod">STUNMaximum­Keep­Alive­Period</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.STUNMaximumKeepAlivePeriod">STUNMaximumKeepAlivePeriod</a></td>
 <td>W</td></tr>
 <tr class="parameter">
-<td><a href="#D.Device:1.Device.ManagementServer.STUNMinimumKeepAlivePeriod">STUNMinimum­Keep­Alive­Period</a></td>
+<td><a href="#D.Device:1.Device.ManagementServer.STUNMinimumKeepAlivePeriod">STUNMinimumKeepAlivePeriod</a></td>
 <td>W</td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.ManagementServer.NATDetected">NATDetected</a></td>
@@ -2558,8 +2620,7 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.0 (2023-06-14 version) on 2023-06-14
-at 11:08:48 UTC.<br/>report.py –output &lt;stdout&gt; –format markdown tr-106-1-1-0.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:38:53 UTC.<br/>report.py –output &lt;stdout&gt; –format markdown tr-106-1-1-0.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 
