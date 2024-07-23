@@ -65,12 +65,12 @@
 ]>
 
 <dm:document
-    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
     xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
-      urn:broadband-forum-org:cwmp:datamodel-1-10
-        http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-1-14
+        http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
       urn:broadband-forum-org:cwmp:datamodel-report-1-0
         https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
     spec="urn:broadband-forum-org:tr-106"
@@ -130,9 +130,41 @@
   <!-- For backwards compatibility with pre-USP models, "Alias" means "_AliasCWMP" -->
   <dataType name="Alias" base="_AliasCWMP"/>
 
-  <!-- When expanded, these components will use the Alias data type
-       that is in scope at the point of expansion -->
-  <component name="Alias-1-0">
+  <!-- These components are analogous to the above data types. When expanded,
+       the version will be clamped to the version supplied on or inherited by
+       the component reference -->
+  <component name="_AliasCWMP">
+    <parameter name="Alias" access="readWrite" version="1.0">
+      <description>
+        {{datatype|expand}}
+      </description>
+      <syntax>
+        <dataType ref="_AliasCWMP"/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="_AliasUSP">
+    <parameter name="Alias" access="writeOnceReadOnly" version="1.0">
+      <description>
+        {{datatype|expand}}
+      </description>
+      <syntax>
+        <dataType ref="_AliasUSP"/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <!-- This is a virtual component that's the same (apart from the version) as
+       the original "Alias-2-0" component (this is necessary for backwards
+       compatibility). It should be overridden by one of the above in a CWMP
+       or USP file, e.g.,
+
+       <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+         <component name="Alias" ref="_AliasCWMP"/>
+       </import>
+  -->
+  <component name="Alias" virtual="true">
     <parameter name="Alias" access="writeOnceReadOnly" version="1.0">
       <description>
         {{datatype|expand}}
@@ -143,17 +175,12 @@
     </parameter>
   </component>
 
+  <!-- should use the above Alias component, not this one (can't delete this,
+       because it was used by Device:2.17) -->
   <component name="Alias-2-0">
-    <parameter name="Alias" access="writeOnceReadOnly" version="2.0">
-      <description>
-        {{datatype|expand}}
-      </description>
-      <syntax>
-        <dataType ref="Alias"/>
-      </syntax>
-    </parameter>
+    <component ref="Alias"/>
   </component>
-  
+
   <dataType name="Dbm1000">
     <description>
       The value is measured in ''dBm/1000'', i.e. the value divided by 1000 is

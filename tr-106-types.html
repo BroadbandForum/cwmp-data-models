@@ -307,6 +307,7 @@
     :root {
       --background-color: white;
       --foreground-color: black;
+      --diff-background-color: aliceblue;
       --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
@@ -331,6 +332,7 @@
     :root {
       --background-color: black;
       --foreground-color: white;
+      --diff-background-color: #0f0700;
       --link-color: lightblue;
       --parameter-color: black;
       --object-color: #bbbb44;
@@ -344,6 +346,9 @@
       --stripe-color-deprecated: #555555;
       --stripe-color-obsoleted: #444444;
       --stripe-color-deleted: #333333;
+    }
+    .hoverlink {
+      filter: invert(1);
     }
   }
 
@@ -441,7 +446,7 @@
 
   /* XXX this is a bad name */
   .diffs {
-      background-color: aliceblue;
+      background-color: var(--diff-background-color);
       opacity: 0.8;
   }
 
@@ -793,9 +798,6 @@
       text-align: center;
   }
   </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <div id="main">
@@ -907,7 +909,14 @@ MUST be in one of the ranges.</p></td></tr>
 <tr>
 <td><span id="T.decimal">decimal</span></td>
 <td>-</td>
-<td>Decimal TBD.</td></tr>
+<td><p>Decimal number, with optional sign and optional fractional part.</p>
+
+<p>For some <em>decimal</em> types, a value range is given using the form
+<em>decimal(Min:Max)</em> or <em>decimal(Min:Max step Step)</em> where the <em>Min</em>
+and <em>Max</em> values are inclusive. If either <em>Min</em> or <em>Max</em> are missing,
+this indicates no limit. If <em>Step</em> is missing, this indicates a
+step of <em>1.0</em>. Multiple comma-separated ranges can be specified,
+in which case the value will be in one of the ranges.</p></td></tr>
 <tr>
 <td><span id="T.hexBinary">hexBinary</span></td>
 <td>-</td>
@@ -1078,7 +1087,7 @@ assigned by the organization with that company_id assignment.</li></ul>
 
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li>[*([0-9A-Fa-f][0-9A-Fa-f]:){7}(<span id="D..0-9A-Fa-f0-9A-Fa-f:70-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])*</span></li></ul></td></tr>
+<li><span id="D..0-9A-Fa-f0-9A-Fa-f:70-9A-Fa-f0-9A-Fa-f"><code>([0-9A-Fa-f][0-9A-Fa-f]:){7}([0-9A-Fa-f][0-9A-Fa-f])</code></span></li></ul></td></tr>
 <tr>
 <td><span id="T.IPAddress">IPAddress</span></td>
 <td><a href="#T.string">string</a>(:45)</td>
@@ -1140,22 +1149,26 @@ an empty string unless otherwise specified by the parameter definition.</p></td>
 <td><a href="#T.IPAddress">IPAddress</a>(:45)</td>
 <td><p>IPv4 address (or subnet mask).</p>
 
-<p>Can be any IPv4 address that is permitted by the <em>IPAddress</em> data type. Possible patterns:</p>
+<p>Can be any IPv4 address that is permitted by the <em>IPAddress</em> data type.</p>
+
+<p>Possible patterns:</p>
 
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li>[*((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]).){3}(25[0-5]|2[0-4][0-9]|[01]?<span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-9">0-9]?[0-9])*</span></li></ul></td></tr>
+<li><span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-9"><code>((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])</code></span></li></ul></td></tr>
 <tr>
 <td><span id="T.IPv4Prefix">IPv4Prefix</span></td>
 <td><a href="#T.IPPrefix">IPPrefix</a>(:49)</td>
 <td><p>IPv4 address prefix.</p>
 
-<p>Can be any IPv4 prefix that is permitted by the <em>IPPrefix</em> data type. Possible patterns:</p>
+<p>Can be any IPv4 prefix that is permitted by the <em>IPPrefix</em> data type.</p>
+
+<p>Possible patterns:</p>
 
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li>[*/(3[0-2]|<span id="D..30-20120-9">012]?[0-9])*</span></li>
-<li>[*((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]).){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])/(3[0-2]|<span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-930-20120-9">012]?[0-9])*</span></li></ul></td></tr>
+<li><span id="D..30-20120-9"><code>/(3[0-2]|[012]?[0-9])</code></span></li>
+<li><span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-930-20120-9"><code>((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])/(3[0-2]|[012]?[0-9])</code></span></li></ul></td></tr>
 <tr>
 <td><span id="T.IPv6Address">IPv6Address</span></td>
 <td><a href="#T.IPAddress">IPAddress</a>(:45)</td>
@@ -1179,11 +1192,13 @@ an empty string unless otherwise specified by the parameter definition.</p></td>
 (digits 0-9, letters A-F or a-f) displayed as six pairs of digits
 separated by colons. Unspecified or inapplicable MAC addresses MUST be
 represented as empty strings unless otherwise specified by the parameter
-definition. Possible patterns:</p>
+definition.</p>
+
+<p>Possible patterns:</p>
 
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li>[*([0-9A-Fa-f][0-9A-Fa-f]:){5}(<span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])*</span></li></ul></td></tr>
+<li><span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f"><code>([0-9A-Fa-f][0-9A-Fa-f]:){5}([0-9A-Fa-f][0-9A-Fa-f])</code></span></li></ul></td></tr>
 <tr>
 <td><span id="T.Order">Order</span></td>
 <td><a href="#T.unsignedInt">unsignedInt</a>(1:)</td>
@@ -1252,27 +1267,33 @@ Ethernet frame.</p></td></tr>
 <td><span id="T.URN">URN</span></td>
 <td><a href="#T.URI">URI</a>(:2048)</td>
 <td><p>Uniform Resource Name. See [<a href="#R.RFC3986">RFC3986</a>] (URI) and
-[<a href="#R.RFC8141">RFC8141</a>] (<em>urn</em> URI scheme). Possible patterns:</p>
+[<a href="#R.RFC8141">RFC8141</a>] (<em>urn</em> URI scheme).</p>
+
+<p>Possible patterns:</p>
 
 <ul>
-<li>[*urn:[A-Za-z0-9]<span id="D..urn:A-Za-z0-9A-Za-z0-9-030A-Za-z0-9:.">A-Za-z0-9-]{0,30}[A-Za-z0-9]:.+*</span></li></ul></td></tr>
+<li><span id="D..urn:A-Za-z0-9A-Za-z0-9-030A-Za-z0-9:."><code>urn:[A-Za-z0-9][A-Za-z0-9-]{0,30}[A-Za-z0-9]:.+</code></span></li></ul></td></tr>
 <tr>
 <td><span id="T.UUID">UUID</span></td>
 <td><a href="#T.string">string</a>(36)</td>
-<td><p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>]. Possible patterns:</p>
+<td><p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>].</p>
+
+<p>Possible patterns:</p>
 
 <ul>
-<li>[*[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-<span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912">A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}*</span></li></ul></td></tr>
+<li><span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912"><code>[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}</code></span></li></ul></td></tr>
 <tr>
 <td><span id="T.ZigBeeNetworkAddress">ZigBeeNetworkAddress</span></td>
 <td><a href="#T.string">string</a>(:4)</td>
 <td><p>The ZigBee 16-bit network address (NWK) as defined in
 [<a href="#R.ZigBee2007">ZigBee2007</a>]. The address is assigned to a device by the network
-layer and used by the network layer for routing messages between devices. Possible patterns:</p>
+layer and used by the network layer for routing messages between devices.</p>
+
+<p>Possible patterns:</p>
 
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li><span id="D..0-9A-Fa-f4"><em>([0-9A-Fa-f]){4}</em></span></li></ul></td></tr></tbody></table>
+<li><span id="D..0-9A-Fa-f4"><code>([0-9A-Fa-f]){4}</code></span></li></ul></td></tr></tbody></table>
 
 <h1 id="references">References</h1>
 
@@ -1324,7 +1345,7 @@ and Aggregation Plan</em>, IETF, 2006.</td></tr>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:45:44 UTC.<br/>report.py –output &lt;stdout&gt; –all –format markdown tr-106-types.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.2.0 (2024-07-23 version) on 2024-07-23 at 11:06:33 UTC.<br/>report.py –output <stdout> –all –format markdown tr-106-types.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 

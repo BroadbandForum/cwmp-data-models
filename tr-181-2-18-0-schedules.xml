@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Device:2 Root Data Model: Common Object definitions [Schedules]
+
+Copyright (c) 2010-2024, Broadband Forum
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the following
+conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The above license is used as a license under copyright only.
+Please reference the Forum IPR Policy for patent licensing terms
+<https://www.broadband-forum.org/ipr-policy>.
+
+Any moral rights which are necessary to exercise under the above
+license grant are also deemed granted under this license.
+
+Comments or questions about this Broadband Forum data model should be
+directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  urn:broadband-forum-org:cwmp:datamodel-1-10
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-1-0
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-18-0-schedules"
+  file="tr-181-2-18-0-schedules.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="ScheduleRef">
+    <parameter name="ScheduleRef" access="readWrite" version="2.18">
+      <description>
+        Each reference provides a schedule where time based access can be enabled.
+        When {{param}} is {{empty}} the {{object}} is not scheduled, and the {{param|Enable}} defines the operational state.
+      </description>
+      <syntax>
+        <list/>
+        <string>
+          <pathRef refType="strong" targetParent=".Schedules.Schedule." targetType="row"/>
+        </string>
+        <default type="object" value="[]"/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="Schedules">
+    <object name="Device.Schedules." access="readOnly" version="2.18">
+      <description>
+        This object is responsible for managing the schedules that are embedded within the Device.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the scheduling. If the scheduling is disabled then the
+          status of any enabled {{object|Schedule}} entries will change to
+          {{enum|StackDisabled|Schedule.{i}.Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="implementation" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScheduleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Schedules.Schedule.{i}."
+      access="readWrite" numEntriesParameter="ScheduleNumberOfEntries"
+      enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+      version="2.18">
+      <description>
+        Each instance of this object provides a schedule where access is
+        enabled.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Status of the schedule.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Active"/>
+            <enumeration value="Inactive"/>
+            <enumeration value="StackDisabled">
+              <description>
+                When the global {{param|#.Enable}} is {{false}} and the {{param|Enable}} parameter is {{true}}, the scheduling is disabled and the
+                status of the enabled {{object}} entry must change to {{enum|StackDisabled|Status}}.
+                The value of the {{param|Enable}} parameter is not changed.
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Description" access="readWrite">
+        <description>
+          A description of the schedule (human readable string).
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Day" access="readWrite">
+        <description>
+          {{list|the days for which access is enabled}} {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Monday"/>
+            <enumeration value="Tuesday"/>
+            <enumeration value="Wednesday"/>
+            <enumeration value="Thursday"/>
+            <enumeration value="Friday"/>
+            <enumeration value="Saturday"/>
+            <enumeration value="Sunday"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="StartTime" access="readWrite">
+        <description>
+          Start time of the enable schedule in hh:mm format. [hh] refers to a
+          zero-padded hour between 00 and 23. [mm] refers to a zero-padded
+          minute between 00 and 59.
+
+          Start time is in local time zone.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="5"/>
+            <pattern value=""/>
+            <pattern value="([01][0-9]|2[0-3]):[0-5][0-9]"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Duration" access="readWrite">
+        <description>
+          The duration, in {{units}}, which the access is enabled.
+
+          If the {{param|StartTime}} is not defined, duration is the total time
+          access is allowed during a calendar day.
+
+          If a {{param|StartTime}} is defined, access is allowed for the
+          {{param}} period starting from {{param|StartTime}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1"/>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="InverseMode" access="readWrite">
+        <description>
+          When enabled, the Inverse Mode reverses the default behavior of the
+          schedule, creating a dynamic where actions that are typically activated
+          are now deactivated, and vice versa.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeLeft" access="readOnly" activeNotify="canDeny">
+        <description>
+          The number of {{units}} remaining before the next state change will occur.
+          ''0'' means that schedule is disabled.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="Schedules:1" version="2.18">
+      <object ref="Device.Schedules." requirement="present">
+        <parameter ref="ScheduleNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Schedules.Schedule.{i}."
+          requirement="present">
+        <parameter ref="Alias" requirement="writeOnceReadOnly"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Day" requirement="readWrite"/>
+        <parameter ref="StartTime" requirement="readWrite"/>
+        <parameter ref="Duration" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="GenericSchedules:2.18">
+    <component ref="Root"/>
+    <component ref="Schedules"/>
+  </model>
+</dm:document>

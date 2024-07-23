@@ -307,6 +307,7 @@
     :root {
       --background-color: white;
       --foreground-color: black;
+      --diff-background-color: aliceblue;
       --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
@@ -331,6 +332,7 @@
     :root {
       --background-color: black;
       --foreground-color: white;
+      --diff-background-color: #0f0700;
       --link-color: lightblue;
       --parameter-color: black;
       --object-color: #bbbb44;
@@ -344,6 +346,9 @@
       --stripe-color-deprecated: #555555;
       --stripe-color-obsoleted: #444444;
       --stripe-color-deleted: #333333;
+    }
+    .hoverlink {
+      filter: invert(1);
     }
   }
 
@@ -441,7 +446,7 @@
 
   /* XXX this is a bad name */
   .diffs {
-      background-color: aliceblue;
+      background-color: var(--diff-background-color);
       opacity: 0.8;
   }
 
@@ -793,9 +798,6 @@
       text-align: center;
   }
   </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <div id="main">
@@ -807,7 +809,7 @@
 <col style="width: 25.0%;"></col></colgroup>
 <tbody>
 <tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
+<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></img></a></td>
 <td class="centered" rowspan="1"><p></p>
 
 <h1 id="tr-143-issue-1-amendment-1" class="unnumbered unlisted">TR-143 Issue 1 Amendment 1</h1>
@@ -1069,7 +1071,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1097,7 +1101,9 @@ If an empty string is specified, the CPE MUST use the default routing interface.
 <td><span id="D.TR-143:1.DownloadDiagnostics.DownloadTransports">DownloadTransports</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Supported <em>DownloadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Supported <em>DownloadDiagnostics</em> transport protocols for a CPE device.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.DownloadDiagnostics.DownloadTransports.HTTP"><em>HTTP</em></span></li>
@@ -1138,105 +1144,119 @@ The default value SHOULD be zero.</td>
 <td><span id="D.TR-143:1.DownloadDiagnostics.ROMTime">ROMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the client sends the GET command.</li>
-<li>For FTP this is the time at which the client sends the RTRV command.</li></ul></td>
+<li>For FTP this is the time at which the client sends the RTRV command.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Begin of transmission time in UTC, which MUST be specified to microsecond precision
-For example: 2008-04-09T15:01:05.123456
+<td><p>Begin of transmission time in UTC, which MUST be specified to microsecond precision
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the first data packet is received.</li>
-<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>End of transmission in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>End of transmission in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the last data packet is received.</li>
-<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TestBytesReceived">TestBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The test traffic received in bytes during the FTP/HTTP transaction including FTP/HTTP headers, between <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</a></em>,</td>
+<td><p>The test traffic received in bytes during the FTP/HTTP transaction including FTP/HTTP headers, between <a href="#D.TR-143:1.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.EOMTime"><em>EOMTime</em></a>,</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of bytes received on the Interface between <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</a></em>.</td>
+<td><p>The total number of bytes received on the Interface between <a href="#D.TR-143:1.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.EOMTime"><em>EOMTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesSent on the <em><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em> and at <em><a href="#D.TR-143:1.DownloadDiagnostics.EOMTime">EOMTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <a href="#D.TR-143:1.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.EOMTime"><em>EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesSent on the <a href="#D.TR-143:1.DownloadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a> and at <a href="#D.TR-143:1.DownloadDiagnostics.EOMTime"><em>EOMTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.</li>
 <li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Response time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Response time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.</li>
 <li>For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResultNumberOfEntries">PerConnectionResultNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.">PerConnectionResult</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult."><em>PerConnectionResult</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</span></td>
 <td>unsignedInt(0:999)</td>
 <td>W</td>
-<td>The measurement interval duration in <em>seconds</em> for objects in <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.">IncrementalResult</a></em> for a time based FTP/HTTP download test (when <em><a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestDuration">TimeBasedTestDuration</a></em> &gt; 0). The default value SHOULD be 0, which implies <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.">IncrementalResult</a></em> collection is disabled.
-For example if <em><a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestDuration">TimeBasedTestDuration</a></em> is 90 seconds and <em>TimeBasedTestMeasurementInterval</em> is 10 <em>seconds</em>, there will be 9 results in <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.">IncrementalResult</a></em>, each with a 10 <em>seconds</em> duration.</td>
+<td>The measurement interval duration in <em>seconds</em> for objects in <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> for a time based FTP/HTTP download test (when <a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestDuration"><em>TimeBasedTestDuration</em></a> &gt; 0). The default value SHOULD be 0, which implies <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> collection is disabled.
+For example if <a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestDuration"><em>TimeBasedTestDuration</em></a> is 90 seconds and <em>TimeBasedTestMeasurementInterval</em> is 10 <em>seconds</em>, there will be 9 results in <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a>, each with a 10 <em>seconds</em> duration.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementOffset">TimeBasedTestMeasurementOffset</span></td>
 <td>unsignedInt(0:255)</td>
 <td>W</td>
-<td>This <em>TimeBasedTestMeasurementOffset</em> works in conjunction with <em><a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</a></em> to allow the interval measurement to start a number of <em>seconds</em> after <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em>. The test measurement interval in <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.">IncrementalResult</a></em> starts at time <em><a href="#D.TR-143:1.DownloadDiagnostics.BOMTime">BOMTime</a></em> + <em>TimeBasedTestMeasurementOffset</em> to allow for slow start window removal of file transfers.
+<td>This <em>TimeBasedTestMeasurementOffset</em> works in conjunction with <a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementInterval"><em>TimeBasedTestMeasurementInterval</em></a> to allow the interval measurement to start a number of <em>seconds</em> after <a href="#D.TR-143:1.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a>. The test measurement interval in <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> starts at time <a href="#D.TR-143:1.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a> + <em>TimeBasedTestMeasurementOffset</em> to allow for slow start window removal of file transfers.
 This <em>TimeBasedTestMeasurementOffset</em> is in <em>seconds</em>. The default value SHOULD be 0.</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -1244,7 +1264,9 @@ This <em>TimeBasedTestMeasurementOffset</em> is in <em>seconds</em>. The default
 <td><span id="D.TR-143:1.DownloadDiagnostics.ProtocolVersion">ProtocolVersion</span></td>
 <td>string</td>
 <td>W</td>
-<td><p>Indicates the IP protocol version to be used. The default value SHOULD be <a href="#D.TR-143:1.DownloadDiagnostics.ProtocolVersion.Any"><em>Any</em></a>. Enumeration of:</p>
+<td><p>Indicates the IP protocol version to be used. The default value SHOULD be <a href="#D.TR-143:1.DownloadDiagnostics.ProtocolVersion.Any"><em>Any</em></a>.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.DownloadDiagnostics.ProtocolVersion.Any"><em>Any</em></span> (Use either IPv4 or IPv6 depending on the system preference)</li>
@@ -1256,195 +1278,221 @@ This <em>TimeBasedTestMeasurementOffset</em> is in <em>seconds</em>. The default
 <td><span id="D.TR-143:1.DownloadDiagnostics.NumberOfConnections">NumberOfConnections</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
-<td>The number of connections to be used in the test. The default value SHOULD be 1. <em>NumberOfConnections</em> MUST NOT be set to a value greater than <em><a href="#D.TR-143:1.DownloadDiagnostics.DownloadDiagnosticMaxConnections">DownloadDiagnosticMaxConnections</a></em>.</td>
+<td>The number of connections to be used in the test. The default value SHOULD be 1. <em>NumberOfConnections</em> MUST NOT be set to a value greater than <a href="#D.TR-143:1.DownloadDiagnostics.DownloadDiagnosticMaxConnections"><em>DownloadDiagnosticMaxConnections</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IPAddressUsed">IPAddressUsed</span></td>
 <td><span title="IPAddress">string(:45)</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Indicates which IP address was used to send the request.</td>
+<td><p>[<a href="#T.IPAddress">IPAddress</a>] Indicates which IP address was used to send the request.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TestBytesReceivedUnderFullLoading">TestBytesReceivedUnderFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of <em>bytes</em> of the test file received between the latest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> across all connections.</td>
+<td>The number of <em>bytes</em> of the test file received between the latest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> across all connections.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TotalBytesReceivedUnderFullLoading">TotalBytesReceivedUnderFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) received in between the latest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesReceived on the <em><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></em> object at the latest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and at the earliest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) received in between the latest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesReceived on the <a href="#D.TR-143:1.DownloadDiagnostics.Interface"><em>Interface</em></a> object at the latest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and at the earliest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.TotalBytesSentUnderFullLoading">TotalBytesSentUnderFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) sent between the latest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesSent on the <em><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></em> object at the latest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and at the earliest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) sent between the latest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesSent on the <a href="#D.TR-143:1.DownloadDiagnostics.Interface"><em>Interface</em></a> object at the latest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and at the earliest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PeriodOfFullLoading">PeriodOfFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The period of time in <em>microseconds</em> between the latest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> of the test.</td>
+<td>The period of time in <em>microseconds</em> between the latest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> of the test.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.EnablePerConnectionResults">EnablePerConnectionResults</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>The results must be returned in the <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.">PerConnectionResult</a></em> table for every connection when set to <em>true</em>. The default value SHOULD be <em>false</em>.</td>
+<td><p>The results must be returned in the <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult."><em>PerConnectionResult</em></a> table for every connection when set to <em>true</em>. The default value SHOULD be <em>false</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IncrementalResultNumberOfEntries">IncrementalResultNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.">IncrementalResult</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.DownloadDiagnosticsMaxIncrementalResult">DownloadDiagnosticsMaxIncrementalResult</span></td>
 <td>unsignedInt(1:)</td>
 <td>R</td>
-<td>The maximum number of rows in <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.">IncrementalResult</a></em> that the CPE will store.</td>
+<td>The maximum number of rows in <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> that the CPE will store.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.">DownloadDiagnostics.PerConnectionResult.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
-<td>Results for individual connections. This table is only populated when <em><a href="#D.TR-143:1.DownloadDiagnostics.EnablePerConnectionResults">EnablePerConnectionResults</a></em> is <em>true</em>. A new object is created for each connection specified in <em><a href="#D.TR-143:1.DownloadDiagnostics.NumberOfConnections">NumberOfConnections</a></em>. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState">DiagnosticsState</a></em> is set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
+<td>Results for individual connections. This table is only populated when <a href="#D.TR-143:1.DownloadDiagnostics.EnablePerConnectionResults"><em>EnablePerConnectionResults</em></a> is <em>true</em>. A new object is created for each connection specified in <a href="#D.TR-143:1.DownloadDiagnostics.NumberOfConnections"><em>NumberOfConnections</em></a>. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a> is set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.ROMTime">ROMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the client sends the GET command.</li>
-<li>For FTP this is the time at which the client sends the RTRV command.</li></ul></td>
+<li>For FTP this is the time at which the client sends the RTRV command.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">BOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Begin of transmission time in UTC, which MUST be specified to microsecond precision
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Begin of transmission time in UTC, which MUST be specified to microsecond precision
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the first data packet is received.</li>
-<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">EOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>End of transmission in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>End of transmission in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the last data packet is received.</li>
-<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.TestBytesReceived">TestBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of <em>bytes</em> of the test file received during the FTP/HTTP transaction including FTP/HTTP headers, between <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em>.</td>
+<td><p>The number of <em>bytes</em> of the test file received during the FTP/HTTP transaction including FTP/HTTP headers, between <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesReceived on the <em><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and at <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em> and subtracting.</td>
+<td><p>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesReceived on the <a href="#D.TR-143:1.DownloadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and at <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a> and subtracting.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesSent on the <em><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and at <em><a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em> and subtracting.</td>
+<td><p>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesSent on the <a href="#D.TR-143:1.DownloadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and at <a href="#D.TR-143:1.DownloadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a> and subtracting.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.</li>
-<li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.</li></ul></td>
+<li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.PerConnectionResult.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Response time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Response time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.</li>
-<li>For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.</li></ul></td>
+<li>For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IncrementalResult.">DownloadDiagnostics.IncrementalResult.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
-<td>Results for time segmented tests (tests where <em><a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestDuration">TimeBasedTestDuration</a></em> &gt; 0 and <em><a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</a></em> &gt; 0). This data is totaled across all connections in the test. A new object is created every <em><a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</a></em> after that interval has completed. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <em><a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState">DiagnosticsState</a></em> is set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
+<td>Results for time segmented tests (tests where <a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestDuration"><em>TimeBasedTestDuration</em></a> &gt; 0 and <a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementInterval"><em>TimeBasedTestMeasurementInterval</em></a> &gt; 0). This data is totaled across all connections in the test. A new object is created every <a href="#D.TR-143:1.DownloadDiagnostics.TimeBasedTestMeasurementInterval"><em>TimeBasedTestMeasurementInterval</em></a> after that interval has completed. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a> is set to <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IncrementalResult.TestBytesReceived">TestBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Change in the value of <em><a href="#D.TR-143:1.DownloadDiagnostics.TestBytesReceivedUnderFullLoading">TestBytesReceivedUnderFullLoading</a></em> between <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime">EndTime</a></em>.</td>
+<td><p>Change in the value of <a href="#D.TR-143:1.DownloadDiagnostics.TestBytesReceivedUnderFullLoading"><em>TestBytesReceivedUnderFullLoading</em></a> between <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IncrementalResult.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime">EndTime</a></em>. This MAY be calculated by sampling Stats.bytesReceived on the <em><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and at <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime">EndTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a>. This MAY be calculated by sampling Stats.bytesReceived on the <a href="#D.TR-143:1.DownloadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and at <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IncrementalResult.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime">EndTime</a></em>. This MAY be calculated by sampling Stats.bytesSent on the <em><a href="#D.TR-143:1.DownloadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and at <em><a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime">EndTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a>. This MAY be calculated by sampling Stats.bytesSent on the <a href="#D.TR-143:1.DownloadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and at <a href="#D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IncrementalResult.StartTime">StartTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>The start time of this interval which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z</td>
+<td><p>The start time of this interval which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.DownloadDiagnostics.IncrementalResult.EndTime">EndTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>The end time of this interval which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z</td>
+<td><p>The end time of this interval which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1496,7 +1544,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1524,7 +1574,9 @@ If an empty string is specified, the CPE MUST use the default routing interface.
 <td><span id="D.TR-143:1.UploadDiagnostics.UploadTransports">UploadTransports</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Supported <em>UploadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Supported <em>UploadDiagnostics</em> transport protocols for a CPE device.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.UploadDiagnostics.UploadTransports.HTTP"><em>HTTP</em></span></li>
@@ -1542,7 +1594,7 @@ If an empty string is specified, the CPE MUST use the default routing interface.
 <td><span id="D.TR-143:1.UploadDiagnostics.UploadDiagnosticsMaxIncrementalResult">UploadDiagnosticsMaxIncrementalResult</span></td>
 <td>unsignedInt(1:)</td>
 <td>R</td>
-<td>The maximum number of rows in <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.">IncrementalResult</a></em> that the CPE will store.</td>
+<td>The maximum number of rows in <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> that the CPE will store.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1580,98 +1632,110 @@ The CPE MUST insure the appropriate number of bytes are sent.</td>
 <td><span id="D.TR-143:1.UploadDiagnostics.ROMTime">ROMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the client sends the PUT command</li>
-<li>For FTP this is the time at which the STOR command is sent.</li></ul></td>
+<li>For FTP this is the time at which the STOR command is sent.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Begin of transmission time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Begin of transmission time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the first data packet is sent.</li>
-<li>For FTP this is the time at which the client receives the ready for transfer notification.</li></ul></td>
+<li>For FTP this is the time at which the client receives the ready for transfer notification.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>End of transmission in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>End of transmission in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time when the HTTP successful response code is received.</li>
-<li>For FTP this is the time when the client receives a transfer complete.</li></ul></td>
+<li>For FTP this is the time when the client receives a transfer complete.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TestBytesSent">TestBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of <em>bytes</em> of the test file sent during the FTP/HTTP transaction including FTP/HTTP headers, between <em><a href="#D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</a></em> acrosss all connections.</td>
+<td>The number of <em>bytes</em> of the test file sent during the FTP/HTTP transaction including FTP/HTTP headers, between <a href="#D.TR-143:1.UploadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.EOMTime"><em>EOMTime</em></a> acrosss all connections.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of bytes sent on the Interface between <em><a href="#D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</a></em>.</td>
+<td><p>The total number of bytes sent on the Interface between <a href="#D.TR-143:1.UploadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.EOMTime"><em>EOMTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.</li>
 <li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Response time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Response time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the Time at which the TCP ACK to the socket opening the HTTP connection was received.</li>
 <li>For FTP this is the Time at which the TCP ACK to the socket opening the Data connection was received.
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResultNumberOfEntries">PerConnectionResultNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.">PerConnectionResult</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult."><em>PerConnectionResult</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</span></td>
 <td>unsignedInt(0:999)</td>
 <td>W</td>
-<td>The measurement interval duration in <em>seconds</em> for objects in <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.">IncrementalResult</a></em> for a time based FTP/HTTP upload test (when <em><a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestDuration">TimeBasedTestDuration</a></em> &gt; 0). The default value SHOULD be 0, which implies <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.">IncrementalResult</a></em> collection is disabled.
-For example if <em><a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestDuration">TimeBasedTestDuration</a></em> is 90 seconds and <em>TimeBasedTestMeasurementInterval</em> is 10 <em>seconds</em>, there will be 9 results in <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.">IncrementalResult</a></em>, each with a 10 <em>seconds</em> duration.</td>
+<td>The measurement interval duration in <em>seconds</em> for objects in <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> for a time based FTP/HTTP upload test (when <a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestDuration"><em>TimeBasedTestDuration</em></a> &gt; 0). The default value SHOULD be 0, which implies <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> collection is disabled.
+For example if <a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestDuration"><em>TimeBasedTestDuration</em></a> is 90 seconds and <em>TimeBasedTestMeasurementInterval</em> is 10 <em>seconds</em>, there will be 9 results in <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a>, each with a 10 <em>seconds</em> duration.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementOffset">TimeBasedTestMeasurementOffset</span></td>
 <td>unsignedInt(0:255)</td>
 <td>W</td>
-<td>This <em>TimeBasedTestMeasurementOffset</em> works in conjunction with <em><a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</a></em> and allows the interval measurement to start a number of <em>seconds</em> after <em><a href="#D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</a></em>. The test measurement interval in <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.">IncrementalResult</a></em> starts at time <em><a href="#D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</a></em> + <em>TimeBasedTestMeasurementOffset</em> to allow for slow start window removal of file transfers.
+<td>This <em>TimeBasedTestMeasurementOffset</em> works in conjunction with <a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementInterval"><em>TimeBasedTestMeasurementInterval</em></a> and allows the interval measurement to start a number of <em>seconds</em> after <a href="#D.TR-143:1.UploadDiagnostics.BOMTime"><em>BOMTime</em></a>. The test measurement interval in <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> starts at time <a href="#D.TR-143:1.UploadDiagnostics.BOMTime"><em>BOMTime</em></a> + <em>TimeBasedTestMeasurementOffset</em> to allow for slow start window removal of file transfers.
 This <em>TimeBasedTestMeasurementOffset</em> is in <em>seconds</em>. The default value SHOULD be 0.</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -1679,7 +1743,9 @@ This <em>TimeBasedTestMeasurementOffset</em> is in <em>seconds</em>. The default
 <td><span id="D.TR-143:1.UploadDiagnostics.ProtocolVersion">ProtocolVersion</span></td>
 <td>string</td>
 <td>W</td>
-<td><p>Indicates the IP protocol version to be used. The default value SHOULD be <a href="#D.TR-143:1.UploadDiagnostics.ProtocolVersion.Any"><em>Any</em></a>. Enumeration of:</p>
+<td><p>Indicates the IP protocol version to be used. The default value SHOULD be <a href="#D.TR-143:1.UploadDiagnostics.ProtocolVersion.Any"><em>Any</em></a>.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.UploadDiagnostics.ProtocolVersion.Any"><em>Any</em></span> (Use either IPv4 or IPv6 depending on the system preference)</li>
@@ -1691,7 +1757,7 @@ This <em>TimeBasedTestMeasurementOffset</em> is in <em>seconds</em>. The default
 <td><span id="D.TR-143:1.UploadDiagnostics.NumberOfConnections">NumberOfConnections</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
-<td>The number of connections to be used in the test. The default value SHOULD be 1. <em>NumberOfConnections</em> MUST NOT be set to a value greater than <em><a href="#D.TR-143:1.UploadDiagnostics.UploadDiagnosticsMaxConnections">UploadDiagnosticsMaxConnections</a></em>.</td>
+<td>The number of connections to be used in the test. The default value SHOULD be 1. <em>NumberOfConnections</em> MUST NOT be set to a value greater than <a href="#D.TR-143:1.UploadDiagnostics.UploadDiagnosticsMaxConnections"><em>UploadDiagnosticsMaxConnections</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1705,181 +1771,205 @@ This <em>TimeBasedTestMeasurementOffset</em> is in <em>seconds</em>. The default
 <td><span id="D.TR-143:1.UploadDiagnostics.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <em><a href="#D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesReceived on the <em><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.UploadDiagnostics.BOMTime">BOMTime</a></em> and at <em><a href="#D.TR-143:1.UploadDiagnostics.EOMTime">EOMTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <a href="#D.TR-143:1.UploadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.EOMTime"><em>EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesReceived on the <a href="#D.TR-143:1.UploadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.UploadDiagnostics.BOMTime"><em>BOMTime</em></a> and at <a href="#D.TR-143:1.UploadDiagnostics.EOMTime"><em>EOMTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TestBytesSentUnderFullLoading">TestBytesSentUnderFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of <em>bytes</em> of the test file sent between the latest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> across all connections.</td>
+<td>The number of <em>bytes</em> of the test file sent between the latest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> across all connections.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TotalBytesReceivedUnderFullLoading">TotalBytesReceivedUnderFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) received between the latest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> across all connections in the test. This MAY be calculated by sampling Stats.bytesReceived on the <em><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></em> object at the latest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and at the earliest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) received between the latest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> across all connections in the test. This MAY be calculated by sampling Stats.bytesReceived on the <a href="#D.TR-143:1.UploadDiagnostics.Interface"><em>Interface</em></a> object at the latest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and at the earliest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.TotalBytesSentUnderFullLoading">TotalBytesSentUnderFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) sent between the latest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> across all connections in the test. This MAY be calculated by sampling Stats.bytesSent on the <em><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></em> object at the latest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and at the earliest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) sent between the latest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> across all connections in the test. This MAY be calculated by sampling Stats.bytesSent on the <a href="#D.TR-143:1.UploadDiagnostics.Interface"><em>Interface</em></a> object at the latest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and at the earliest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PeriodOfFullLoading">PeriodOfFullLoading</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The period of time in <em>microseconds</em> between the latest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">PerConnectionResult.{i}.BOMTime</a></em> and the earliest <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">PerConnectionResult.{i}.EOMTime</a></em> of the test.</td>
+<td>The period of time in <em>microseconds</em> between the latest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>PerConnectionResult.{i}.BOMTime</em></a> and the earliest <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>PerConnectionResult.{i}.EOMTime</em></a> of the test.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.EnablePerConnectionResults">EnablePerConnectionResults</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>The results must be returned in the <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.">PerConnectionResult</a></em> table for every connection when set to <em>true</em>. The default value SHOULD be <em>false</em>.</td>
+<td><p>The results must be returned in the <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult."><em>PerConnectionResult</em></a> table for every connection when set to <em>true</em>. The default value SHOULD be <em>false</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.IncrementalResultNumberOfEntries">IncrementalResultNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.">IncrementalResult</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult."><em>IncrementalResult</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.">UploadDiagnostics.PerConnectionResult.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
-<td>Results for individual connections. This table is only populated when <em><a href="#D.TR-143:1.UploadDiagnostics.EnablePerConnectionResults">EnablePerConnectionResults</a></em> is <em>true</em>. A new object is created for each connection specified in <em><a href="#D.TR-143:1.UploadDiagnostics.NumberOfConnections">NumberOfConnections</a></em>. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState">DiagnosticsState</a></em> is set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
+<td>Results for individual connections. This table is only populated when <a href="#D.TR-143:1.UploadDiagnostics.EnablePerConnectionResults"><em>EnablePerConnectionResults</em></a> is <em>true</em>. A new object is created for each connection specified in <a href="#D.TR-143:1.UploadDiagnostics.NumberOfConnections"><em>NumberOfConnections</em></a>. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a> is set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.ROMTime">ROMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the client sends the GET command.</li>
-<li>For FTP this is the time at which the client sends the RTRV command.</li></ul></td>
+<li>For FTP this is the time at which the client sends the RTRV command.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">BOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Begin of transmission time in UTC, which MUST be specified to microsecond precision
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Begin of transmission time in UTC, which MUST be specified to microsecond precision
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the first data packet is received.</li>
-<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">EOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>End of transmission in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>End of transmission in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the last data packet is received.</li>
-<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.TestBytesSent">TestBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of <em>bytes</em> of the test file sent during the FTP/HTTP transaction including FTP/HTTP headers, between <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em>.</td>
+<td><p>The number of <em>bytes</em> of the test file sent during the FTP/HTTP transaction including FTP/HTTP headers, between <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesReceived on the <em><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and at <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em> and subtracting.</td>
+<td><p>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesReceived on the <a href="#D.TR-143:1.UploadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and at <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a> and subtracting.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em>. This MAY be calculated by sampling Stats.bytesSent on the <em><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime">BOMTime</a></em> and at <em><a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime">EOMTime</a></em> and subtracting.</td>
+<td><p>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a>. This MAY be calculated by sampling Stats.bytesSent on the <a href="#D.TR-143:1.UploadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.BOMTime"><em>BOMTime</em></a> and at <a href="#D.TR-143:1.UploadDiagnostics.PerConnectionResult.EOMTime"><em>EOMTime</em></a> and subtracting.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.</li>
-<li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.</li></ul></td>
+<li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.PerConnectionResult.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Response time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z
+<td><p>Response time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.</li>
-<li>For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.</li></ul></td>
+<li>For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.TR-143:1.UploadDiagnostics.IncrementalResult.">UploadDiagnostics.IncrementalResult.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
-<td>Results for time segmented tests (tests where <em><a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestDuration">TimeBasedTestDuration</a></em> &gt; 0 and <em><a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</a></em> &gt; 0). This data is totaled across all connections in the test. A new object is created every <em><a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementInterval">TimeBasedTestMeasurementInterval</a></em> after that interval has completed. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <em><a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState">DiagnosticsState</a></em> is set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
+<td>Results for time segmented tests (tests where <a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestDuration"><em>TimeBasedTestDuration</em></a> &gt; 0 and <a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementInterval"><em>TimeBasedTestMeasurementInterval</em></a> &gt; 0). This data is totaled across all connections in the test. A new object is created every <a href="#D.TR-143:1.UploadDiagnostics.TimeBasedTestMeasurementInterval"><em>TimeBasedTestMeasurementInterval</em></a> after that interval has completed. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a> is set to <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.IncrementalResult.TestBytesSent">TestBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Change in the value of <em><a href="#D.TR-143:1.UploadDiagnostics.TestBytesSent">TestBytesSent</a></em> between <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime">EndTime</a></em>.</td>
+<td><p>Change in the value of <a href="#D.TR-143:1.UploadDiagnostics.TestBytesSent"><em>TestBytesSent</em></a> between <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.IncrementalResult.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime">EndTime</a></em>. This MAY be calculated by sampling Stats.bytesReceived on the <em><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and at <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime">EndTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) received on the Interface between <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a>. This MAY be calculated by sampling Stats.bytesReceived on the <a href="#D.TR-143:1.UploadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and at <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.IncrementalResult.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime">EndTime</a></em>. This MAY be calculated by sampling Stats.bytesSent on the <em><a href="#D.TR-143:1.UploadDiagnostics.Interface">Interface</a></em> object at <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime">StartTime</a></em> and at <em><a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime">EndTime</a></em> and subtracting.</td>
+<td>The total number of <em>bytes</em> (at the IP layer) sent on the Interface between <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a>. This MAY be calculated by sampling Stats.bytesSent on the <a href="#D.TR-143:1.UploadDiagnostics.Interface"><em>Interface</em></a> object at <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime"><em>StartTime</em></a> and at <a href="#D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime"><em>EndTime</em></a> and subtracting.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.IncrementalResult.StartTime">StartTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>The start time of this interval which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z</td>
+<td><p>The start time of this interval which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UploadDiagnostics.IncrementalResult.EndTime">EndTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>The end time of this interval which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456Z</td>
+<td><p>The end time of this interval which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456Z</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1920,10 +2010,12 @@ If the ACS sets the value of this parameter to <a href="#D.TR-143:1.UDPEchoDiagn
 When requested, the CPE SHOULD wait until after completion of the communication session with the ACS before starting the diagnostic. When the test is completed, the value of this parameter MUST be either <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a> (if the test completed successfully), or one of the <em>Error</em> values listed above.
 If the value of this parameter is anything other than <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a>, the values of the results parameters for this test are indeterminate.
 When the diagnostic initiated by the ACS is completed (successfully or not), the CPE MUST establish a new connection to the ACS to allow the ACS to view the results, indicating the Event code <em>8 DIAGNOSTICS COMPLETE</em> in the Inform message.
-After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a> and remove all object instances from <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">IndividualPacketResult</a></em>.
-Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a> and remove all object instances from <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">IndividualPacketResult</a></em>.
-While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a> and remove all object instances from <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">IndividualPacketResult</a></em>.
-While the test is in progress, setting this parameter to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a> and remove all object instances from <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult."><em>IndividualPacketResult</em></a>.
+Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a> and remove all object instances from <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult."><em>IndividualPacketResult</em></a>.
+While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a> and remove all object instances from <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult."><em>IndividualPacketResult</em></a>.
+While the test is in progress, setting this parameter to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1938,56 +2030,72 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.Host">Host</span></td>
 <td>string(:256)</td>
 <td>W</td>
-<td>Host name or address of the host to perform tests to.</td>
+<td><p>Host name or address of the host to perform tests to.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.Port">Port</span></td>
 <td>unsignedInt(1:65535)</td>
 <td>W</td>
-<td>Port on the host to perform tests to.</td>
+<td><p>Port on the host to perform tests to.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.NumberOfRepetitions">NumberOfRepetitions</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
-<td>Number of repetitions of the test to perform before reporting the results. The default value SHOULD be 1.</td>
+<td><p>Number of repetitions of the test to perform before reporting the results. The default value SHOULD be 1.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.Timeout">Timeout</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
-<td>Timeout in <em>milliseconds</em> for the test. That is, the amount of time to wait for the return of a packet that was sent to the <em><a href="#D.TR-143:1.UDPEchoDiagnostics.Host">Host</a></em>.</td>
+<td><p>Timeout in <em>milliseconds</em> for the test. That is, the amount of time to wait for the return of a packet that was sent to the <a href="#D.TR-143:1.UDPEchoDiagnostics.Host"><em>Host</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.DataBlockSize">DataBlockSize</span></td>
 <td>unsignedInt(1:65535)</td>
 <td>W</td>
-<td>Size of the data block in <em>bytes</em> to be sent for each packet. The default value SHOULD be 24.</td>
+<td><p>Size of the data block in <em>bytes</em> to be sent for each packet. The default value SHOULD be 24.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.DSCP">DSCP</span></td>
 <td>unsignedInt(0:63)</td>
 <td>W</td>
-<td>DiffServ codepoint to be used for the test packets. The default value SHOULD be zero.</td>
+<td><p>DiffServ codepoint to be used for the test packets. The default value SHOULD be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.InterTransmissionTime">InterTransmissionTime</span></td>
 <td>unsignedInt(1:65535)</td>
 <td>W</td>
-<td>The time in <em>milliseconds</em> between the <em><a href="#D.TR-143:1.UDPEchoDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></em> of packets sent during a given test. The default value SHOULD be 1000.</td>
+<td><p>The time in <em>milliseconds</em> between the <a href="#D.TR-143:1.UDPEchoDiagnostics.NumberOfRepetitions"><em>NumberOfRepetitions</em></a> of packets sent during a given test. The default value SHOULD be 1000.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.ProtocolVersion">ProtocolVersion</span></td>
 <td>string</td>
 <td>W</td>
-<td><p>Indicates the IP protocol version to be used. The default value SHOULD be <a href="#D.TR-143:1.UDPEchoDiagnostics.ProtocolVersion.Any"><em>Any</em></a>. Enumeration of:</p>
+<td><p>Indicates the IP protocol version to be used. The default value SHOULD be <a href="#D.TR-143:1.UDPEchoDiagnostics.ProtocolVersion.Any"><em>Any</em></a>.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.UDPEchoDiagnostics.ProtocolVersion.Any"><em>Any</em></span> (Use either IPv4 or IPv6 depending on the system preference)</li>
@@ -2041,35 +2149,39 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.EnableIndividualPacketResults">EnableIndividualPacketResults</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>The results must be returned in the <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">IndividualPacketResult</a></em> table for every repetition of the test when set to <em>true</em>. The default value SHOULD be <em>false</em>.</td>
+<td><p>The results must be returned in the <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult."><em>IndividualPacketResult</em></a> table for every repetition of the test when set to <em>true</em>. The default value SHOULD be <em>false</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResultNumberOfEntries">IndividualPacketResultNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">IndividualPacketResult</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult."><em>IndividualPacketResult</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.UDPEchoDiagnosticsMaxResults">UDPEchoDiagnosticsMaxResults</span></td>
 <td>unsignedInt(1:)</td>
 <td>R</td>
-<td>The maximum number of rows in <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">IndividualPacketResult</a></em> that the CPE will store. If a test would create more rows than <em>UDPEchoDiagnosticsMaxResults</em> only the first <em>UDPEchoDiagnosticsMaxResults</em> rows are present in <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">IndividualPacketResult</a></em>.</td>
+<td><p>The maximum number of rows in <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult."><em>IndividualPacketResult</em></a> that the CPE will store. If a test would create more rows than <em>UDPEchoDiagnosticsMaxResults</em> only the first <em>UDPEchoDiagnosticsMaxResults</em> rows are present in <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult."><em>IndividualPacketResult</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.">UDPEchoDiagnostics.IndividualPacketResult.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
-<td>This object provides the results from individual UDPEchoPlus test packets collected during a test if <em><a href="#D.TR-143:1.UDPEchoDiagnostics.EnableIndividualPacketResults">EnableIndividualPacketResults</a></em> is set to true. When <em><a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState">DiagnosticsState</a></em> is set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a> it should contain <em><a href="#D.TR-143:1.UDPEchoDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></em> objects. Instance numbers MUST start at 1 and sequentially increment as new instances are created. The instance number should match the TestIterationNumber field of the request and response packet. All instances are removed when <em><a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState">DiagnosticsState</a></em> is set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
+<td>This object provides the results from individual UDPEchoPlus test packets collected during a test if <a href="#D.TR-143:1.UDPEchoDiagnostics.EnableIndividualPacketResults"><em>EnableIndividualPacketResults</em></a> is set to true. When <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a> is set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Completed"><em>Completed</em></a> it should contain <a href="#D.TR-143:1.UDPEchoDiagnostics.NumberOfRepetitions"><em>NumberOfRepetitions</em></a> objects. Instance numbers MUST start at 1 and sequentially increment as new instances are created. The instance number should match the TestIterationNumber field of the request and response packet. All instances are removed when <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a> is set to <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> or <a href="#D.TR-143:1.UDPEchoDiagnostics.DiagnosticsState.None"><em>None</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess">PacketSuccess</span></td>
 <td>boolean</td>
 <td>R</td>
-<td>Indicates that the response to this UDP Echo Plus packet sent was received by the client. When this value is <em>true</em>, then all the remaining parameters in this instance are valid. Otherwise only the values originally set by the CPE client (e.g. <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSendTime">PacketSendTime</a></em> and <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.TestGenSN">TestGenSN</a></em>) MAY be set to valid values.</td>
+<td>Indicates that the response to this UDP Echo Plus packet sent was received by the client. When this value is <em>true</em>, then all the remaining parameters in this instance are valid. Otherwise only the values originally set by the CPE client (e.g. <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSendTime"><em>PacketSendTime</em></a> and <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.TestGenSN"><em>TestGenSN</em></a>) MAY be set to valid values.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2100,29 +2212,29 @@ If this response is never received, <em>PacketReceiveTime</em> SHOULD be set to 
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.TestRespSN">TestRespSN</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The TestRespSN field in the response packet [<a href="#R.TR-143a1">Section A.1.4/TR-143a1</a>] from the UDP Echo Plus server (i.e. <em><a href="#D.TR-143:1.UDPEchoDiagnostics.Host">Host</a></em>) for this Echo Plus packet sent by the CPE client. If <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess">PacketSuccess</a></em> is <em>false</em>, <em>TestRespSN</em> SHOULD be 0.</td>
+<td>The TestRespSN field in the response packet [<a href="#R.TR-143a1">Section A.1.4/TR-143a1</a>] from the UDP Echo Plus server (i.e. <a href="#D.TR-143:1.UDPEchoDiagnostics.Host"><em>Host</em></a>) for this Echo Plus packet sent by the CPE client. If <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess"><em>PacketSuccess</em></a> is <em>false</em>, <em>TestRespSN</em> SHOULD be 0.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.TestRespRcvTimeStamp">TestRespRcvTimeStamp</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The TestRespRcvTimeStamp field in the response packet [<a href="#R.TR-143a1">Section A.1.4/TR-143a1</a>] from the UDP Echo Plus server (i.e. <em><a href="#D.TR-143:1.UDPEchoDiagnostics.Host">Host</a></em>) to record the reception time of this UDP Echo Plus packet sent from the CPE client. If <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess">PacketSuccess</a></em> is <em>false</em>, <em>TestRespRcvTimeStamp</em> SHOULD be 0.</td>
+<td>The TestRespRcvTimeStamp field in the response packet [<a href="#R.TR-143a1">Section A.1.4/TR-143a1</a>] from the UDP Echo Plus server (i.e. <a href="#D.TR-143:1.UDPEchoDiagnostics.Host"><em>Host</em></a>) to record the reception time of this UDP Echo Plus packet sent from the CPE client. If <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess"><em>PacketSuccess</em></a> is <em>false</em>, <em>TestRespRcvTimeStamp</em> SHOULD be 0.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.TestRespReplyTimeStamp">TestRespReplyTimeStamp</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The TestRespReplyTimeStamp field in the response packet [<a href="#R.TR-143a1">Section A.1.4/TR-143a1</a>] from the UDP Echo Plus server (i.e. <em><a href="#D.TR-143:1.UDPEchoDiagnostics.Host">Host</a></em>) to record the server reply time of this UDP Echo Plus packet sent from the CPE client.
-That is, the time that the server returned the UDP Echo Plus packet. If <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess">PacketSuccess</a></em> is <em>false</em>, <em>TestRespReplyTimeStamp</em> SHOULD be 0.</td>
+<td>The TestRespReplyTimeStamp field in the response packet [<a href="#R.TR-143a1">Section A.1.4/TR-143a1</a>] from the UDP Echo Plus server (i.e. <a href="#D.TR-143:1.UDPEchoDiagnostics.Host"><em>Host</em></a>) to record the server reply time of this UDP Echo Plus packet sent from the CPE client.
+That is, the time that the server returned the UDP Echo Plus packet. If <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess"><em>PacketSuccess</em></a> is <em>false</em>, <em>TestRespReplyTimeStamp</em> SHOULD be 0.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.TestRespReplyFailureCount">TestRespReplyFailureCount</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The count value that was set by the UDP Echo Plus server (i.e. <em><a href="#D.TR-143:1.UDPEchoDiagnostics.Host">Host</a></em>) to record the number of dropped echo response packets by the server. This count is incremented if a valid echo request packet is received at a UDP EchoPlus server but for some reason cannot be responded to (e.g. due to local buffer overflow, CPU utilization, etc…). If <em><a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess">PacketSuccess</a></em> is <em>false</em>, <em>TestRespReplyFailureCount</em> SHOULD be 0.</td>
+<td>The count value that was set by the UDP Echo Plus server (i.e. <a href="#D.TR-143:1.UDPEchoDiagnostics.Host"><em>Host</em></a>) to record the number of dropped echo response packets by the server. This count is incremented if a valid echo request packet is received at a UDP EchoPlus server but for some reason cannot be responded to (e.g. due to local buffer overflow, CPU utilization, etc…). If <a href="#D.TR-143:1.UDPEchoDiagnostics.IndividualPacketResult.PacketSuccess"><em>PacketSuccess</em></a> is <em>false</em>, <em>TestRespReplyFailureCount</em> SHOULD be 0.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2167,7 +2279,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-143:1.ServerSelectionDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-143:1.ServerSelectionDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-143:1.ServerSelectionDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.TR-143:1.ServerSelectionDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.TR-143:1.ServerSelectionDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2182,7 +2296,9 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.ProtocolVersion">ProtocolVersion</span></td>
 <td>string</td>
 <td>W</td>
-<td><p>Indicates the IP protocol version to be used. Enumeration of:</p>
+<td><p>Indicates the IP protocol version to be used.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.ServerSelectionDiagnostics.ProtocolVersion.Any"><em>Any</em></span> (Use either IPv4 or IPv6 depending on the system preference)</li>
@@ -2196,7 +2312,9 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.Protocol">Protocol</span></td>
 <td>string</td>
 <td>W</td>
-<td><p>The protocol over which the test is to be performed. Enumeration of:</p>
+<td><p>The protocol over which the test is to be performed.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.ServerSelectionDiagnostics.Protocol.ICMP"><em>ICMP</em></span></li>
@@ -2214,49 +2332,57 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.NumberOfRepetitions">NumberOfRepetitions</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
-<td>Number of repetitions of the ping test to perform for each <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.HostList">HostList</a></em> entry before reporting the results.</td>
+<td>Number of repetitions of the ping test to perform for each <a href="#D.TR-143:1.ServerSelectionDiagnostics.HostList"><em>HostList</em></a> entry before reporting the results.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.Timeout">Timeout</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
-<td>Timeout in <em>milliseconds</em> for each iteration of the ping test where the total number of iterations is the value of <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></em> times the number of entities in the <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.HostList">HostList</a></em> Parameter.</td>
+<td>Timeout in <em>milliseconds</em> for each iteration of the ping test where the total number of iterations is the value of <a href="#D.TR-143:1.ServerSelectionDiagnostics.NumberOfRepetitions"><em>NumberOfRepetitions</em></a> times the number of entities in the <a href="#D.TR-143:1.ServerSelectionDiagnostics.HostList"><em>HostList</em></a> Parameter.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.FastestHost">FastestHost</span></td>
 <td>string</td>
 <td>R</td>
-<td>Result parameter indicating the Host (one of the items within the <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.HostList">HostList</a></em> Parameter) with the smallest average response time.</td>
+<td><p>Result parameter indicating the Host (one of the items within the <a href="#D.TR-143:1.ServerSelectionDiagnostics.HostList"><em>HostList</em></a> Parameter) with the smallest average response time.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.MinimumResponseTime">MinimumResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the minimum response time in <em>microseconds</em> over all repetitions with successful responses of the most recent ping test for the Host identified in <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost">FastestHost</a></em>. Success is defined by the underlying protocol used. If there were no successful responses across all Hosts, this value MUST be zero.</td>
+<td><p>Result parameter indicating the minimum response time in <em>microseconds</em> over all repetitions with successful responses of the most recent ping test for the Host identified in <a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost"><em>FastestHost</em></a>. Success is defined by the underlying protocol used. If there were no successful responses across all Hosts, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.AverageResponseTime">AverageResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the average response time in <em>microseconds</em> over all repetitions with successful responses of the most recent ping test for the Host identified in <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost">FastestHost</a></em>. Success is defined by the underlying protocol used. If there were no successful responses across all Hosts, this value MUST be zero.</td>
+<td><p>Result parameter indicating the average response time in <em>microseconds</em> over all repetitions with successful responses of the most recent ping test for the Host identified in <a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost"><em>FastestHost</em></a>. Success is defined by the underlying protocol used. If there were no successful responses across all Hosts, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.MaximumResponseTime">MaximumResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the maximum response time in <em>microseconds</em> over all repetitions with successful responses of the most recent ping test for the Host identified in <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost">FastestHost</a></em>. Success is defined by the underlying protocol used. If there were no successful responses across all Hosts, this value MUST be zero.</td>
+<td><p>Result parameter indicating the maximum response time in <em>microseconds</em> over all repetitions with successful responses of the most recent ping test for the Host identified in <a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost"><em>FastestHost</em></a>. Success is defined by the underlying protocol used. If there were no successful responses across all Hosts, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-143:1.ServerSelectionDiagnostics.IPAddressUsed">IPAddressUsed</span></td>
 <td><span title="IPAddress">string(:45)</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Indicates which IP address was used to send the request to the host identified in <em><a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost">FastestHost</a></em>.</td>
+<td>[<a href="#T.IPAddress">IPAddress</a>] Indicates which IP address was used to send the request to the host identified in <a href="#D.TR-143:1.ServerSelectionDiagnostics.FastestHost"><em>FastestHost</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2291,7 +2417,9 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports">DownloadTransports</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Supported <em>DownloadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Supported <em>DownloadDiagnostics</em> transport protocols for a CPE device.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.DownloadTransports.HTTP"><em>HTTP</em></span></li>
@@ -2316,7 +2444,9 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports">UploadTransports</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Supported <em>UploadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Supported <em>UploadDiagnostics</em> transport protocols for a CPE device.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UploadTransports.HTTP"><em>HTTP</em></span></li>
@@ -2341,32 +2471,13 @@ If an empty string is specified, the CPE MUST use the interface as directed by i
 <td><span id="D.TR-143:1.Capabilities.PerformanceDiagnostic.UDPEchoDiagnosticsMaxResults">UDPEchoDiagnosticsMaxResults</span></td>
 <td>unsignedInt(1:)</td>
 <td>R</td>
-<td>The maximum number of rows in <strong>{{object: non-existent .UDPEchoDiagnostics.IndividualPacketResult}}</strong> that the CPE will store. If a test would create more rows than <em>UDPEchoDiagnosticsMaxResults</em> only the first <em>UDPEchoDiagnosticsMaxResults</em> rows are present in <strong>{{object: non-existent .UDPEchoDiagnostics.IndividualPacketResult}}</strong>.</td>
+<td><p>The maximum number of rows in <strong>{{object: non-existent .UDPEchoDiagnostics.IndividualPacketResult}}</strong> that the CPE will store. If a test would create more rows than <em>UDPEchoDiagnosticsMaxResults</em> only the first <em>UDPEchoDiagnosticsMaxResults</em> rows are present in <strong>{{object: non-existent .UDPEchoDiagnostics.IndividualPacketResult}}</strong>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr></tbody></table>
 
 <h2 id="inform-and-notification-requirements">Inform and Notification Requirements</h2>
-
-<h3 id="forced-inform-parameters">Forced Inform Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="forced-active-notification-parameters">Forced Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="default-active-notification-parameters">Default Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
 
 <h3 id="parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</h3>
 
@@ -2846,7 +2957,7 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:45:39 UTC.<br/>report.py –filter model=None –output &lt;stdout&gt; –transform automodel –format markdown tr-143-1-1-0.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.2.0 (2024-07-23 version) on 2024-07-23 at 11:06:27 UTC.<br/>report.py –filter model=None –output <stdout> –transform automodel –format markdown tr-143-1-1-0.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 
@@ -2879,9 +2990,6 @@ The minimum REQUIRED version for this profile is TR-143:1.0.</p>
 <li><span class="expandable"><a href="#inform-and-notification-requirements">Inform and Notification Requirements</a></span>
 
 <ul class="collapsed">
-<li><a href="#forced-inform-parameters">Forced Inform Parameters</a></li>
-<li><a href="#forced-active-notification-parameters">Forced Active Notification Parameters</a></li>
-<li><a href="#default-active-notification-parameters">Default Active Notification Parameters</a></li>
 <li><a href="#parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</a></li></ul></li>
 <li><span class="expandable"><a href="#profile-definitions">Profile Definitions</a></span>
 

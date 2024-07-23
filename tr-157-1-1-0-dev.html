@@ -307,6 +307,7 @@
     :root {
       --background-color: white;
       --foreground-color: black;
+      --diff-background-color: aliceblue;
       --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
@@ -331,6 +332,7 @@
     :root {
       --background-color: black;
       --foreground-color: white;
+      --diff-background-color: #0f0700;
       --link-color: lightblue;
       --parameter-color: black;
       --object-color: #bbbb44;
@@ -344,6 +346,9 @@
       --stripe-color-deprecated: #555555;
       --stripe-color-obsoleted: #444444;
       --stripe-color-deleted: #333333;
+    }
+    .hoverlink {
+      filter: invert(1);
     }
   }
 
@@ -441,7 +446,7 @@
 
   /* XXX this is a bad name */
   .diffs {
-      background-color: aliceblue;
+      background-color: var(--diff-background-color);
       opacity: 0.8;
   }
 
@@ -793,9 +798,6 @@
       text-align: center;
   }
   </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <div id="main">
@@ -982,11 +984,13 @@ definition.</p></td></tr>
 (digits 0-9, letters A-F or a-f) displayed as six pairs of digits
 separated by colons. Unspecified or inapplicable MAC addresses MUST be
 represented as empty strings unless otherwise specified by the parameter
-definition. Possible patterns:</p>
+definition.</p>
+
+<p>Possible patterns:</p>
 
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li>[*([0-9A-Fa-f][0-9A-Fa-f]:){5}(<span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f">0-9A-Fa-f][0-9A-Fa-f])*</span></li></ul></td></tr></tbody></table>
+<li><span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f"><code>([0-9A-Fa-f][0-9A-Fa-f]:){5}([0-9A-Fa-f][0-9A-Fa-f])</code></span></li></ul></td></tr></tbody></table>
 
 <h1 id="references">References</h1>
 
@@ -1165,8 +1169,10 @@ the <strong>Version</strong> column.</p>
 <td>R</td>
 <td><p>See [<a href="#R.TR-106">Section 3.7/TR-106</a>].</p>
 
-<p>This parameter is DEPRECATED because <em><a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel.">DeviceInfo.SupportedDataModel</a></em> and associated Device Type XML documents (DT Instances) provide a more granular and scalable way of describing the device’s data model.
-Therefore its value MAY be an empty string if (and only if) <em><a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel.">DeviceInfo.SupportedDataModel</a></em> is supported.</p></td>
+<p>This parameter is DEPRECATED because <a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel."><em>DeviceInfo.SupportedDataModel</em></a> and associated Device Type XML documents (DT Instances) provide a more granular and scalable way of describing the device’s data model.
+Therefore its value MAY be an empty string if (and only if) <a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel."><em>DeviceInfo.SupportedDataModel</em></a> is supported.</p>
+
+<p>This parameter MUST always be included in Inform messages.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1217,21 +1223,25 @@ Therefore its value MAY be an empty string if (and only if) <em><a href="#D.Devi
 <td><span id="D.Device:1.Device.DeviceInfo.ModelName">ModelName</span></td>
 <td>string(:64)</td>
 <td>R</td>
-<td>Model name of the CPE (human readable string).</td>
+<td><p>Model name of the CPE (human readable string).</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.Description">Description</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>A full description of the CPE device (human readable string).</td>
+<td><p>A full description of the CPE device (human readable string).</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.ProductClass">ProductClass</span></td>
 <td>string(:64)</td>
 <td>R</td>
-<td><p>Identifier of the class of product for which the serial number applies. That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the <em><a href="#D.Device:1.Device.DeviceInfo.SerialNumber">SerialNumber</a></em> parameter is unique.</p>
+<td><p>Identifier of the class of product for which the serial number applies. That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the <a href="#D.Device:1.Device.DeviceInfo.SerialNumber"><em>SerialNumber</em></a> parameter is unique.</p>
 
 <p>This value MUST remain fixed over the lifetime of the device, including across firmware updates.</p></td>
 <td>-</td>
@@ -1249,15 +1259,19 @@ Therefore its value MAY be an empty string if (and only if) <em><a href="#D.Devi
 <td><span id="D.Device:1.Device.DeviceInfo.HardwareVersion">HardwareVersion</span></td>
 <td>string(:64)</td>
 <td>R</td>
-<td>A string identifying the particular CPE model and version.</td>
+<td><p>A string identifying the particular CPE model and version.</p>
+
+<p>This parameter MUST always be included in Inform messages.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.SoftwareVersion">SoftwareVersion</span></td>
 <td>string(:64)</td>
 <td>R</td>
-<td>A string identifying the software version currently installed in the CPE.
-To allow version comparisons, this element SHOULD be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, <em>3.0.21</em> where the components mean: <em>Major.Minor.Build</em>.</td>
+<td><p>A string identifying the software version currently installed in the CPE.
+To allow version comparisons, this element SHOULD be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, <em>3.0.21</em> where the components mean: <em>Major.Minor.Build</em>.</p>
+
+<p>This parameter MUST always be included in Inform messages.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1292,7 +1306,9 @@ To allow version comparisons, this element SHOULD be in the form of dot-delimite
 <td><span id="D.Device:1.Device.DeviceInfo.DeviceStatus">DeviceStatus</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Current operational status of the device. Enumeration of:</p>
+<td><p>Current operational status of the device.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.DeviceInfo.DeviceStatus.Up"><em>Up</em></span></li>
@@ -1305,7 +1321,9 @@ To allow version comparisons, this element SHOULD be in the form of dot-delimite
 <td><span id="D.Device:1.Device.DeviceInfo.UpTime">UpTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Time in seconds since the CPE was last restarted.</td>
+<td><p>Time in seconds since the CPE was last restarted.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1314,14 +1332,18 @@ To allow version comparisons, this element SHOULD be in the form of dot-delimite
 <td>R</td>
 <td><p>Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection. The CPE MAY reset this date after a factory reset.</p>
 
-<p>If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.</p></td>
+<p>If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.DeviceLog">DeviceLog</span></td>
 <td>string(:32768)</td>
 <td>R</td>
-<td>Vendor-specific log(s).</td>
+<td><p>Vendor-specific log(s).</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1349,7 +1371,9 @@ To allow version comparisons, this element SHOULD be in the form of dot-delimite
 <td><span id="D.Device:1.Device.DeviceInfo.MemoryStatus.Free">Free</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The free physical RAM, in <em>kilobytes</em>, currently available on the device.</td>
+<td><p>The free physical RAM, in <em>kilobytes</em>, currently available on the device.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1363,7 +1387,9 @@ To allow version comparisons, this element SHOULD be in the form of dot-delimite
 <td><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.CPUUsage">CPUUsage</span></td>
 <td>unsignedInt(:100)</td>
 <td>R</td>
-<td>The total amount of the CPU, in <em>percent</em>, rounded up to the nearest whole <em>percent</em>. In the case that multiple CPU are present, this value represents the average of all CPU.</td>
+<td><p>The total amount of the CPU, in <em>percent</em>, rounded up to the nearest whole <em>percent</em>. In the case that multiple CPU are present, this value represents the average of all CPU.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1380,7 +1406,7 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td>R</td>
 <td><p>List of all processes running on the device.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.DeviceInfo.ProcessStatus.Process.PID">PID</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.DeviceInfo.ProcessStatus.Process.PID"><em>PID</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1401,7 +1427,9 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.Size">Size</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The size in <em>kilobytes</em> of the memory occupied by the process.</td>
+<td><p>The size in <em>kilobytes</em> of the memory occupied by the process.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1415,14 +1443,18 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.CPUTime">CPUTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The amount of time in <em>milliseconds</em> that the process has spent taking up CPU time since the process was started.</td>
+<td><p>The amount of time in <em>milliseconds</em> that the process has spent taking up CPU time since the process was started.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.State">State</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The current state that the process is in. Enumeration of:</p>
+<td><p>The current state that the process is in.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.State.Running"><em>Running</em></span></li>
@@ -1430,7 +1462,9 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <li><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.State.Stopped"><em>Stopped</em></span></li>
 <li><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.State.Idle"><em>Idle</em></span> (OPTIONAL)</li>
 <li><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.State.Uninterruptible"><em>Uninterruptible</em></span> (OPTIONAL)</li>
-<li><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.State.Zombie"><em>Zombie</em></span> (OPTIONAL)</li></ul></td>
+<li><span id="D.Device:1.Device.DeviceInfo.ProcessStatus.Process.State.Zombie"><em>Zombie</em></span> (OPTIONAL)</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1453,7 +1487,7 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td>R</td>
 <td><p>This object represents information that the device has obtained via sampling an internal temperature sensor.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Name">Name</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1467,7 +1501,9 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td><span id="D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of this temperature sensor. Enumeration of:</p>
+<td><p>The status of this temperature sensor.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Disabled"><em>Disabled</em></span> (The sensor is not currently sampling the temperature)</li>
@@ -1492,8 +1528,8 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 Reset can be caused by:
 
 <ul>
-<li><em><a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status">Status</a></em> transition from <a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Disabled"><em>Disabled</em></a> to <a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Enabled"><em>Enabled</em></a></li>
-<li><em><a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Reset">Reset</a></em> set to <em>true</em>.</li>
+<li><a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status"><em>Status</em></a> transition from <a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Disabled"><em>Disabled</em></a> to <a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Enabled"><em>Enabled</em></a></li>
+<li><a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Reset"><em>Reset</em></a> set to <em>true</em>.</li>
 <li>An internal reset of the temperature sensor (including a reboot of the device).
 The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates that this temperature sensor has never been reset, which can only happen if it has never been enabled.</li></ul></td>
 <td>-</td>
@@ -1509,16 +1545,20 @@ The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indi
 <td><span id="D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.Value">Value</span></td>
 <td>int(-274:)</td>
 <td>R</td>
-<td>This temperature sensor’s last good reading in <em>degrees celsius</em>.
-A value of -274 (which is below absolute zero) indicates a good reading has not been obtained since last reset.</td>
+<td><p>This temperature sensor’s last good reading in <em>degrees celsius</em>.
+A value of -274 (which is below absolute zero) indicates a good reading has not been obtained since last reset.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.LastUpdate">LastUpdate</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>The time at which this temperature sensor’s last good reading was obtained.
-The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates a good reading has not been obtained since last reset.</td>
+<td><p>The time at which this temperature sensor’s last good reading was obtained.
+The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates a good reading has not been obtained since last reset.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1565,7 +1605,7 @@ A value of -274 (which is below absolute zero) indicates a non configured value.
 <td><span id="D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.LowAlarmTime">LowAlarmTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Initial time at which this temperature sensor’s <em><a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.LowAlarmValue">LowAlarmValue</a></em> was encountered.
+<td>Initial time at which this temperature sensor’s <a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.LowAlarmValue"><em>LowAlarmValue</em></a> was encountered.
 This value is only set the first time the alarm is seen and not changed until the next reset.
 The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates that an alarm has not been encountered since the last reset.</td>
 <td>-</td>
@@ -1582,7 +1622,7 @@ A value of -274 (which is below absolute zero) indicates a non configured value.
 <td><span id="D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.HighAlarmTime">HighAlarmTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Initial time at which this temperature sensor’s <em><a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.HighAlarmValue">HighAlarmValue</a></em> was encountered.
+<td>Initial time at which this temperature sensor’s <a href="#D.Device:1.Device.DeviceInfo.TemperatureStatus.TemperatureSensor.HighAlarmValue"><em>HighAlarmValue</em></a> was encountered.
 This value is only set the first time the alarm is seen and not changed until the next reset.
 The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates that an alarm has not been encountered since the last reset.</td>
 <td>-</td>
@@ -1624,7 +1664,7 @@ The table MUST describe the device’s entire Supported Data Model. Therefore, i
 Each table entry MUST refer to only a single Root Object or Service Object. The device MAY choose to use more than one table entry for a given Root Object or Service Object.
 Considering that every device has some form of a data model, this table MUST NOT be empty.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel.URL">URL</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel.URL"><em>URL</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1651,14 +1691,19 @@ For example, if this table entry references a DT Instance that refers to the <em
 <td><span id="D.Device:1.Device.DeviceInfo.SupportedDataModel.Features">Features</span></td>
 <td>string[]</td>
 <td>R</td>
-<td>Comma-separated list of strings. This parameter MUST list exactly the features that are defined using the top-level <em>feature</em> element in the DT Instance referenced by <em><a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel.URL">URL</a></em>.
-For example, if the DT instance specified the following:
+<td><p>Comma-separated list of strings. This parameter MUST list exactly the features that are defined using the top-level <em>feature</em> element in the DT Instance referenced by <a href="#D.Device:1.Device.DeviceInfo.SupportedDataModel.URL"><em>URL</em></a>.
+For example, if the DT instance specified the following:</p>
 
-<ul>
-<li>&lt;feature name=&ldquo;DNSServer&rdquo;/&gt;</li>
-<li>&lt;feature name=&ldquo;Router&rdquo;/&gt;</li>
-<li>&lt;feature name=&ldquo;X_MyDeviceFeature&rdquo;/&gt;
-then the value of this parameter might be <em>DNSServer,Router,X_MyDeviceFeature</em>. The order in which the features are listed is not significant.</li></ul></td>
+<blockquote><feature name="DNSServer"/>
+</blockquote>
+
+<blockquote><feature name="Router"/>
+</blockquote>
+
+<blockquote><feature name="X_MyDeviceFeature"/>
+</blockquote>
+
+<p>then the value of this parameter might be <em>DNSServer,Router,X_MyDeviceFeature</em>. The order in which the features are listed is not significant.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1712,17 +1757,17 @@ When read, this parameter returns an empty string, regardless of the actual valu
 <td><span id="D.Device:1.Device.ManagementServer.PeriodicInformInterval">PeriodicInformInterval</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
-<td>The duration in seconds of the interval for which the CPE MUST attempt to connect with the ACS and call the Inform method if <em><a href="#D.Device:1.Device.ManagementServer.PeriodicInformEnable">PeriodicInformEnable</a></em> is <em>true</em>.</td>
+<td>The duration in seconds of the interval for which the CPE MUST attempt to connect with the ACS and call the Inform method if <a href="#D.Device:1.Device.ManagementServer.PeriodicInformEnable"><em>PeriodicInformEnable</em></a> is <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.PeriodicInformTime">PeriodicInformTime</span></td>
 <td>dateTime</td>
 <td>W</td>
-<td>An absolute time reference in UTC to determine when the CPE will initiate the periodic Inform method calls. Each Inform call MUST occur at this reference time plus or minus an integer multiple of the <em><a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval">PeriodicInformInterval</a></em>.
+<td>An absolute time reference in UTC to determine when the CPE will initiate the periodic Inform method calls. Each Inform call MUST occur at this reference time plus or minus an integer multiple of the <a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval"><em>PeriodicInformInterval</em></a>.
 <em>PeriodicInformTime</em> is used only to set the <em>phase</em> of the periodic Informs. The actual value of <em>PeriodicInformTime</em> can be arbitrarily far into the past or future.
-For example, if <em><a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval">PeriodicInformInterval</a></em> is 86400 (a day) and if <em>PeriodicInformTime</em> is set to UTC midnight on some day (in the past, present, or future) then periodic Informs will occur every day at UTC midnight. These MUST begin on the very next midnight, even if <em>PeriodicInformTime</em> refers to a day in the future.
-The Unknown Time value defined in [<a href="#R.TR-106a2">Section 3.2/TR-106a2</a>] indicates that no particular time reference is specified. That is, the CPE MAY locally choose the time reference, and needs only to adhere to the specified <em><a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval">PeriodicInformInterval</a></em>.
+For example, if <a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval"><em>PeriodicInformInterval</em></a> is 86400 (a day) and if <em>PeriodicInformTime</em> is set to UTC midnight on some day (in the past, present, or future) then periodic Informs will occur every day at UTC midnight. These MUST begin on the very next midnight, even if <em>PeriodicInformTime</em> refers to a day in the future.
+The Unknown Time value defined in [<a href="#R.TR-106a2">Section 3.2/TR-106a2</a>] indicates that no particular time reference is specified. That is, the CPE MAY locally choose the time reference, and needs only to adhere to the specified <a href="#D.Device:1.Device.ManagementServer.PeriodicInformInterval"><em>PeriodicInformInterval</em></a>.
 If absolute time is not available to the CPE, its periodic Inform behavior MUST be the same as if the <em>PeriodicInformTime</em> parameter was set to the Unknown Time value.</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -1730,21 +1775,26 @@ If absolute time is not available to the CPE, its periodic Inform behavior MUST 
 <td><span id="D.Device:1.Device.ManagementServer.ParameterKey">ParameterKey</span></td>
 <td>string(:32)</td>
 <td>R</td>
-<td><em>ParameterKey</em> provides the ACS a reliable and extensible means to track changes made by the ACS. The value of <em>ParameterKey</em> MUST be equal to the value of the ParameterKey argument from the most recent successful SetParameterValues, AddObject, or DeleteObject method call from the ACS.
+<td><p><em>ParameterKey</em> provides the ACS a reliable and extensible means to track changes made by the ACS. The value of <em>ParameterKey</em> MUST be equal to the value of the ParameterKey argument from the most recent successful SetParameterValues, AddObject, or DeleteObject method call from the ACS.
 The CPE MUST set <em>ParameterKey</em> to the value specified in the corresponding method arguments if and only if the method completes successfully and no fault response is generated. If a method call does not complete successfully (implying that the changes requested in the method did not take effect), the value of <em>ParameterKey</em> MUST NOT be modified.
-The CPE MUST only modify the value of <em>ParameterKey</em> as a result of SetParameterValues, AddObject, DeleteObject, or due to a factory reset. On factory reset, the value of <em>ParameterKey</em> MUST be set to an empty string.</td>
+The CPE MUST only modify the value of <em>ParameterKey</em> as a result of SetParameterValues, AddObject, DeleteObject, or due to a factory reset. On factory reset, the value of <em>ParameterKey</em> MUST be set to an empty string.</p>
+
+<p>This parameter MUST always be included in Inform messages.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.ConnectionRequestURL">ConnectionRequestURL</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>HTTP URL, as defined in [<a href="#R.RFC3986">RFC3986</a>], for an ACS to make a Connection Request notification to the CPE.
-In the form:
+<td><p>HTTP URL, as defined in [<a href="#R.RFC3986">RFC3986</a>], for an ACS to make a Connection Request notification to the CPE.
+In the form:</p>
 
-<ul>
-<li>http://host:port/path
-The <em>host</em> portion of the URL MAY be the IP address for the management interface of the CPE in lieu of a host name.</li></ul></td>
+<blockquote><a href="http://host:port/path">http://host:port/path</a>
+The <em>host</em> portion of the URL MAY be the IP address for the management interface of the CPE in lieu of a host name.</blockquote>
+
+<p>This parameter MUST always be included in Inform messages.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1792,14 +1842,16 @@ LAN-accessible URL, as defined in [<a href="#R.RFC3986">RFC3986</a>], to which a
 <td><span id="D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress">UDPConnectionRequestAddress</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>Address and port to which an ACS MAY send a UDP Connection Request to the CPE (see [<a href="#R.TR-069a2">Annex G/TR-069a2</a>]).
-This parameter is represented in the form of an Authority element as defined in [<a href="#R.RFC3986">RFC3986</a>]. The value MUST be in one of the following two forms:
+<td><p>Address and port to which an ACS MAY send a UDP Connection Request to the CPE (see [<a href="#R.TR-069a2">Annex G/TR-069a2</a>]).
+This parameter is represented in the form of an Authority element as defined in [<a href="#R.RFC3986">RFC3986</a>]. The value MUST be in one of the following two forms:</p>
+
+<blockquote>host:port</blockquote>
+
+<blockquote>host</blockquote>
 
 <ul>
-<li>host:port</li>
-<li>host</li>
-<li>When <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em> is <em>true</em>, the <em>host</em> and <em>port</em> portions of this parameter MUST represent the public address and port corresponding to the NAT binding through which the ACS can send UDP Connection Request messages (once this information is learned by the CPE through the use of STUN).</li>
-<li>When <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em> is <em>false</em>, the <em>host</em> and <em>port</em> portions of the URL MUST represent the local IP address and port on which the CPE is listening for UDP Connection Request messages.
+<li>When <a href="#D.Device:1.Device.ManagementServer.STUNEnable"><em>STUNEnable</em></a> is <em>true</em>, the <em>host</em> and <em>port</em> portions of this parameter MUST represent the public address and port corresponding to the NAT binding through which the ACS can send UDP Connection Request messages (once this information is learned by the CPE through the use of STUN).</li>
+<li>When <a href="#D.Device:1.Device.ManagementServer.STUNEnable"><em>STUNEnable</em></a> is <em>false</em>, the <em>host</em> and <em>port</em> portions of the URL MUST represent the local IP address and port on which the CPE is listening for UDP Connection Request messages.
 The second form of this parameter MAY be used only if the port value is equal to <em>80</em>.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -1807,7 +1859,7 @@ The second form of this parameter MAY be used only if the port value is equal to
 <td><span id="D.Device:1.Device.ManagementServer.UDPConnectionRequestAddressNotificationLimit">UDPConnectionRequestAddressNotificationLimit</span></td>
 <td>unsignedInt</td>
 <td>W</td>
-<td>The minimum time, in seconds, between Active Notifications resulting from changes to the <em><a href="#D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress">UDPConnectionRequestAddress</a></em> (if Active Notification is enabled).</td>
+<td>The minimum time, in seconds, between Active Notifications resulting from changes to the <a href="#D.Device:1.Device.ManagementServer.UDPConnectionRequestAddress"><em>UDPConnectionRequestAddress</em></a> (if Active Notification is enabled).</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1821,15 +1873,15 @@ The second form of this parameter MAY be used only if the port value is equal to
 <td><span id="D.Device:1.Device.ManagementServer.STUNServerAddress">STUNServerAddress</span></td>
 <td>string(:256)</td>
 <td>W</td>
-<td>Host name or IP address of the STUN server for the CPE to send Binding Requests if STUN is enabled via <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em>.
-If is an empty string and <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em> is <em>true</em>, the CPE MUST use the address of the ACS extracted from the host portion of the ACS URL.</td>
+<td>Host name or IP address of the STUN server for the CPE to send Binding Requests if STUN is enabled via <a href="#D.Device:1.Device.ManagementServer.STUNEnable"><em>STUNEnable</em></a>.
+If is an empty string and <a href="#D.Device:1.Device.ManagementServer.STUNEnable"><em>STUNEnable</em></a> is <em>true</em>, the CPE MUST use the address of the ACS extracted from the host portion of the ACS URL.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.ManagementServer.STUNServerPort">STUNServerPort</span></td>
 <td>unsignedInt(0:65535)</td>
 <td>W</td>
-<td>Port number of the STUN server for the CPE to send Binding Requests if STUN is enabled via <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em>.
+<td>Port number of the STUN server for the CPE to send Binding Requests if STUN is enabled via <a href="#D.Device:1.Device.ManagementServer.STUNEnable"><em>STUNEnable</em></a>.
 By default, this SHOULD be the equal to the default STUN port, 3478.</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -1872,7 +1924,7 @@ A value of -1 indicates that no maximum period is specified.</td>
 <td>R</td>
 <td>When STUN is enabled, this parameter indicates whether or not the CPE has detected address and/or port mapping in use.
 A <em>true</em> value indicates that the received MAPPED-ADDRESS in the most recent Binding Response differs from the CPE’s source address and port.
-When <em><a href="#D.Device:1.Device.ManagementServer.STUNEnable">STUNEnable</a></em> is <em>false</em>, this value MUST be <em>false</em>.</td>
+When <a href="#D.Device:1.Device.ManagementServer.STUNEnable"><em>STUNEnable</em></a> is <em>false</em>, this value MUST be <em>false</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1912,14 +1964,14 @@ Note that this includes any backup or restore operations that were not specifica
 <p>Each list item matches one of:</p>
 
 <ul>
-<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.1FirmwareUpgradeImage"><em>1 Firmware Upgrade Image</em></span> (Download Only)</li>
-<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.2WebContent"><em>2 Web Content</em></span> (Download Only)</li>
-<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.3VendorConfigurationFile"><em>3 Vendor Configuration File</em></span> (Download or Upload)</li>
-<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.4VendorLogFile"><em>4 Vendor Log File</em></span> (Upload Only)</li>
-<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.X0-9A-F6.">*X [0-9A-F]{6} .**</span> (For Vendor-Specific File Types, could be for either Download or Upload)
+<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.1FirmwareUpgradeImage"><code>1 Firmware Upgrade Image</code></span> (Download Only)</li>
+<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.2WebContent"><code>2 Web Content</code></span> (Download Only)</li>
+<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.3VendorConfigurationFile"><code>3 Vendor Configuration File</code></span> (Download or Upload)</li>
+<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.4VendorLogFile"><code>4 Vendor Log File</code></span> (Upload Only)</li>
+<li><span id="D.Device:1.Device.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.X0-9A-F6."><code>X [0-9A-F]{6} .*</code></span> (For Vendor-Specific File Types, could be for either Download or Upload)
 Additionally, the following format is defined to allow the unique definition of vendor-specific file types:</li>
-<li><em>&ldquo;X &lt;OUI&gt; &lt;Vendor-specific identifier&gt;&rdquo;</em>
-&lt;OUI&gt; is replaced by a 6 hexadecimal-digit OUI (organizationally unique identifier) as defined in [<a href="#R.OUI">OUI</a>], with all upper-case letters and any leading zeros included. The OUI used for a given vendor-specific file type MUST be one that is assigned to the organization that defined this file type (which is not necessarily the same as the vendor of the CPE or ACS).
+<li><em>&ldquo;X <OUI> <Vendor-specific identifier>&rdquo;</em>
+<OUI> is replaced by a 6 hexadecimal-digit OUI (organizationally unique identifier) as defined in [<a href="#R.OUI">OUI</a>], with all upper-case letters and any leading zeros included. The OUI used for a given vendor-specific file type MUST be one that is assigned to the organization that defined this file type (which is not necessarily the same as the vendor of the CPE or ACS).
 Note that an empty string indicates that all file types are excluded from this filter, effectively disabling CPE notification of AUTONOMOUS TRANSFER COMPLETE events to the ACS.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -2020,17 +2072,18 @@ Note that an empty string indicates that all file types are excluded from this f
 <td><span id="D.Device:1.Device.Time.CurrentLocalTime">CurrentLocalTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>The current date and time in the CPE’s local time zone.</td>
+<td><p>The current date and time in the CPE’s local time zone.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.Time.LocalTimeZone">LocalTimeZone</span></td>
 <td>string(:256)</td>
 <td>W</td>
-<td>The local time zone definition, encoded according to IEEE 1003.1 (POSIX). The following is an example value:
+<td><p>The local time zone definition, encoded according to IEEE 1003.1 (POSIX). The following is an example value:</p>
 
-<ul>
-<li>EST+5 EDT,M4.1.0/2,M10.5.0/2</li></ul></td>
+<blockquote>EST+5 EDT,M4.1.0/2,M10.5.0/2</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2160,14 +2213,14 @@ ISPLogoSize can also be used as a check to verify correct transfer and conversio
 <td><span id="D.Device:1.Device.UserInterface.AutoUpdateServer">AutoUpdateServer</span></td>
 <td>string(:256)</td>
 <td>W</td>
-<td>The server the CPE can check to see if an update is available for direct download to it. This MUST NOT be used by the CPE if the <em><a href="#D.Device:1.Device.ManagementServer.UpgradesManaged">ManagementServer.UpgradesManaged</a></em> parameter is <em>true</em>.</td>
+<td>The server the CPE can check to see if an update is available for direct download to it. This MUST NOT be used by the CPE if the <a href="#D.Device:1.Device.ManagementServer.UpgradesManaged"><em>ManagementServer.UpgradesManaged</em></a> parameter is <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UserInterface.UserUpdateServer">UserUpdateServer</span></td>
 <td>string(:256)</td>
 <td>W</td>
-<td>The server where a user can check via a web browser if an update is available for download to a PC. This MUST NOT be used by the CPE if the <em><a href="#D.Device:1.Device.ManagementServer.UpgradesManaged">ManagementServer.UpgradesManaged</a></em> parameter is <em>true</em>.</td>
+<td>The server where a user can check via a web browser if an update is available for download to a PC. This MUST NOT be used by the CPE if the <a href="#D.Device:1.Device.ManagementServer.UpgradesManaged"><em>ManagementServer.UpgradesManaged</em></a> parameter is <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2190,7 +2243,7 @@ ISPLogoSize can also be used as a check to verify correct transfer and conversio
 <td>R</td>
 <td>This object contains parameters relating to remotely accessing the CPE’s user interface.
 Remote access is defined as any entity not of a local subnet attempting to connect to the CPE.
-Remote access requires user authentication. To provide remote access authentication the CPE MUST support a <em><a href="#D.Device:1.Device.User.">User.{i}.</a></em> with at least one instance that has <em><a href="#D.Device:1.Device.User.RemoteAccessCapable">User.{i}.RemoteAccessCapable</a></em> set to <em>true</em>.</td>
+Remote access requires user authentication. To provide remote access authentication the CPE MUST support a <a href="#D.Device:1.Device.User."><em>User.{i}.</em></a> with at least one instance that has <a href="#D.Device:1.Device.User.RemoteAccessCapable"><em>User.{i}.RemoteAccessCapable</em></a> set to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2211,7 +2264,9 @@ Remote access requires user authentication. To provide remote access authenticat
 <td><span id="D.Device:1.Device.UserInterface.RemoteAccess.SupportedProtocols">SupportedProtocols</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Indicates the protocols that are supported by the CPE for the purpose of remotely accessing the user interface. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Indicates the protocols that are supported by the CPE for the purpose of remotely accessing the user interface.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.UserInterface.RemoteAccess.SupportedProtocols.HTTP"><em>HTTP</em></span> (As defined in [<a href="#R.RFC2616">RFC2616</a>])</li>
@@ -2222,7 +2277,7 @@ Remote access requires user authentication. To provide remote access authenticat
 <td><span id="D.Device:1.Device.UserInterface.RemoteAccess.Protocol">Protocol</span></td>
 <td>string</td>
 <td>W</td>
-<td>The value MUST be a member of the list reported by the <em><a href="#D.Device:1.Device.UserInterface.RemoteAccess.SupportedProtocols">SupportedProtocols</a></em> parameter. This is the protocol currently being used for remote access.</td>
+<td>The value MUST be a member of the list reported by the <a href="#D.Device:1.Device.UserInterface.RemoteAccess.SupportedProtocols"><em>SupportedProtocols</em></a> parameter. This is the protocol currently being used for remote access.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2250,28 +2305,36 @@ Remote access requires user authentication. To provide remote access authenticat
 <td><span id="D.Device:1.Device.UserInterface.LocalDisplay.PosX">PosX</span></td>
 <td>int</td>
 <td>W</td>
-<td>The horizontal position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</td>
+<td><p>The horizontal position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UserInterface.LocalDisplay.PosY">PosY</span></td>
 <td>int</td>
 <td>W</td>
-<td>The vertical position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</td>
+<td><p>The vertical position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UserInterface.LocalDisplay.Width">Width</span></td>
 <td>unsignedInt</td>
 <td>W</td>
-<td>The width of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</td>
+<td><p>The width of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UserInterface.LocalDisplay.Height">Height</span></td>
 <td>unsignedInt</td>
 <td>W</td>
-<td>The height of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</td>
+<td><p>The height of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2313,8 +2376,10 @@ The ability to modify this parameter is OPTIONAL.</li></ul></td>
 <td><span id="D.Device:1.Device.LAN.IPAddress">IPAddress</span></td>
 <td><span title="IPAddress">string(:45)</span></td>
 <td>W</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] The current IP address assigned to this interface.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
+<td><p>[<a href="#T.IPAddress">IPAddress</a>] The current IP address assigned to this interface.
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <a href="#D.Device:1.Device.LAN.AddressingType"><em>AddressingType</em></a> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</p>
+
+<p>This parameter MUST always be included in Inform messages.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2322,7 +2387,7 @@ The ability to modify this parameter is OPTIONAL, and this parameter cannot be m
 <td><span title="IPAddress">string(:45)</span></td>
 <td>W</td>
 <td>[<a href="#T.IPAddress">IPAddress</a>] The current subnet mask.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <a href="#D.Device:1.Device.LAN.AddressingType"><em>AddressingType</em></a> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2330,7 +2395,7 @@ The ability to modify this parameter is OPTIONAL, and this parameter cannot be m
 <td>string</td>
 <td>W</td>
 <td>The IP address of the current default gateway for this interface.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <a href="#D.Device:1.Device.LAN.AddressingType"><em>AddressingType</em></a> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2338,7 +2403,7 @@ The ability to modify this parameter is OPTIONAL, and this parameter cannot be m
 <td>string[](:256)</td>
 <td>W</td>
 <td>Comma-separated list (maximum number of characters 256) of strings. Comma-separated list of IP address of the DNS servers for this interface.
-The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <em><a href="#D.Device:1.Device.LAN.AddressingType">AddressingType</a></em> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.
+The ability to modify this parameter is OPTIONAL, and this parameter cannot be modified if the <a href="#D.Device:1.Device.LAN.AddressingType"><em>AddressingType</em></a> is <a href="#D.Device:1.Device.LAN.AddressingType.DHCP"><em>DHCP</em></a>.
 If this parameter is modifiable, the device MAY ignore any DNS servers beyond the first two in the list.</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -2346,7 +2411,7 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td><span id="D.Device:1.Device.LAN.MACAddress">MACAddress</span></td>
 <td><span title="MACAddress">string(:17)</span></td>
 <td>W</td>
-<td>[<a href="#T.MACAddress">MACAddress</a>] The physical address of this interface. Writable only if <em><a href="#D.Device:1.Device.LAN.MACAddressOverride">MACAddressOverride</a></em> is present and equal to <em>true</em>.</td>
+<td>[<a href="#T.MACAddress">MACAddress</a>] The physical address of this interface. Writable only if <a href="#D.Device:1.Device.LAN.MACAddressOverride"><em>MACAddressOverride</em></a> is present and equal to <em>true</em>.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2356,8 +2421,8 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td>Whether the value of MACAddress parameter can be overridden.
 
 <ul>
-<li>When <em>true</em>, <em><a href="#D.Device:1.Device.LAN.MACAddress">MACAddress</a></em> is writable.</li>
-<li>When <em>false</em>, <em><a href="#D.Device:1.Device.LAN.MACAddress">MACAddress</a></em> is not writable, and the default MAC address assigned by the device SHOULD be restored.</li></ul></td>
+<li>When <em>true</em>, <a href="#D.Device:1.Device.LAN.MACAddress"><em>MACAddress</em></a> is writable.</li>
+<li>When <em>false</em>, <a href="#D.Device:1.Device.LAN.MACAddress"><em>MACAddress</em></a> is not writable, and the default MAC address assigned by the device SHOULD be restored.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2381,8 +2446,8 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td>Whether this entry represents a request to the DHCP server, or a value to be sent by the DHCP client.
 
 <ul>
-<li>When <em>true</em>, this entry represents a request. In this case, the DHCP client MUST include the specified <em><a href="#D.Device:1.Device.LAN.DHCPOption.Tag">Tag</a></em> in the Parameter Request List, as defined in RFC 2132. The <em><a href="#D.Device:1.Device.LAN.DHCPOption.Value">Value</a></em> parameter is ignored in this case.</li>
-<li>When <em>false</em>, this entry represents a value to be sent by the DHCP client. In this case, the DHCP client MUST include a DHCP option formed from the <em><a href="#D.Device:1.Device.LAN.DHCPOption.Tag">Tag</a></em> and <em><a href="#D.Device:1.Device.LAN.DHCPOption.Value">Value</a></em> parameters (with the Length derived from the length of the <em><a href="#D.Device:1.Device.LAN.DHCPOption.Value">Value</a></em> parameter).</li></ul></td>
+<li>When <em>true</em>, this entry represents a request. In this case, the DHCP client MUST include the specified <a href="#D.Device:1.Device.LAN.DHCPOption.Tag"><em>Tag</em></a> in the Parameter Request List, as defined in RFC 2132. The <a href="#D.Device:1.Device.LAN.DHCPOption.Value"><em>Value</em></a> parameter is ignored in this case.</li>
+<li>When <em>false</em>, this entry represents a value to be sent by the DHCP client. In this case, the DHCP client MUST include a DHCP option formed from the <a href="#D.Device:1.Device.LAN.DHCPOption.Tag"><em>Tag</em></a> and <a href="#D.Device:1.Device.LAN.DHCPOption.Value"><em>Value</em></a> parameters (with the Length derived from the length of the <a href="#D.Device:1.Device.LAN.DHCPOption.Value"><em>Value</em></a> parameter).</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2396,8 +2461,8 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td><span id="D.Device:1.Device.LAN.DHCPOption.Value">Value</span></td>
 <td>base64(:255)</td>
 <td>W</td>
-<td>Base64 encoded octet string to be used as the Value of the DHCP option if <em><a href="#D.Device:1.Device.LAN.DHCPOption.Request">Request</a></em> is <em>false</em>.</td>
-<td></td>
+<td>Base64 encoded octet string to be used as the Value of the DHCP option if <a href="#D.Device:1.Device.LAN.DHCPOption.Request"><em>Request</em></a> is <em>false</em>.</td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.Device:1.Device.LAN.Stats.">Device.LAN.Stats.</span></td>
@@ -2410,111 +2475,141 @@ If this parameter is modifiable, the device MAY ignore any DNS servers beyond th
 <td><span id="D.Device:1.Device.LAN.Stats.ConnectionUpTime">ConnectionUpTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The time in seconds that this IP interface has been connected.
+<td><p>The time in seconds that this IP interface has been connected.</p>
 
 <ul>
 <li>If the IP interface is using DHCP, this is the time that the DHCP client has been only in the Bound or Renewing states and the lower-layer interface has continuously maintained a link.</li>
-<li>If the IP interface is using static addressing, this is the time that the lower-layer interface has continuously maintained a link.</li></ul></td>
+<li>If the IP interface is using static addressing, this is the time that the lower-layer interface has continuously maintained a link.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP payload bytes sent over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
+<td><p>Total number of IP payload bytes sent over this interface since the device was last restarted as specified in <a href="#D.Device:1.Device.DeviceInfo.UpTime"><em>DeviceInfo.UpTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP payload bytes received over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
+<td><p>Total number of IP payload bytes received over this interface since the device was last restarted as specified in <a href="#D.Device:1.Device.DeviceInfo.UpTime"><em>DeviceInfo.UpTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.TotalPacketsSent">TotalPacketsSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP packets sent over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
+<td><p>Total number of IP packets sent over this interface since the device was last restarted as specified in <a href="#D.Device:1.Device.DeviceInfo.UpTime"><em>DeviceInfo.UpTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.TotalPacketsReceived">TotalPacketsReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP packets received over this interface since the device was last restarted as specified in <em><a href="#D.Device:1.Device.DeviceInfo.UpTime">DeviceInfo.UpTime</a></em>.</td>
+<td><p>Total number of IP packets received over this interface since the device was last restarted as specified in <a href="#D.Device:1.Device.DeviceInfo.UpTime"><em>DeviceInfo.UpTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Number of seconds since the beginning of the period used for collection of CurrentDay statistics.
-The device MAY align the beginning of each CurrentDay interval with days in the UTC time zone, but does not need to do so.</td>
+<td><p>Number of seconds since the beginning of the period used for collection of CurrentDay statistics.
+The device MAY align the beginning of each CurrentDay interval with days in the UTC time zone, but does not need to do so.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.CurrentDayBytesSent">CurrentDayBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP payload bytes sent over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
+<td><p>Total number of IP payload bytes sent over this interface since the beginning of the current-day interval as specified by <a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval"><em>CurrentDayInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.CurrentDayBytesReceived">CurrentDayBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP payload bytes received over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
+<td><p>Total number of IP payload bytes received over this interface since the beginning of the current-day interval as specified by <a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval"><em>CurrentDayInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.CurrentDayPacketsSent">CurrentDayPacketsSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP packets sent over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
+<td><p>Total number of IP packets sent over this interface since the beginning of the current-day interval as specified by <a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval"><em>CurrentDayInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.CurrentDayPacketsReceived">CurrentDayPacketsReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP packets received over this interface since the beginning of the current-day interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval">CurrentDayInterval</a></em>.</td>
+<td><p>Total number of IP packets received over this interface since the beginning of the current-day interval as specified by <a href="#D.Device:1.Device.LAN.Stats.CurrentDayInterval"><em>CurrentDayInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Number of seconds since the beginning of the period used for collection of QuarterHour statistics.
-The device MAY align the beginning of each QuarterHour interval with real-time quarter-hour intervals, but does not need to do so.</td>
+<td><p>Number of seconds since the beginning of the period used for collection of QuarterHour statistics.
+The device MAY align the beginning of each QuarterHour interval with real-time quarter-hour intervals, but does not need to do so.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.QuarterHourBytesSent">QuarterHourBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP payload bytes sent over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
+<td><p>Total number of IP payload bytes sent over this interface since the beginning of the quarter-hour interval as specified by <a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval"><em>QuarterHourInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.QuarterHourBytesReceived">QuarterHourBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP payload bytes received over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
+<td><p>Total number of IP payload bytes received over this interface since the beginning of the quarter-hour interval as specified by <a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval"><em>QuarterHourInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.QuarterHourPacketsSent">QuarterHourPacketsSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP packets sent over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
+<td><p>Total number of IP packets sent over this interface since the beginning of the quarter-hour interval as specified by <a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval"><em>QuarterHourInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.Stats.QuarterHourPacketsReceived">QuarterHourPacketsReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of IP packets received over this interface since the beginning of the quarter-hour interval as specified by <em><a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval">QuarterHourInterval</a></em>.</td>
+<td><p>Total number of IP packets received over this interface since the beginning of the quarter-hour interval as specified by <a href="#D.Device:1.Device.LAN.Stats.QuarterHourInterval"><em>QuarterHourInterval</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2545,7 +2640,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.LAN.IPPingDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2587,35 +2684,45 @@ While the test is in progress, setting this parameter to <a href="#D.Device:1.De
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.SuccessCount">SuccessCount</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the number of successful pings (those in which a successful response was received prior to the timeout) in the most recent ping test.</td>
+<td><p>Result parameter indicating the number of successful pings (those in which a successful response was received prior to the timeout) in the most recent ping test.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.FailureCount">FailureCount</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the number of failed pings in the most recent ping test.</td>
+<td><p>Result parameter indicating the number of failed pings in the most recent ping test.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.AverageResponseTime">AverageResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the average response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</td>
+<td><p>Result parameter indicating the average response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.MinimumResponseTime">MinimumResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the minimum response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</td>
+<td><p>Result parameter indicating the minimum response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.IPPingDiagnostics.MaximumResponseTime">MaximumResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the maximum response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</td>
+<td><p>Result parameter indicating the maximum response time in milliseconds over all repetitions with successful responses of the most recent ping test. If there were no successful responses, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2647,7 +2754,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.LAN.TraceRouteDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2689,14 +2798,18 @@ While the test is in progress, setting this parameter to <a href="#D.Device:1.De
 <td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.ResponseTime">ResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the response time in milliseconds the most recent trace route test. If a route could not be determined, this value MUST be zero.</td>
+<td><p>Result parameter indicating the response time in milliseconds the most recent trace route test. If a route could not be determined, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.NumberOfRouteHops">NumberOfRouteHops</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Result parameter indicating the number of hops within the discovered route. If a route could not be determined, this value MUST be zero.</td>
+<td><p>Result parameter indicating the number of hops within the discovered route. If a route could not be determined, this value MUST be zero.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2710,7 +2823,9 @@ While the test is in progress, setting this parameter to <a href="#D.Device:1.De
 <td><span id="D.Device:1.Device.LAN.TraceRouteDiagnostics.RouteHops.HopHost">HopHost</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>Result parameter indicating the Host Name or IP Address of a hop along the discovered route.</td>
+<td><p>Result parameter indicating the Host Name or IP Address of a hop along the discovered route.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2731,7 +2846,9 @@ While the test is in progress, setting this parameter to <a href="#D.Device:1.De
 <td><span id="D.Device:1.Device.Capabilities.PerformanceDiagnostic.DownloadTransports">DownloadTransports</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Supported <em>DownloadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Supported <em>DownloadDiagnostics</em> transport protocols for a CPE device.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.Capabilities.PerformanceDiagnostic.DownloadTransports.HTTP"><em>HTTP</em></span></li>
@@ -2742,7 +2859,9 @@ While the test is in progress, setting this parameter to <a href="#D.Device:1.De
 <td><span id="D.Device:1.Device.Capabilities.PerformanceDiagnostic.UploadTransports">UploadTransports</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Supported <em>UploadDiagnostics</em> transport protocols for a CPE device. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Supported <em>UploadDiagnostics</em> transport protocols for a CPE device.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.Capabilities.PerformanceDiagnostic.UploadTransports.HTTP"><em>HTTP</em></span></li>
@@ -2784,7 +2903,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.DownloadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to Requested (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to Requested (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2828,76 +2949,90 @@ The default value SHOULD be zero.</td>
 <td><span id="D.Device:1.Device.DownloadDiagnostics.ROMTime">ROMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the client sends the GET command.</li>
-<li>For FTP this is the time at which the client sends the RTRV command.</li></ul></td>
+<li>For FTP this is the time at which the client sends the RTRV command.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DownloadDiagnostics.BOMTime">BOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Begin of transmission time in UTC, which MUST be specified to microsecond precision
-For example: 2008-04-09T15:01:05.123456
+<td><p>Begin of transmission time in UTC, which MUST be specified to microsecond precision
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the first data packet is received.</li>
-<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the first data packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DownloadDiagnostics.EOMTime">EOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>End of transmission in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>End of transmission in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the last data packet is received.</li>
-<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul></td>
+<li>For FTP this is the time at which the client receives the last packet on the data connection.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DownloadDiagnostics.TestBytesReceived">TestBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The test traffic received in bytes during the FTP/HTTP transaction including FTP/HTTP headers, between <em><a href="#D.Device:1.Device.DownloadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.Device:1.Device.DownloadDiagnostics.EOMTime">EOMTime</a></em>,</td>
+<td><p>The test traffic received in bytes during the FTP/HTTP transaction including FTP/HTTP headers, between <a href="#D.Device:1.Device.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.Device:1.Device.DownloadDiagnostics.EOMTime"><em>EOMTime</em></a>,</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DownloadDiagnostics.TotalBytesReceived">TotalBytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of bytes received on the Interface between <em><a href="#D.Device:1.Device.DownloadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.Device:1.Device.DownloadDiagnostics.EOMTime">EOMTime</a></em>.</td>
+<td><p>The total number of bytes received on the Interface between <a href="#D.Device:1.Device.DownloadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.Device:1.Device.DownloadDiagnostics.EOMTime"><em>EOMTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DownloadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.</li>
 <li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection.
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.DownloadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Response time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Response time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP ACK to the socket opening the HTTP connection was received.</li>
 <li>For FTP this is the time at which the TCP ACK to the socket opening the data connection was received.
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2935,7 +3070,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.UploadDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.UploadDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2987,69 +3124,81 @@ The CPE MUST insure the appropriate number of bytes are sent.</td>
 <td><span id="D.Device:1.Device.UploadDiagnostics.ROMTime">ROMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the client sends the PUT command</li>
-<li>For FTP this is the time at which the STOR command is sent.</li></ul></td>
+<li>For FTP this is the time at which the STOR command is sent.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UploadDiagnostics.BOMTime">BOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Begin of transmission time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Begin of transmission time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the first data packet is sent.</li>
-<li>For FTP this is the time at which the client receives the ready for transfer notification.</li></ul></td>
+<li>For FTP this is the time at which the client receives the ready for transfer notification.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UploadDiagnostics.EOMTime">EOMTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>End of transmission in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>End of transmission in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time when the HTTP successful response code is received.</li>
-<li>For FTP this is the time when the client receives a transfer complete.</li></ul></td>
+<li>For FTP this is the time when the client receives a transfer complete.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UploadDiagnostics.TotalBytesSent">TotalBytesSent</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The total number of bytes sent on the Interface between <em><a href="#D.Device:1.Device.UploadDiagnostics.BOMTime">BOMTime</a></em> and <em><a href="#D.Device:1.Device.UploadDiagnostics.EOMTime">EOMTime</a></em>.</td>
+<td><p>The total number of bytes sent on the Interface between <a href="#D.Device:1.Device.UploadDiagnostics.BOMTime"><em>BOMTime</em></a> and <a href="#D.Device:1.Device.UploadDiagnostics.EOMTime"><em>EOMTime</em></a>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UploadDiagnostics.TCPOpenRequestTime">TCPOpenRequestTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Request time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Request time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the time at which the TCP socket open (SYN) was sent for the HTTP connection.</li>
 <li>For FTP this is the time at which the TCP socket open (SYN) was sent for the data connection
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UploadDiagnostics.TCPOpenResponseTime">TCPOpenResponseTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Response time in UTC, which MUST be specified to microsecond precision.
-For example: 2008-04-09T15:01:05.123456
+<td><p>Response time in UTC, which MUST be specified to microsecond precision.
+For example: 2008-04-09T15:01:05.123456</p>
 
 <ul>
 <li>For HTTP this is the Time at which the TCP ACK to the socket opening the HTTP connection was received.</li>
 <li>For FTP this is the Time at which the TCP ACK to the socket opening the Data connection was received.
-Note: Interval of 1 microsecond SHOULD be supported.</li></ul></td>
+Note: Interval of 1 microsecond SHOULD be supported.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -3108,46 +3257,58 @@ Note: Interfaces behind a NAT MAY require port forwarding rules configured in th
 <td><span id="D.Device:1.Device.UDPEchoConfig.PacketsReceived">PacketsReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Incremented upon each valid UDP echo packet received.</td>
+<td><p>Incremented upon each valid UDP echo packet received.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UDPEchoConfig.PacketsResponded">PacketsResponded</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Incremented for each UDP echo response sent.</td>
+<td><p>Incremented for each UDP echo response sent.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UDPEchoConfig.BytesReceived">BytesReceived</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of UDP received bytes including payload and UDP header after the UDPEchoConfig is enabled.</td>
+<td><p>The number of UDP received bytes including payload and UDP header after the UDPEchoConfig is enabled.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UDPEchoConfig.BytesResponded">BytesResponded</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of UDP responded bytes, including payload and UDP header sent after the UDPEchoConfig is enabled.</td>
+<td><p>The number of UDP responded bytes, including payload and UDP header sent after the UDPEchoConfig is enabled.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UDPEchoConfig.TimeFirstPacketReceived">TimeFirstPacketReceived</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Time in UTC, which MUST be specified to microsecond precision.
+<td><p>Time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456,
-The time that the server receives the first UDP echo packet after the UDPEchoConfig is enabled.</td>
+The time that the server receives the first UDP echo packet after the UDPEchoConfig is enabled.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UDPEchoConfig.TimeLastPacketReceived">TimeLastPacketReceived</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Time in UTC, which MUST be specified to microsecond precision.
+<td><p>Time in UTC, which MUST be specified to microsecond precision.
 For example: 2008-04-09T15:01:05.123456
-The time that the server receives the most recent UDP echo packet.</td>
+The time that the server receives the most recent UDP echo packet.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -3156,7 +3317,7 @@ The time that the server receives the most recent UDP echo packet.</td>
 <td>W</td>
 <td><p>This object contains parameters relating to the user characteristics.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.User.Username">Username</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.Device:1.Device.User.Username"><em>Username</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3171,7 +3332,7 @@ If the User being configured is currently accessing the device then a disable MU
 <td><span id="D.Device:1.Device.User.RemoteAccessCapable">RemoteAccessCapable</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>Allows this user to remotely access the UserInterface via the mechanism defined in <em><a href="#D.Device:1.Device.UserInterface.RemoteAccess.">UserInterface.RemoteAccess.</a></em></td>
+<td>Allows this user to remotely access the UserInterface via the mechanism defined in <a href="#D.Device:1.Device.UserInterface.RemoteAccess."><em>UserInterface.RemoteAccess.</em></a></td>
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3179,7 +3340,7 @@ If the User being configured is currently accessing the device then a disable MU
 <td>string(:64)</td>
 <td>W</td>
 <td>Name of the current user. MUST NOT be an empty string for an enabled entry.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.User.Password">Password</span></td>
@@ -3195,8 +3356,8 @@ If the User being configured is currently accessing the device then a disable MU
 <td>string(:16)</td>
 <td>W</td>
 <td>String describing the default language for the local configuration interface, specified according to [<a href="#R.RFC3066">RFC3066</a>].
-If an empty string, <em><a href="#D.Device:1.Device.UserInterface.CurrentLanguage">UserInterface.CurrentLanguage</a></em> is used.</td>
-<td></td>
+If an empty string, <a href="#D.Device:1.Device.UserInterface.CurrentLanguage"><em>UserInterface.CurrentLanguage</em></a> is used.</td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.Device:1.Device.UPnP.">Device.UPnP.</span></td>
@@ -3367,7 +3528,7 @@ The CPE MAY, but need not, retain some or all of the information in this object 
 <td>R</td>
 <td><p>UPnP root device table. This table contains an entry for each UPnP root device that has been discovered via SSDP.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.UPnP.Discovery.RootDevice.UUID">UUID</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.UPnP.Discovery.RootDevice.UUID"><em>UUID</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3389,26 +3550,26 @@ The ability to list inactive UPnP root devices is OPTIONAL. The length of time a
 <td>R</td>
 <td><p>This UPnP root device’s UUID (Universally Unique IDentifier) [<a href="#R.RFC4122">RFC4122</a>], extracted from any of its USN (Unique Service Name) headers. This is a 36-byte string that uniquely identifies the device, the following is an example:</p>
 
-<ul>
-<li><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></li></ul>
+<blockquote><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></blockquote>
 
 <p>Possible patterns:</p>
 
 <ul>
-<li>[*[0-9A-Fa-f]{8}-(<span id="D.Device:1.Device.UPnP.Discovery.RootDevice.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12">0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}*</span></li></ul></td>
+<li><span id="D.Device:1.Device.UPnP.Discovery.RootDevice.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12"><code>[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}</code></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UPnP.Discovery.RootDevice.USN">USN</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the USN (Unique Service Name) header for this UPnP root device. Three discovery messages are sent for root devices, and this SHOULD be the value of the USN header of the following form:
+<td><p>The value of the USN (Unique Service Name) header for this UPnP root device. Three discovery messages are sent for root devices, and this SHOULD be the value of the USN header of the following form:</p>
 
-<ul>
-<li><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
-SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, one of the other two forms MAY be used:</li>
-<li><em>uuid:device-UUID::upnp:rootdevice</em></li>
-<li><em>uuid:device-UUID</em> (for root device UUID)</li></ul></td>
+<blockquote><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
+SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, one of the other two forms MAY be used:</blockquote>
+
+<blockquote><em>uuid:device-UUID::upnp:rootdevice</em></blockquote>
+
+<blockquote><em>uuid:device-UUID</em> (for root device UUID)</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3429,11 +3590,10 @@ SSDP is an unreliable protocol and it is possible that no discovery message cont
 <td><span id="D.Device:1.Device.UPnP.Discovery.RootDevice.Server">Server</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the SERVER header for this UPnP root device, which is a string of the following form:
+<td><p>The value of the SERVER header for this UPnP root device, which is a string of the following form:</p>
 
-<ul>
-<li><em>OS/version UPnP/udaversion product/version</em>
-where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</li></ul></td>
+<blockquote><em>OS/version UPnP/udaversion product/version</em>
+where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3450,7 +3610,7 @@ As such entries are added to or removed from the Host tables, the value of this 
 <td>R</td>
 <td><p>UPnP embedded device table. This table contains an entry for each UPnP embedded device that has been discovered via SSDP.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.UPnP.Discovery.Device.UUID">UUID</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.UPnP.Discovery.Device.UUID"><em>UUID</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3472,25 +3632,24 @@ The ability to list inactive UPnP embedded devices is OPTIONAL. The length of ti
 <td>R</td>
 <td><p>This UPnP embedded device’s UUID (Universally Unique IDentifier) [<a href="#R.RFC4122">RFC4122</a>], extracted from any of its USN (Unique Service Name) headers. This is a 36-byte string that uniquely identifies the device, the following is an example:</p>
 
-<ul>
-<li><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></li></ul>
+<blockquote><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></blockquote>
 
 <p>Possible patterns:</p>
 
 <ul>
-<li>[*[0-9A-Fa-f]{8}-(<span id="D.Device:1.Device.UPnP.Discovery.Device.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12">0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}*</span></li></ul></td>
+<li><span id="D.Device:1.Device.UPnP.Discovery.Device.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12"><code>[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}</code></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.UPnP.Discovery.Device.USN">USN</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the USN (Unique Service Name) header for this UPnP embedded device. Two discovery messages are sent for embedded devices, and this SHOULD be the value of the USN header of the following form:
+<td><p>The value of the USN (Unique Service Name) header for this UPnP embedded device. Two discovery messages are sent for embedded devices, and this SHOULD be the value of the USN header of the following form:</p>
 
-<ul>
-<li><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
-SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, the other form MAY be used:</li>
-<li><em>uuid:device-UUID</em></li></ul></td>
+<blockquote><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
+SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, the other form MAY be used:</blockquote>
+
+<blockquote><em>uuid:device-UUID</em></blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3511,11 +3670,10 @@ SSDP is an unreliable protocol and it is possible that no discovery message cont
 <td><span id="D.Device:1.Device.UPnP.Discovery.Device.Server">Server</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the SERVER header for this UPnP embedded device, which is a string of the following form:
+<td><p>The value of the SERVER header for this UPnP embedded device, which is a string of the following form:</p>
 
-<ul>
-<li><em>OS/version UPnP/udaversion product/version</em>
-where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</li></ul></td>
+<blockquote><em>OS/version UPnP/udaversion product/version</em>
+where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3532,7 +3690,7 @@ As such entries are added to or removed from the Host tables, the value of this 
 <td>R</td>
 <td><p>UPnP embedded service table. This table contains an entry for each UPnP embedded service that has been discovered via SSDP.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.UPnP.Discovery.Service.USN">USN</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.UPnP.Discovery.Service.USN"><em>USN</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3552,10 +3710,9 @@ The ability to list inactive UPnP embedded services is OPTIONAL. The length of t
 <td><span id="D.Device:1.Device.UPnP.Discovery.Service.USN">USN</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the USN (Unique Service Name) header for this UPnP embedded service. This is of the following form:
+<td><p>The value of the USN (Unique Service Name) header for this UPnP embedded service. This is of the following form:</p>
 
-<ul>
-<li><em>uuid:device-UUID::urn:domain-name:service:serviceType:v</em></li></ul></td>
+<blockquote><em>uuid:device-UUID::urn:domain-name:service:serviceType:v</em></blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3576,11 +3733,10 @@ The ability to list inactive UPnP embedded services is OPTIONAL. The length of t
 <td><span id="D.Device:1.Device.UPnP.Discovery.Service.Server">Server</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the SERVER header for this UPnP embedded service, which is a string of the following form:
+<td><p>The value of the SERVER header for this UPnP embedded service, which is a string of the following form:</p>
 
-<ul>
-<li><em>OS/version UPnP/udaversion product/version</em>
-where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</li></ul></td>
+<blockquote><em>OS/version UPnP/udaversion product/version</em>
+where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3667,7 +3823,7 @@ As such entries are added to or removed from the Host tables, the value of this 
 <td>R</td>
 <td><p>This object describes the characteristics of the smart card reader.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.SmartCardReader.Name">Name</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.SmartCardReader.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3681,7 +3837,9 @@ As such entries are added to or removed from the Host tables, the value of this 
 <td><span id="D.Device:1.Device.SmartCardReader.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Indicates the status of this smart card reader. Enumeration of:</p>
+<td><p>Indicates the status of this smart card reader.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.SmartCardReader.Status.Disabled"><em>Disabled</em></span></li>
@@ -3713,8 +3871,8 @@ As such entries are added to or removed from the Host tables, the value of this 
 Reset can be caused by:
 
 <ul>
-<li><em><a href="#D.Device:1.Device.SmartCardReader.Status">Status</a></em> transition from Disabled to Enabled</li>
-<li><em><a href="#D.Device:1.Device.SmartCardReader.Reset">Reset</a></em> set to <em>true</em>.</li>
+<li><a href="#D.Device:1.Device.SmartCardReader.Status"><em>Status</em></a> transition from Disabled to Enabled</li>
+<li><a href="#D.Device:1.Device.SmartCardReader.Reset"><em>Reset</em></a> set to <em>true</em>.</li>
 <li>An internal reset of the SmartCard Reader (including a reboot of the device).
 Unknown Time value indicates that this SmartCard Reader has never been reset, which can only happen if it has never been enabled.</li></ul></td>
 <td>-</td>
@@ -3723,16 +3881,20 @@ Unknown Time value indicates that this SmartCard Reader has never been reset, wh
 <td><span id="D.Device:1.Device.SmartCardReader.DecryptionFailedCounter">DecryptionFailedCounter</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Counter incremented once each time decryption cannot be carried out.
-This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <em><a href="#D.Device:1.Device.SmartCardReader.Reset">Reset</a></em> parameter is used and not when a Smart Card is inserted or removed.</td>
+<td><p>Counter incremented once each time decryption cannot be carried out.
+This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <a href="#D.Device:1.Device.SmartCardReader.Reset"><em>Reset</em></a> parameter is used and not when a Smart Card is inserted or removed.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.SmartCardReader.DecryptionFailedNoKeyCounter">DecryptionFailedNoKeyCounter</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Counter incremented once each time the key is not available to decrypt it. This is a subset of the more general <em><a href="#D.Device:1.Device.SmartCardReader.DecryptionFailedCounter">DecryptionFailedCounter</a></em> within the same object and thus will always be less than that parameter.
-This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <em><a href="#D.Device:1.Device.SmartCardReader.Reset">Reset</a></em> parameter is used and not when a Smart Card is inserted or removed.</td>
+<td><p>Counter incremented once each time the key is not available to decrypt it. This is a subset of the more general <a href="#D.Device:1.Device.SmartCardReader.DecryptionFailedCounter"><em>DecryptionFailedCounter</em></a> within the same object and thus will always be less than that parameter.
+This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <a href="#D.Device:1.Device.SmartCardReader.Reset"><em>Reset</em></a> parameter is used and not when a Smart Card is inserted or removed.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -3746,7 +3908,9 @@ This counter relates to the smart card reader, not to the smart card itself, i.e
 <td><span id="D.Device:1.Device.SmartCardReader.SmartCard.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Status of the Smart Card. Enumeration of:</p>
+<td><p>Status of the Smart Card.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.SmartCardReader.SmartCard.Status.None"><em>None</em></span> (Indicates that no Smart Card is inserted)</li>
@@ -3771,7 +3935,7 @@ Vendors can extend the enumerated values with vendor specific extensions, in whi
 <td><span id="D.Device:1.Device.SmartCardReader.SmartCard.Application">Application</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Indicates Smart Card Application(s). <em>Application</em> is only relevant when <em><a href="#D.Device:1.Device.SmartCardReader.SmartCard.Type">Type</a></em> has a value of UICC, otherwise it is an empty string. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Indicates Smart Card Application(s). <em>Application</em> is only relevant when <a href="#D.Device:1.Device.SmartCardReader.SmartCard.Type"><em>Type</em></a> has a value of UICC, otherwise it is an empty string. Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.SmartCardReader.SmartCard.Application.SIM"><em>SIM</em></span></li>
@@ -3821,14 +3985,18 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.SelfTestDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.SelfTestDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.SelfTestDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.SelfTestDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.SelfTestDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.SelfTestDiagnostics.Results">Results</span></td>
 <td>string(:1024)</td>
 <td>R</td>
-<td>Results of self-test (vendor specific).</td>
+<td><p>Results of self-test (vendor specific).</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -3836,9 +4004,9 @@ While the test is in progress, setting this parameter to <a href="#D.Device:1.De
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object defines access to an IP-layer NS Lookup test for the specified IP interface.
-When initiated, the NS Lookup test will contact <em><a href="#D.Device:1.Device.NSLookupDiagnostics.DNSServer">DNSServer</a></em> and look up <em><a href="#D.Device:1.Device.NSLookupDiagnostics.HostName">HostName</a></em> <em><a href="#D.Device:1.Device.NSLookupDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></em> times.
-There will be a <em><a href="#D.Device:1.Device.NSLookupDiagnostics.Result.">Result</a></em> instance for each time the device performs a DNS lookup, which is determined by the value of <em><a href="#D.Device:1.Device.NSLookupDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></em>.
-Any previous <em><a href="#D.Device:1.Device.NSLookupDiagnostics.Result.">Result</a></em> instances are removed when a new test is initiated.</td>
+When initiated, the NS Lookup test will contact <a href="#D.Device:1.Device.NSLookupDiagnostics.DNSServer"><em>DNSServer</em></a> and look up <a href="#D.Device:1.Device.NSLookupDiagnostics.HostName"><em>HostName</em></a> <a href="#D.Device:1.Device.NSLookupDiagnostics.NumberOfRepetitions"><em>NumberOfRepetitions</em></a> times.
+There will be a <a href="#D.Device:1.Device.NSLookupDiagnostics.Result."><em>Result</em></a> instance for each time the device performs a DNS lookup, which is determined by the value of <a href="#D.Device:1.Device.NSLookupDiagnostics.NumberOfRepetitions"><em>NumberOfRepetitions</em></a>.
+Any previous <a href="#D.Device:1.Device.NSLookupDiagnostics.Result."><em>Result</em></a> instances are removed when a new test is initiated.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3862,7 +4030,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3907,14 +4077,18 @@ Each repetition will use a Result instance to hold the NSLookup result data.</td
 <td><span id="D.Device:1.Device.NSLookupDiagnostics.SuccessCount">SuccessCount</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Number of successfully executed repetitions.</td>
+<td><p>Number of successfully executed repetitions.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.NSLookupDiagnostics.ResultNumberOfEntries">ResultNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Total number of Result entries from the most recent invocation of the test.</td>
+<td><p>Total number of Result entries from the most recent invocation of the test.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -3929,55 +4103,71 @@ Each repetition will use a Result instance to hold the NSLookup result data.</td
 <td>string</td>
 <td>R</td>
 <td><p>Result Parameter to represent whether the NS Lookup was successful or not.
-Errors for individual Result instances do not get bubbled up to <em><a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState">NSLookupDiagnostics.DiagnosticsState</a></em>.
-A failure on a specific attempt does not mean that the overall test failed, but a failure on all attempts means that <em><a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState">NSLookupDiagnostics.DiagnosticsState</a></em> SHOULD be <a href="#D.Device:1.Device.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></a>. Enumeration of:</p>
+Errors for individual Result instances do not get bubbled up to <a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState"><em>NSLookupDiagnostics.DiagnosticsState</em></a>.
+A failure on a specific attempt does not mean that the overall test failed, but a failure on all attempts means that <a href="#D.Device:1.Device.NSLookupDiagnostics.DiagnosticsState"><em>NSLookupDiagnostics.DiagnosticsState</em></a> SHOULD be <a href="#D.Device:1.Device.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></a>.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.Status.Success"><em>Success</em></span></li>
 <li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.Status.Error_DNSServerNotAvailable"><em>Error_DNSServerNotAvailable</em></span></li>
 <li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.Status.Error_HostNameNotResolved"><em>Error_HostNameNotResolved</em></span></li>
 <li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.Status.Error_Timeout"><em>Error_Timeout</em></span></li>
-<li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></span></li></ul></td>
+<li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></span></li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.NSLookupDiagnostics.Result.AnswerType">AnswerType</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Result parameter to represent whether the answer is Authoritative or not. Enumeration of:</p>
+<td><p>Result parameter to represent whether the answer is Authoritative or not.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.AnswerType.None"><em>None</em></span> (Indicates that the NS Lookup failed to find the host)</li>
 <li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.AnswerType.Authoritative"><em>Authoritative</em></span></li>
-<li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.AnswerType.NonAuthoritative"><em>NonAuthoritative</em></span></li></ul></td>
+<li><span id="D.Device:1.Device.NSLookupDiagnostics.Result.AnswerType.NonAuthoritative"><em>NonAuthoritative</em></span></li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.NSLookupDiagnostics.Result.HostNameReturned">HostNameReturned</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>Result parameter to represent the fully qualified name for the Host Name in the calling parameter (e.g. HostName.DomainName); if no response was provided, then this parameter is an empty string.</td>
+<td><p>Result parameter to represent the fully qualified name for the Host Name in the calling parameter (e.g. HostName.DomainName); if no response was provided, then this parameter is an empty string.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.NSLookupDiagnostics.Result.IPAddresses">IPAddresses</span></td>
 <td><span title="IPAddress[:10]">string(:45)[:10]</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (up to 10 items) of IP Addresses. Indicates the IP Address results returned by the NS Lookup; if no response was provided, then this parameter is an empty string.</td>
+<td><p>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (up to 10 items) of IP Addresses. Indicates the IP Address results returned by the NS Lookup; if no response was provided, then this parameter is an empty string.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.NSLookupDiagnostics.Result.DNSServerIP">DNSServerIP</span></td>
 <td><span title="IPAddress">string(:45)</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Result parameter to represent the actual DNS Server IP address that the NS Lookup used.</td>
+<td><p>[<a href="#T.IPAddress">IPAddress</a>] Result parameter to represent the actual DNS Server IP address that the NS Lookup used.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.NSLookupDiagnostics.Result.ResponseTime">ResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Response time (for the first response packet) in <em>milliseconds</em>, or 0 if no response was received.</td>
+<td><p>Response time (for the first response packet) in <em>milliseconds</em>, or 0 if no response was received.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -4035,7 +4225,7 @@ See [<a href="#R.TR-157">Appendix I/TR-157</a>] for Theory of Operation.</td>
 <td>R</td>
 <td><p>Table of CPE USB Host controllers.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.USBHosts.Host.Name">Name</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.USBHosts.Host.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4056,7 +4246,9 @@ See [<a href="#R.TR-157">Appendix I/TR-157</a>] for Theory of Operation.</td>
 <td><span id="D.Device:1.Device.USBHosts.Host.Type">Type</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Type of USB Host Enumeration of:</p>
+<td><p>Type of USB Host</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.USBHosts.Host.Type.OHCI"><em>OHCI</em></span> (Open Host Controller Interface)</li>
@@ -4103,7 +4295,7 @@ When set to <em>false</em> <em>PowerManagementEnable</em> immediately disables t
 <td>R</td>
 <td><p>Table of connected USB devices.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.USBHosts.Host.Device.DeviceNumber">DeviceNumber</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.USBHosts.Host.Device.DeviceNumber"><em>DeviceNumber</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4210,12 +4402,11 @@ Internal signaling between the connected USB device and the USB Host Controller 
 <td><span id="D.Device:1.Device.USBHosts.Host.Device.Parent">Parent</span></td>
 <td>string</td>
 <td>R</td>
-<td>The value MUST be the Path Name of a row in the <em><a href="#D.Device:1.Device.USBHosts.Host.Device.">USBHosts.Host.{i}.Device.{i}.</a></em> table. If the referenced object is deleted, the parameter value MUST be set to an empty string. This is a reference to the parent USB device (e.g. hub device).
-Example:
+<td><p>The value MUST be the Path Name of a row in the <a href="#D.Device:1.Device.USBHosts.Host.Device."><em>USBHosts.Host.{i}.Device.{i}.</em></a> table. If the referenced object is deleted, the parameter value MUST be set to an empty string. This is a reference to the parent USB device (e.g. hub device).
+Example:</p>
 
-<ul>
-<li><em>.USBHosts.Host.2.Device.3</em>
-This is an empty string for a device connected to the Host controller (root hub).</li></ul></td>
+<blockquote><em>.USBHosts.Host.2.Device.3</em>
+This is an empty string for a device connected to the Host controller (root hub).</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4254,7 +4445,7 @@ When <em>false</em> the associated device draws all the current it needs from th
 <td>R</td>
 <td><p>Table of device configurations.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.USBHosts.Host.Device.Configuration.ConfigurationNumber">ConfigurationNumber</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.USBHosts.Host.Device.Configuration.ConfigurationNumber"><em>ConfigurationNumber</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4277,7 +4468,7 @@ When <em>false</em> the associated device draws all the current it needs from th
 <td>R</td>
 <td><p>Table of device interface descriptors.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.USBHosts.Host.Device.Configuration.Interface.InterfaceNumber">InterfaceNumber</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.Device:1.Device.USBHosts.Host.Device.Configuration.Interface.InterfaceNumber"><em>InterfaceNumber</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4314,7 +4505,7 @@ When 0x00, each interface specifies its own class code. When 0xFF, the class cod
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object configures collection of periodic statistics for the device.
-Periodic statistics are measured over a sample interval (which can be aligned with absolute time) and are made available to the ACS as a comma-separated list of the most recent &lt;n&gt; samples.
+Periodic statistics are measured over a sample interval (which can be aligned with absolute time) and are made available to the ACS as a comma-separated list of the most recent <n> samples.
 This object provides a single set of global settings that affect the entire device unless overridden locally.</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -4347,7 +4538,7 @@ A value of 0 indicates no specific maximum number of samples.</td>
 <td>W</td>
 <td><p>Periodic statistics sample set table. Each sample set has its own sample interval etc.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Name">Name</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4368,7 +4559,7 @@ When collection of periodic statistics is enabled, any stored samples are discar
 <li><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Disabled"><em>Disabled</em></span> (Collection is disabled)</li>
 <li><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></span> (Collection is enabled)</li>
 <li><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></span> (Collection is enabled and the ACS SHOULD now fetch the collected data)
-The <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> value is only used for triggering the ACS to fetch the collected data and can only be used when <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> is in the range [1:<em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>].
+The <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> value is only used for triggering the ACS to fetch the collected data and can only be used when <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> is in the range [1:<a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>].
 The transition from <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> MUST be instantaneous and so will result in only a single value change for notification purposes.</li></ul></td>
 <td>Disabled</td>
 <td>1.0</td></tr>
@@ -4377,17 +4568,17 @@ The transition from <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Sta
 <td>string(:128)</td>
 <td>W</td>
 <td>The name of this sample set, which uniquely distinguishes each sample set.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</span></td>
 <td>unsignedInt(1:)</td>
 <td>W</td>
 <td>The sample interval in <em>seconds</em>. Each statistic is measured over this sample interval.
-The CPE MAY reject a request to set <em>SampleInterval</em> to less than <em><a href="#D.Device:1.Device.PeriodicStatistics.MinSampleInterval">PeriodicStatistics.MinSampleInterval</a></em>.
+The CPE MAY reject a request to set <em>SampleInterval</em> to less than <a href="#D.Device:1.Device.PeriodicStatistics.MinSampleInterval"><em>PeriodicStatistics.MinSampleInterval</em></a>.
 Sample intervals MUST begin every <em>SampleInterval</em> <em>seconds</em>, with no delay between samples.
 If <em>SampleInterval</em> is changed while collection of periodic statistics is enabled, any stored samples are discarded, and the first sample interval begins immediately.
-For example, if <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em> is 24 and <em>SampleInterval</em> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
+For example, if <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a> is 24 and <em>SampleInterval</em> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
 <td>3600</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4395,34 +4586,34 @@ For example, if <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Rep
 <td>unsignedInt(1:)</td>
 <td>W</td>
 <td>The number of samples that the CPE will store and report for each statistic.
-The CPE MUST permit <em>ReportSamples</em> to be set to at least <em><a href="#D.Device:1.Device.PeriodicStatistics.MaxReportSamples">PeriodicStatistics.MaxReportSamples</a></em>.
+The CPE MUST permit <em>ReportSamples</em> to be set to at least <a href="#D.Device:1.Device.PeriodicStatistics.MaxReportSamples"><em>PeriodicStatistics.MaxReportSamples</em></a>.
 If <em>ReportSamples</em> is changed while collection of periodic statistics is enabled, the CPE will truncate or extend its statistics buffers as appropriate, but statistics collection MUST NOT otherwise be affected.
-For example, if <em>ReportSamples</em> is 24 and <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
+For example, if <em>ReportSamples</em> is 24 and <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
 <td>24</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.TimeReference">TimeReference</span></td>
 <td>dateTime</td>
 <td>W</td>
-<td>An absolute time reference in UTC to determine when sample intervals will complete. Each sample interval MUST complete at this reference time plus or minus an integer multiple of <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em>.
+<td>An absolute time reference in UTC to determine when sample intervals will complete. Each sample interval MUST complete at this reference time plus or minus an integer multiple of <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a>.
 <em>TimeReference</em> is used only to set the &ldquo;phase&rdquo; of the sample and fetch intervals. The actual value of <em>TimeReference</em> can be arbitrarily far into the past or future.
-This time reference also determines when the <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status">Status</a></em> <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions that are controlled by <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> will occur. If collection of periodic statistics is enabled and <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> is in the range [1:<em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>] then each such <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status">Status</a></em> transition MUST occur at this reference time plus or minus an integer multiple of <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> * <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em> (the fetch interval).
+This time reference also determines when the <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions that are controlled by <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> will occur. If collection of periodic statistics is enabled and <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> is in the range [1:<a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>] then each such <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> transition MUST occur at this reference time plus or minus an integer multiple of <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> * <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a> (the fetch interval).
 If <em>TimeReference</em> is changed while collection of periodic statistics is enabled, any stored samples are discarded, and the first sample interval begins immediately.
 The Unknown Time value defined in [<a href="#R.TR-106a2">TR-106a2</a>] indicates that no particular time reference is specified. That is, the CPE MAY locally choose the time reference, and is required only to adhere to the specified sample and fetch intervals.
 If absolute time is not available to the CPE, its sample and fetch interval behavior MUST be the same as if the <em>TimeReference</em> parameter was set to the Unknown Time value.
-For example, if <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em> is 3600 (an hour) and if <em>TimeReference</em> is set to UTC midnight on some day (in the past, present, or future) then sample intervals will complete on each UTC hour (00:00, 01:00, 02:00 etc).
-If, in addition, <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> is 24, then the fetch interval is 86400 (a day) and <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status">Status</a></em> <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions will occur every day at UTC midnight.
-Note that, if <em>TimeReference</em> is set to a time other than the Unknown Time, the first sample interval (which has to begin immediately) will almost certainly be shorter than <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em>). This is why <em>TimeReference</em> is defined in terms of when sample intervals complete rather than start.</td>
+For example, if <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a> is 3600 (an hour) and if <em>TimeReference</em> is set to UTC midnight on some day (in the past, present, or future) then sample intervals will complete on each UTC hour (00:00, 01:00, 02:00 etc).
+If, in addition, <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> is 24, then the fetch interval is 86400 (a day) and <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions will occur every day at UTC midnight.
+Note that, if <em>TimeReference</em> is set to a time other than the Unknown Time, the first sample interval (which has to begin immediately) will almost certainly be shorter than <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a>). This is why <em>TimeReference</em> is defined in terms of when sample intervals complete rather than start.</td>
 <td>0001-01-01T00:00:00Z</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</span></td>
 <td>unsignedInt</td>
 <td>W</td>
-<td>The number of sample intervals to be collected before transitioning <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status">Status</a></em> from <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a>.
-If this SampleSet is enabled and <em>FetchSamples</em> is in the range [1:<em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>] then <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status">Status</a></em> MUST transition from <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> on completion of every <em>FetchSamples</em> sample intervals. Otherwise, the transition MUST NOT occur.
-For example, if <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em> is 25 and <em>FetchSamples</em> is 24, then the CPE will store 25 values for each monitored parameter and the above <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status">Status</a></em> transition will occur as the CPE stores each 24th of 25 sample intervals, which means that the ACS could delay for up to two sample intervals before reading the stored values and would still not miss any samples (see also <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ForceSample">ForceSample</a></em>).
-To disable this trigger mechanism and still collect sampled statistics, <em>FetchSamples</em> can be set to either 0 or a value greater than <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>.</td>
+<td>The number of sample intervals to be collected before transitioning <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> from <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a>.
+If this SampleSet is enabled and <em>FetchSamples</em> is in the range [1:<a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>] then <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> MUST transition from <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> on completion of every <em>FetchSamples</em> sample intervals. Otherwise, the transition MUST NOT occur.
+For example, if <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a> is 25 and <em>FetchSamples</em> is 24, then the CPE will store 25 values for each monitored parameter and the above <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> transition will occur as the CPE stores each 24th of 25 sample intervals, which means that the ACS could delay for up to two sample intervals before reading the stored values and would still not miss any samples (see also <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ForceSample"><em>ForceSample</em></a>).
+To disable this trigger mechanism and still collect sampled statistics, <em>FetchSamples</em> can be set to either 0 or a value greater than <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>.</td>
 <td>0</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4430,10 +4621,10 @@ To disable this trigger mechanism and still collect sampled statistics, <em>Fetc
 <td>boolean</td>
 <td>W</td>
 <td>When set to <em>true</em>, forces statistics for the current sample to be calculated and updated in the data model. Setting it to <em>false</em> has no effect. When read, this parameter returns <em>false</em>, regardless of the actual value.
-If this is the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, this MUST cause a new value to be added to each of the periodic statistics comma-separated list parameters, and the <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</a></em> and all <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</a></em> parameters MUST be updated accordingly.
-If this is not the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, then the new values that were added as described in the previous paragraph, and the <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</a></em> and all <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</a></em> parameters, MUST be updated accordingly.
+If this is the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, this MUST cause a new value to be added to each of the periodic statistics comma-separated list parameters, and the <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportEndTime"><em>ReportEndTime</em></a> and all <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds"><em>SampleSeconds</em></a> parameters MUST be updated accordingly.
+If this is not the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, then the new values that were added as described in the previous paragraph, and the <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportEndTime"><em>ReportEndTime</em></a> and all <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds"><em>SampleSeconds</em></a> parameters, MUST be updated accordingly.
 Note that <em>ForceSample</em> just provides a &ldquo;sneak preview&rdquo; of the current sample. It does not create a new sample and it does not interfere with the sample interval schedule.
-At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</a></em> and all <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</a></em> parameters, will be updated accordingly. In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.</td>
+At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ReportEndTime"><em>ReportEndTime</em></a> and all <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds"><em>SampleSeconds</em></a> parameters, will be updated accordingly. In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.</td>
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4441,27 +4632,29 @@ At the end of each sample interval, if <em>ForceSample</em> was set to <em>true<
 <td>dateTime</td>
 <td>R</td>
 <td>The absolute time at which the sample interval for the first stored sample (for each statistic) started.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</span></td>
 <td>dateTime</td>
 <td>R</td>
 <td>The absolute time at which the sample interval for the last stored sample (for each statistic) ended.
-If <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ForceSample">ForceSample</a></em> has been used to force statistics for the current sample to be calculated and updated in the data model, then <em>ReportEndTime</em> MUST be updated to reflect the actual time over which stored data was collected.</td>
-<td></td>
+If <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ForceSample"><em>ForceSample</em></a> has been used to force statistics for the current sample to be calculated and updated in the data model, then <em>ReportEndTime</em> MUST be updated to reflect the actual time over which stored data was collected.</td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</span></td>
 <td>unsignedInt[]</td>
 <td>R</td>
-<td>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected during the sample interval.
-Individual <em>SampleSeconds</em> values can be less than <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em>, for several reasons, including:
+<td><p>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected during the sample interval.
+Individual <em>SampleSeconds</em> values can be less than <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a>, for several reasons, including:</p>
 
-<ul>
-<li><em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.TimeReference">TimeReference</a></em> has been set to a time other than the Unknown Time and the current sample interval started part of the way through a scheduled sample interval.</li>
-<li><em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ForceSample">ForceSample</a></em> has been used to force statistics for the current sample to be calculated and updated in the data model.</li></ul></td>
-<td></td>
+<blockquote><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.TimeReference"><em>TimeReference</em></a> has been set to a time other than the Unknown Time and the current sample interval started part of the way through a scheduled sample interval.</blockquote>
+
+<blockquote><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.ForceSample"><em>ForceSample</em></a> has been used to force statistics for the current sample to be calculated and updated in the data model.</blockquote>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.ParameterNumberOfEntries">ParameterNumberOfEntries</span></td>
@@ -4477,7 +4670,7 @@ Individual <em>SampleSeconds</em> values can be less than <em><a href="#D.Device
 <td><p>Periodic statistics parameter table for this sample set. This table contains entries for parameters whose values are to be sampled.
 Note that the comma-separated lists in this object (SampleSeconds, SuspectData and Values) only ever change (a) when first enabled, (b) when ForceSample is set to true (a &ldquo;sneak preview&rdquo; of the current sample), or (c) at the end of the sample interval.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Reference">Reference</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Reference"><em>Reference</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4492,7 +4685,7 @@ Note that the comma-separated lists in this object (SampleSeconds, SuspectData a
 <td>string(:256)</td>
 <td>W</td>
 <td>The value MUST be the Path Name of a parameter. This is the parameter being monitored by the Periodic Statistics mechanism.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</span></td>
@@ -4518,15 +4711,15 @@ Parameters of non-numeric types can only support <a href="#D.Device:1.Device.Per
 <li><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.CalculationMode.Maximum"><em>Maximum</em></span> (Statistic is maximum sampled value during sample interval)</li>
 <li><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.CalculationMode.Average"><em>Average</em></span> (Statistic is average (mean) sampled value during sample interval)
 Parameters of non-numeric types can only support <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.CalculationMode.Latest"><em>Latest</em></a>. The value of the <em>CalculationMode</em> MUST be ignored for such parameters.
-<em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em> MUST be applied before <em>CalculationMode</em>, i.e. the inputs to the calculation will have already accounted for <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em>.</li></ul></td>
+<a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a> MUST be applied before <em>CalculationMode</em>, i.e. the inputs to the calculation will have already accounted for <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a>.</li></ul></td>
 <td>Latest</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</span></td>
 <td>int</td>
 <td>W</td>
-<td>The low threshold value that controls the calculation of <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Failures">Failures</a></em>.
-A value equal to <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em> disables the threshold/failure mechanism.
+<td>The low threshold value that controls the calculation of <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Failures"><em>Failures</em></a>.
+A value equal to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a> disables the threshold/failure mechanism.
 Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.</td>
 <td>0</td>
 <td>1.0</td></tr>
@@ -4534,8 +4727,8 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</span></td>
 <td>int</td>
 <td>W</td>
-<td>The high threshold value that controls the calculation of <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Failures">Failures</a></em>.
-A value equal to <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em> disables the threshold/failure mechanism.
+<td>The high threshold value that controls the calculation of <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Failures"><em>Failures</em></a>.
+A value equal to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a> disables the threshold/failure mechanism.
 Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.</td>
 <td>0</td>
 <td>1.0</td></tr>
@@ -4543,43 +4736,49 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleSeconds">SampleSeconds</span></td>
 <td>unsignedInt[]</td>
 <td>R</td>
-<td>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected for this parameter during the sample interval.
-Individual <em>SampleSeconds</em> values can be less than <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">PeriodicStatistics.SampleSet.{i}.SampleInterval</a></em>, for several reasons, including:
+<td><p>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected for this parameter during the sample interval.
+Individual <em>SampleSeconds</em> values can be less than <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>PeriodicStatistics.SampleSet.{i}.SampleInterval</em></a>, for several reasons, including:</p>
 
-<ul>
-<li>Any of the reasons for which <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds">PeriodicStatistics.SampleSet.{i}.SampleSeconds</a></em> values might be less than <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval">PeriodicStatistics.SampleSet.{i}.SampleInterval</a></em>.</li>
-<li>The parameter doesn’t exist, or was created or deleted during a sample interval.</li></ul></td>
-<td></td>
+<blockquote>Any of the reasons for which <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleSeconds"><em>PeriodicStatistics.SampleSet.{i}.SampleSeconds</em></a> values might be less than <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.SampleInterval"><em>PeriodicStatistics.SampleSet.{i}.SampleInterval</em></a>.</blockquote>
+
+<blockquote>The parameter doesn’t exist, or was created or deleted during a sample interval.</blockquote>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SuspectData">SuspectData</span></td>
 <td>unsignedInt(:1)[]</td>
 <td>R</td>
-<td>Comma-separated list of unsigned integers (up to 1). Each entry is 0 if the sampled value is believed to be valid, or 1 if an event that might affect the validity of the sampled value occurred during the sample interval.
-For example, if the parameter value were to be reset during the sample interval then it would be appropriate to set <em>SuspectData</em> to 1.</td>
-<td></td>
+<td><p>Comma-separated list of unsigned integers (up to 1). Each entry is 0 if the sampled value is believed to be valid, or 1 if an event that might affect the validity of the sampled value occurred during the sample interval.
+For example, if the parameter value were to be reset during the sample interval then it would be appropriate to set <em>SuspectData</em> to 1.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Values">Values</span></td>
 <td>string[]</td>
 <td>R</td>
-<td>Comma-separated list of strings. Each entry indicates the value of the referenced parameter, as determined by <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em>, during the sample interval.
+<td><p>Comma-separated list of strings. Each entry indicates the value of the referenced parameter, as determined by <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a>, during the sample interval.
 The statistics values in this comma-separated lists MUST be in time order, with the oldest one first and the most recent one last.
-If the <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em> parameter is not present, or is inappropriate for the referenced parameter, the statistics values MUST be collected in Current mode.</td>
-<td></td>
+If the <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a> parameter is not present, or is inappropriate for the referenced parameter, the statistics values MUST be collected in Current mode.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.Failures">Failures</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Counts the number of times (since this object instance was last enabled) that a newly-calculated sample value (accounting for <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em>) transitioned from the “in range” state to the “out of range” state, or between the “out of range (low)” and “out of range (high)” states. The states are defined as follows:
+<td>Counts the number of times (since this object instance was last enabled) that a newly-calculated sample value (accounting for <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a>) transitioned from the “in range” state to the “out of range” state, or between the “out of range (low)” and “out of range (high)” states. The states are defined as follows:
 
 <ul>
-<li>“in range” : current value is greater than <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em> and less than <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em>.</li>
-<li>“out of range” : current value is less than or equal to <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em>, or greater than or equal to <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em>.</li>
-<li>“out of range (low)” : current value is less than or equal to <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em>.</li>
-<li>“out of range (high)” : current value is greater than or equal to <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em>.
-Note that, if <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em> and <em><a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em> are both the same, the threshold/failure mechanism is disabled, so the value of this parameter will not increment.
+<li>“in range” : current value is greater than <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a> and less than <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a>.</li>
+<li>“out of range” : current value is less than or equal to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a>, or greater than or equal to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a>.</li>
+<li>“out of range (low)” : current value is less than or equal to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a>.</li>
+<li>“out of range (high)” : current value is greater than or equal to <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a>.
+Note that, if <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a> and <a href="#D.Device:1.Device.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a> are both the same, the threshold/failure mechanism is disabled, so the value of this parameter will not increment.
 This parameter can be incremented at any time during a sample interval, and might be incremented more than once during a single sample interval. For this reason, the CPE SHOULD place a locally specified limit on the frequency at which it will notify the ACS of such changes, as described in [<a href="#R.TR-069a2">Section 3.2.1/TR-069a2</a>].
 Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.</li></ul></td>
 <td>0</td>
@@ -4609,7 +4808,9 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.Device:1.Device.DownloadAvailability.Announcement.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of the announcement service. Enumeration of:</p>
+<td><p>The status of the announcement service.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.DownloadAvailability.Announcement.Status.Disabled"><em>Disabled</em></span></li>
@@ -4630,7 +4831,7 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td>W</td>
 <td><p>Multicast groups to which the CPE SHOULD listen for announcements.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.Device:1.Device.DownloadAvailability.Announcement.Group.URL">URL</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.Device:1.Device.DownloadAvailability.Announcement.Group.URL"><em>URL</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -4644,7 +4845,9 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.Device:1.Device.DownloadAvailability.Announcement.Group.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of this group table entry. Enumeration of:</p>
+<td><p>The status of this group table entry.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.DownloadAvailability.Announcement.Group.Status.Disabled"><em>Disabled</em></span></li>
@@ -4659,7 +4862,7 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td>URL [<a href="#R.RFC3986">RFC3986</a>] encoding the group address, source and port on which to listen, and other protocol information, e.g. expected announcement format.
 Depending on the application, the messages identified by this URL MAY directly contain the data to be downloaded, or alternatively MAY contain information informing the CPE how to obtain the data to be downloaded via a separate mechanism, which itself could involve a unicast or a multicast download protocol.
 Refer to [<a href="#R.DVB-TS.102.824">DVB-TS.102.824</a>] for an example of a URL format that identifies a SAP [<a href="#R.RFC2974">RFC2974</a>] stream that indicates how to use either FLUTE [<a href="#R.RFC3926">RFC3926</a>] or DSM-CC [<a href="#R.ISO-13818-6:1998">ISO-13818-6:1998</a>] to perform the download.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.Device:1.Device.DownloadAvailability.Query.">Device.DownloadAvailability.Query.</span></td>
@@ -4679,7 +4882,9 @@ Refer to [<a href="#R.DVB-TS.102.824">DVB-TS.102.824</a>] for an example of a UR
 <td><span id="D.Device:1.Device.DownloadAvailability.Query.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of the query service. Enumeration of:</p>
+<td><p>The status of the query service.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.Device:1.Device.DownloadAvailability.Query.Status.Disabled"><em>Disabled</em></span></li>
@@ -4718,20 +4923,6 @@ Refer to [<a href="#R.DVB-TS.102.824">DVB-TS.102.824</a>] for an example of a UR
 <td><a href="#D.Device:1.Device.ManagementServer.ConnectionRequestURL">Device.ManagementServer.ConnectionRequestURL</a></td></tr>
 <tr class="parameter">
 <td><a href="#D.Device:1.Device.LAN.IPAddress">Device.LAN.IPAddress</a></td></tr></tbody></table>
-
-<h3 id="forced-active-notification-parameters">Forced Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="default-active-notification-parameters">Default Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
 
 <h3 id="parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</h3>
 
@@ -6430,7 +6621,7 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:38:41 UTC.<br/>report.py –filter model=Device –output &lt;stdout&gt; –format markdown tr-157-1-1-0.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.2.0 (2024-07-23 version) on 2024-07-23 at 10:57:10 UTC.<br/>report.py –filter model=Device –output <stdout> –format markdown tr-157-1-1-0.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 
@@ -6548,8 +6739,6 @@ The minimum REQUIRED version for this profile is Device:1.0.</p>
 
 <ul class="collapsed">
 <li><a href="#forced-inform-parameters">Forced Inform Parameters</a></li>
-<li><a href="#forced-active-notification-parameters">Forced Active Notification Parameters</a></li>
-<li><a href="#default-active-notification-parameters">Default Active Notification Parameters</a></li>
 <li><a href="#parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</a></li></ul></li>
 <li><span class="expandable"><a href="#profile-definitions">Profile Definitions</a></span>
 

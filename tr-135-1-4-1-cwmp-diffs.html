@@ -307,6 +307,7 @@
     :root {
       --background-color: white;
       --foreground-color: black;
+      --diff-background-color: aliceblue;
       --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
@@ -331,6 +332,7 @@
     :root {
       --background-color: black;
       --foreground-color: white;
+      --diff-background-color: #0f0700;
       --link-color: lightblue;
       --parameter-color: black;
       --object-color: #bbbb44;
@@ -344,6 +346,9 @@
       --stripe-color-deprecated: #555555;
       --stripe-color-obsoleted: #444444;
       --stripe-color-deleted: #333333;
+    }
+    .hoverlink {
+      filter: invert(1);
     }
   }
 
@@ -441,7 +446,7 @@
 
   /* XXX this is a bad name */
   .diffs {
-      background-color: aliceblue;
+      background-color: var(--diff-background-color);
       opacity: 0.8;
   }
 
@@ -801,9 +806,6 @@
       color: inherit;
   }
   </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <div id="main">
@@ -815,7 +817,7 @@
 <col style="width: 25.0%;"></col></colgroup>
 <tbody>
 <tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
+<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></img></a></td>
 <td class="centered" rowspan="1"><p></p>
 
 <h1 id="stbservice14-service-object-definition-cwmp-changes" class="unnumbered unlisted">STBService:1.4 Service Object definition [CWMP] (changes)</h1>
@@ -921,10 +923,12 @@ specified, in which case the value will be in one of the ranges.</p></td></tr>
 <tr>
 <td><span id="T.UUID">UUID</span></td>
 <td><a href="#T.string">string</a>(36)</td>
-<td><p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>]. Possible patterns:</p>
+<td><p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>].</p>
+
+<p>Possible patterns:</p>
 
 <ul>
-<li>[*[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-<span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912">A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}*</span></li></ul></td></tr></tbody></table>
+<li><span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912"><code>[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}</code></span></li></ul></td></tr></tbody></table>
 
 <h1 id="references">References</h1>
 
@@ -951,13 +955,6 @@ specified, in which case the value will be in one of the ranges.</p></td></tr>
 <tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc4291">[<span id="R.RFC4291">RFC4291</span>]</a></td>
 <td>RFC 4291, <em>IP Version 6 Addressing Architecture</em>, IETF, 2006.</td></tr>
-<tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4585">[<span id="R.RFC4585">RFC4585</span>]</a></td>
-<td>RFC 4585, <em>Extended RTP Profile for Real-time Transport Control Protocol
-(RTCP)-Based Feedback (RTP/AVPF)</em>, IETF.</td></tr>
-<tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4588">[<span id="R.RFC4588">RFC4588</span>]</a></td>
-<td>RFC 4588, <em>RTP Retransmission Packet Format</em>, IETF.</td></tr>
 <tr>
 <td><a href="https://www.rfc-editor.org/rfc/rfc4632">[<span id="R.RFC4632">RFC4632</span>]</a></td>
 <td>RFC 4632, <em>Classless Inter-domain Routing (CIDR): The Internet Address Assignment
@@ -1009,7 +1006,7 @@ the <strong>Version</strong> column.</p>
 <div class="diffs"><p><strong>Changes in 1.4:</strong></p>
 
 <ul>
-<li>Changed attribute <em>name</em> = <em>STBService:1.3</em> ⇒ <em>STBService:1.4</em></li></ul></div>
+<li>Changed name = <em>STBService:1.3</em> ⇒ <em>STBService:1.4</em></li></ul></div>
 
 <table class="full-width partial-border data-model-table">
 <thead>
@@ -1027,7 +1024,7 @@ the <strong>Version</strong> column.</p>
 <td>R</td>
 <td><p>The top-level object for an STB CPE.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.STBService:1.STBService.Alias">Alias</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.Alias"><em>Alias</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1055,20 +1052,19 @@ the <strong>Version</strong> column.</p>
 <td><span id="D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.">STBService.{i}.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
-<td>Table to describe the set of profiles and levels combinations supported by the STB when MPEG4 Part 10 is used as video standard.
-<span class="removed">|enum| </span><span class="inserted">At most one entry in this table can exist with the same values for both <em><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Profile">Profile</a></em> and <em><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Level">Level</a></em>, or with a given value for <em><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Alias">Alias</a></em>. </span>The table MUST include a distinct entry for each supported combination of these parameters.</td>
+<td>Table to describe the set of profiles and levels combinations supported by the STB when MPEG4 Part 10 is used as video standard. <span class="removed"><strong>{{enum: empty param arg only valid in parameter descriptions}}</strong></span><span class="inserted">At most one entry in this table can exist with the same values for both <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Profile"><em>Profile</em></a> and <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Level"><em>Level</em></a>, or with a given value for <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Alias"><em>Alias</em></a>.</span> The table MUST include a distinct entry for each supported combination of these parameters.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.STBService:1.STBService.Capabilities.ServiceMonitoring.">STBService.{i}.Capabilities.ServiceMonitoring.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
-<td>This object describes the capabilities of the <em><a href="#D.STBService:1.STBService.ServiceMonitoring.">ServiceMonitoring</a></em> object.
+<td>This object describes the capabilities of the <a href="#D.STBService:1.STBService.ServiceMonitoring."><em>ServiceMonitoring</em></a> object.
 
 <div class="diffs"><p><strong>Changes in 1.4:</strong></p>
 
 <ul>
-<li>Added <em><a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries">MaxMainStreamEventLogEntries</a></em> parameter</li></ul></div></td>
+<li>Added <a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries"><em>MaxMainStreamEventLogEntries</em></a> parameter</li></ul></div></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter inserted">
@@ -1082,7 +1078,7 @@ the <strong>Version</strong> column.</p>
 <td><span id="D.STBService:1.STBService.Components.">STBService.{i}.Components.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
-<td>Details of STB logical or physical internal components. Unlike the <em><a href="#D.STBService:1.STBService.Capabilities.">Capabilities</a></em> object, which is read-only and which doesn’t describe individual instances, this object contains some writeable parameters.</td>
+<td>Details of STB logical or physical internal components. Unlike the <a href="#D.STBService:1.STBService.Capabilities."><em>Capabilities</em></a> object, which is read-only and which doesn’t describe individual instances, this object contains some writeable parameters.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1091,7 +1087,7 @@ the <strong>Version</strong> column.</p>
 <td>R</td>
 <td><p>FrontEnd instance table. Each front-end instance, including vendor-specific front-end types, will normally have a sub-object that corresponds to the front-end type (e.g. DVB-T or IP).</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.STBService:1.STBService.Components.FrontEnd.Name">Name</a></em>, or with a given value for <em><a href="#D.STBService:1.STBService.Components.FrontEnd.Alias">Alias</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.Components.FrontEnd.Name"><em>Name</em></a>, or with a given value for <a href="#D.STBService:1.STBService.Components.FrontEnd.Alias"><em>Alias</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1115,7 +1111,9 @@ Parameters are taken from the DGTVi D-Book [<a href="#R.D-Book">D-Book</a>].</p>
 <td><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation">HierarchicalInformation</span></td>
 <td>string</td>
 <td>W</td>
-<td><p>Hierarchical parameter alpha. The higher the value of alpha, the more noise-immune the High Priority Modulation is. Enumeration of:</p>
+<td><p>Hierarchical parameter alpha. The higher the value of alpha, the more noise-immune the High Priority Modulation is.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation.0"><em>0</em></span> (no hierarchy)</li>
@@ -1143,27 +1141,11 @@ Parameters are taken from the DGTVi D-Book [<a href="#R.D-Book">D-Book</a>].</p>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.IP.RTPAVPF.">STBService.{i}.Components.FrontEnd.{i}.IP.RTPAVPF.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>Parameters related to RTP AVPF configuration as defined in [<a href="#R.RFC4585">RFC4585</a>] and [<a href="#R.RFC4588">RFC4588</a>].</td>
-<td>-</td>
-<td>1.0</td></tr>
-<tr class="parameter">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.IP.RTPAVPF.Enable">Enable</span></td>
-<td>boolean</td>
-<td>W</td>
-<td>Enables or disables RTP/AVPF receiver report generation.
-When set to <em>true</em>, enables the error correction operation, immediately (<a href="#D.STBService:1.STBService.Components.FrontEnd.IP.RTPAVPF.OperationMode.Forced"><em>Forced</em></a> mode) or automatically when necessary (<a href="#D.STBService:1.STBService.Components.FrontEnd.IP.RTPAVPF.OperationMode.Auto"><em>Auto</em></a> mode).
-When set to <em>false</em>, disables the error correction operation.</td>
-<td>-</td>
-<td>1.0</td></tr>
-<tr class="object">
 <td><span id="D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.">STBService.{i}.Components.FrontEnd.{i}.IP.ForceMonitor.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>Parameters used to describe the force monitoring operation.
-When running in the force monitoring mode, the STB MUST automatically connect to a test URI defined by the <em><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.URI">URI</a></em> parameter whenever it detects that the IP tuner is not not receiving any data from the WAN.
+When running in the force monitoring mode, the STB MUST automatically connect to a test URI defined by the <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.URI"><em>URI</em></a> parameter whenever it detects that the IP tuner is not not receiving any data from the WAN.
 When running in normal mode, the STB does not perform any action when it does not receive any data from the IP tuner coming from the WAN.
 The force monitor mode allows to maintain an active stream coming from the network so as to keep collecting statistics.</td>
 <td>-</td>
@@ -1172,29 +1154,19 @@ The force monitor mode allows to maintain an active stream coming from the netwo
 <td><span id="D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.URI">URI</span></td>
 <td>string(:256)</td>
 <td>W</td>
-<td><span class="removed">describes</span><span class="inserted">Describes</span> the service to connect to for force monitoring purposes with the same <span class="removed">syntaxt</span><span class="inserted">syntax</span> as <em><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI">ServiceConnect.URI</a></em><span class="inserted">.</span>If a <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.">ServiceMonitoring.MainStream</a></em> instance with <em>ServiceType</em> = <em>TEST</em> or <em>IP-All</em> is currently enabled, the STB MUST ensure that performance data for this service is collected in that instance.
-The value when read is not specified and need not be the value that was most recently written.</td>
+<td><span class="removed">describes</span><span class="inserted">Describes</span> the service to connect to for force monitoring purposes with the same <span class="removed">syntaxt</span><span class="inserted">syntax</span> as <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI"><em>ServiceConnect.URI</em></a><span class="removed"> </span><span class="inserted">.</span>If a <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream."><em>ServiceMonitoring.MainStream</em></a> instance with <em>ServiceType</em> = <em>TEST</em> or <em>IP-All</em> is currently enabled, the STB MUST ensure that performance data for this service is collected in that instance. The value when read is not specified and need not be the value that was most recently written.</td>
 <td>-</td>
 <td>1.1</td></tr>
 <tr class="object">
 <td><span id="D.STBService:1.STBService.ServiceMonitoring.">STBService.{i}.ServiceMonitoring.</span></td>
 <td><span title="object">object</span></td>
 <td>R</td>
-<td><p><span class="removed">Contains statistics relating to the</span><span class="inserted">Records events and collects</span> QoS / QoE <span class="removed">of</span><span class="inserted">related statistics for</span> Main AV streams.
-These statistics are broken down into categories, e.g. de-jittering and RTP, and for each category there are two types of statistics:</p>
-
-<ul>
-<li><strong>Total</strong> statistics, which count the number of occurrences of something.</li>
-<li><strong>Sample</strong> statistics, which are measured over a sample interval, and are made available to the ACS as a list of the most recent n samples.
-Total statistics are always collected (collection cannot be disabled, but the values can be reset).
-For Sample statistics, an STB uses a single sample interval and number of samples (n) for all <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.">MainStream</a></em> instances. The sample interval can be aligned with absolute time.
-When Sample statistics collection is enabled, statistics collection MUST proceed regardless of whether there are any active Main AV streams. For example, even when the STB is not receiving any data, sample intervals will continue to be timed as normal.
-Refer to [<a href="#R.TR-135">I.3/TR-135</a>] for non-normative explanation of the operation of the <em>ServiceMonitoring</em> object.</li></ul>
+<td><span class="removed">Contains statistics relating to the</span><span class="inserted">Records events and collects</span> QoS / QoE <span class="removed">of</span><span class="inserted">related statistics for</span> Main AV streams. These statistics are broken down into categories, e.g. de-jittering and RTP, and for each category there are two types of statistics: * <strong>Total</strong> statistics, which count the number of occurrences of something. * <strong>Sample</strong> statistics, which are measured over a sample interval, and are made available to the ACS as a list of the most recent n samples. Total statistics are always collected (collection cannot be disabled, but the values can be reset). For Sample statistics, an STB uses a single sample interval and number of samples (n) for all <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream."><em>MainStream</em></a> instances. The sample interval can be aligned with absolute time. When Sample statistics collection is enabled, statistics collection MUST proceed regardless of whether there are any active Main AV streams. For example, even when the STB is not receiving any data, sample intervals will continue to be timed as normal. Refer to [<a href="#R.TR-135">I.3/TR-135</a>] for non-normative explanation of the operation of the <em>ServiceMonitoring</em> object.
 
 <div class="diffs"><p><strong>Changes in 1.4:</strong></p>
 
 <ul>
-<li>Added <em><a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable">EventCollectionEnable</a></em> parameter</li></ul></div></td>
+<li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable"><em>EventCollectionEnable</em></a> parameter</li></ul></div></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1202,15 +1174,15 @@ Refer to [<a href="#R.TR-135">I.3/TR-135</a>] for non-normative explanation of t
 <td>boolean</td>
 <td>W</td>
 <td>When set to <em>true</em>, forces statistics for the current sample to be calculated and updated in the data model. Setting it to <em>false</em> has no effect. The value is not saved in device state and is always <em>false</em> when read.
-If this is the first time that <em>ForceSample</em> has been set to true during the current sample interval, this MUST cause a new value to be added to each of the Sample statistics comma-separated list parameters, and the <em><a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime">ReportEndTime</a></em> and all <em>SampleSeconds</em> parameters MUST be updated accordingly.
-If this is not the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, then the new values that were added as described in the previous paragraph, and the <em><a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime">ReportEndTime</a></em> and all <em>SampleSeconds</em> parameters, MUST be updated accordingly.
+If this is the first time that <em>ForceSample</em> has been set to true during the current sample interval, this MUST cause a new value to be added to each of the Sample statistics comma-separated list parameters, and the <a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime"><em>ReportEndTime</em></a> and all <em>SampleSeconds</em> parameters MUST be updated accordingly.
+If this is not the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, then the new values that were added as described in the previous paragraph, and the <a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime"><em>ReportEndTime</em></a> and all <em>SampleSeconds</em> parameters, MUST be updated accordingly.
 Note that <em>ForceSample</em> just provides a <em>sneak preview</em> of the current sample. It does not create a new sample and it does not interfere with the sample interval schedule.
-At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <em><a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime">ReportEndTime</a></em> and all <em>SampleSeconds</em> parameters, will be updated accordingly. In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.
+At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime"><em>ReportEndTime</em></a> and all <em>SampleSeconds</em> parameters, will be updated accordingly. In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.
 
 <div class="diffs"><p><strong>Changes in 1.4:</strong></p>
 
 <ul>
-<li>Removed <em>boolean</em> syntax <em>[]</em> list</li></ul></div></td>
+<li>Removed <em>boolean[]</em> syntax <em>[]</em> list</li></ul></div></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter inserted">
@@ -1225,25 +1197,22 @@ When the collection of events is enabled, any previously collected events are di
 <td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.">STBService.{i}.ServiceMonitoring.MainStream.{i}.</span></td>
 <td><span title="object(0:∞)">object(0:)</span></td>
 <td>R</td>
-<td><p>List of Main AV stream objects. Each instance is associated with a specified service type and will collect statistics only for the main stream that matches that service type.
-Note that this means that streams that do not match an instance’s service type MUST NOT contribute to the instance’s Total and Sample statistics.
-It is up to the STB to determine which AV stream should be regarded as the Main AV stream for a given service type at any given time. For example, if two active streams are associated with the same service type, the STB might prefer streams that are associated with an AV player, or if more than one stream is associated with an AV player, the STB might prefer a player that is outputting a DVI stream to a player that is outputting an RF stream.Note that some parameters, e.g. <em><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI">Components.FrontEnd.{i}.IP.ServiceConnect.URI</a></em>, include requirements that restrict the STB’s freedom to determine which AV stream should be regarded as the Main AV stream for a given service.</p>
+<td><p>List of Main AV stream objects. Each instance is associated with a specified service type and will collect statistics only for the main stream that matches that service type. Note that this means that streams that do not match an instance’s service type MUST NOT contribute to the instance’s Total and Sample statistics. It is up to the STB to determine which AV stream should be regarded as the Main AV stream for a given service type at any given time. For example, if two active streams are associated with the same service type, the STB might prefer streams that are associated with an AV player, or if more than one stream is associated with an AV player, the STB might prefer a player that is outputting a DVI stream to a player that is outputting an RF stream.<span class="removed"> </span>Note that some parameters, e.g. <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI"><em>Components.FrontEnd.{i}.IP.ServiceConnect.URI</em></a>, include requirements that restrict the STB’s freedom to determine which AV stream should be regarded as the Main AV stream for a given service.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.ServiceType">ServiceType</a></em>, or with a given value for <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Alias">Alias</a></em>.</p>
+<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.ServiceType"><em>ServiceType</em></a>, or with a given value for <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Alias"><em>Alias</em></a>.</p>
 
 <div class="diffs"><p><strong>Changes in 1.4:</strong></p>
 
 <ul>
-<li>Added <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.SessionId">SessionId</a></em> parameter</li>
-<li>Added <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.">EventLog.</a></em> object</li></ul></div></td>
+<li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.SessionId"><em>SessionId</em></a> parameter</li>
+<li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog."><em>EventLog.</em></a> object</li></ul></div></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Enable">Enable</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>Enables or disables collection of Total and Sample statistics <span class="inserted">and events </span>for this object instance.<span class="inserted">
-The collection of events requires the value of this parameter to be <em>true</em> and the value of the <em><a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable">ServiceMonitoring.EventCollectionEnable</a></em> to be <em>true</em>.</span></td>
+<td>Enables or disables collection of Total and Sample statistics <span class="inserted">and events </span>for this object instance.<span class="inserted"> The collection of events requires the value of this parameter to be <em>true</em> and the value of the <a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable"><em>ServiceMonitoring.EventCollectionEnable</em></a> to be <em>true</em>.</span></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1263,7 +1232,7 @@ The <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Status.Erro
 <td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.SessionId">SessionId</span></td>
 <td><span title="UUID">string(36)</span></td>
 <td>R</td>
-<td>[<a href="#T.UUID">UUID</a>] Time based UUID [<a href="#R.RFC4122">Section 4.2/RFC4122</a>] that is the identifier for the associated <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.AVStream">AVStream</a></em> parameter when available to the device.</td>
+<td>[<a href="#T.UUID">UUID</a>] Time based UUID [<a href="#R.RFC4122">Section 4.2/RFC4122</a>] that is the identifier for the associated <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.AVStream"><em>AVStream</em></a> parameter when available to the device.</td>
 <td>-</td>
 <td>1.4</td></tr>
 <tr class="object inserted">
@@ -1271,7 +1240,7 @@ The <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Status.Erro
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object represents the log entries of events recorded by the MainStream object instance.
-When the number of log entries in the EventLog exceeds the value of the <em><a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries">Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries</a></em> parameter, the Entry object with the lowest SequenceNumber value is replaced by the new EventLog Entry object.
+When the number of log entries in the EventLog exceeds the value of the <a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries"><em>Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries</em></a> parameter, the Entry object with the lowest SequenceNumber value is replaced by the new EventLog Entry object.
 Log entries are persisted across reboots of the CPE.</td>
 <td>-</td>
 <td>1.4</td></tr>
@@ -1279,14 +1248,14 @@ Log entries are persisted across reboots of the CPE.</td>
 <td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Reset">Reset</span></td>
 <td>boolean</td>
 <td>W</td>
-<td>When set to true, clears the events from the event log and the value of <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber">Entry.{i}.SequenceNumber</a></em> parameter is reset to the parameter’s minimum value.</td>
+<td>When set to true, clears the events from the event log and the value of <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber"><em>Entry.{i}.SequenceNumber</em></a> parameter is reset to the parameter’s minimum value.</td>
 <td>-</td>
 <td>1.4</td></tr>
 <tr class="parameter inserted">
 <td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.EntryNumberOfEntries">EntryNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.">Entry</a></em> table.</td>
+<td>The number of entries in the <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry."><em>Entry</em></a> table.</td>
 <td>-</td>
 <td>1.4</td></tr>
 <tr class="object inserted">
@@ -1295,7 +1264,7 @@ Log entries are persisted across reboots of the CPE.</td>
 <td>R</td>
 <td><p>This object represents an entry (e.g., start session, channel change) in the event log.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber">SequenceNumber</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber"><em>SequenceNumber</em></a>.</p></td>
 <td>-</td>
 <td>1.4</td></tr>
 <tr class="parameter inserted">
@@ -1325,7 +1294,7 @@ When the value of the parameter exceeds the maximium range, the lowest value of 
 <td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.ParameterNumberOfEntries">ParameterNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.">Parameter</a></em> table.</td>
+<td>The number of entries in the <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter."><em>Parameter</em></a> table.</td>
 <td>-</td>
 <td>1.4</td></tr>
 <tr class="object inserted">
@@ -1350,254 +1319,9 @@ When the value of the parameter exceeds the maximium range, the lowest value of 
 <td>-</td>
 <td>1.4</td></tr></tbody></table>
 
-<h2 id="inform-and-notification-requirements">Inform and Notification Requirements</h2>
-
-<h3 id="forced-inform-parameters">Forced Inform Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="forced-active-notification-parameters">Forced Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="default-active-notification-parameters">Default Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead>
-<tbody>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.">STBService.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG2Part2.ProfileLevel.">STBService.{i}.Capabilities.VideoDecoder.MPEG2Part2.ProfileLevel.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG2Part2.ProfileLevel.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part2.ProfileLevel.">STBService.{i}.Capabilities.VideoDecoder.MPEG4Part2.ProfileLevel.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part2.ProfileLevel.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.">STBService.{i}.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.SMPTEVC1.ProfileLevel.">STBService.{i}.Capabilities.VideoDecoder.SMPTEVC1.ProfileLevel.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.SMPTEVC1.ProfileLevel.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.">STBService.{i}.Components.FrontEnd.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.">STBService.{i}.Components.FrontEnd.{i}.DVBT.Modulation.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.SNR">SNR</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.BER">BER</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.CBER">CBER</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.ServiceListDatabase.LogicalChannel.">STBService.{i}.Components.FrontEnd.{i}.DVBT.ServiceListDatabase.LogicalChannel.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.ServiceListDatabase.LogicalChannel.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.ServiceListDatabase.LogicalChannel.Service.">STBService.{i}.Components.FrontEnd.{i}.DVBT.ServiceListDatabase.LogicalChannel.{i}.Service.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.ServiceListDatabase.LogicalChannel.Service.Alias">Alias</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.ServiceListDatabase.LogicalChannel.Service.BER">BER</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.ServiceListDatabase.LogicalChannel.Service.CBER">CBER</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.ServiceListDatabase.LogicalChannel.Service.SNR">SNR</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroup.">STBService.{i}.Components.FrontEnd.{i}.IP.IGMP.ClientGroup.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroup.Alias">Alias</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroup.UpTime">UpTime</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.">STBService.{i}.Components.FrontEnd.{i}.IP.IGMP.ClientGroupStats.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.Alias">Alias</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.TotalStart">TotalStart</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.CurrentDayStart">CurrentDayStart</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.QuarterHourStart">QuarterHourStart</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.Total.">STBService.{i}.Components.FrontEnd.{i}.IP.IGMP.ClientGroupStats.{i}.Total.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.Total.NumberOfJoins">NumberOfJoins</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.Total.NumberOfLeaves">NumberOfLeaves</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.CurrentDay.">STBService.{i}.Components.FrontEnd.{i}.IP.IGMP.ClientGroupStats.{i}.CurrentDay.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.CurrentDay.NumberOfJoins">NumberOfJoins</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.CurrentDay.NumberOfLeaves">NumberOfLeaves</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.QuarterHour.">STBService.{i}.Components.FrontEnd.{i}.IP.IGMP.ClientGroupStats.{i}.QuarterHour.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.QuarterHour.NumberOfJoins">NumberOfJoins</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.IGMP.ClientGroupStats.QuarterHour.NumberOfLeaves">NumberOfLeaves</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.Inbound.">STBService.{i}.Components.FrontEnd.{i}.IP.Inbound.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.Inbound.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.Outbound.">STBService.{i}.Components.FrontEnd.{i}.IP.Outbound.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.Outbound.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.PVR.Storage.">STBService.{i}.Components.PVR.Storage.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.PVR.Storage.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.AudioDecoder.">STBService.{i}.Components.AudioDecoder.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.AudioDecoder.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.VideoDecoder.">STBService.{i}.Components.VideoDecoder.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.VideoDecoder.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.AudioOutput.">STBService.{i}.Components.AudioOutput.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.AudioOutput.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.SPDIF.">STBService.{i}.Components.SPDIF.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.SPDIF.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.VideoOutput.">STBService.{i}.Components.VideoOutput.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.VideoOutput.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.SCART.">STBService.{i}.Components.SCART.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.SCART.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.HDMI.">STBService.{i}.Components.HDMI.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.HDMI.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.CA.">STBService.{i}.Components.CA.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.CA.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.DRM.">STBService.{i}.Components.DRM.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.DRM.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.AVStreams.AVStream.">STBService.{i}.AVStreams.AVStream.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.AVStreams.AVStream.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.AVPlayers.AVPlayer.">STBService.{i}.AVPlayers.AVPlayer.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.AVPlayers.AVPlayer.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.">STBService.{i}.ServiceMonitoring.MainStream.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.ResetTime">ResetTime</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.DejitteringStats.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.DejitteringStats.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.DejitteringStats.Overruns">Overruns</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.DejitteringStats.Underruns">Underruns</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.TCPStats.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.TCPStats.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.TCPStats.PacketsReceived">PacketsReceived</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.TCPStats.PacketsRetransmitted">PacketsRetransmitted</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.TCPStats.BytesReceived">BytesReceived</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.RTPStats.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.RTPStats.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.RTPStats.PacketsExpected">PacketsExpected</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.RTPStats.PacketsReceived">PacketsReceived</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.RTPStats.PacketsReceivedBeforeEC">PacketsReceivedBeforeEC</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.MPEG2TSStats.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.MPEG2TSStats.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.MPEG2TSStats.TSPacketsReceived">TSPacketsReceived</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.VideoDecoderStats.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.VideoDecoderStats.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.VideoDecoderStats.DecodedFrames">DecodedFrames</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.VideoDecoderStats.IDecodedFrames">IDecodedFrames</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.VideoDecoderStats.PDecodedFrames">PDecodedFrames</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.VideoDecoderStats.BDecodedFrames">BDecodedFrames</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.AudioDecoderStats.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Total.AudioDecoderStats.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Total.AudioDecoderStats.DecodedFrames">DecodedFrames</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Sample.HighLevelMetricStats.">STBService.{i}.ServiceMonitoring.MainStream.{i}.Sample.HighLevelMetricStats.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Sample.HighLevelMetricStats.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Applications.AudienceStats.">STBService.{i}.Applications.AudienceStats.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Applications.AudienceStats.ResetTime">ResetTime</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Applications.AudienceStats.Channel.">STBService.{i}.Applications.AudienceStats.Channel.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Applications.AudienceStats.Channel.Alias">Alias</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Applications.AudienceStats.Channel.Duration">Duration</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Applications.CDSPush.ContentItem.">STBService.{i}.Applications.CDSPush.ContentItem.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Applications.CDSPush.ContentItem.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Applications.CDSPull.ContentItem.">STBService.{i}.Applications.CDSPull.ContentItem.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Applications.CDSPull.ContentItem.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Applications.ServiceProvider.">STBService.{i}.Applications.ServiceProvider.{i}.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Applications.ServiceProvider.Alias">Alias</a></td></tr>
-<tr class="object">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Install.">STBService.{i}.Components.FrontEnd.{i}.DVBT.Install.</a></td></tr>
-<tr class="parameter">
-<td><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Install.Progress">Progress</a></td></tr></tbody></table>
-
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:48:56 UTC.<br/>report.py –include ../../install/cwmp –output &lt;stdout&gt; –transform diff –format markdown tr-135-1-3-0.xml tr-135-1-4-1-cwmp.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.2.0 (2024-07-23 version) on 2024-07-23 at 11:11:05 UTC.<br/>report.py –include ../../install/cwmp –output <stdout> –transform diff –format markdown tr-135-1-3-0.xml tr-135-1-4-1-cwmp.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 
@@ -1635,7 +1359,6 @@ When the value of the parameter exceeds the maximium range, the lowest value of 
 <li><span class="expandable"><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.">IP.</a></span>
 
 <ul class="collapsed">
-<li><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.RTPAVPF.">RTPAVPF.</a></li>
 <li><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.">ForceMonitor.</a></li></ul></li></ul></li></ul></li>
 <li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.">ServiceMonitoring.</a></span>
 
@@ -1649,13 +1372,6 @@ When the value of the parameter exceeds the maximium range, the lowest value of 
 <li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.">Entry.{i}.</a></span>
 
 <ul class="collapsed">
-<li><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.">Parameter.{i}.</a></li></ul></li></ul></li></ul></li></ul></li></ul></li>
-<li><span class="expandable"><a href="#inform-and-notification-requirements">Inform and Notification Requirements</a></span>
-
-<ul class="collapsed">
-<li><a href="#forced-inform-parameters">Forced Inform Parameters</a></li>
-<li><a href="#forced-active-notification-parameters">Forced Active Notification Parameters</a></li>
-<li><a href="#default-active-notification-parameters">Default Active Notification Parameters</a></li>
-<li><a href="#parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</a></li></ul></li></ul></li></ul></div>
+<li><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.">Parameter.{i}.</a></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></div>
 </body>
 </html>

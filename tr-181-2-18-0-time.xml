@@ -1,0 +1,909 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Time]
+
+  Copyright (c) 2010-2024, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-18-0-time"
+    file="tr-181-2-18-0-time.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="Time">
+
+    <object name="Device.Time." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.0">
+      <description>
+        This object contains global parameters relating to the NTP time clients
+        and or servers that are active in the device. This object can be used
+        to model SNTP and NTP clients and servers.
+
+        Both NTP and SNTP have identical packet formats and use the same
+        mathematical operations to calculate client time, clock offset, and
+        roundtrip delay. From the perspective of an NTP or SNTP server, there
+        is no difference between NTP and SNTP clients, and from the perspective
+        of an NTP or SNTP client, there is no difference between NTP and SNTP
+        servers. SNTP servers are stateless like NTP servers in non-symmetric
+        modes and can handle numerous clients, but SNTP clients usually operate
+        with only one server at a time, unlike most NTP clients.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables all the time clients and servers.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Reflects the global time synchronisation status of the CPE. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                Indicates that the CPE's time client services are disabled.
+              </description>
+            </enumeration>
+            <enumeration value="Unsynchronized">
+              <description>
+                Indicates that the CPE's absolute time has not yet been set by
+                any of the configured time clients.
+              </description>
+            </enumeration>
+            <enumeration value="Synchronized">
+              <description>
+                Indicates that the CPE has acquired accurate absolute time; its
+                current time is accurate. One or more time client was able to
+                configure the time of the CPE.
+              </description>
+            </enumeration>
+            <enumeration value="Error_FailedToSynchronize" status="obsoleted">
+              <description>
+                {{deprecated|2.16|due to the introduction of
+                {{object|Client}}}}
+
+                {{obsoleted|2.18}}
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>
+                MAY be used by the CPE to indicate a locally defined error
+                condition. None of the configured Time clients were able to
+                synchronize the time.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NTPServer1" access="readWrite" status="obsoleted">
+        <description>
+          First NTP timeserver. Either a host name or IP address.
+
+          {{deprecated|2.16|due to the introduction of {{object|Client}}}}
+
+          {{obsoleted|2.18}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NTPServer2" access="readWrite" status="obsoleted">
+        <description>
+          Second NTP timeserver. Either a host name or IP address.
+
+          {{deprecated|2.16|due to the introduction of {{object|Client}}}}
+
+          {{obsoleted|2.18}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NTPServer3" access="readWrite" status="obsoleted">
+        <description>
+          Third NTP timeserver. Either a host name or IP address.
+
+          {{deprecated|2.16|due to the introduction of {{object|Client}}}}
+
+          {{obsoleted|2.18}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NTPServer4" access="readWrite" status="obsoleted">
+        <description>
+          Fourth NTP timeserver. Either a host name or IP address.
+
+          {{deprecated|2.16|due to the introduction of {{object|Client}}}}
+
+          {{obsoleted|2.18}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NTPServer5" access="readWrite" status="obsoleted">
+        <description>
+          Fifth NTP timeserver. Either a host name or IP address.
+
+          {{deprecated|2.16|due to the introduction of {{object|Client}}}}
+
+          {{obsoleted|2.18}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentLocalTime" access="readOnly"
+          activeNotify="canDeny">
+        <description>
+          The current date and time in the CPE's local time zone.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LocalTimeZone" access="readWrite">
+        <description>
+          The local time zone definition, encoded according to IEEE 1003.1
+          (POSIX). The following is an example value:
+
+          : EST+5 EDT,M4.1.0/2,M10.5.0/2
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly" version="2.16">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly" version="2.16">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Time.Client.{i}." access="readWrite"
+        enableParameter="Enable" numEntriesParameter="ClientNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.16">
+      <description>
+        This object contains parameters relating to an time client instance.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the time client.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Status of Time support for this client. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                Indicates that the time client service is being disabled
+              </description>
+            </enumeration>
+            <enumeration value="Unsynchronized">
+              <description>
+                Indicates that the time client absolute time has not yet been
+                set.
+              </description>
+            </enumeration>
+            <enumeration value="Synchronized">
+              <description>
+                Indicates that the time client has acquired accurate absolute
+                time; its current time is accurate.
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>
+                MAY be used by the time client to indicate a locally defined
+                error condition.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Mode" access="readWrite">
+        <description>
+          Specifies in which mode the NTP client must be run. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unicast">
+              <description>
+                Support for the NTP client in unicast mode.
+              </description>
+            </enumeration>
+            <enumeration value="Broadcast">
+              <description>
+                Support for the NTP client in broadcast mode.
+              </description>
+            </enumeration>
+            <enumeration value="Multicast">
+              <description>
+                Support for the NTP client in multicast mode.
+              </description>
+            </enumeration>
+            <enumeration value="Manycast">
+              <description>
+                Support for the NTP client in manycast mode.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Specify the port used to send NTP packets. {{bibref|RFC5905|Section
+          7.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="123"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readWrite">
+        <description>
+          Specifies the supported NTP version. Possible versions are 1-4.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="4"/>
+          </unsignedInt>
+          <default type="object" value="4"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Servers" access="readWrite">
+        <description>
+          Points to a CSV list of NTP servers or pools. A NTP server can either
+          be specified as an IP address or a host name. It is expected that the
+          NTP client resolves multiple addresses which can change over time
+          when {{param|ResolveAddresses}} is enabled.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+          <default type="object" value="[]"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResolveAddresses" access="readWrite">
+        <description>
+          When this option is enabled the NTP client must resolve the multiple
+          addresses associated with the host name(s) that are specified in the
+          {{param|Servers}} field.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResolveMaxAddresses" access="readWrite">
+        <description>
+          When {{param|ResolveAddresses}} is enabled, This parameter specifies
+          the maximum number of IP addresses that the NTP client can resolve. 0
+          means that all addresses must be resolved.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="6"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Peer" access="readWrite">
+        <description>
+          Use symmetric active association mode. This device may provide
+          synchronization to the configured NTP server.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinPoll" access="readWrite">
+        <description>
+          This is the minimum polling interval, in {{units}} to the power of
+          two, allowed by any peer of the Internet system, currently set to 6
+          (64 seconds). {{bibref|RFC5905|Section 7.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="6"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxPoll" access="readWrite">
+        <description>
+          This is the maximum polling interval, in {{units}} to the power of
+          two, allowed by any peer of the Internet system, currently set to 10
+          (1024 seconds) {{bibref|RFC5905|Section 7.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="10"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IBurst" access="readWrite">
+        <description>
+          If the {{param}} parameter is enabled, and this is the first packet
+          sent when the server has been unreachable, the client sends a burst.
+          This is useful to quickly reduce the synchronization distance below
+          the distance threshold and synchronize the clock. {{bibref|RFC5905}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Burst" access="readWrite">
+        <description>
+          If the {{param}} parameter is enabled and the server is reachable and
+          a valid source of synchronization is available, the client sends a
+          burst of BCOUNT (8) packets at each poll interval. The interval
+          between packets in the burst is two seconds. This is useful to
+          accurately measure jitter with long poll intervals.
+          {{bibref|RFC5905}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="8"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          The IP Interface associated with the ''Client'' entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BindType" access="readWrite">
+        <description>
+          Specifies how the client sockets are bound. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Address">
+              <description>
+                The client sockets are bound to a local IP address.
+              </description>
+            </enumeration>
+            <enumeration value="Device">
+              <description>
+                The client sockets are bound to a network device. This can be
+                useful when the local address is dynamic.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Time.Client.{i}.Authentication." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        This object contains parameters relating to enabling security for the
+        time client.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables authentication of the time client.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Certificate" access="readWrite">
+        <description>
+          Points to the certificate that must be used by the NTS-KE client.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".Security.Certificate."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NTSPort" access="readWrite">
+        <description>
+          On this port the NTS Key Establishment protocol is being provided.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="4460"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Time.Client.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        This object specifies the statistic parameters for the time client.
+        {{bibref|RFC9249|Chapter 8 NTP Yang Module}}
+      </description>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          Specifies the number of packets that have been successfully sent from
+          the NTP client to the NTP server.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSentFailed" access="readOnly">
+        <description>
+          Specifies the number of packets that were not successfully sent to
+          the NTP server.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          Specifies the number of packets that have been successfully received
+          by the NTP client from the NTP server.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsDropped" access="readOnly">
+        <description>
+          Specifies the number of packets that were received by the NTP client
+          but were not successfully processed or handled due to errors or other
+          issues.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Time.Server.{i}." access="readWrite"
+        enableParameter="Enable" numEntriesParameter="ServerNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.16">
+      <description>
+        This object contains parameters relating to an time server instance.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the time server.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Status of Time server instance. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up">
+              <description>
+                Indicates that the NTP server instance is enabled and working.
+              </description>
+            </enumeration>
+            <enumeration value="Down">
+              <description>
+                Indicates that the NTP server instance is disabled and thus not
+                working.
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>
+                MAY be used by the NTP server instance to indicate a locally
+                defined error condition.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Mode" access="readWrite">
+        <description>
+          Specifies in which mode the NTP server must be ran. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unicast">
+              <description>
+                Support for the NTP server in unicast mode.
+              </description>
+            </enumeration>
+            <enumeration value="Broadcast">
+              <description>
+                Support for the NTP server in broadcast mode.
+              </description>
+            </enumeration>
+            <enumeration value="Multicast">
+              <description>
+                Support for the NTP server in multicast mode.
+              </description>
+            </enumeration>
+            <enumeration value="Manycast">
+              <description>
+                Support for the NTP server in manycast mode.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Version" access="readWrite">
+        <description>
+          Specifies the supported NTP version. Possible versions are 1-4.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="4"/>
+          </unsignedInt>
+          <default type="object" value="4"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Specify the port used to receive NTP packets.
+          {{bibref|RFC5905|Section 7.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+          <default type="object" value="123"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          The IP Interface associated with the ''Server'' entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BindType" access="readWrite">
+        <description>
+          Specifies how the client sockets must be bounded. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Address">
+              <description>
+                The server sockets are bound to a local IP address.
+              </description>
+            </enumeration>
+            <enumeration value="Device">
+              <description>
+                The server sockets are bound to a network device. This can be
+                useful when the local address is dynamic.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinPoll" access="readWrite">
+        <description>
+          This is the minimum polling interval, in {{units}} to the power of
+          two, allowed by any peer of the Internet system, currently set to 6
+          (64 seconds). {{bibref|RFC5905|Section 7.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="6"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxPoll" access="readWrite">
+        <description>
+          This is the maximum polling interval, in {{units}} to the power of
+          two, allowed by any peer of the Internet system, currently set to 10
+          (1024 seconds) {{bibref|RFC5905|Section 7.2}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+          <default type="object" value="10"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TTL" access="readWrite">
+        <description>
+          Specifies the time to live (TTL) for a broadcast/multicast packet.
+          {{bibref|RFC5905|Section 3.1}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+          <default type="object" value="255"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Time.Server.{i}.Authentication." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        This object contains parameters relating to enabling security for the
+        NTP Server.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables authentication of the NTP server.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Certificate" access="readWrite">
+        <description>
+          Points to the certificate that must be used by the NTS-KE client.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".Security.Certificate."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NTSNTPServer" access="readWrite">
+        <description>
+          Points to a CSV list of NTP servers. A NTP server can either be
+          specified as an IP address or a host name. When used the NTS-KE
+          server will tell the remote NTS-KE client the NTP hostname or address
+          of the NTP server(s) that should be used. This allows to separate the
+          NTP server and NTS-KE server implementation.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+          <default type="object" value="[]"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Time.Server.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.16">
+      <description>
+        This object specifies the statistic parameters for the NTP server.
+        {{bibref|RFC9249|Chapter 8 NTP Yang Module}}
+      </description>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          Specifies the number of packets that have been successfully sent from
+          the NTP server to the NTP client.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSentFailed" access="readOnly">
+        <description>
+          Specifies the number of packets that were not successfully sent to
+          the NTP client.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          Specifies the number of packets that have been successfully received
+          by the NTP server from a NTP client.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsDropped" access="readOnly">
+        <description>
+          Specifies the number of packets that were received by the NTP server
+          but were not successfully processed or handled due to errors or other
+          issues.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter32"/>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <profile name="Time:1" version="2.0" status="obsoleted">
+      <object ref="Device.Time." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="NTPServer1" requirement="readWrite"
+            status="obsoleted"/>
+        <parameter ref="NTPServer2" requirement="readWrite"
+            status="obsoleted"/>
+        <parameter ref="CurrentLocalTime" requirement="readOnly"/>
+        <parameter ref="LocalTimeZone" requirement="readWrite"/>
+      </object>
+    </profile>
+
+    <profile name="Time:2" version="2.16">
+      <object ref="Device.Time." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="CurrentLocalTime" requirement="readOnly"/>
+        <parameter ref="LocalTimeZone" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Time:2.18">
+    <component ref="Root"/>
+    <component ref="Time"/>
+  </model>
+</dm:document>

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Optical]
+
+  Copyright (c) 2010-2021,2024 Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-14
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-18-0-optical"
+    file="tr-181-2-18-0-optical.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="Dbm1000"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-interface.xml"
+    spec="urn:broadband-forum-org:tr-181-2-18-interface">
+    <component name="Layer1Interface"/>
+  </import>
+
+
+  <component name="Optical">
+
+    <object name="Device.Optical." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.4">
+      <description>
+        This object models a generic optical interface. It defines an
+        {{object|Interface}} object that models a layer 1 optical interface
+        that is capable of transporting Ethernet packets. For historical
+        reasons, the data model definition is based on parts of
+        {{bibref|G.988}}. However, it is not intended to model anything
+        specific to IEEE PON or ITU-T PON technologies.
+
+        Note that this object is not intended to model the optical transceiver
+        either.
+      </description>
+      <component ref="Layer1Interface" version="2.4"/>
+    </object>
+
+    <object base="Device.Optical.Interface.{i}.">
+      <description action="replace">
+        Optical interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}). This table models physical optical
+        interfaces.
+      </description>
+
+      <parameter base="Enable">
+        <description action="replace">
+          Enables or disables the optical interface.
+
+          This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.
+        </description>
+      </parameter>
+
+      <parameter name="OpticalSignalLevel" access="readOnly">
+        <description>
+          Current measurement of total downstream optical signal level.
+
+          {{datatype|expand}}
+
+          Valid values are -65.536 dBm (coded as -65536), to 65.534 dBm (coded
+          as 65534) in 0.002 dB increments.
+
+          This parameter is based on ''Optical signal level'' from
+          {{bibref|G.988|Section 9.2.1}}.
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-65536" maxInclusive="65534" step="2"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerOpticalThreshold" access="readOnly"
+          status="deleted">
+        <description>
+          Optical level that is used to declare the downstream low received
+          optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -127.5 dBm (coded as -127500) to 0 dBm (coded as 0)
+          in 0.5 dB increments. The value -127500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Lower optical threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+
+          {{obsoleted|2.17}}
+
+          {{deleted|2.18}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-127000" maxInclusive="0" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpperOpticalThreshold" access="readOnly"
+          status="deleted">
+        <description>
+          Optical level that is used to declare the downstream high received
+          optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -127.5 dBm (coded as -127500) to 0 dBm (coded as 0)
+          in 0.5 dB increments. The value -127500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Upper optical threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+
+          {{obsoleted|2.17}}
+
+          {{deleted|2.18}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-127000" maxInclusive="0" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitOpticalLevel" access="readOnly">
+        <description>
+          Current measurement of mean optical launch power.
+
+          {{datatype|expand}}
+
+          Valid values are -65.536 dBm (coded as -65536), to 65.534 dBm (coded
+          as 65534) in 0.002 dB increments.
+
+          This parameter is based on ''Transmit optical level'' from
+          {{bibref|G.988|section 9.2.1}}.
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-65536" maxInclusive="65534" step="2"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowerTransmitPowerThreshold" access="readOnly"
+          status="deleted">
+        <description>
+          Minimum mean optical launch power that is used to declare the low
+          transmit optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -63.5 dBm (coded as -63500) to +63.5 dBm (coded as
+          63500) in 0.5 dB increments. The value -63500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Lower transmit power threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+
+          {{obsoleted|2.17}}
+
+          {{deleted|2.18}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-63500" maxInclusive="63500" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpperTransmitPowerThreshold" access="readOnly"
+          status="deleted">
+        <description>
+          Maximum mean optical launch power that is used to declare the high
+          transmit optical power alarm.
+
+          {{datatype|expand}}
+
+          Valid values are -63.5 dBm (coded as -63500) to +63.5 dBm (coded as
+          63500) in 0.5 dB increments. The value -63500 indicates the device's
+          internal policy.
+
+          This parameter is based on ''Upper transmit power threshold'' from
+          {{bibref|G.988|section 9.2.1}}.
+
+          {{deprecated|2.15|because it is not intended for the device to raise
+          an optical power alarm.}}
+
+          {{obsoleted|2.17}}
+
+          {{deleted|2.18}}
+        </description>
+        <syntax>
+          <dataType ref="Dbm1000">
+            <range minInclusive="-63500" maxInclusive="63500" step="500"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Optical.Interface.{i}.">
+      <parameter base="MaxBitRate" version="2.18"/>
+    </object>
+
+    <profile name="Optical:1" version="2.4">
+      <object ref="Device.Optical." requirement="present">
+        <parameter ref="InterfaceNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Optical.Interface.{i}." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Alias" requirement="writeOnceReadOnly"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="LastChange" requirement="readOnly"/>
+        <parameter ref="Upstream" requirement="readOnly"/>
+        <parameter ref="OpticalSignalLevel" requirement="readOnly"/>
+        <parameter ref="TransmitOpticalLevel" requirement="readOnly"/>
+      </object>
+      <object ref="Device.Optical.Interface.{i}.Stats." requirement="present">
+        <parameter ref="BytesSent" requirement="readOnly"/>
+        <parameter ref="BytesReceived" requirement="readOnly"/>
+        <parameter ref="PacketsSent" requirement="readOnly"/>
+        <parameter ref="PacketsReceived" requirement="readOnly"/>
+        <parameter ref="ErrorsSent" requirement="readOnly"/>
+        <parameter ref="ErrorsReceived" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="Optical:2.18">
+    <component ref="Root"/>
+    <component ref="Optical"/>
+  </model>
+</dm:document>

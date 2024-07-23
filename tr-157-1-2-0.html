@@ -307,6 +307,7 @@
     :root {
       --background-color: white;
       --foreground-color: black;
+      --diff-background-color: aliceblue;
       --link-color: blue;
       --parameter-color: white;
       --object-color: #ffff99;
@@ -331,6 +332,7 @@
     :root {
       --background-color: black;
       --foreground-color: white;
+      --diff-background-color: #0f0700;
       --link-color: lightblue;
       --parameter-color: black;
       --object-color: #bbbb44;
@@ -344,6 +346,9 @@
       --stripe-color-deprecated: #555555;
       --stripe-color-obsoleted: #444444;
       --stripe-color-deleted: #333333;
+    }
+    .hoverlink {
+      filter: invert(1);
     }
   }
 
@@ -441,7 +446,7 @@
 
   /* XXX this is a bad name */
   .diffs {
-      background-color: aliceblue;
+      background-color: var(--diff-background-color);
       opacity: 0.8;
   }
 
@@ -793,9 +798,6 @@
       text-align: center;
   }
   </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <div id="main">
@@ -1129,7 +1131,9 @@ the <strong>Version</strong> column.</p>
 <td><span id="D.TR-157:1.DeviceInfo.MemoryStatus.Free">Free</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The free physical RAM, in <em>kilobytes</em>, currently available on the device.</td>
+<td><p>The free physical RAM, in <em>kilobytes</em>, currently available on the device.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1171,14 +1175,16 @@ Tahoe, Reno, and New Reno are defined in [<a href="#R.RFC2582">RFC2582</a>]</li>
 <td><span id="D.TR-157:1.DeviceInfo.ProcessStatus.CPUUsage">CPUUsage</span></td>
 <td>unsignedInt(:100)</td>
 <td>R</td>
-<td>The total amount of the CPU, in <em>percent</em>, rounded up to the nearest whole <em>percent</em>. In the case that multiple CPU are present, this value represents the average of all CPU.</td>
+<td><p>The total amount of the CPU, in <em>percent</em>, rounded up to the nearest whole <em>percent</em>. In the case that multiple CPU are present, this value represents the average of all CPU.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.DeviceInfo.ProcessStatus.ProcessNumberOfEntries">ProcessNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.DeviceInfo.ProcessStatus.Process.">Process</a></em> table.
+<td>The number of entries in the <a href="#D.TR-157:1.DeviceInfo.ProcessStatus.Process."><em>Process</em></a> table.
 Since a Process can come and go very quickly, the CPE SHOULD place a locally specified limit on the frequency at which it will notify the ACS of value changes, as described in [<a href="#R.TR-069a2">Section 3.2.1/TR-069a2</a>].</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -1188,7 +1194,7 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td>R</td>
 <td><p>List of all processes running on the device.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.DeviceInfo.ProcessStatus.Process.PID">PID</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.DeviceInfo.ProcessStatus.Process.PID"><em>PID</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1209,7 +1215,9 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.Size">Size</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The size in <em>kilobytes</em> of the memory occupied by the process.</td>
+<td><p>The size in <em>kilobytes</em> of the memory occupied by the process.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1223,14 +1231,18 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.CPUTime">CPUTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The amount of time in <em>milliseconds</em> that the process has spent taking up CPU time since the process was started.</td>
+<td><p>The amount of time in <em>milliseconds</em> that the process has spent taking up CPU time since the process was started.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.State">State</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The current state that the process is in. Enumeration of:</p>
+<td><p>The current state that the process is in.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.State.Running"><em>Running</em></span></li>
@@ -1238,7 +1250,9 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <li><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.State.Stopped"><em>Stopped</em></span></li>
 <li><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.State.Idle"><em>Idle</em></span> (OPTIONAL)</li>
 <li><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.State.Uninterruptible"><em>Uninterruptible</em></span> (OPTIONAL)</li>
-<li><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.State.Zombie"><em>Zombie</em></span> (OPTIONAL)</li></ul></td>
+<li><span id="D.TR-157:1.DeviceInfo.ProcessStatus.Process.State.Zombie"><em>Zombie</em></span> (OPTIONAL)</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1252,7 +1266,7 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td><span id="D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensorNumberOfEntries">TemperatureSensorNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.">TemperatureSensor</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor."><em>TemperatureSensor</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1261,7 +1275,7 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td>R</td>
 <td><p>This object represents information that the device has obtained via sampling an internal temperature sensor.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Name">Name</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1275,7 +1289,9 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 <td><span id="D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of this temperature sensor. Enumeration of:</p>
+<td><p>The status of this temperature sensor.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Disabled"><em>Disabled</em></span> (The sensor is not currently sampling the temperature)</li>
@@ -1300,8 +1316,8 @@ Since a Process can come and go very quickly, the CPE SHOULD place a locally spe
 Reset can be caused by:
 
 <ul>
-<li><em><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status">Status</a></em> transition from <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Disabled"><em>Disabled</em></a> to <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Enabled"><em>Enabled</em></a></li>
-<li><em><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Reset">Reset</a></em> set to <em>true</em>.</li>
+<li><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status"><em>Status</em></a> transition from <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Disabled"><em>Disabled</em></a> to <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Status.Enabled"><em>Enabled</em></a></li>
+<li><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Reset"><em>Reset</em></a> set to <em>true</em>.</li>
 <li>An internal reset of the temperature sensor (including a reboot of the device).
 The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates that this temperature sensor has never been reset, which can only happen if it has never been enabled.</li></ul></td>
 <td>-</td>
@@ -1317,16 +1333,20 @@ The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indi
 <td><span id="D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.Value">Value</span></td>
 <td>int(-274:)</td>
 <td>R</td>
-<td>This temperature sensor’s last good reading in <em>degrees celsius</em>.
-A value of -274 (which is below absolute zero) indicates a good reading has not been obtained since last reset.</td>
+<td><p>This temperature sensor’s last good reading in <em>degrees celsius</em>.
+A value of -274 (which is below absolute zero) indicates a good reading has not been obtained since last reset.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.LastUpdate">LastUpdate</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>The time at which this temperature sensor’s last good reading was obtained.
-The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates a good reading has not been obtained since last reset.</td>
+<td><p>The time at which this temperature sensor’s last good reading was obtained.
+The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates a good reading has not been obtained since last reset.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1373,7 +1393,7 @@ A value of -274 (which is below absolute zero) indicates a non configured value.
 <td><span id="D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.LowAlarmTime">LowAlarmTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Initial time at which this temperature sensor’s <em><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.LowAlarmValue">LowAlarmValue</a></em> was encountered.
+<td>Initial time at which this temperature sensor’s <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.LowAlarmValue"><em>LowAlarmValue</em></a> was encountered.
 This value is only set the first time the alarm is seen and not changed until the next reset.
 The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates that an alarm has not been encountered since the last reset.</td>
 <td>-</td>
@@ -1390,7 +1410,7 @@ A value of -274 (which is below absolute zero) indicates a non configured value.
 <td><span id="D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.HighAlarmTime">HighAlarmTime</span></td>
 <td>dateTime</td>
 <td>R</td>
-<td>Initial time at which this temperature sensor’s <em><a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.HighAlarmValue">HighAlarmValue</a></em> was encountered.
+<td>Initial time at which this temperature sensor’s <a href="#D.TR-157:1.DeviceInfo.TemperatureStatus.TemperatureSensor.HighAlarmValue"><em>HighAlarmValue</em></a> was encountered.
 This value is only set the first time the alarm is seen and not changed until the next reset.
 The Unknown Time value, as defined in [<a href="#R.TR-106a2">TR-106a2</a>], indicates that an alarm has not been encountered since the last reset.</td>
 <td>-</td>
@@ -1404,7 +1424,7 @@ The table MUST describe the device’s entire Supported Data Model. Therefore, i
 Each table entry MUST refer to only a single Root Object or Service Object. The device MAY choose to use more than one table entry for a given Root Object or Service Object.
 Considering that every device has some form of a data model, this table MUST NOT be empty.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.DeviceInfo.SupportedDataModel.URL">URL</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.DeviceInfo.SupportedDataModel.URL"><em>URL</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1431,14 +1451,19 @@ For example, if this table entry references a DT Instance that refers to the <em
 <td><span id="D.TR-157:1.DeviceInfo.SupportedDataModel.Features">Features</span></td>
 <td>string[]</td>
 <td>R</td>
-<td>Comma-separated list of strings. This parameter MUST list exactly the features that are defined using the top-level <em>feature</em> element in the DT Instance referenced by <em><a href="#D.TR-157:1.DeviceInfo.SupportedDataModel.URL">URL</a></em>.
-For example, if the DT instance specified the following:
+<td><p>Comma-separated list of strings. This parameter MUST list exactly the features that are defined using the top-level <em>feature</em> element in the DT Instance referenced by <a href="#D.TR-157:1.DeviceInfo.SupportedDataModel.URL"><em>URL</em></a>.
+For example, if the DT instance specified the following:</p>
 
-<ul>
-<li>&lt;feature name=&ldquo;DNSServer&rdquo;/&gt;</li>
-<li>&lt;feature name=&ldquo;Router&rdquo;/&gt;</li>
-<li>&lt;feature name=&ldquo;X_MyDeviceFeature&rdquo;/&gt;
-then the value of this parameter might be <em>DNSServer,Router,X_MyDeviceFeature</em>. The order in which the features are listed is not significant.</li></ul></td>
+<blockquote><feature name="DNSServer"/>
+</blockquote>
+
+<blockquote><feature name="Router"/>
+</blockquote>
+
+<blockquote><feature name="X_MyDeviceFeature"/>
+</blockquote>
+
+<p>then the value of this parameter might be <em>DNSServer,Router,X_MyDeviceFeature</em>. The order in which the features are listed is not significant.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1466,28 +1491,36 @@ then the value of this parameter might be <em>DNSServer,Router,X_MyDeviceFeature
 <td><span id="D.TR-157:1.UserInterface.LocalDisplay.PosX">PosX</span></td>
 <td>int</td>
 <td>W</td>
-<td>The horizontal position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</td>
+<td><p>The horizontal position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.UserInterface.LocalDisplay.PosY">PosY</span></td>
 <td>int</td>
 <td>W</td>
-<td>The vertical position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</td>
+<td><p>The vertical position of the User Interface’s top left corner within the local CPE’s display measured from the top left corner, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.UserInterface.LocalDisplay.Width">Width</span></td>
 <td>unsignedInt</td>
 <td>W</td>
-<td>The width of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</td>
+<td><p>The width of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.UserInterface.LocalDisplay.Height">Height</span></td>
 <td>unsignedInt</td>
 <td>W</td>
-<td>The height of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</td>
+<td><p>The height of the user interface within the local CPE’s display, expressed in <em>pixels</em>.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1531,7 +1564,9 @@ Remote access requires user authentication. To provide remote access authenticat
 <td><span id="D.TR-157:1.UserInterface.RemoteAccess.SupportedProtocols">SupportedProtocols</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Indicates the protocols that are supported by the CPE for the purpose of remotely accessing the user interface. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Indicates the protocols that are supported by the CPE for the purpose of remotely accessing the user interface.</p>
+
+<p>Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.UserInterface.RemoteAccess.SupportedProtocols.HTTP"><em>HTTP</em></span> (As defined in [<a href="#R.RFC2616">RFC2616</a>])</li>
@@ -1542,7 +1577,7 @@ Remote access requires user authentication. To provide remote access authenticat
 <td><span id="D.TR-157:1.UserInterface.RemoteAccess.Protocol">Protocol</span></td>
 <td>string</td>
 <td>W</td>
-<td>The value MUST be a member of the list reported by the <em><a href="#D.TR-157:1.UserInterface.RemoteAccess.SupportedProtocols">SupportedProtocols</a></em> parameter. This is the protocol currently being used for remote access.</td>
+<td>The value MUST be a member of the list reported by the <a href="#D.TR-157:1.UserInterface.RemoteAccess.SupportedProtocols"><em>SupportedProtocols</em></a> parameter. This is the protocol currently being used for remote access.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1653,7 +1688,7 @@ Vendors can extend the enumerated values with vendor specific extensions, in whi
 <td><span id="D.TR-157:1.UserNumberOfEntries">UserNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.User.">User</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.User."><em>User</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1662,7 +1697,7 @@ Vendors can extend the enumerated values with vendor specific extensions, in whi
 <td>W</td>
 <td><p>This object contains parameters relating to the user characteristics.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.TR-157:1.User.Username">Username</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.TR-157:1.User.Username"><em>Username</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1685,7 +1720,7 @@ If the User being configured is currently accessing the device then a disable MU
 <td>string(:64)</td>
 <td>W</td>
 <td>Name of the current user. MUST NOT be an empty string for an enabled entry.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.User.Password">Password</span></td>
@@ -1702,7 +1737,7 @@ If the User being configured is currently accessing the device then a disable MU
 <td>W</td>
 <td>String describing the default language for the local configuration interface, specified according to [<a href="#R.RFC3066">RFC3066</a>].
 If an empty string, <strong>{{param: non-existent .UserInterface.CurrentLanguage}}</strong> is used.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.TR-157:1.UPnP.">UPnP.</span></td>
@@ -1810,7 +1845,7 @@ A value of 0 indicates no UPnP support.</td>
 <td>R</td>
 <td>Numeric value indicating the minor version of the supported UPnP architecture.
 If UPnP 1.1 is supported the value is 1. If UPnP 2.0 is supported the value is 0.
-If <em><a href="#D.TR-157:1.UPnP.Device.Capabilities.UPnPArchitecture">UPnPArchitecture</a></em> is 0 then this parameter SHOULD be ignored.</td>
+If <a href="#D.TR-157:1.UPnP.Device.Capabilities.UPnPArchitecture"><em>UPnPArchitecture</em></a> is 0 then this parameter SHOULD be ignored.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1905,21 +1940,21 @@ The CPE MAY, but need not, retain some or all of the information in this object 
 <td><span id="D.TR-157:1.UPnP.Discovery.RootDeviceNumberOfEntries">RootDeviceNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.UPnP.Discovery.RootDevice.">RootDevice</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.UPnP.Discovery.RootDevice."><em>RootDevice</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.UPnP.Discovery.DeviceNumberOfEntries">DeviceNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.UPnP.Discovery.Device.">Device</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.UPnP.Discovery.Device."><em>Device</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.UPnP.Discovery.ServiceNumberOfEntries">ServiceNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.UPnP.Discovery.Service.">Service</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.UPnP.Discovery.Service."><em>Service</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -1928,7 +1963,7 @@ The CPE MAY, but need not, retain some or all of the information in this object 
 <td>R</td>
 <td><p>UPnP root device table. This table contains an entry for each UPnP root device that has been discovered via SSDP.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.UPnP.Discovery.RootDevice.UUID">UUID</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.UPnP.Discovery.RootDevice.UUID"><em>UUID</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1950,26 +1985,26 @@ The ability to list inactive UPnP root devices is OPTIONAL. The length of time a
 <td>R</td>
 <td><p>This UPnP root device’s UUID (Universally Unique IDentifier) [<a href="#R.RFC4122">RFC4122</a>], extracted from any of its USN (Unique Service Name) headers. This is a 36-byte string that uniquely identifies the device, the following is an example:</p>
 
-<ul>
-<li><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></li></ul>
+<blockquote><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></blockquote>
 
 <p>Possible patterns:</p>
 
 <ul>
-<li>[*[0-9A-Fa-f]{8}-(<span id="D.TR-157:1.UPnP.Discovery.RootDevice.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12">0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}*</span></li></ul></td>
+<li><span id="D.TR-157:1.UPnP.Discovery.RootDevice.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12"><code>[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}</code></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.UPnP.Discovery.RootDevice.USN">USN</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the USN (Unique Service Name) header for this UPnP root device. Three discovery messages are sent for root devices, and this SHOULD be the value of the USN header of the following form:
+<td><p>The value of the USN (Unique Service Name) header for this UPnP root device. Three discovery messages are sent for root devices, and this SHOULD be the value of the USN header of the following form:</p>
 
-<ul>
-<li><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
-SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, one of the other two forms MAY be used:</li>
-<li><em>uuid:device-UUID::upnp:rootdevice</em></li>
-<li><em>uuid:device-UUID</em> (for root device UUID)</li></ul></td>
+<blockquote><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
+SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, one of the other two forms MAY be used:</blockquote>
+
+<blockquote><em>uuid:device-UUID::upnp:rootdevice</em></blockquote>
+
+<blockquote><em>uuid:device-UUID</em> (for root device UUID)</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -1990,11 +2025,10 @@ SSDP is an unreliable protocol and it is possible that no discovery message cont
 <td><span id="D.TR-157:1.UPnP.Discovery.RootDevice.Server">Server</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the SERVER header for this UPnP root device, which is a string of the following form:
+<td><p>The value of the SERVER header for this UPnP root device, which is a string of the following form:</p>
 
-<ul>
-<li><em>OS/version UPnP/udaversion product/version</em>
-where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</li></ul></td>
+<blockquote><em>OS/version UPnP/udaversion product/version</em>
+where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2011,7 +2045,7 @@ As such entries are added to or removed from the Host tables, the value of this 
 <td>R</td>
 <td><p>UPnP embedded device table. This table contains an entry for each UPnP embedded device that has been discovered via SSDP.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.UPnP.Discovery.Device.UUID">UUID</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.UPnP.Discovery.Device.UUID"><em>UUID</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2033,25 +2067,24 @@ The ability to list inactive UPnP embedded devices is OPTIONAL. The length of ti
 <td>R</td>
 <td><p>This UPnP embedded device’s UUID (Universally Unique IDentifier) [<a href="#R.RFC4122">RFC4122</a>], extracted from any of its USN (Unique Service Name) headers. This is a 36-byte string that uniquely identifies the device, the following is an example:</p>
 
-<ul>
-<li><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></li></ul>
+<blockquote><em>02c29d2a-dbfd-2d91-99c9-306d537e9856</em></blockquote>
 
 <p>Possible patterns:</p>
 
 <ul>
-<li>[*[0-9A-Fa-f]{8}-(<span id="D.TR-157:1.UPnP.Discovery.Device.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12">0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}*</span></li></ul></td>
+<li><span id="D.TR-157:1.UPnP.Discovery.Device.UUID.0-9A-Fa-f8-0-9A-Fa-f4-30-9A-Fa-f12"><code>[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}</code></span></li></ul></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.UPnP.Discovery.Device.USN">USN</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the USN (Unique Service Name) header for this UPnP embedded device. Two discovery messages are sent for embedded devices, and this SHOULD be the value of the USN header of the following form:
+<td><p>The value of the USN (Unique Service Name) header for this UPnP embedded device. Two discovery messages are sent for embedded devices, and this SHOULD be the value of the USN header of the following form:</p>
 
-<ul>
-<li><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
-SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, the other form MAY be used:</li>
-<li><em>uuid:device-UUID</em></li></ul></td>
+<blockquote><em>uuid:device-UUID::urn:domain-name:device:deviceType:v</em>
+SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, the other form MAY be used:</blockquote>
+
+<blockquote><em>uuid:device-UUID</em></blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2072,11 +2105,10 @@ SSDP is an unreliable protocol and it is possible that no discovery message cont
 <td><span id="D.TR-157:1.UPnP.Discovery.Device.Server">Server</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the SERVER header for this UPnP embedded device, which is a string of the following form:
+<td><p>The value of the SERVER header for this UPnP embedded device, which is a string of the following form:</p>
 
-<ul>
-<li><em>OS/version UPnP/udaversion product/version</em>
-where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</li></ul></td>
+<blockquote><em>OS/version UPnP/udaversion product/version</em>
+where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2093,7 +2125,7 @@ As such entries are added to or removed from the Host tables, the value of this 
 <td>R</td>
 <td><p>UPnP embedded service table. This table contains an entry for each UPnP embedded service that has been discovered via SSDP.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.UPnP.Discovery.Service.USN">USN</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.UPnP.Discovery.Service.USN"><em>USN</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2113,10 +2145,9 @@ The ability to list inactive UPnP embedded services is OPTIONAL. The length of t
 <td><span id="D.TR-157:1.UPnP.Discovery.Service.USN">USN</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the USN (Unique Service Name) header for this UPnP embedded service. This is of the following form:
+<td><p>The value of the USN (Unique Service Name) header for this UPnP embedded service. This is of the following form:</p>
 
-<ul>
-<li><em>uuid:device-UUID::urn:domain-name:service:serviceType:v</em></li></ul></td>
+<blockquote><em>uuid:device-UUID::urn:domain-name:service:serviceType:v</em></blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2137,11 +2168,10 @@ The ability to list inactive UPnP embedded services is OPTIONAL. The length of t
 <td><span id="D.TR-157:1.UPnP.Discovery.Service.Server">Server</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>The value of the SERVER header for this UPnP embedded service, which is a string of the following form:
+<td><p>The value of the SERVER header for this UPnP embedded service, which is a string of the following form:</p>
 
-<ul>
-<li><em>OS/version UPnP/udaversion product/version</em>
-where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</li></ul></td>
+<blockquote><em>OS/version UPnP/udaversion product/version</em>
+where <strong>UPnP</strong> is a literal string, <strong>udaversion</strong> is the version of the UPnP Device Architecture.</blockquote></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2164,7 +2194,7 @@ See [<a href="#R.TR-157">Appendix I/TR-157</a>] for Theory of Operation.</td>
 <td><span id="D.TR-157:1.USBHosts.HostNumberOfEntries">HostNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.USBHosts.Host.">Host</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.USBHosts.Host."><em>Host</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2173,7 +2203,7 @@ See [<a href="#R.TR-157">Appendix I/TR-157</a>] for Theory of Operation.</td>
 <td>R</td>
 <td><p>Table of CPE USB Host controllers.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Name">Name</a></em>, or with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Name">Name</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.USBHosts.Host.Name"><em>Name</em></a>, or with a given value for <a href="#D.TR-157:1.USBHosts.Host.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2194,7 +2224,9 @@ See [<a href="#R.TR-157">Appendix I/TR-157</a>] for Theory of Operation.</td>
 <td><span id="D.TR-157:1.USBHosts.Host.Type">Type</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Type of USB Host Enumeration of:</p>
+<td><p>Type of USB Host</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.USBHosts.Host.Type.OHCI"><em>OHCI</em></span> (Open Host Controller Interface)</li>
@@ -2232,7 +2264,7 @@ When set to <em>false</em> <em>PowerManagementEnable</em> immediately disables t
 <td><span id="D.TR-157:1.USBHosts.Host.DeviceNumberOfEntries">DeviceNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.USBHosts.Host.Device.">Device</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.USBHosts.Host.Device."><em>Device</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2241,7 +2273,7 @@ When set to <em>false</em> <em>PowerManagementEnable</em> immediately disables t
 <td>R</td>
 <td><p>Table of connected USB devices.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Device.DeviceNumber">DeviceNumber</a></em>, or with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Device.DeviceNumber">DeviceNumber</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.USBHosts.Host.Device.DeviceNumber"><em>DeviceNumber</em></a>, or with a given value for <a href="#D.TR-157:1.USBHosts.Host.Device.DeviceNumber"><em>DeviceNumber</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2355,7 +2387,7 @@ Internal signaling between the connected USB device and the USB Host Controller 
 <td><span id="D.TR-157:1.USBHosts.Host.Device.Parent">Parent</span></td>
 <td>string</td>
 <td>R</td>
-<td>The value MUST be the Path Name of a row in the <em><a href="#D.TR-157:1.USBHosts.Host.Device.">Device.</a></em> table. If the referenced object is deleted, the parameter value MUST be set to an empty string. This is a reference to the parent USB device (e.g. hub device).
+<td>The value MUST be the Path Name of a row in the <a href="#D.TR-157:1.USBHosts.Host.Device."><em>Device.</em></a> table. If the referenced object is deleted, the parameter value MUST be set to an empty string. This is a reference to the parent USB device (e.g. hub device).
 This is an empty string for a device connected to the Host controller (root hub).</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -2386,7 +2418,7 @@ When <em>false</em> the associated device draws all the current it needs from th
 <td><span id="D.TR-157:1.USBHosts.Host.Device.ConfigurationNumberOfEntries">ConfigurationNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.">Configuration</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.USBHosts.Host.Device.Configuration."><em>Configuration</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2395,7 +2427,7 @@ When <em>false</em> the associated device draws all the current it needs from th
 <td>R</td>
 <td><p>Table of device configurations.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.ConfigurationNumber">ConfigurationNumber</a></em>, or with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.ConfigurationNumber">ConfigurationNumber</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.ConfigurationNumber"><em>ConfigurationNumber</em></a>, or with a given value for <a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.ConfigurationNumber"><em>ConfigurationNumber</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2409,7 +2441,7 @@ When <em>false</em> the associated device draws all the current it needs from th
 <td><span id="D.TR-157:1.USBHosts.Host.Device.Configuration.InterfaceNumberOfEntries">InterfaceNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.Interface.">Interface</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.Interface."><em>Interface</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2418,7 +2450,7 @@ When <em>false</em> the associated device draws all the current it needs from th
 <td>R</td>
 <td><p>Table of device interface descriptors.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.Interface.InterfaceNumber">InterfaceNumber</a></em>, or with a given value for <em><a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.Interface.InterfaceNumber">InterfaceNumber</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.Interface.InterfaceNumber"><em>InterfaceNumber</em></a>, or with a given value for <a href="#D.TR-157:1.USBHosts.Host.Device.Configuration.Interface.InterfaceNumber"><em>InterfaceNumber</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2455,9 +2487,9 @@ When 0x00, each interface specifies its own class code. When 0xFF, the class cod
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object defines access to an IP-layer NS Lookup test for the specified IP interface.
-When initiated, the NS Lookup test will contact <em><a href="#D.TR-157:1.NSLookupDiagnostics.DNSServer">DNSServer</a></em> and look up <em><a href="#D.TR-157:1.NSLookupDiagnostics.HostName">HostName</a></em> <em><a href="#D.TR-157:1.NSLookupDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></em> times.
-There will be a <em><a href="#D.TR-157:1.NSLookupDiagnostics.Result.">Result</a></em> instance for each time the device performs a DNS lookup, which is determined by the value of <em><a href="#D.TR-157:1.NSLookupDiagnostics.NumberOfRepetitions">NumberOfRepetitions</a></em>.
-Any previous <em><a href="#D.TR-157:1.NSLookupDiagnostics.Result.">Result</a></em> instances are removed when a new test is initiated.</td>
+When initiated, the NS Lookup test will contact <a href="#D.TR-157:1.NSLookupDiagnostics.DNSServer"><em>DNSServer</em></a> and look up <a href="#D.TR-157:1.NSLookupDiagnostics.HostName"><em>HostName</em></a> <a href="#D.TR-157:1.NSLookupDiagnostics.NumberOfRepetitions"><em>NumberOfRepetitions</em></a> times.
+There will be a <a href="#D.TR-157:1.NSLookupDiagnostics.Result."><em>Result</em></a> instance for each time the device performs a DNS lookup, which is determined by the value of <a href="#D.TR-157:1.NSLookupDiagnostics.NumberOfRepetitions"><em>NumberOfRepetitions</em></a>.
+Any previous <a href="#D.TR-157:1.NSLookupDiagnostics.Result."><em>Result</em></a> instances are removed when a new test is initiated.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2481,7 +2513,9 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2526,15 +2560,19 @@ Each repetition will use a Result instance to hold the NSLookup result data.</td
 <td><span id="D.TR-157:1.NSLookupDiagnostics.SuccessCount">SuccessCount</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Number of successfully executed repetitions.</td>
+<td><p>Number of successfully executed repetitions.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.NSLookupDiagnostics.ResultNumberOfEntries">ResultNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.NSLookupDiagnostics.Result.">Result</a></em> table.
-Total number of Result entries from the most recent invocation of the test.</td>
+<td><p>The number of entries in the <a href="#D.TR-157:1.NSLookupDiagnostics.Result."><em>Result</em></a> table.
+Total number of Result entries from the most recent invocation of the test.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2549,55 +2587,71 @@ Total number of Result entries from the most recent invocation of the test.</td>
 <td>string</td>
 <td>R</td>
 <td><p>Result Parameter to represent whether the NS Lookup was successful or not.
-Errors for individual Result instances do not get bubbled up to <em><a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState">DiagnosticsState</a></em>.
-A failure on a specific attempt does not mean that the overall test failed, but a failure on all attempts means that <em><a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState">DiagnosticsState</a></em> SHOULD be <a href="#D.TR-157:1.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></a>. Enumeration of:</p>
+Errors for individual Result instances do not get bubbled up to <a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a>.
+A failure on a specific attempt does not mean that the overall test failed, but a failure on all attempts means that <a href="#D.TR-157:1.NSLookupDiagnostics.DiagnosticsState"><em>DiagnosticsState</em></a> SHOULD be <a href="#D.TR-157:1.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></a>.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.NSLookupDiagnostics.Result.Status.Success"><em>Success</em></span></li>
 <li><span id="D.TR-157:1.NSLookupDiagnostics.Result.Status.Error_DNSServerNotAvailable"><em>Error_DNSServerNotAvailable</em></span></li>
 <li><span id="D.TR-157:1.NSLookupDiagnostics.Result.Status.Error_HostNameNotResolved"><em>Error_HostNameNotResolved</em></span></li>
 <li><span id="D.TR-157:1.NSLookupDiagnostics.Result.Status.Error_Timeout"><em>Error_Timeout</em></span></li>
-<li><span id="D.TR-157:1.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></span></li></ul></td>
+<li><span id="D.TR-157:1.NSLookupDiagnostics.Result.Status.Error_Other"><em>Error_Other</em></span></li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.NSLookupDiagnostics.Result.AnswerType">AnswerType</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Result parameter to represent whether the answer is Authoritative or not. Enumeration of:</p>
+<td><p>Result parameter to represent whether the answer is Authoritative or not.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.NSLookupDiagnostics.Result.AnswerType.None"><em>None</em></span> (Indicates that the NS Lookup failed to find the host)</li>
 <li><span id="D.TR-157:1.NSLookupDiagnostics.Result.AnswerType.Authoritative"><em>Authoritative</em></span></li>
-<li><span id="D.TR-157:1.NSLookupDiagnostics.Result.AnswerType.NonAuthoritative"><em>NonAuthoritative</em></span></li></ul></td>
+<li><span id="D.TR-157:1.NSLookupDiagnostics.Result.AnswerType.NonAuthoritative"><em>NonAuthoritative</em></span></li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.NSLookupDiagnostics.Result.HostNameReturned">HostNameReturned</span></td>
 <td>string(:256)</td>
 <td>R</td>
-<td>Result parameter to represent the fully qualified name for the Host Name in the calling parameter (e.g. HostName.DomainName); if no response was provided, then this parameter is an empty string.</td>
+<td><p>Result parameter to represent the fully qualified name for the Host Name in the calling parameter (e.g. HostName.DomainName); if no response was provided, then this parameter is an empty string.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.NSLookupDiagnostics.Result.IPAddresses">IPAddresses</span></td>
 <td><span title="IPAddress[:10]">string(:45)[:10]</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (up to 10 items) of IP Addresses. Indicates the IP Address results returned by the NS Lookup; if no response was provided, then this parameter is an empty string.</td>
+<td><p>[<a href="#T.IPAddress">IPAddress</a>] Comma-separated list (up to 10 items) of IP Addresses. Indicates the IP Address results returned by the NS Lookup; if no response was provided, then this parameter is an empty string.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.NSLookupDiagnostics.Result.DNSServerIP">DNSServerIP</span></td>
 <td><span title="IPAddress">string(:45)</span></td>
 <td>R</td>
-<td>[<a href="#T.IPAddress">IPAddress</a>] Result parameter to represent the actual DNS Server IP address that the NS Lookup used.</td>
+<td><p>[<a href="#T.IPAddress">IPAddress</a>] Result parameter to represent the actual DNS Server IP address that the NS Lookup used.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.NSLookupDiagnostics.Result.ResponseTime">ResponseTime</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Response time (for the first response packet) in <em>milliseconds</em>, or 0 if no response was received.</td>
+<td><p>Response time (for the first response packet) in <em>milliseconds</em>, or 0 if no response was received.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2627,21 +2681,25 @@ When the diagnostic initiated by the ACS is completed (successfully or not), the
 After the diagnostic is complete, the value of all result parameters (all read-only parameters in this object) MUST be retained by the CPE until either this diagnostic is run again, or the CPE reboots. After a reboot, if the CPE has not retained the result parameters from the most recent test, it MUST set the value of this parameter to <a href="#D.TR-157:1.SelfTestDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 Modifying any of the writable parameters in this object except for this one MUST result in the value of this parameter being set to <a href="#D.TR-157:1.SelfTestDiagnostics.DiagnosticsState.None"><em>None</em></a>.
 While the test is in progress, modifying any of the writable parameters in this object except for this one MUST result in the test being terminated and the value of this parameter being set to <a href="#D.TR-157:1.SelfTestDiagnostics.DiagnosticsState.None"><em>None</em></a>.
-While the test is in progress, setting this parameter to <a href="#D.TR-157:1.SelfTestDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul></td>
+While the test is in progress, setting this parameter to <a href="#D.TR-157:1.SelfTestDiagnostics.DiagnosticsState.Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in this object) MUST result in the test being terminated and then restarted using the current values of the test parameters.</li></ul>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.SelfTestDiagnostics.Results">Results</span></td>
 <td>string(:1024)</td>
 <td>R</td>
-<td>Results of self-test (vendor specific).</td>
+<td><p>Results of self-test (vendor specific).</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.SmartCardReaderNumberOfEntries">SmartCardReaderNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.SmartCardReader.">SmartCardReader</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.SmartCardReader."><em>SmartCardReader</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2650,7 +2708,7 @@ While the test is in progress, setting this parameter to <a href="#D.TR-157:1.Se
 <td>R</td>
 <td><p>This object describes the characteristics of the smart card reader.</p>
 
-<p>At most one entry in this table can exist with a given value for <em><a href="#D.TR-157:1.SmartCardReader.Name">Name</a></em>.</p></td>
+<p>At most one entry in this table can exist with a given value for <a href="#D.TR-157:1.SmartCardReader.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2664,7 +2722,9 @@ While the test is in progress, setting this parameter to <a href="#D.TR-157:1.Se
 <td><span id="D.TR-157:1.SmartCardReader.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Indicates the status of this smart card reader. Enumeration of:</p>
+<td><p>Indicates the status of this smart card reader.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.SmartCardReader.Status.Disabled"><em>Disabled</em></span></li>
@@ -2696,8 +2756,8 @@ While the test is in progress, setting this parameter to <a href="#D.TR-157:1.Se
 Reset can be caused by:
 
 <ul>
-<li><em><a href="#D.TR-157:1.SmartCardReader.Status">Status</a></em> transition from Disabled to Enabled</li>
-<li><em><a href="#D.TR-157:1.SmartCardReader.Reset">Reset</a></em> set to <em>true</em>.</li>
+<li><a href="#D.TR-157:1.SmartCardReader.Status"><em>Status</em></a> transition from Disabled to Enabled</li>
+<li><a href="#D.TR-157:1.SmartCardReader.Reset"><em>Reset</em></a> set to <em>true</em>.</li>
 <li>An internal reset of the SmartCard Reader (including a reboot of the device).
 Unknown Time value indicates that this SmartCard Reader has never been reset, which can only happen if it has never been enabled.</li></ul></td>
 <td>-</td>
@@ -2706,16 +2766,20 @@ Unknown Time value indicates that this SmartCard Reader has never been reset, wh
 <td><span id="D.TR-157:1.SmartCardReader.DecryptionFailedCounter">DecryptionFailedCounter</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Counter incremented once each time decryption cannot be carried out.
-This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <em><a href="#D.TR-157:1.SmartCardReader.Reset">Reset</a></em> parameter is used and not when a Smart Card is inserted or removed.</td>
+<td><p>Counter incremented once each time decryption cannot be carried out.
+This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <a href="#D.TR-157:1.SmartCardReader.Reset"><em>Reset</em></a> parameter is used and not when a Smart Card is inserted or removed.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.SmartCardReader.DecryptionFailedNoKeyCounter">DecryptionFailedNoKeyCounter</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Counter incremented once each time the key is not available to decrypt it. This is a subset of the more general <em><a href="#D.TR-157:1.SmartCardReader.DecryptionFailedCounter">DecryptionFailedCounter</a></em> within the same object and thus will always be less than that parameter.
-This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <em><a href="#D.TR-157:1.SmartCardReader.Reset">Reset</a></em> parameter is used and not when a Smart Card is inserted or removed.</td>
+<td><p>Counter incremented once each time the key is not available to decrypt it. This is a subset of the more general <a href="#D.TR-157:1.SmartCardReader.DecryptionFailedCounter"><em>DecryptionFailedCounter</em></a> within the same object and thus will always be less than that parameter.
+This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the <a href="#D.TR-157:1.SmartCardReader.Reset"><em>Reset</em></a> parameter is used and not when a Smart Card is inserted or removed.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2729,7 +2793,9 @@ This counter relates to the smart card reader, not to the smart card itself, i.e
 <td><span id="D.TR-157:1.SmartCardReader.SmartCard.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>Status of the Smart Card. Enumeration of:</p>
+<td><p>Status of the Smart Card.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.SmartCardReader.SmartCard.Status.None"><em>None</em></span> (Indicates that no Smart Card is inserted)</li>
@@ -2754,7 +2820,7 @@ Vendors can extend the enumerated values with vendor specific extensions, in whi
 <td><span id="D.TR-157:1.SmartCardReader.SmartCard.Application">Application</span></td>
 <td>string[]</td>
 <td>R</td>
-<td><p>Comma-separated list of strings. Indicates Smart Card Application(s). <em>Application</em> is only relevant when <em><a href="#D.TR-157:1.SmartCardReader.SmartCard.Type">Type</a></em> has a value of UICC, otherwise it is an empty string. Each list item is an enumeration of:</p>
+<td><p>Comma-separated list of strings. Indicates Smart Card Application(s). <em>Application</em> is only relevant when <a href="#D.TR-157:1.SmartCardReader.SmartCard.Type"><em>Type</em></a> has a value of UICC, otherwise it is an empty string. Each list item is an enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.SmartCardReader.SmartCard.Application.SIM"><em>SIM</em></span></li>
@@ -2782,7 +2848,7 @@ Vendors can extend the enumerated values with vendor specific extensions, in whi
 <td><span title="object">object</span></td>
 <td>R</td>
 <td>This object configures collection of periodic statistics for the device.
-Periodic statistics are measured over a sample interval (which can be aligned with absolute time) and are made available to the ACS as a comma-separated list of the most recent &lt;n&gt; samples.
+Periodic statistics are measured over a sample interval (which can be aligned with absolute time) and are made available to the ACS as a comma-separated list of the most recent <n> samples.
 This object provides a single set of global settings that affect the entire device unless overridden locally.</td>
 <td>-</td>
 <td>1.0</td></tr>
@@ -2806,7 +2872,7 @@ A value of 0 indicates no specific maximum number of samples.</td>
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSetNumberOfEntries">SampleSetNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.">SampleSet</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.PeriodicStatistics.SampleSet."><em>SampleSet</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2815,7 +2881,7 @@ A value of 0 indicates no specific maximum number of samples.</td>
 <td>W</td>
 <td><p>Periodic statistics sample set table. Each sample set has its own sample interval etc.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Name">Name</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Name"><em>Name</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2836,7 +2902,7 @@ When collection of periodic statistics is enabled, any stored samples are discar
 <li><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Status.Disabled"><em>Disabled</em></span> (Collection is disabled)</li>
 <li><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></span> (Collection is enabled)</li>
 <li><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></span> (Collection is enabled and the ACS SHOULD now fetch the collected data)
-The <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> value is only used for triggering the ACS to fetch the collected data and can only be used when <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> is in the range [1:<em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>].
+The <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> value is only used for triggering the ACS to fetch the collected data and can only be used when <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> is in the range [1:<a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>].
 The transition from <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> MUST be instantaneous and so will result in only a single value change for notification purposes.</li></ul></td>
 <td>Disabled</td>
 <td>1.0</td></tr>
@@ -2845,7 +2911,7 @@ The transition from <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Ena
 <td>string(:128)</td>
 <td>W</td>
 <td>The name of this sample set, which uniquely distinguishes each sample set.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</span></td>
@@ -2855,7 +2921,7 @@ The transition from <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Ena
 The CPE MAY reject a request to set <em>SampleInterval</em> to less than <strong>{{param: non-existent .PeriodicStatistics.MinSampleInterval}}</strong>.
 Sample intervals MUST begin every <em>SampleInterval</em> <em>seconds</em>, with no delay between samples.
 If <em>SampleInterval</em> is changed while collection of periodic statistics is enabled, any stored samples are discarded, and the first sample interval begins immediately.
-For example, if <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em> is 24 and <em>SampleInterval</em> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
+For example, if <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a> is 24 and <em>SampleInterval</em> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
 <td>3600</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2865,32 +2931,32 @@ For example, if <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamp
 <td>The number of samples that the CPE will store and report for each statistic.
 The CPE MUST permit <em>ReportSamples</em> to be set to at least <strong>{{param: non-existent .PeriodicStatistics.MaxReportSamples}}</strong>.
 If <em>ReportSamples</em> is changed while collection of periodic statistics is enabled, the CPE will truncate or extend its statistics buffers as appropriate, but statistics collection MUST NOT otherwise be affected.
-For example, if <em>ReportSamples</em> is 24 and <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
+For example, if <em>ReportSamples</em> is 24 and <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a> is 3600 (an hour), the CPE can store up to a day’s worth of samples for each statistic.</td>
 <td>24</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.TimeReference">TimeReference</span></td>
 <td>dateTime</td>
 <td>W</td>
-<td>An absolute time reference in UTC to determine when sample intervals will complete. Each sample interval MUST complete at this reference time plus or minus an integer multiple of <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em>.
+<td>An absolute time reference in UTC to determine when sample intervals will complete. Each sample interval MUST complete at this reference time plus or minus an integer multiple of <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a>.
 <em>TimeReference</em> is used only to set the &ldquo;phase&rdquo; of the sample and fetch intervals. The actual value of <em>TimeReference</em> can be arbitrarily far into the past or future.
-This time reference also determines when the <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status">Status</a></em> <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions that are controlled by <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> will occur. If collection of periodic statistics is enabled and <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> is in the range [1:<em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>] then each such <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status">Status</a></em> transition MUST occur at this reference time plus or minus an integer multiple of <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> * <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em> (the fetch interval).
+This time reference also determines when the <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions that are controlled by <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> will occur. If collection of periodic statistics is enabled and <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> is in the range [1:<a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>] then each such <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> transition MUST occur at this reference time plus or minus an integer multiple of <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> * <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a> (the fetch interval).
 If <em>TimeReference</em> is changed while collection of periodic statistics is enabled, any stored samples are discarded, and the first sample interval begins immediately.
 The Unknown Time value defined in [<a href="#R.TR-106a2">TR-106a2</a>] indicates that no particular time reference is specified. That is, the CPE MAY locally choose the time reference, and is required only to adhere to the specified sample and fetch intervals.
 If absolute time is not available to the CPE, its sample and fetch interval behavior MUST be the same as if the <em>TimeReference</em> parameter was set to the Unknown Time value.
-For example, if <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em> is 3600 (an hour) and if <em>TimeReference</em> is set to UTC midnight on some day (in the past, present, or future) then sample intervals will complete on each UTC hour (00:00, 01:00, 02:00 etc).
-If, in addition, <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</a></em> is 24, then the fetch interval is 86400 (a day) and <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status">Status</a></em> <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions will occur every day at UTC midnight.
-Note that, if <em>TimeReference</em> is set to a time other than the Unknown Time, the first sample interval (which has to begin immediately) will almost certainly be shorter than <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em>). This is why <em>TimeReference</em> is defined in terms of when sample intervals complete rather than start.</td>
+For example, if <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a> is 3600 (an hour) and if <em>TimeReference</em> is set to UTC midnight on some day (in the past, present, or future) then sample intervals will complete on each UTC hour (00:00, 01:00, 02:00 etc).
+If, in addition, <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples"><em>FetchSamples</em></a> is 24, then the fetch interval is 86400 (a day) and <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> transitions will occur every day at UTC midnight.
+Note that, if <em>TimeReference</em> is set to a time other than the Unknown Time, the first sample interval (which has to begin immediately) will almost certainly be shorter than <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a>). This is why <em>TimeReference</em> is defined in terms of when sample intervals complete rather than start.</td>
 <td>0001-01-01T00:00:00Z</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.FetchSamples">FetchSamples</span></td>
 <td>unsignedInt</td>
 <td>W</td>
-<td>The number of sample intervals to be collected before transitioning <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status">Status</a></em> from <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a>.
-If this SampleSet is enabled and <em>FetchSamples</em> is in the range [1:<em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>] then <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status">Status</a></em> MUST transition from <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> on completion of every <em>FetchSamples</em> sample intervals. Otherwise, the transition MUST NOT occur.
-For example, if <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em> is 25 and <em>FetchSamples</em> is 24, then the CPE will store 25 values for each monitored parameter and the above <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status">Status</a></em> transition will occur as the CPE stores each 24th of 25 sample intervals, which means that the ACS could delay for up to two sample intervals before reading the stored values and would still not miss any samples (see also <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ForceSample">ForceSample</a></em>).
-To disable this trigger mechanism and still collect sampled statistics, <em>FetchSamples</em> can be set to either 0 or a value greater than <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples">ReportSamples</a></em>.</td>
+<td>The number of sample intervals to be collected before transitioning <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> from <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a>.
+If this SampleSet is enabled and <em>FetchSamples</em> is in the range [1:<a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>] then <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> MUST transition from <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Trigger"><em>Trigger</em></a> to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status.Enabled"><em>Enabled</em></a> on completion of every <em>FetchSamples</em> sample intervals. Otherwise, the transition MUST NOT occur.
+For example, if <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a> is 25 and <em>FetchSamples</em> is 24, then the CPE will store 25 values for each monitored parameter and the above <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Status"><em>Status</em></a> transition will occur as the CPE stores each 24th of 25 sample intervals, which means that the ACS could delay for up to two sample intervals before reading the stored values and would still not miss any samples (see also <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ForceSample"><em>ForceSample</em></a>).
+To disable this trigger mechanism and still collect sampled statistics, <em>FetchSamples</em> can be set to either 0 or a value greater than <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportSamples"><em>ReportSamples</em></a>.</td>
 <td>0</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2898,10 +2964,10 @@ To disable this trigger mechanism and still collect sampled statistics, <em>Fetc
 <td>boolean</td>
 <td>W</td>
 <td>When set to <em>true</em>, forces statistics for the current sample to be calculated and updated in the data model. Setting it to <em>false</em> has no effect. When read, this parameter returns <em>false</em>, regardless of the actual value.
-If this is the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, this MUST cause a new value to be added to each of the periodic statistics comma-separated list parameters, and the <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</a></em> and all <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</a></em> parameters MUST be updated accordingly.
-If this is not the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, then the new values that were added as described in the previous paragraph, and the <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</a></em> and all <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</a></em> parameters, MUST be updated accordingly.
+If this is the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, this MUST cause a new value to be added to each of the periodic statistics comma-separated list parameters, and the <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportEndTime"><em>ReportEndTime</em></a> and all <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleSeconds"><em>SampleSeconds</em></a> parameters MUST be updated accordingly.
+If this is not the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, then the new values that were added as described in the previous paragraph, and the <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportEndTime"><em>ReportEndTime</em></a> and all <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleSeconds"><em>SampleSeconds</em></a> parameters, MUST be updated accordingly.
 Note that <em>ForceSample</em> just provides a &ldquo;sneak preview&rdquo; of the current sample. It does not create a new sample and it does not interfere with the sample interval schedule.
-At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</a></em> and all <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</a></em> parameters, will be updated accordingly. In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.</td>
+At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ReportEndTime"><em>ReportEndTime</em></a> and all <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleSeconds"><em>SampleSeconds</em></a> parameters, will be updated accordingly. In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.</td>
 <td>false</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2909,33 +2975,35 @@ At the end of each sample interval, if <em>ForceSample</em> was set to <em>true<
 <td>dateTime</td>
 <td>R</td>
 <td>The absolute time at which the sample interval for the first stored sample (for each statistic) started.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.ReportEndTime">ReportEndTime</span></td>
 <td>dateTime</td>
 <td>R</td>
 <td>The absolute time at which the sample interval for the last stored sample (for each statistic) ended.
-If <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ForceSample">ForceSample</a></em> has been used to force statistics for the current sample to be calculated and updated in the data model, then <em>ReportEndTime</em> MUST be updated to reflect the actual time over which stored data was collected.</td>
-<td></td>
+If <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ForceSample"><em>ForceSample</em></a> has been used to force statistics for the current sample to be calculated and updated in the data model, then <em>ReportEndTime</em> MUST be updated to reflect the actual time over which stored data was collected.</td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.SampleSeconds">SampleSeconds</span></td>
 <td>unsignedInt[]</td>
 <td>R</td>
-<td>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected during the sample interval.
-Individual <em>SampleSeconds</em> values can be less than <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval">SampleInterval</a></em>, for several reasons, including:
+<td><p>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected during the sample interval.
+Individual <em>SampleSeconds</em> values can be less than <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.SampleInterval"><em>SampleInterval</em></a>, for several reasons, including:</p>
 
-<ul>
-<li><em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.TimeReference">TimeReference</a></em> has been set to a time other than the Unknown Time and the current sample interval started part of the way through a scheduled sample interval.</li>
-<li><em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ForceSample">ForceSample</a></em> has been used to force statistics for the current sample to be calculated and updated in the data model.</li></ul></td>
-<td></td>
+<blockquote><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.TimeReference"><em>TimeReference</em></a> has been set to a time other than the Unknown Time and the current sample interval started part of the way through a scheduled sample interval.</blockquote>
+
+<blockquote><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.ForceSample"><em>ForceSample</em></a> has been used to force statistics for the current sample to be calculated and updated in the data model.</blockquote>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.ParameterNumberOfEntries">ParameterNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.">Parameter</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter."><em>Parameter</em></a> table.</td>
 <td>0</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -2945,7 +3013,7 @@ Individual <em>SampleSeconds</em> values can be less than <em><a href="#D.TR-157
 <td><p>Periodic statistics parameter table for this sample set. This table contains entries for parameters whose values are to be sampled.
 Note that the comma-separated lists in this object (SampleSeconds, SuspectData and Values) only ever change (a) when first enabled, (b) when ForceSample is set to true (a &ldquo;sneak preview&rdquo; of the current sample), or (c) at the end of the sample interval.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Reference">Reference</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Reference"><em>Reference</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -2960,7 +3028,7 @@ Note that the comma-separated lists in this object (SampleSeconds, SuspectData a
 <td>string(:256)</td>
 <td>W</td>
 <td>The value MUST be the Path Name of a parameter. This is the parameter being monitored by the Periodic Statistics mechanism.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</span></td>
@@ -2986,15 +3054,15 @@ Parameters of non-numeric types can only support <a href="#D.TR-157:1.PeriodicSt
 <li><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.CalculationMode.Maximum"><em>Maximum</em></span> (Statistic is maximum sampled value during sample interval)</li>
 <li><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.CalculationMode.Average"><em>Average</em></span> (Statistic is average (mean) sampled value during sample interval)
 Parameters of non-numeric types can only support <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.CalculationMode.Latest"><em>Latest</em></a>. The value of the <em>CalculationMode</em> MUST be ignored for such parameters.
-<em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em> MUST be applied before <em>CalculationMode</em>, i.e. the inputs to the calculation will have already accounted for <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em>.</li></ul></td>
+<a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a> MUST be applied before <em>CalculationMode</em>, i.e. the inputs to the calculation will have already accounted for <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a>.</li></ul></td>
 <td>Latest</td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</span></td>
 <td>int</td>
 <td>W</td>
-<td>The low threshold value that controls the calculation of <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Failures">Failures</a></em>.
-A value equal to <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em> disables the threshold/failure mechanism.
+<td>The low threshold value that controls the calculation of <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Failures"><em>Failures</em></a>.
+A value equal to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a> disables the threshold/failure mechanism.
 Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.</td>
 <td>0</td>
 <td>1.0</td></tr>
@@ -3002,8 +3070,8 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</span></td>
 <td>int</td>
 <td>W</td>
-<td>The high threshold value that controls the calculation of <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Failures">Failures</a></em>.
-A value equal to <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em> disables the threshold/failure mechanism.
+<td>The high threshold value that controls the calculation of <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Failures"><em>Failures</em></a>.
+A value equal to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a> disables the threshold/failure mechanism.
 Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.</td>
 <td>0</td>
 <td>1.0</td></tr>
@@ -3011,43 +3079,49 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleSeconds">SampleSeconds</span></td>
 <td>unsignedInt[]</td>
 <td>R</td>
-<td>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected for this parameter during the sample interval.
-Individual <em>SampleSeconds</em> values can be less than <strong>{{param: non-existent .PeriodicStatistics.SampleSet.{i}.SampleInterval}}</strong>, for several reasons, including:
+<td><p>Comma-separated list of unsigned integers. Each entry indicates the number of <em>seconds</em> during which data was collected for this parameter during the sample interval.
+Individual <em>SampleSeconds</em> values can be less than <strong>{{param: non-existent .PeriodicStatistics.SampleSet.{i}.SampleInterval}}</strong>, for several reasons, including:</p>
 
-<ul>
-<li>Any of the reasons for which <strong>{{param: non-existent .PeriodicStatistics.SampleSet.{i}.SampleSeconds}}</strong> values might be less than <strong>{{param: non-existent .PeriodicStatistics.SampleSet.{i}.SampleInterval}}</strong>.</li>
-<li>The parameter doesn’t exist, or was created or deleted during a sample interval.</li></ul></td>
-<td></td>
+<blockquote>Any of the reasons for which <strong>{{param: non-existent .PeriodicStatistics.SampleSet.{i}.SampleSeconds}}</strong> values might be less than <strong>{{param: non-existent .PeriodicStatistics.SampleSet.{i}.SampleInterval}}</strong>.</blockquote>
+
+<blockquote>The parameter doesn’t exist, or was created or deleted during a sample interval.</blockquote>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SuspectData">SuspectData</span></td>
 <td>unsignedInt(:1)[]</td>
 <td>R</td>
-<td>Comma-separated list of unsigned integers (up to 1). Each entry is 0 if the sampled value is believed to be valid, or 1 if an event that might affect the validity of the sampled value occurred during the sample interval.
-For example, if the parameter value were to be reset during the sample interval then it would be appropriate to set <em>SuspectData</em> to 1.</td>
-<td></td>
+<td><p>Comma-separated list of unsigned integers (up to 1). Each entry is 0 if the sampled value is believed to be valid, or 1 if an event that might affect the validity of the sampled value occurred during the sample interval.
+For example, if the parameter value were to be reset during the sample interval then it would be appropriate to set <em>SuspectData</em> to 1.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Values">Values</span></td>
 <td>string[]</td>
 <td>R</td>
-<td>Comma-separated list of strings. Each entry indicates the value of the referenced parameter, as determined by <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em>, during the sample interval.
+<td><p>Comma-separated list of strings. Each entry indicates the value of the referenced parameter, as determined by <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a>, during the sample interval.
 The statistics values in this comma-separated lists MUST be in time order, with the oldest one first and the most recent one last.
-If the <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em> parameter is not present, or is inappropriate for the referenced parameter, the statistics values MUST be collected in Current mode.</td>
-<td></td>
+If the <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a> parameter is not present, or is inappropriate for the referenced parameter, the statistics values MUST be collected in Current mode.</p>
+
+<p>Active Notification requests for this parameter MAY be denied.</p></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="parameter">
 <td><span id="D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.Failures">Failures</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>Counts the number of times (since this object instance was last enabled) that a newly-calculated sample value (accounting for <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode">SampleMode</a></em>) transitioned from the “in range” state to the “out of range” state, or between the “out of range (low)” and “out of range (high)” states. The states are defined as follows:
+<td>Counts the number of times (since this object instance was last enabled) that a newly-calculated sample value (accounting for <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.SampleMode"><em>SampleMode</em></a>) transitioned from the “in range” state to the “out of range” state, or between the “out of range (low)” and “out of range (high)” states. The states are defined as follows:
 
 <ul>
-<li>“in range” : current value is greater than <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em> and less than <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em>.</li>
-<li>“out of range” : current value is less than or equal to <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em>, or greater than or equal to <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em>.</li>
-<li>“out of range (low)” : current value is less than or equal to <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em>.</li>
-<li>“out of range (high)” : current value is greater than or equal to <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em>.
-Note that, if <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold">LowThreshold</a></em> and <em><a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold">HighThreshold</a></em> are both the same, the threshold/failure mechanism is disabled, so the value of this parameter will not increment.
+<li>“in range” : current value is greater than <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a> and less than <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a>.</li>
+<li>“out of range” : current value is less than or equal to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a>, or greater than or equal to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a>.</li>
+<li>“out of range (low)” : current value is less than or equal to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a>.</li>
+<li>“out of range (high)” : current value is greater than or equal to <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a>.
+Note that, if <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.LowThreshold"><em>LowThreshold</em></a> and <a href="#D.TR-157:1.PeriodicStatistics.SampleSet.Parameter.HighThreshold"><em>HighThreshold</em></a> are both the same, the threshold/failure mechanism is disabled, so the value of this parameter will not increment.
 This parameter can be incremented at any time during a sample interval, and might be incremented more than once during a single sample interval. For this reason, the CPE SHOULD place a locally specified limit on the frequency at which it will notify the ACS of such changes, as described in [<a href="#R.TR-069a2">Section 3.2.1/TR-069a2</a>].
 Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.</li></ul></td>
 <td>0</td>
@@ -3077,7 +3151,9 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.TR-157:1.DownloadAvailability.Announcement.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of the announcement service. Enumeration of:</p>
+<td><p>The status of the announcement service.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.DownloadAvailability.Announcement.Status.Disabled"><em>Disabled</em></span></li>
@@ -3089,7 +3165,7 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.TR-157:1.DownloadAvailability.Announcement.GroupNumberOfEntries">GroupNumberOfEntries</span></td>
 <td>unsignedInt</td>
 <td>R</td>
-<td>The number of entries in the <em><a href="#D.TR-157:1.DownloadAvailability.Announcement.Group.">Group</a></em> table.</td>
+<td>The number of entries in the <a href="#D.TR-157:1.DownloadAvailability.Announcement.Group."><em>Group</em></a> table.</td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="object">
@@ -3098,7 +3174,7 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td>W</td>
 <td><p>Multicast groups to which the CPE SHOULD listen for announcements.</p>
 
-<p>At most one enabled entry in this table can exist with a given value for <em><a href="#D.TR-157:1.DownloadAvailability.Announcement.Group.URL">URL</a></em>.</p></td>
+<p>At most one enabled entry in this table can exist with a given value for <a href="#D.TR-157:1.DownloadAvailability.Announcement.Group.URL"><em>URL</em></a>.</p></td>
 <td>-</td>
 <td>1.0</td></tr>
 <tr class="parameter">
@@ -3112,7 +3188,9 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td><span id="D.TR-157:1.DownloadAvailability.Announcement.Group.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of this group table entry. Enumeration of:</p>
+<td><p>The status of this group table entry.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.DownloadAvailability.Announcement.Group.Status.Disabled"><em>Disabled</em></span></li>
@@ -3127,7 +3205,7 @@ Parameters of non-numeric types cannot support the threshold/failure mechanism. 
 <td>URL [<a href="#R.RFC3986">RFC3986</a>] encoding the group address, source and port on which to listen, and other protocol information, e.g. expected announcement format.
 Depending on the application, the messages identified by this URL MAY directly contain the data to be downloaded, or alternatively MAY contain information informing the CPE how to obtain the data to be downloaded via a separate mechanism, which itself could involve a unicast or a multicast download protocol.
 Refer to [<a href="#R.DVB-TS.102.824">DVB-TS.102.824</a>] for an example of a URL format that identifies a SAP [<a href="#R.RFC2974">RFC2974</a>] stream that indicates how to use either FLUTE [<a href="#R.RFC3926">RFC3926</a>] or DSM-CC [<a href="#R.ISO-13818-6:1998">ISO-13818-6:1998</a>] to perform the download.</td>
-<td></td>
+<td><em>&lt;Empty&gt;</em></td>
 <td>1.0</td></tr>
 <tr class="object">
 <td><span id="D.TR-157:1.DownloadAvailability.Query.">DownloadAvailability.Query.</span></td>
@@ -3147,7 +3225,9 @@ Refer to [<a href="#R.DVB-TS.102.824">DVB-TS.102.824</a>] for an example of a UR
 <td><span id="D.TR-157:1.DownloadAvailability.Query.Status">Status</span></td>
 <td>string</td>
 <td>R</td>
-<td><p>The status of the query service. Enumeration of:</p>
+<td><p>The status of the query service.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.DownloadAvailability.Query.Status.Disabled"><em>Disabled</em></span></li>
@@ -3197,7 +3277,9 @@ Note that this includes any backup or restore operations that were not specifica
 <td>string</td>
 <td>W</td>
 <td><p>Indicates the transfer results that MUST be included when the CPE notifies the ACS of AUTONOMOUS TRANSFER COMPLETE events. Transfer results omitted from this list MUST NOT be included when the CPE notifies the ACS.
-Note that this includes any backup or restore operations that were not specifically requested by the ACS. A backup is regarded as an Upload and a restore is regarded as a Download. Enumeration of:</p>
+Note that this includes any backup or restore operations that were not specifically requested by the ACS. A backup is regarded as an Upload and a restore is regarded as a Download.</p>
+
+<p>Enumeration of:</p>
 
 <ul>
 <li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.ResultTypeFilter.Success"><em>Success</em></span> (The autonomous file transfer completed successfully; i.e., the FaultCode was zero)</li>
@@ -3214,40 +3296,19 @@ Note that this includes any backup or restore operations that were not specifica
 <p>Each list item matches one of:</p>
 
 <ul>
-<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.1FirmwareUpgradeImage"><em>1 Firmware Upgrade Image</em></span> (Download Only)</li>
-<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.2WebContent"><em>2 Web Content</em></span> (Download Only)</li>
-<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.3VendorConfigurationFile"><em>3 Vendor Configuration File</em></span> (Download or Upload)</li>
-<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.4VendorLogFile"><em>4 Vendor Log File</em></span> (Upload Only)</li>
-<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.X0-9A-F6.">*X [0-9A-F]{6} .**</span> (For Vendor-Specific File Types, could be for either Download or Upload)
+<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.1FirmwareUpgradeImage"><code>1 Firmware Upgrade Image</code></span> (Download Only)</li>
+<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.2WebContent"><code>2 Web Content</code></span> (Download Only)</li>
+<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.3VendorConfigurationFile"><code>3 Vendor Configuration File</code></span> (Download or Upload)</li>
+<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.4VendorLogFile"><code>4 Vendor Log File</code></span> (Upload Only)</li>
+<li><span id="D.TR-157:1.ManagementServer.AutonomousTransferCompletePolicy.FileTypeFilter.X0-9A-F6."><code>X [0-9A-F]{6} .*</code></span> (For Vendor-Specific File Types, could be for either Download or Upload)
 Additionally, the following format is defined to allow the unique definition of vendor-specific file types:</li>
-<li><em>&ldquo;X &lt;OUI&gt; &lt;Vendor-specific identifier&gt;&rdquo;</em>
-&lt;OUI&gt; is replaced by a 6 hexadecimal-digit OUI (organizationally unique identifier) as defined in [<a href="#R.OUI">OUI</a>], with all upper-case letters and any leading zeros included. The OUI used for a given vendor-specific file type MUST be one that is assigned to the organization that defined this file type (which is not necessarily the same as the vendor of the CPE or ACS).
+<li><em>&ldquo;X <OUI> <Vendor-specific identifier>&rdquo;</em>
+<OUI> is replaced by a 6 hexadecimal-digit OUI (organizationally unique identifier) as defined in [<a href="#R.OUI">OUI</a>], with all upper-case letters and any leading zeros included. The OUI used for a given vendor-specific file type MUST be one that is assigned to the organization that defined this file type (which is not necessarily the same as the vendor of the CPE or ACS).
 Note that an empty string indicates that all file types are excluded from this filter, effectively disabling CPE notification of AUTONOMOUS TRANSFER COMPLETE events to the ACS.</li></ul></td>
 <td>-</td>
 <td>1.0</td></tr></tbody></table>
 
 <h2 id="inform-and-notification-requirements">Inform and Notification Requirements</h2>
-
-<h3 id="forced-inform-parameters">Forced Inform Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="forced-active-notification-parameters">Forced Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
-
-<h3 id="default-active-notification-parameters">Default Active Notification Parameters</h3>
-
-<table class="middle-width partial-border">
-<thead>
-<tr>
-<th>Parameter</th></tr></thead></table>
 
 <h3 id="parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</h3>
 
@@ -4244,7 +4305,7 @@ The minimum REQUIRED version for this profile is TR-157:1.0.</p>
 
 <hr/>
 
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.1.0 (2024-01-18 version) on 2024-01-18 at 11:45:32 UTC.<br/>report.py –filter model=None –output &lt;stdout&gt; –transform automodel –format markdown tr-157-1-2-0.xml</p></div>
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.2.0 (2024-07-23 version) on 2024-07-23 at 11:06:16 UTC.<br/>report.py –filter model=None –output <stdout> –transform automodel –format markdown tr-157-1-2-0.xml</p></div>
 
 <div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
 
@@ -4337,9 +4398,6 @@ The minimum REQUIRED version for this profile is TR-157:1.0.</p>
 <li><span class="expandable"><a href="#inform-and-notification-requirements">Inform and Notification Requirements</a></span>
 
 <ul class="collapsed">
-<li><a href="#forced-inform-parameters">Forced Inform Parameters</a></li>
-<li><a href="#forced-active-notification-parameters">Forced Active Notification Parameters</a></li>
-<li><a href="#default-active-notification-parameters">Default Active Notification Parameters</a></li>
 <li><a href="#parameters-for-which-active-notification-may-be-denied">Parameters for which Active Notification MAY be Denied</a></li></ul></li>
 <li><span class="expandable"><a href="#profile-definitions">Profile Definitions</a></span>
 

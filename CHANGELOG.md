@@ -7,6 +7,52 @@ can be found at <https://cwmp-data-models.broadband-forum.org>.
 
 [CWMP]: https://www.broadband-forum.org/technical/download/TR-069.pdf
 
+## 2024-07-23: [TR-106 Amendment 14] and [TR-181 Issue 2 Amendment 18]
+
+*Tags: [v1.6.9] (data models), 
+       [v2.18.0][TR-181-v2.18.0] (TR-181), 
+       [v1.14.0][TR-106-v1.14.0] (TR-106)*
+
+### TR-181
+* Added more counter types to IoT
+* Improved MoCA network state parameter descriptions
+* Added new parameter to support VLAN priority
+* Added new parameter to indicate the used Ethernet duplex mode
+* Improved example Ethernet PHY types by using more commonly used types
+* Added new parameter to control the sending of ARP messages on an Ethernet link
+* Corrected access type of multiple parameters
+* Added new parameters for IP based access control in HTTP access
+* Added new parameter to configure the MTU on an Ethernet link
+* Added new parameter to link a USPService to an ExecutionUnit providing it
+* Extended size of various QoS parameter types from 32 bits to 64 bits types
+* Added new parameter to control filtering of ICMPv6 packets
+* Changed one more missed parameter from hidden to secured
+* Added new parameters to control DHCP retransmission/retry behavior
+* Removed some dmr:fixedObject attributes from non-fixed objects
+* Added Device.Schedules. mechanism to define time-based schedules for services to use
+* Added new parameters indicate the reason for a device reboot
+* Added new parameters to configure and check the Ethernet MDIX mode
+* Deprecated a decent number of MultiAP commands and parameters due to being supported in DataElements
+* Refactored many Interface and Link objects, parameters and commands into components for deduplication
+* Refactored and improved the description of the NetworkConfig object
+* Replaced outdated DHCPv6 bibref by latest RFC
+* Added Reset() command to various interface stats objects
+* Promoted some readOnly parameters to readWrite
+* Added source and dest port ranges to more firewall objects
+* Added success and failure counters to IEEE802.1x supplicant stats
+* Added 3GPP-NAS auto configuration type to various enumerations
+* Added RemainingLeastTime to port-mapping objects
+* Demoted a few readWrite objects to readOnly since they were never meant to be the former
+* Added histogram mode to PeriodicSampling mechanism
+* Added more informational parameters and ShutdownDelay as well as user configuration to SMM DUs
+* Added system capabilities configuration to Users
+* Changed parameter type of some Wi-Fi timestamps from string to datetime
+* Clarified the credentials allowed usages
+* Added UUID, Version, and ExecEnvRef as output arguments to the InstallDU() command
+* Adjusted indentation to fix rendering issues
+* Added missing Alias keys throughout the data model
+* Removed some inappropriate dmr:noUniqueKeys annotations
+
 ## 2024-01-18: [TR-106 Amendment 13] and [TR-181 Issue 2 Amendment 17]
 
 *Tags: [v1.6.8] (data models), 
@@ -27,8 +73,8 @@ can be found at <https://cwmp-data-models.broadband-forum.org>.
   to be used by the DNS forwarders
 * Added new InterfaceSetting object to Device.Firewall.
 * Added ModuleVersion parameter to InstallDU() and Update() commands
-* Added Origin parameter to PinHole, PortMapping and AccesssControl
-* Added PhysAddresMask parameter to AccessControl
+* Added Origin parameter to PinHole, PortMapping and AccessControl
+* Added PhysAddressMask parameter to AccessControl
 * Added LeaseDuration and RemainLeaseTime parameters to the DMZ and Pinhole objects
 * Added Device.Firewall.ConnectionTracking. object tree to configure ALGs
 * Added missing DSL xTU-C and xTU-R parameters to DSL objects
@@ -282,17 +328,20 @@ version of the BBF report tool
 [TR-106 Amendment 11]: https://www.broadband-forum.org/download/TR-106_Amendment-11.pdf
 [TR-106 Amendment 12]: https://www.broadband-forum.org/download/TR-106_Amendment-12.pdf
 [TR-106 Amendment 13]: https://www.broadband-forum.org/download/TR-106_Amendment-13.pdf
+[TR-106 Amendment 14]: https://www.broadband-forum.org/download/TR-106_Amendment-14.pdf
 [TR-106-v1.7.0+]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.7.0+
 [TR-106-v1.10.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.10.0
 [TR-106-v1.11.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.11.0
 [TR-106-v1.12.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.12.0
 [TR-106-v1.13.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.13.0
+[TR-106-v1.14.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.14.0
 [TR-181 Issue 2 Amendment 12]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-12.pdf
 [TR-181 Issue 2 Amendment 13]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-13.pdf
 [TR-181 Issue 2 Amendment 14]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-14.pdf
 [TR-181 Issue 2 Amendment 15]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-15.pdf
 [TR-181 Issue 2 Amendment 16]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-16.pdf
 [TR-181 Issue 2 Amendment 17]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-17.pdf
+[TR-181 Issue 2 Amendment 18]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-18.pdf
 [TR-181-v2.12.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.12.0
 [TR-181-v2.13.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.13.0
 [TR-181-v2.14.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.14.0
@@ -301,6 +350,7 @@ version of the BBF report tool
 [TR-181-v2.15.1]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.15.1
 [TR-181-v2.16.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.16.0
 [TR-181-v2.17.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.17.0
+[TR-181-v2.18.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.18.0
 [v1.6.0]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0
 [v1.6.0+]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0+
 [v1.6.0c1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0c1
@@ -312,3 +362,4 @@ version of the BBF report tool
 [v1.6.6]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.6
 [v1.6.7]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.7
 [v1.6.8]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.8
+[v1.6.9]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.9

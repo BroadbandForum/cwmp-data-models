@@ -65,12 +65,12 @@
 
 -->
 <dm:document
-    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-7"
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
     xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-0-1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
-      urn:broadband-forum-org:cwmp:datamodel-1-7
-        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-7.xsd
+      urn:broadband-forum-org:cwmp:datamodel-1-14
+        http://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
       urn:broadband-forum-org:cwmp:datamodel-report-0-1
         https://www.broadband-forum.org/cwmp/cwmp-datamodel-report.xsd"
     spec="urn:broadband-forum-org:tr-104-2-0-1-cwmp"
@@ -96,6 +96,26 @@
     </string>
   </dataType>
 
+  <dataType name="_AliasCWMP" base="_AliasCommon">
+    <description action="replace">
+      A non-volatile handle used to reference this instance. Alias provides a
+      mechanism for an ACS to label this instance for future reference.
+
+      If the CPE supports the Alias-based Addressing feature as defined in
+      {{bibref|TR-069|3.6.1}} and described in {{bibref|TR-069|Appendix II}},
+      the following mandatory constraints MUST be enforced:
+
+      * Its value MUST NOT be empty.
+
+      * Its value MUST start with a letter.
+
+      * If its value is not assigned by the ACS, it MUST start with a "cpe-"
+        prefix.
+
+      * The CPE MUST NOT change the parameter value.
+    </description>
+  </dataType>
+
   <dataType name="Alias" base="_AliasCommon">
     <description action="replace">
       A non-volatile handle used to reference this instance. Alias provides a
@@ -114,6 +134,71 @@
 
       * The CPE MUST NOT change the parameter value.
     </description>
+  </dataType>
+
+  <dataType name="DiagnosticsState">
+    <description>
+      Indicates the availability of diagnostics data. Enumeration of:
+
+      {{enum}}
+
+      If the ACS sets the value of this parameter to {{enum|Requested}}, the
+      CPE MUST initiate the corresponding diagnostic test. When writing, the
+      only allowed values are {{enum|Requested}} and {{enum|Canceled}}. To
+      ensure the use of the proper test parameters (the writable parameters in
+      this object), the test parameters MUST be set, and any errors or
+      inconsistencies in the test parameters MUST be detected, either prior to
+      or at the same time as (in the same SetParameterValues) setting this
+      parameter to {{enum|Requested}}.
+
+      When requested, the CPE SHOULD wait until after completion of the
+      communication session with the ACS before starting the diagnostic test.
+
+      When the test is completed, the value of this parameter MUST be either
+      {{enum|Complete}} (if the test completed successfully), or one of the
+      ''Error'' values listed above.
+
+      If the value of this parameter is anything other than {{enum|Complete}},
+      the values of the results parameters for this test are indeterminate.
+
+      When the diagnostic initiated by the ACS is completed (successfully or
+      not), but not if it is canceled for any reason, the CPE MUST establish a
+      new connection to the ACS to allow the ACS to view the results,
+      indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform
+      message.
+
+      After the diagnostic is complete, the value of all result parameters (all
+      read-only parameters in this object) MUST be retained by the CPE until
+      either this diagnostic is run again, or the CPE reboots. After a reboot,
+      if the CPE has not retained the result parameters from the most recent
+      test, it MUST set the value of this parameter to {{enum|None}}.
+
+      Modifying any of the writable parameters in this object except for this
+      one MUST result in the value of this parameter being set to
+      {{enum|None}}.
+
+      While the test is in progress, modifying any of the writable parameters
+      in this object except for this one MUST result in the test being
+      terminated and the value of this parameter being set to {{enum|None}}.
+
+      While the test is in progress, setting this parameter to
+      {{enum|Requested}} (and possibly modifying other writable parameters in
+      this object) MUST result in the test being terminated and then restarted
+      using the current values of the test parameters.
+
+      While the test is in progress, setting this parameter to
+      {{enum|Canceled}} MUST result in the test being canceled and the value of
+      this parameter being set to {{enum|None}}. If the CPE does not support
+      the {{enum|Canceled}} value, it MUST return a SPV error with "Invalid
+      Parameter value" (9007) to the ACS instead.
+    </description>
+    <string>
+      <enumeration value="None" access="readOnly"/>
+      <enumeration value="Requested"/>
+      <enumeration value="Canceled" optional="true"/>
+      <enumeration value="Complete" access="readOnly"/>
+      <enumeration value="Error" access="readOnly" optional="true"/>
+    </string>
   </dataType>
 
   <dataType name="IPAddress">
@@ -192,71 +277,6 @@
       Ethernet frame.
     </description>
     <unsignedLong/>
-  </dataType>
-
-  <dataType name="DiagnosticsState">
-    <description>
-      Indicates the availability of diagnostics data. Enumeration of:
-
-      {{enum}}
-
-      If the ACS sets the value of this parameter to {{enum|Requested}}, the
-      CPE MUST initiate the corresponding diagnostic test. When writing, the
-      only allowed values are {{enum|Requested}} and {{enum|Canceled}}. To
-      ensure the use of the proper test parameters (the writable parameters in
-      this object), the test parameters MUST be set, and any errors or
-      inconsistencies in the test parameters MUST be detected, either prior to
-      or at the same time as (in the same SetParameterValues) setting this
-      parameter to {{enum|Requested}}.
-
-      When requested, the CPE SHOULD wait until after completion of the
-      communication session with the ACS before starting the diagnostic test.
-
-      When the test is completed, the value of this parameter MUST be either
-      {{enum|Complete}} (if the test completed successfully), or one of the
-      ''Error'' values listed above.
-
-      If the value of this parameter is anything other than {{enum|Complete}},
-      the values of the results parameters for this test are indeterminate.
-
-      When the diagnostic initiated by the ACS is completed (successfully or
-      not), but not if it is canceled for any reason, the CPE MUST establish a
-      new connection to the ACS to allow the ACS to view the results,
-      indicating the Event code ''8 DIAGNOSTICS COMPLETE'' in the Inform
-      message.
-
-      After the diagnostic is complete, the value of all result parameters (all
-      read-only parameters in this object) MUST be retained by the CPE until
-      either this diagnostic is run again, or the CPE reboots. After a reboot,
-      if the CPE has not retained the result parameters from the most recent
-      test, it MUST set the value of this parameter to {{enum|None}}.
-
-      Modifying any of the writable parameters in this object except for this
-      one MUST result in the value of this parameter being set to
-      {{enum|None}}.
-
-      While the test is in progress, modifying any of the writable parameters
-      in this object except for this one MUST result in the test being
-      terminated and the value of this parameter being set to {{enum|None}}.
-
-      While the test is in progress, setting this parameter to
-      {{enum|Requested}} (and possibly modifying other writable parameters in
-      this object) MUST result in the test being terminated and then restarted
-      using the current values of the test parameters.
-
-      While the test is in progress, setting this parameter to
-      {{enum|Canceled}} MUST result in the test being canceled and the value of
-      this parameter being set to {{enum|None}}. If the CPE does not support
-      the {{enum|Canceled}} value, it MUST return a SPV error with "Invalid
-      Parameter value" (9007) to the ACS instead.
-    </description>
-    <string>
-      <enumeration value="None" access="readOnly"/>
-      <enumeration value="Requested"/>
-      <enumeration value="Canceled" optional="true"/>
-      <enumeration value="Complete" access="readOnly"/>
-      <enumeration value="Error" access="readOnly" optional="true"/>
-    </string>
   </dataType>
 
   <bibliography>
@@ -3005,7 +3025,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="TestSelector" access="readWrite">
+      <parameter name="TestSelector" access="readWrite" version="2.0">
         <description>
           Indicates which test to perform. {{enum}}
 
@@ -3031,7 +3051,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="TestResult" access="readOnly">
+      <parameter name="TestResult" access="readOnly" version="2.0">
         <description>
           Result of the selected test. {{enum}}
 
@@ -3326,7 +3346,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="TestSelector" access="readWrite">
+      <parameter name="TestSelector" access="readWrite" version="2.0">
         <description>
           Indicates which GR-909 test to perform.
         </description>
@@ -3372,7 +3392,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="TestResult" access="readOnly">
+      <parameter name="TestResult" access="readOnly" version="2.0">
         <description>
           Result of the selected test.
         </description>
@@ -3862,7 +3882,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="Name" access="readWrite">
+      <parameter name="Name" access="readWrite" version="2.0.3">
         <description>
           The name of the DECT portable as assigned by the CPE. May be used for
           display on the handset screen.
@@ -11452,7 +11472,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="RTCPCNAME" access="readOnly">
+      <parameter name="RTCPCNAME" access="readOnly" version="2.0.3">
         <description>
           A unique identifier provided in RTCP by the destination.
         </description>
@@ -11463,7 +11483,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="MinJitter" access="readOnly">
+      <parameter name="MinJitter" access="readOnly" version="2.0">
         <description>
           The minimum relative transit time in {{units}} between two packets as
           defined in {{bibref|RFC3611}}.
@@ -11588,7 +11608,8 @@
         </syntax>
       </parameter>
 
-      <parameter name="DuplicatePacketsReceived" access="readOnly">
+      <parameter name="DuplicatePacketsReceived" access="readOnly"
+          version="2.0.3">
         <description>
           Total number of duplicate RTP packets that have been received for
           this session. Note: duplicate packets are often the result of network
@@ -12009,7 +12030,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="RTCPCNAME" access="readOnly">
+      <parameter name="RTCPCNAME" access="readOnly" version="2.0.3">
         <description>
           A unique identifier provided in RTCP by the destination.
         </description>
@@ -12020,7 +12041,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="MinJitter" access="readOnly">
+      <parameter name="MinJitter" access="readOnly" version="2.0">
         <description>
           The minimum relative transit time in {{units}} between two packets as
           defined in {{bibref|RFC3611}}.
@@ -12145,7 +12166,8 @@
         </syntax>
       </parameter>
 
-      <parameter name="DuplicatePacketsReceived" access="readOnly">
+      <parameter name="DuplicatePacketsReceived" access="readOnly"
+          version="2.0.3">
         <description>
           Total number of duplicate RTP packets that have been received for
           this session. Note: duplicate packets are often the result of network
@@ -13247,7 +13269,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="DefaultEventProfile" access="readWrite">
+      <parameter name="DefaultEventProfile" access="readWrite" version="2.0.3">
         <description>
           Reference to the default tone event profile.
         </description>
@@ -14225,7 +14247,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="TestSelector" access="readWrite">
+      <parameter name="TestSelector" access="readWrite" version="2.0">
         <description>
           Indicates which test to perform.
 
@@ -14241,7 +14263,7 @@
         </syntax>
       </parameter>
 
-      <parameter name="PhoneRinging" access="readOnly">
+      <parameter name="PhoneRinging" access="readOnly" version="2.0">
         <description>
           Indicates whether or not the phone associated with this port is
           ringing. This parameter is applicable only if
