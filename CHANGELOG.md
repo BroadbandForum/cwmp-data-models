@@ -7,6 +7,12 @@ can be found at <https://cwmp-data-models.broadband-forum.org>.
 
 [CWMP]: https://www.broadband-forum.org/technical/download/TR-069.pdf
 
+## 2024-09-04: TR-181 Issue 2 Amendment 18 Corrigendum 1
+
+*Tags: [v1.6.10] (data models), 
+       [v2.18.1][TR-181-v2.18.1] (TR-181), 
+       [v1.14.0][TR-106-v1.14.0] (TR-106 didn't change)*
+
 ## 2024-07-23: [TR-106 Amendment 14] and [TR-181 Issue 2 Amendment 18]
 
 *Tags: [v1.6.9] (data models), 
@@ -351,10 +357,12 @@ version of the BBF report tool
 [TR-181-v2.16.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.16.0
 [TR-181-v2.17.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.17.0
 [TR-181-v2.18.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.18.0
+[TR-181-v2.18.1]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.18.1
 [v1.6.0]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0
 [v1.6.0+]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0+
 [v1.6.0c1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0c1
 [v1.6.1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.1
+[v1.6.10]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.10
 [v1.6.2]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.2
 [v1.6.3]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.3
 [v1.6.4]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.4
