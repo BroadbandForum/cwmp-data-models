@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Device:2 Root Data Model: Common Object definitions [Thread]
+
+Copyright (c) 2024, Broadband Forum
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the following
+conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The above license is used as a license under copyright only.
+Please reference the Forum IPR Policy for patent licensing terms
+<https://www.broadband-forum.org/ipr-policy>.
+
+Any moral rights which are necessary to exercise under the above
+license grant are also deemed granted under this license.
+
+Comments or questions about this Broadband Forum data model should be
+directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  urn:broadband-forum-org:cwmp:datamodel-1-14
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-1-0
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-19-0-thread"
+  file="tr-181-2-19-0-thread.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="MACAddress"/>
+    <dataType name="IPv6Address"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-interface.xml"
+    spec="urn:broadband-forum-org:tr-181-2-19-interface">
+    <component name="BaseInterfaceParams"/>
+    <component name="BaseInterfaceParamsMaxBitRateReadOnly"/>
+    <component name="BaseInterfaceParamsAddDefaults"/>
+    <component name="Layer1InterfaceParams"/>
+    <component name="Layer2InterfaceParams"/>
+    <component name="BaseInterfaceStats"/>
+    <component name="Layer1InterfaceStats"/>
+    <component name="Layer2InterfaceStats"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <dataType name="ThreadLinkQuality">
+    <description>
+      Encoded intervals representation of the Thread link quality:
+        * 3 (&gt; 20 dB)
+        * 2 (&gt; 10 dB)
+        * 1 (&gt; 2 dB)
+        * 0 (&lt;= 2 dB)
+    </description>
+    <unsignedInt>
+      <range minInclusive="0" maxInclusive="3"/>
+    </unsignedInt>
+  </dataType>
+
+  <component name="Thread">
+    <object name="Device.Thread." version="2.19">
+      <description>
+        The Thread object is based on the Thread Group specifications:
+        Thread 1.3.0 Specification {{bibref|ThreadSpec}}.
+        It defines interface object ({{object|Radio}} and {{object|MLE}}), and 
+        application object ({{object|BorderRouter}}).
+      </description>
+
+      <parameter name="BorderRouterNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RadioNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MLENumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NodeNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.BorderRouter.{i}."
+      numEntriesParameter="BorderRouterNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        The BorderRouter is capable of forwarding between a Thread Network and 
+        a non-Thread Network. Each BorderRouter entry is associated with a 
+        particular Thread Network (or MLE) instance via the 
+        {{param|MLEReference}} parameter.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <uniqueKey functional="false">
+        <parameter ref="BorderAgentID"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this border router.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status">
+        <description>
+          Indicates the status of this border router.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Started"/>
+            <enumeration value="Stopped"/>
+            <enumeration value="Error"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="BorderAgentID">
+        <description>
+          Globally unique ID generated by the Thread Border Router.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="16" maxLength="16"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="MLEReference" access="readWrite">
+        <description>
+          Define the Thread network to which it belongs.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.MLE." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoutingRef" access="readOnly">
+        <description>
+          Define the routing and forwarding configuration of the BorderRouter, 
+          in order to access the Thread Network it manages. This is the way to 
+          manage ::/64 prefix used for global addressing of the mesh network
+          (see Thread Specification {{bibref|ThreadIPv6Addressing}} "IPv6 
+          Address Configuration").
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".Routing.Router." 
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.Radio.{i}."
+      numEntriesParameter="RadioNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        This object models an 802.15.4 wireless radio 
+        ({{bibref|802.15.4-2020}}) on the device (a stackable interface object
+        as described in {{bibref|TR-181i2|Section 4.2}}).
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <component ref="BaseInterfaceParams"/>
+      <component ref="BaseInterfaceParamsMaxBitRateReadOnly"/>
+      <component ref="Layer1InterfaceParams"/>
+      <component ref="BaseInterfaceStats"/>
+      <component ref="Layer1InterfaceStats"/>
+
+      <parameter name="TransmitPowerSupported">
+        <description>
+          {{list}} List items represent supported transmit power levels as 
+          {{units}} of full power. For example, "0,25,50,75,100". A -1 item 
+          indicates auto mode (automatic decision by CPE). Auto mode allows the
+          {{object}} to adjust transmit power accordingly. For example, this 
+          can be useful for power-save modes such as EU-CoC, where the 
+          {{object}} can adjust power according to activity in the CPE.
+        </description>
+        <syntax>
+          <list/>
+          <int>
+            <range minInclusive="-1" maxInclusive="100"/>
+            <units value="percentage"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitPower" access="readWrite">
+        <description>
+          Indicates the current transmit power level as a {{units}} of full 
+          power. The value MUST be one of the values reported by the 
+          {{param|TransmitPowerSupported}} parameter. A value of -1 indicates 
+          auto mode (automatic decision by device).
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="100"/>
+            <units value="percentage"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="HardwareVersion">
+        <description>
+          This radio's Thread hardware version.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FirmwareVersion">
+        <description>
+          This radio's Thread firmware version.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Thread.MLE.{i}." access="readWrite"
+      numEntriesParameter="MLENumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        This object models the Mesh Link Establishment (MLE) (a stackable 
+        interface object as described in {{bibref|TR-181i2|Section 4.2}}) used 
+        to establish and configure secure radio link of Thread network.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <component ref="BaseInterfaceParams"/>
+      <component ref="BaseInterfaceParamsAddDefaults"/>
+      <component ref="Layer2InterfaceParams"/>
+      <component ref="BaseInterfaceStats"/>
+      <component ref="Layer2InterfaceStats"/>
+
+      <parameter name="SupportedStandards">
+        <description>
+          The items in the list indicate the supported Thread version. The 
+          associated border router can only support one standard at a time.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="1.0"/>
+            <enumeration value="1.1"/>
+            <enumeration value="1.2"/>
+            <enumeration value="1.3"/>
+            <enumeration value="1.4"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingStandard">
+        <description>
+          The operating standard this {{object}} instance is configured for.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="SupportedStandards"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DatasetNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AssociatedNodeNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.MLE.{i}.LeaderData." version="2.19">
+      <description>
+        Indicates the leader data.
+      </description>
+
+      <parameter name="DataVersion">
+        <description>
+          The full Network Data Version the Node currently uses.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LeaderRouterID">
+        <description>
+          The 8-bit {{param}} the Node attempts to utilize upon becoming a 
+          router or leader on the Thread network.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PartitionID">
+        <description>
+          The Thread Leader Partition ID for the Thread network to which the 
+          Node is joined.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="StableDataVersion">
+        <description>
+          The Network Data Version for the stable subset of data the Node 
+          currently uses.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Weighting">
+        <description>
+          The Thread Leader weight used when operating in the Leader role.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.MLE.{i}.Dataset.{i}."
+      numEntriesParameter="DatasetNumberOfEntries" minEntries="0"
+      maxEntries="2" version="2.19">
+
+      <description>
+        Thread network configuration parameters are managed using an
+        active and one optional pending Operational Dataset objects.
+
+        The active Operational Dataset includes parameters (defined in the 
+        Thread specification, see {{bibref|ThreadSpec}}) that are currently in 
+        use across an entire Thread network. The active Operational Dataset 
+        contains:
+        * Timestamp
+        * Channel
+        * Channel Mask
+        * Extended PAN ID
+        * Mesh-Local Prefix
+        * Network Name
+        * PAN ID
+        * PSKc
+        * Network key
+        * Security Policy
+
+        The pending Operational Dataset is used to communicate changes to the 
+        active Operational Dataset before they take effect. The pending 
+        Operational Dataset contains all the parameters from the Active 
+        Operational Dataset, with the addition of: Delay Timer.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Status"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Status">
+        <description>
+          Indicates the status of this dataset.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="active"/>
+            <enumeration value="pending"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="TimeStamp">
+        <description>
+          {{param}} of the dataset, depending status, it represent :
+          * Active Timestamp (timestamp of the current dataset)
+          * Pending Timestamp
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DelayTimer">
+        <description>
+          An unsigned 32-bit number in milliseconds indicate the Time Remaining
+          when pending Dataset will be activated. This value MUST be 0 for 
+          active dataset.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel">
+        <description>
+          The IEEE 802.15.4 channel value of the interface defined in 
+          {{bibref|ThreadSpec}} (Thread specification only supports the 
+          2450 MHz channels).
+        </description>
+
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkName">
+        <description>
+          The name of the network link to the interface.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PanID">
+        <description>
+          The IEEE 802.15.4 PAN ID value link to the interface.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="2" maxLength="2"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExtendedPanID">
+        <description>
+          The IEEE 802.15.4 ExtPAN ID value link to the interface.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="8" maxLength="8"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="MeshLocalPrefix">
+        <description>
+          Indicate the mesh-local IPv6 prefix for the Thread network.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Prefix"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ChannelMask">
+        <description>
+          Indicates the channels within channel page 0, in the 2.4GHz ISM band.
+          The channels are represented in most significant bit order, 
+          with bit value 1 meaning selected, bit value 0 meaning unselected.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="4" maxLength="4"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="PSKc">
+        <description>
+          Pre-Shared Key Credential for inband commissioning.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="16" maxLength="16"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="NetworkKey">
+        <description>
+          Key of the network.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="16" maxLength="16"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.MLE.{i}.Dataset.{i}.SecurityPolicy."
+      version="2.19">
+      <description>
+        The {{object}} provide an administrator a way to enable or disable 
+        certain security related behaviors. 
+      </description>
+
+      <parameter name="RotationTime">
+        <description>
+          The rotation time of the security policy.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Flags">
+        <description>
+          The flags indicates the current security policies for the Thread 
+          partition of the current dataset. The {{param}} is an ordered
+          concatenation of case sensitive characters containing list elements
+          (may be empty).
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="o">
+              <description>
+                indicates that obtaining the Network Key for out-of-band
+                commissioning is enabled
+              </description>
+            </enumeration>
+            <enumeration value="n">
+              <description>
+               indicates that Native Commissioning using PSKc is allowed 
+              </description>
+            </enumeration>
+            <enumeration value="r">
+              <description>
+                indicates that Thread 1.x Routers are enabled
+              </description>
+            </enumeration>
+            <enumeration value="c">
+              <description>
+                indicates that external Commissioner authentication is allowed
+                using PSKc
+              </description>
+            </enumeration>
+            <enumeration value="C">
+              <description>
+                Indicates that Thread 1.2 Commercial Commissioning is enabled
+              </description>
+            </enumeration>
+            <enumeration value="e">
+              <description>
+               indicate that autonomous Enrollment is enabled 
+              </description>
+            </enumeration>
+            <enumeration value="p">
+              <description>
+                indicate that Network Key Provisioning is enabled
+              </description>
+            </enumeration>
+            <enumeration value="R">
+              <description>
+                indicates the Thread Network supports Commercial Commissioning
+                Mode : CCM
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.MLE.{i}.AssociatedNode.{i}."
+      numEntriesParameter="AssociatedNodeNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        A table of the nodes currently associated to the Thread network defined
+        by this {{object|##.MLE.}} instance. This includes the host nodes.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="ExtendedMAC"/>
+      </uniqueKey>
+      
+
+      <component ref="Alias"/>
+
+      <parameter name="LastContactTime">
+        <description>
+          The date and time in UTC when associated Thread node on the device
+          has received data from remote node.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExtendedMAC">
+        <description>
+          Unique MacID of the node.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="16" maxLength="16"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="Rloc16">
+        <description>
+          Rloc of the node.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoutingRole">
+        <description>
+          The current state of the Thread node. 
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Child">
+              <description>
+                if the associated node is a Child, the {{object|Neighbor}} and
+                {{object|Route}} tables MUST be empty
+              </description>
+            </enumeration>
+            <enumeration value="Router"/>
+            <enumeration value="Leader"/>
+            <enumeration value="Unassigned"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Mode">
+        <description>
+          Thread Device mode value.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="rx-on-when-idle" code="1"/>
+            <enumeration value="Full Thread Device" code="2"/>
+            <enumeration value="Full Network Data" code="3"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RouteNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NeighborNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6AddressNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.MLE.{i}.AssociatedNode.{i}.Neighbor.{i}."
+      numEntriesParameter="NeighborNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        Entries in this table reference nodes that are immediate neighbors of
+        the associated node instance. This table is empty if the
+        {{param|#.RoutingRole}} is not a {{enum|Router|#.RoutingRole}} or
+        {{enum|Leader|#.RoutingRole}}.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="NodeReference"/>
+      </uniqueKey>
+
+      <parameter name="NodeReference">
+        <description>
+          References the Thread node that is an immediate neighbor of the
+          {{object|##.AssociatedNode}}. By construction the
+          {{param|#.RoutingRole}} of {{object|##.AssociatedNode}} MUST be
+          {{enum|Router|#.RoutingRole}} or {{enum|Leader|#.RoutingRole}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="##.AssociatedNode."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AvgRSSI">
+        <description>
+          The average Received Signal Strength Indicator (RSSI) is the average
+          measurement of the signal strength received by the parent router node
+          from the neighbor node.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.MLE.{i}.AssociatedNode.{i}.Route.{i}."
+      numEntriesParameter="RouteNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        Entries in this table depend on the associated node routing capabilities
+        defined by the {{param|#.RoutingRole}} and {{param|#.Mode}} according
+        to the Thread Specification (i.e. a child node has an empty {{object}}
+        table). It maintains information for each link to Router neighbor as
+        follows: 
+        * the Router ID assigned to that neighbor.
+        * the routing cost.
+        * the incoming link quality metric calculated from the measured link
+          margin for messages received from the neighbor.
+        * the incoming link quality metric reported by the neighbor for
+          messages arriving from this Router. 
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="ID"/>
+      </uniqueKey>
+
+      <parameter name="ID">
+        <description>
+          Router ID of the route table entry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PathCost">
+        <description>
+          The routing cost advertised by the Next Hop to reach {{param|ID}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LQIn">
+        <description>
+          Link Quality for messages received from {{param|ID}}, depending on
+          the Link Margin value average of the received relative signal
+          strength.
+        </description>
+        <syntax>
+          <dataType ref="ThreadLinkQuality"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LQOut">
+        <description>
+          Link Quality for messages sent to {{param|ID}}, depending on the Link
+          Margin value average of the sent relative signal strength.
+        </description>
+        <syntax>
+          <dataType ref="ThreadLinkQuality"/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.Thread.MLE.{i}.AssociatedNode.{i}.IPv6Address.{i}."
+      numEntriesParameter="IPv6AddressNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        This object represents the list of IPv6 addresses associated with the
+        Thread node.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+        <parameter ref="IPAddress"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Type">
+        <description>
+          The IPv6 address may by of one the following types. Enumeration of:
+          * LinkLocal (Address reachable by a single radio transmission with
+            the prefixes fe80::/16).
+          * MeshLocal (Address reachable within the same Thread network with
+            the prefix defined by the Thread network).
+          * Global (Address reachable from outside a Thread network with the
+            prefix provided by the Border Router).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPAddress">
+        <description>
+          Router ID of the route table entry.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Thread.Node.{i}."
+      numEntriesParameter="NodeNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" version="2.19">
+
+      <description>
+        The table of nodes hosted on the device.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="ExtendedMAC"/>
+      </uniqueKey>
+
+      <parameter name="ExtendedMAC">
+        <description>
+          Unique MacID of the node. 
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="16" maxLength="16"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="Connected" access="readWrite">
+        <description>
+          The connectivity status. When {{true}} this {{object}} instance
+          participates to the Thread network referenced by
+          {{param|MLEReference}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MLEReference">
+        <description>
+          Connect the node to the Thread network managed by the Mesh Link
+          Established.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="#.MLE." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+    </object>
+  </component>
+
+  <component name="ThreadUSP">
+
+    <object base="Device.Thread.BorderRouter.{i}.">
+      <command name="Start()" async="false">
+        <description>
+          Start the BorderRouter Agent.
+        </description>
+      </command>
+
+      <command name="Stop()" async="false">
+        <description>
+          Stop the BorderRouter Agent.
+        </description>
+      </command>
+    </object>
+
+    <object base="Device.Thread.Radio.{i}.">
+      <command name="Scan()" async="false">
+        <description>
+          Perform an IEEE 802.15.4 Active Scan ({{bibref|802.15.4-2020}}).
+        </description>
+        <output>
+          <object name="PanScan.{i}." minEntries="0" maxEntries="unbounded">
+            <description>
+              This table list the set of PAN discovered and reachable from the 
+              node.
+            </description>
+
+            <parameter name="PanID">
+              <description>
+                Personal Area Network Identifier (ex: 0xFFFF).
+              </description>
+              <syntax>
+                <hexBinary>
+                  <size minLength="2" maxLength="2"/>
+                </hexBinary>
+              </syntax>
+            </parameter>
+
+            <parameter name="MACAddress">
+              <description>
+                MAC Extended Address.
+              </description>
+              <syntax>
+                <dataType ref="MACAddress"/>
+              </syntax>
+            </parameter>
+
+            <parameter name="Channel">
+              <description>
+                Radio channels in the range [11-26].
+              </description>
+              <syntax>
+                <unsignedInt>
+                  <range minInclusive="11" maxInclusive="26"/>
+                </unsignedInt>
+              </syntax>
+            </parameter>
+
+            <parameter name="RSSI">
+              <description>
+                Received Signal Strength Indicator, this field SHALL have the 
+                units of {{units}}, having the range -128 {{units}} to 0 
+                {{units}}.
+              </description>
+              <syntax>
+                <int>
+                  <range minInclusive="-128"  maxInclusive="0"/>
+                  <units value="dBm"/>
+                </int>
+              </syntax>
+            </parameter>
+
+            <parameter name="LQI">
+              <description>
+                Link Quality Indicator (LQI) depending on the Link Margin value
+                average of the received relative signal strength.
+              </description>
+              <syntax>
+                <dataType ref="ThreadLinkQuality"/>
+              </syntax>
+            </parameter>
+
+          </object>
+        </output>
+      </command>
+
+      <command name="EnergyScan()" async="false">
+        <description>
+          Perform an IEEE 802.15.4 Energy Scan ({{bibref|802.15.4-2020}} and 
+          {{bibref|ED_scan_802.15.4}}).
+        </description>
+        <output>
+          <object name="ChannelScan.{i}." minEntries="0" maxEntries="unbounded">
+            <description>
+              Received Signal Strength Indicator for each channel in the range 
+              [11-26].
+            </description>
+
+            <parameter name="Channel">
+              <description>
+                Radio channel in the range [11-26].
+              </description>
+              <syntax>
+                <unsignedInt>
+                  <range minInclusive="11" maxInclusive="26"/>
+                </unsignedInt>
+              </syntax>
+            </parameter>
+
+            <parameter name="RSSI">
+              <description>
+                Received Signal Strength Indicator, this field SHALL have the
+                units of {{units}}, having the range -128 {{units}} to 0
+                {{units}}.
+              </description>
+              <syntax>
+                <int>
+                  <range minInclusive="-128"  maxInclusive="0"/>
+                  <units value="dBm"/>
+                </int>
+              </syntax>
+            </parameter>
+          </object>
+        </output>
+      </command>
+    </object>
+
+    <object base="Device.Thread.MLE.{i}.">
+
+      <command name="SetActiveDataset()" async="false">
+        <description>
+          Create, or replace existing, {{object|Dataset}} instance.
+
+          When this command is call :
+          * if the {{object|Device.Thread.MLE.{i}.}} instance
+          is enabled and {{param|Status}} is Up then all nodes attached to the 
+          interface receive the order to change their Dataset,
+          * else the active Dataset is stored and will be activated
+          when the {{object|Device.Thread.MLE.{i}.}} instance becomes enabled 
+          and Up.
+        </description>
+        <input>
+            <parameter name="TLVs">
+              <description>
+                The TLV encodings for the active {{object|Dataset}}
+                parameters that will be used across an entire Thread network.
+                The active Operational Dataset TLVs encode :
+                * Active Timestamp
+                * Channel
+                * Channel Mask
+                * Extended PAN ID
+                * Mesh-Local Prefix
+                * Network Name
+                * PAN ID
+                * PSKc
+                * Security Policy
+    
+                The encoding in {{param}} for the active Dataset field is defined in
+                the Thread specification (see {{bibref|ThreadSpec}}).
+              </description>
+              <syntax>
+                <hexBinary/>
+              </syntax>
+            </parameter>
+        </input>
+      </command>
+
+      <command name="SetPendingDataset()" async="false">
+        <description>
+          Create, or replace existing, pending {{object|Dataset}} instance with
+          parameters provided in the TLVs.
+        </description>
+        <input>
+            <parameter name="TLVs">
+              <description>
+                The TLV encodings for the pending Dataset parameters that will
+                be use across an entire Thread network. The pending Operational
+                Dataset TLVs encode :
+                * Pending Timestamp
+                * Channel
+                * Channel Mask
+                * Extended PAN ID
+                * Mesh-Local Prefix
+                * Network Name
+                * PAN ID
+                * PSKc
+                * Security Policy
+
+                The encoding in {{param}} for the pending Dataset field is defined
+                in the Thread specification (see {{bibref|ThreadSpec}}).
+              </description>
+              <syntax>
+                <hexBinary/>
+              </syntax>
+            </parameter>
+        </input>
+      </command>
+
+      <command name="GetActiveDataset()" async="false">
+        <description>
+          Get the TLVs of the active {{object|Dataset}}
+          ({{param|Dataset.{i}.Status}} is active).
+        </description>
+        <output>
+            <parameter name="TLVs">
+              <description>
+                The TLV encodings for the active Dataset parameters that will
+                be use across an entire Thread network. The active Operational
+                Dataset TLVs encode :
+                * Active Timestamp
+                * Channel
+                * Channel Mask
+                * Extended PAN ID
+                * Mesh-Local Prefix
+                * Network Name
+                * PAN ID
+                * PSKc
+                * Security Policy
+
+                The encoding in {{param}} for the active Dataset field is defined in
+                the Thread specification (see {{bibref|ThreadSpec}}).
+              </description>
+              <syntax>
+                <hexBinary/>
+              </syntax>
+            </parameter>
+        </output>
+      </command>
+
+      <command name="GetPendingDataset()" async="false">
+        <description>
+          Get the TLVs of the pending {{object|Dataset}}
+          ({{param|Dataset.{i}.Status}} is pending).
+        </description>
+        <output>
+            <parameter name="TLVs">
+              <description>
+                The TLV encodings the pending Dataset parameters that will
+                be use across an entire Thread network. The pending Operational
+                Dataset TLVs encode :
+                * Pending Timestamp
+                * Channel
+                * Channel Mask
+                * Delay Timer
+                * Extended PAN ID
+                * Mesh-Local Prefix
+                * Network Name
+                * PAN ID
+                * PSKc
+                * Security Policy
+
+                The encoding in {{param}} for the pending Dataset field is defined
+                in the Thread specification (see {{bibref|ThreadSpec}}).
+              </description>
+              <syntax>
+                <hexBinary/>
+              </syntax>
+            </parameter>
+        </output>
+      </command>
+    </object>
+  </component>
+
+  <model name="Thread:2.19">
+    <component ref="Root"/>
+    <component ref="Thread"/>
+  </model>
+</dm:document>

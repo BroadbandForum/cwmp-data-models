@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Device:2 Root Data Model: Common Object definitions [CollectionDevice]
+
+Copyright (c) 2010-2024, Broadband Forum
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the following
+conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The above license is used as a license under copyright only.
+Please reference the Forum IPR Policy for patent licensing terms
+<https://www.broadband-forum.org/ipr-policy>.
+
+Any moral rights which are necessary to exercise under the above
+license grant are also deemed granted under this license.
+
+Comments or questions about this Broadband Forum data model should be
+directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  urn:broadband-forum-org:cwmp:datamodel-1-14
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-1-0
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-19-0-collectiondevice"
+  file="tr-181-2-19-0-collectiondevice.xml">
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <component name="CollectionDevice">
+    <object name="Device.CollectionDevice.{i}." access="readOnly"
+        minEntries="0" maxEntries="unbounded"
+        numEntriesParameter="CollectionDeviceNumberOfEntries" version="2.16">
+      <description>
+        A {{object}} is a device in the network that is represented in the
+        {{object|#}} data model in multiple places. An instance of {{object}}
+        represents a physical device that is modeled via a set of data model
+        objects that are distributed throughout the data model, and brings them
+        together into a single Data Model Object. For example an entry with a
+        {{object|#.WiFi.DataElements.Network.Device}} and a
+        {{object|#.IEEE1905.AL.NetworkTopology.IEEE1905Device}} is the same
+        device represented in two places.
+
+        When the entry with {{param|IsNativeDevice}} is {{true}}, that entry will represent the Native
+        Device which is modeled by the Root Object {{object|#}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias" version="2.16"/>
+
+      <parameter name="IsNativeDevice" access="readOnly">
+        <description>
+          If {{true}} this {{object}} models the top level {{object|#}} only one instance
+          can represent the top-level device. If {{false}} this {{object}} represents another
+          device in the network.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DataElementsDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.WiFi.DataElements.Network.Device}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.WiFi.DataElements.Network.Device}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".WiFi.DataElements.Network.Device."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEE1905DeviceRef" access="readOnly">
+        <description>
+          {{reference|the
+          {{object|#.IEEE1905.AL.NetworkTopology.IEEE1905Device}} instance
+          corresponding to this {{object}}, or {{empty}} if this {{object}} is
+          not represented in the
+          {{object|#.IEEE1905.AL.NetworkTopology.IEEE1905Device}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".IEEE1905.AL.NetworkTopology.IEEE1905Device."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LLDPDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.LLDP.Discovery.Device}} instance
+          corresponding to this {{object}}, or {{empty}} if this {{object}} is
+          not represented in the {{object|#.LLDP.Discovery.Device}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".LLDP.Discovery.Device."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UPnPDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.UPnP.Discovery.Device}} instance
+          corresponding to this {{object}}, or {{empty}} if this {{object}} is
+          not represented in the {{object|#.UPnP.Discovery.Device}} table}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent=".UPnP.Discovery.Device."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HostDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.Hosts.Host}} instance corresponding to
+          this {{object}}, or {{empty}} if this {{object}} is not represented
+          in the {{object|#.Hosts.Host}} table}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent=".Hosts.Host."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="GhnAssociatedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.Ghn.Interface.{i}.AssociatedDevice}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.Ghn.Interface.{i}.AssociatedDevice}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".Ghn.Interface.{i}.AssociatedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MoCAAssociatedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.MoCA.Interface.{i}.AssociatedDevice}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.MoCA.Interface.{i}.AssociatedDevice}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".MoCA.Interface.{i}.AssociatedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HomePlugAssociatedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.HomePlug.Interface.{i}.AssociatedDevice}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.HomePlug.Interface.{i}.AssociatedDevice}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".HomePlug.Interface.{i}.AssociatedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HPNAAssociatedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.HPNA.Interface.{i}.AssociatedDevice}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.HPNA.Interface.{i}.AssociatedDevice}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".HPNA.Interface.{i}.AssociatedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UPAAssociatedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.UPA.Interface.{i}.AssociatedDevice}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.UPA.Interface.{i}.AssociatedDevice}} table}}
+        </description>
+          <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".UPA.Interface.{i}.AssociatedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="WiFiAssociatedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.WiFi.AccessPoint.{i}.AssociatedDevice}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.WiFi.AccessPoint.{i}.AssociatedDevice}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".WiFi.AccessPoint.{i}.AssociatedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ZigBeeAssociatedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.ZigBee.Interface.{i}.AssociatedDevice}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.ZigBee.Interface.{i}.AssociatedDevice}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".ZigBee.Interface.{i}.AssociatedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ThreadAssociatedNodeRef" access="readOnly" 
+        version="2.19">
+        <description>
+          {{reference|the {{object|#.Thread.MLE.{i}.AssociatedNode}}
+          instance corresponding to this {{object}}, or {{empty}} if this
+          {{object}} is not represented in the
+          {{object|#.Thread.MLE.{i}.AssociatedNode}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent=".Thread.MLE.{i}.AssociatedNode."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="CollectionDeviceUSP">
+    <object base="Device.">
+      <parameter name="CollectionDeviceNumberOfEntries" version="2.16">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <component ref="CollectionDevice"/>
+    <object base="Device.CollectionDevice.{i}.">
+      <parameter name="ProxiedDeviceRef" access="readOnly">
+        <description>
+          {{reference|the {{object|#.ProxiedDevice}} instance corresponding to
+          this {{object}}, or {{empty}} if this {{object}} is not represented
+          in the {{object|#.ProxiedDevice}} table}}
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="Device.ProxiedDevice."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="CollectionDeviceCWMP">
+    <object base="Device.">
+      <parameter name="CollectionDeviceNumberOfEntries" version="2.19">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+    <component ref="CollectionDevice" version="2.19"/>
+  </component>
+
+</dm:document>

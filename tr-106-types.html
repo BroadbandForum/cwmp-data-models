@@ -1,850 +1,846 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tr-106-types.xml</title>
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
+    <meta charset="utf-8" />
+    <meta name="generator" content="pandoc" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,
+          user-scalable=yes" />
+    <title>tr-106-types.xml</title>
+    <style>
+        code{white-space: pre-wrap;}
+        span.smallcaps{font-variant: small-caps;}
+        div.columns{display: flex; gap: min(4vw, 1.5em);}
+        div.column{flex: auto; overflow-x: auto;}
+        div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+        /* The extra [class] is a hack that increases specificity enough to
+           override a similar rule in reveal.js */
+        ul.task-list[class]{list-style: none;}
+        ul.task-list li input[type="checkbox"] {
+            font-size: inherit;
+            width: 0.8em;
+            margin: 0 0.8em 0.2em -1.6em;
+            vertical-align: middle;
+        }
+    </style>
+
+    <!-- Sidebar ToC styles -->
+    <style>
+    @media screen and (min-width: 60em) {
+        body {
+            display: flex;
+            align-items: stretch;
+            margin: 0px;
+            /* XXX this is experimental; may need to insert zero-width spaces */
+            overflow-wrap: break-word;
+        }
+
+        #main {
+            flex: 4 2 auto;
+            overflow: auto;
+            order: 2;
+            padding: 5px;
+        }
+
+        #TOC {
+            position: sticky;
+            order: 1;
+            flex: 1 0 auto;
+            margin: 0 0;
+            top: 0px;
+            left: 0px;
+            height: 100vh;
+            line-height: 1.4;
+            resize: horizontal;
+            font-size: larger;
+            overflow: auto;
+            border-right: 1px solid #73AD21;
+            padding: 5px;
+            max-width: 20%;
+        }
+
+        #TOC ul {
+            margin: 0.35em 0;
+            padding: 0 0 0 1em;
+            list-style-type: none;
+        }
+
+        #TOC ul ul {
+            margin: 0.25em 0;
+        }
+
+        #TOC ul ul ul {
+            margin: 0.15em 0;
+        }
+
+        #TOC {
+            z-index: 1;
+        }
     }
-  </style>
-  <!-- Sidebar ToC styles -->
+    </style>
 
-  <style>
-  @media screen and (min-width: 60em) {
-      body {
-          display: flex;
-          align-items: stretch;
-          margin: 0px;
-          /* XXX this is experimental; may need to insert zero-width spaces */
-          overflow-wrap: break-word;
-      }
+    <!-- ToC expansion and contraction script -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var expandables = document.getElementsByClassName('expandable');
+        for (i = 0; i < expandables.length; i++) {
+            expandables[i].addEventListener('click', function() {
+                this.parentElement.querySelector('.collapsed').classList
+                    .toggle('expanded');
+                this.classList.toggle('collapsible');
+            });
+        }
+    });
+    </script>
 
-      #main {
-          flex: 4 2 auto;
-          overflow: auto;
-          order: 2;
-          padding: 5px;
-      }
+    <!-- ToC expansion and contraction styles -->
+    <style>
+    .expandable {
+        cursor: pointer;
+        user-select: none;
+        display: list-item;
+        /* Circled Plus + non-breakable space */
+        list-style-type: "\2295\A0";
+    }
 
-      #TOC {
-          position: sticky;
-          order: 1;
-          flex: 1 0 auto;
-          margin: 0 0;
-          top: 0px;
-          left: 0px;
-          height: 100vh;
-          line-height: 1.4;
-          resize: horizontal;
-          font-size: larger;
-          overflow: auto;
-          border-right: 1px solid #73AD21;
-          padding: 5px;
-          max-width: 20%;
-      }
+    .collapsible {
+        /* Circled Minus + non-breakable space */
+        list-style-type: "\2296\A0";
+    }
 
-      #TOC ul {
-          margin: 0.35em 0;
-          padding: 0 0 0 1em;
-          list-style-type: none;
-      }
+    .collapsed {
+        display: none;
+    }
 
-      #TOC ul ul {
-          margin: 0.25em 0;
-      }
+    .expanded {
+        display: grid; /* needed by the 'order' property */
+    }
+    </style>
 
-      #TOC ul ul ul {
-          margin: 0.15em 0;
-      }
+    <!-- ToC sorting script (works for object names and profile headers) -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        /* 'A.B.' -> {prefix: '', name: 'A.B.', 'version': ''}
+           '_Baseline:1' -> {prefix: '_', name: 'Baseline', version: '1'} */
+        var regex = /^(?<prefix>_?)(?<name>[^:]*)(:?)(?<version>\d*)/;
+        var lists = document.getElementsByClassName('ordered');
+        for (var i = 0; i < lists.length; i++) {
+            var items = lists[i].children;
+            var temp = [];
+            for (var j = 0; j < items.length; j++) {
+                /* this assumes that the first child contains the text */
+                temp.push([j, items[j].children[0].innerText]);
+            }
+            temp.sort((a, b) => {
+                /* 'Notation' (which is used for profiles) must come first */
+                var a1 = a[1] == 'Notation' ? ' Notation' : a[1];
+                var b1 = b[1] == 'Notation' ? ' Notation' : b[1];
+                var a1_groups = a1.match(regex).groups;
+                var b1_groups = b1.match(regex).groups;
+                var a1_tuple =  [
+                    a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
+                    parseInt(a1_groups.version || 0)];
+                var b1_tuple =  [
+                    b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
+                    parseInt(b1_groups.version || 0)];
+                return a1_tuple < b1_tuple ? -1 : a1_tuple > b1_tuple ? 1 : 0;
+            });
+            temp.forEach((order_text, j) => {
+                var k = order_text[0];
+                items[k].style.order = j;
+            });
+        }
+    });
+    </script>
 
-      #TOC {
-          z-index: 1;
-      }
-  }
-  </style>
+    <!-- Automatic title generation (from anchor ids) script
+         XXX only works for non-deprecated object parameters and doesn't
+             show correct full paths; should get rid of it? -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var pars = document.getElementsByClassName('parameter');
+        var regex = /\w\.\w+:[0-9.]+\./;
+        for (var i = 0; i < pars.length; i++) {
+            if (pars[i].firstElementChild && pars[i].firstElementChild.
+                    firstElementChild) {
+                pars[i].firstElementChild.title =
+                    pars[i].firstElementChild.firstElementChild.id.
+                    replace(regex, '');
+            }
+        }
+    });
+    </script>
 
-  <!-- ToC expansion and contraction script -->
+    <!-- Automatic on-hover link generation script -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var hoverlink = null;
 
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var expandables = document.getElementsByClassName('expandable');
-      for (i = 0; i < expandables.length; i++) {
-          expandables[i].addEventListener('click', function() {
-              this.parentElement.querySelector('.collapsed').classList
-                  .toggle('expanded');
-              this.classList.toggle('collapsible');
+        var anchors = document.querySelectorAll('td span[id]:not(:empty)');
+        for (var i = 0; i < anchors.length; i++) {
+          var cell = anchors[i].parentElement;
+
+          cell.addEventListener('mouseenter', event => {
+            var target = event.target;
+            var anchor = target.querySelector('span[id]:not(:empty)');
+
+            /* derive the item type from the row's first class item,
+             * which might have a leading 'deprecated-' etc. and
+             * might also contain additional hyphens */
+            var itemType = (target.parentElement.classList.item(0) || 'item').
+                replace(/^\w+-/, '').replace(/-/g, ' ');
+
+            if (hoverlink) {
+              hoverlink.remove();
+              hoverlink = null;
+            }
+
+            hoverlink = document.createElement('a');
+            hoverlink.href = '#' + anchor.id;
+            hoverlink.className = 'hoverlink';
+            hoverlink.title = 'Permalink to this ' + itemType;
+            target.appendChild(hoverlink);
           });
-      }
-  });
-  </script>
 
-  <!-- ToC expansion and contraction styles -->
-
-  <style>
-  .expandable {
-      cursor: pointer;
-      user-select: none;
-      display: list-item;
-      /* Circled Plus + non-breakable space */
-      list-style-type: "\2295\A0";
-  }
-
-  .collapsible {
-      /* Circled Minus + non-breakable space */
-      list-style-type: "\2296\A0";
-  }
-
-  .collapsed {
-      display: none;
-  }
-
-  .expanded {
-      display: grid; /* needed by the 'order' property */
-  }
-  </style>
-
-  <!-- ToC sorting script (works for object names and profile headers) -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      /* 'A.B.' -> {prefix: '', name: 'A.B.', 'version': ''}
-         '_Baseline:1' -> {prefix: '_', name: 'Baseline', version: '1'} */
-      var regex = /^(?<prefix>_?)(?<name>[^:]*)(:?)(?<version>\d*)/;
-      var lists = document.getElementsByClassName('ordered');
-      for (var i = 0; i < lists.length; i++) {
-          var items = lists[i].children;
-          var temp = [];
-          for (var j = 0; j < items.length; j++) {
-              /* this assumes that the first child contains the text */
-              temp.push([j, items[j].children[0].innerText]);
-          }
-          temp.sort((a, b) => {
-              /* 'Notation' (which is used for profiles) must come first */
-              var a1 = a[1] == 'Notation' ? ' Notation' : a[1];
-              var b1 = b[1] == 'Notation' ? ' Notation' : b[1];
-              var a1_groups = a1.match(regex).groups;
-              var b1_groups = b1.match(regex).groups;
-              var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
-                  parseInt(a1_groups.version || 0)];
-              var b1_tuple =  [
-                  b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
-                  parseInt(b1_groups.version || 0)];
-              return a1_tuple < b1_tuple ? -1 : a1_tuple > b1_tuple ? 1 : 0;
+          cell.addEventListener('mouseleave', () => {
+            if (hoverlink) {
+              hoverlink.remove();
+              hoverlink = null;
+            }
           });
-          temp.forEach((order_text, j) => {
-              var k = order_text[0];
-              items[k].style.order = j;
-          });
-      }
-  });
-  </script>
+        }
+    });
+    </script>
 
-  <!-- Automatic title generation (from anchor ids) script
-       XXX only works for non-deprecated object parameters and doesn't
-           show correct full paths; should get rid of it? -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var pars = document.getElementsByClassName('parameter');
-      var regex = /\w\.\w+:[0-9.]+\./;
-      for (var i = 0; i < pars.length; i++) {
-          if (pars[i].firstElementChild && pars[i].firstElementChild.
-                  firstElementChild) {
-              pars[i].firstElementChild.title =
-                  pars[i].firstElementChild.firstElementChild.id.
-                  replace(regex, '');
-          }
-      }
-  });
-  </script>
-
-  <!-- Automatic on-hover link generation script -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var hoverlink = null;
-
-      var anchors = document.querySelectorAll('td span[id]:not(:empty)');
-      for (var i = 0; i < anchors.length; i++) {
-        var cell = anchors[i].parentElement;
-
-        cell.addEventListener('mouseenter', event => {
-          var target = event.target;
-          var anchor = target.querySelector('span[id]:not(:empty)');
-
-          /* derive the item type from the row's first class item,
-           * which might have a leading 'deprecated-' etc. and
-           * might also contain additional hyphens */
-          var itemType = (target.parentElement.classList.item(0) || 'item').
-              replace(/^\w+-/, '').replace(/-/g, ' ');
-
-          if (hoverlink) {
-            hoverlink.remove();
-            hoverlink = null;
-          }
-
-          hoverlink = document.createElement('a');
-          hoverlink.href = '#' + anchor.id;
-          hoverlink.className = 'hoverlink';
-          hoverlink.title = 'Permalink to this ' + itemType;
-          target.appendChild(hoverlink);
-        });
-
-        cell.addEventListener('mouseleave', () => {
-          if (hoverlink) {
-            hoverlink.remove();
-            hoverlink = null;
-          }
-        });
-      }
-  });
-  </script>
-
-  <!-- Hoverlink styles -->
-
-  <style>
-  :root {
-      --hoverlink-size: 0.9em;
-  }
-
-  .hoverlink {
-      text-decoration: none;
-  }
-
-  .hoverlink::after {
-      position: absolute;
-      display: inline-block;
-      content: "";
-      width: var(--hoverlink-size);
-      height: var(--hoverlink-size);
-      background-size: var(--hoverlink-size) var(--hoverlink-size);
-      background-image: url(data:image/png;base64,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);
-  }
-  </style>
-
-  <!-- Table body expansion and contraction script -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var showables = document.getElementsByClassName('showable');
-      for (var i = 0; i < showables.length; i++) {
-          var showable = showables[i];
-          showable.addEventListener('click', function() {
-              this.classList.toggle('show');
-          });
-      }
-
-      showables = document.getElementsByClassName('showable2');
-      for (var i = 0; i < showables.length; i++) {
-          var showable = showables[i];
-          showable.addEventListener('click', function(event) {
-              this.classList.toggle('show2');
-              event.stopPropagation();
-          });
-      }
-  });
-  </script>
-
-  <!-- Table body expansion and contraction styles -->
-
-  <style>
-  .chevron {
-      color: var(--link-color);
-      cursor: pointer;
-  }
-
-  .chevron::before {
-      /* Single Right-Pointing Angle Quotation Mark */
-      content: "\00203A ";
-  }
-
-  .chevron .click::after {
-      content: " Click to show/hide...";
-  }
-
-  .hide {
-      display: none;
-  }
-
-  .show tr {
-      display: table-row;
-  }
-
-  .show td div, .show ul, .show ol {
-      display: block;
-  }
-
-  .show td span {
-      display: inline;
-  }
-
-  .show2 *.hide {
-      display: none;
-  }
-
-  </style>
-
-  <!-- Global styles (that affect the entire document) -->
-
-  <style>
-  /* light mode support */
-  @media (prefers-color-scheme: light) {
+    <!-- Hoverlink styles -->
+    <style>
     :root {
-      --background-color: white;
-      --foreground-color: black;
-      --diff-background-color: aliceblue;
-      --link-color: blue;
-      --parameter-color: white;
-      --object-color: #ffff99;
-      --command-color: #66cdaa;
-      --event-color: #66cdaa;
-      --argument-container-color: silver;
-      --argument-object-color: pink;
-      --argument-parameter-color: #ffe4e1;
-      --mountable-object-color: #b3e0ff;
-      --mountpoint-object-color: #4db8ff;
-      --stripe-direction: 90deg;
-      --stripe-stop-point-1: 1%;
-      --stripe-stop-point-2: 2%;
-      --stripe-color-deprecated: #eeeeee;
-      --stripe-color-obsoleted: #dddddd;
-      --stripe-color-deleted: #cccccc;
+        --hoverlink-size: 0.9em;
     }
-  }
 
-  /* dark mode support */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: black;
-      --foreground-color: white;
-      --diff-background-color: #0f0700;
-      --link-color: lightblue;
-      --parameter-color: black;
-      --object-color: #bbbb44;
-      --command-color: #56bd9a;
-      --event-color: #56bd9a;
-      --argument-container-color: #777777;
-      --argument-object-color: #dfa0ab;
-      --argument-parameter-color: #bfa4a1;
-      --mountable-object-color: #b3e0ff;
-      --mountpoint-object-color: #3da8ef;
-      --stripe-color-deprecated: #555555;
-      --stripe-color-obsoleted: #444444;
-      --stripe-color-deleted: #333333;
-    }
     .hoverlink {
-      filter: invert(1);
+        text-decoration: none;
     }
-  }
-
-  body, table {
-      background-color: var(--background-color);
-      color: var(--foreground-color);
-      font-family: helvetica, arial, sans-serif;
-      font-size: 9pt;
-  }
-
-  h1 {
-      font-size: 14pt;
-  }
-
-  h2 {
-      font-size: 12pt;
-  }
-
-  h3 {
-      font-size: 10pt;
-  }
-
-  a:link, a:visited {
-      color: var(--link-color);
-  }
-
-  sup {
-      vertical-align: super;
-  }
-
-  table {
-      text-align: left;
-      vertical-align: top;
-  }
-
-  td, th {
-      padding: 2px;
-      text-align: left;
-      vertical-align: top;
-  }
-
-  /* this is intended for hoverlinks */
-  td span {
-      padding-right: 2px;
-  }
-
-  table.middle-width {
-      width: 60%;
-  }
-
-  table.full-width {
-      width: 100%;
-  }
-
-  thead th {
-      background-color: #999999;
-  }
-
-  table.partial-border {
-      border-left-style: hidden;
-      border-right-style: hidden;
-      border-collapse: collapse;
-  }
-
-  table.partial-border th,
-  table.partial-border td {
-      border-style: solid;
-      border-width: 1px;
-      border-color: lightgray;
-  }
-
-  td > div,
-  td > p {
-      margin-block-start: 0;
-      margin-block-end: 1em;
-  }
-
-  td > div:last-of-type,
-  td > p:last-of-type {
-      margin-block-end: 0;
-  }
-
-  .centered {
-      text-align: center;
-  }
-
-  .inserted {
-      color: blue;
-  }
-
-  .removed {
-      color: red;
-      text-decoration: line-through;
-  }
-
-  /* XXX this is a bad name */
-  .diffs {
-      background-color: var(--diff-background-color);
-      opacity: 0.8;
-  }
-
-  .parameter {
-      background-color: var(--parameter-color);
-  }
-
-  .deprecated-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--parameter-color),
-          var(--parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--parameter-color),
-          var(--parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--parameter-color),
-          var(--parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .object {
-      background-color: var(--object-color);
-  }
-
-  .deprecated-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--object-color),
-          var(--object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--object-color),
-          var(--object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--object-color),
-          var(--object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .command {
-      background-color: var(--command-color);
-  }
-
-  .deprecated-command {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--command-color),
-          var(--command-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-command {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--command-color),
-          var(--command-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-command {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--command-color),
-          var(--command-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .event {
-      background-color: var(--event-color);
-  }
-
-  .deprecated-event {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--event-color),
-          var(--event-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-event {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--event-color),
-          var(--event-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-event {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--event-color),
-          var(--event-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .argument-container {
-      background-color: var(--argument-container-color);
-  }
-
-  .deprecated-argument-container {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-container-color),
-          var(--argument-container-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-argument-container {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-container-color),
-          var(--argument-container-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-argument-container {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-container-color),
-          var(--argument-container-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .argument-parameter {
-      background-color: var(--argument-parameter-color);
-  }
-
-  .deprecated-argument-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-parameter-color),
-          var(--argument-parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-argument-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-parameter-color),
-          var(--argument-parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-argument-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-parameter-color),
-          var(--argument-parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .argument-object {
-      background-color: var(--argument-object-color);
-  }
-
-  .deprecated-argument-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-object-color),
-          var(--argument-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-argument-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-object-color),
-          var(--argument-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-argument-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-object-color),
-          var(--argument-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .mountable-object {
-      background-color: var(--mountable-object-color);
-  }
-
-  .deprecated-mountable-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountable-object-color),
-          var(--mountable-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-mountable-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountable-object-color),
-          var(--mountable-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-mountable-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountable-object-color),
-          var(--mountable-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .mountpoint-object {
-      background-color: var(--mountpoint-object-color);
-  }
-
-  .deprecated-mountpoint-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountpoint-object-color),
-          var(--mountpoint-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-mountpoint-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountpoint-object-color),
-          var(--mountpoint-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-mountpoint-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountpoint-object-color),
-          var(--mountpoint-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-  </style>
-
-  <!-- Local styles (that affect only data model tables) -->
-
-  <style>
-  /* center column 2 (Base Type) */
-  .data-type-table th:nth-child(2),
-  .data-type-table td:nth-child(2) {
-      text-align: center;
-  }
-
-  /* center columns 3 (Write), 5 (Object Default), 6 (Version) */
-  .data-model-table th:nth-child(3),
-  .data-model-table td:nth-child(3),
-  .data-model-table th:nth-child(5),
-  .data-model-table td:nth-child(5),
-  .data-model-table th:nth-child(6),
-  .data-model-table td:nth-child(6)
-  {
-      text-align: center;
-  }
-
-  .data-model-table th,
-  .data-model-table td {
-      hyphenate-character: "";
-  }
-
-  /* word wrap/break column 1 (Name) */
-  .data-model-table td:first-child {
-      word-wrap: break-word;
-      word-break: break-all;
-      min-width: 27ch;
-  }
-
-  /* word wrap/break column 2 (Base Type) */
-  .data-model-table td:nth-child(2) {
-      word-wrap: break-word;
-      word-break: break-all;
-      min-width: 12ch;
-  }
-
-  /* word wrap/break column 3 (Write) */
-  .data-model-table td:nth-child(3) {
-      min-width: 1ch;
-  }
-
-  /* word wrap/break column 5 (Object Default) */
-  .data-model-table td:nth-child(5) {
-      word-wrap: break-word;
-      word-break: break-all;
-      min-width: 12ch;
-  }
-
-  /* word wrap/break column 6 (Version) */
-  .data-model-table td:nth-child(6) {
-      min-width: 6ch;
-  }
-
-  /* center column 1 (Abbreviation) */
-  .profile-notation-table th:nth-child(1),
-  .profile-notation-table td:nth-child(1) {
-      text-align: center;
-  }
-
-  /* center column 2 (Requirement) */
-  .profile-requirements-table th:nth-child(2),
-  .profile-requirements-table td:nth-child(2) {
-      text-align: center;
-  }
-  </style>
+
+    .hoverlink::after {
+        position: absolute;
+        display: inline-block;
+        content: "";
+        width: var(--hoverlink-size);
+        height: var(--hoverlink-size);
+        background-size: var(--hoverlink-size) var(--hoverlink-size);
+        background-image: url(data:image/png;base64,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);
+    }
+    </style>
+
+    <!-- Table body expansion and contraction script -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var showables = document.getElementsByClassName('showable');
+        for (var i = 0; i < showables.length; i++) {
+            var showable = showables[i];
+            showable.addEventListener('click', function() {
+                this.classList.toggle('show');
+            });
+        }
+
+        showables = document.getElementsByClassName('showable2');
+        for (var i = 0; i < showables.length; i++) {
+            var showable = showables[i];
+            showable.addEventListener('click', function(event) {
+                this.classList.toggle('show2');
+                event.stopPropagation();
+            });
+        }
+    });
+    </script>
+
+    <!-- Table body expansion and contraction styles -->
+    <style>
+    .chevron {
+        color: var(--link-color);
+        cursor: pointer;
+        margin-block-end: 0;
+    }
+
+    .chevron::before {
+        /* Single Right-Pointing Angle Quotation Mark */
+        content: "\00203A ";
+    }
+
+    .chevron .click::after {
+        content: " Click to show/hide...";
+    }
+
+    .chevron p {
+        display: inline;
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .show tr {
+        display: table-row;
+    }
+
+    .show td div, .show ul, .show ol {
+        display: block;
+    }
+
+    .show td span {
+        display: inline;
+    }
+
+    .show2 *.hide {
+        display: none;
+    }
+
+    </style>
+
+    <!-- Global styles (that affect the entire document) -->
+    <style>
+    /* light mode support */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --background-color: white;
+        --foreground-color: black;
+        --diff-background-color: aliceblue;
+        --link-color: blue;
+        --parameter-color: white;
+        --object-color: #ffff99;
+        --command-color: #66cdaa;
+        --event-color: #66cdaa;
+        --argument-container-color: silver;
+        --argument-object-color: pink;
+        --argument-parameter-color: #ffe4e1;
+        --mountable-object-color: #b3e0ff;
+        --mountpoint-object-color: #4db8ff;
+        --stripe-direction: 90deg;
+        --stripe-stop-point-1: 1%;
+        --stripe-stop-point-2: 2%;
+        --stripe-color-deprecated: #eeeeee;
+        --stripe-color-obsoleted: #dddddd;
+        --stripe-color-deleted: #cccccc;
+      }
+    }
+
+    /* dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background-color: black;
+        --foreground-color: white;
+        --diff-background-color: #0f0700;
+        --link-color: lightblue;
+        --parameter-color: black;
+        --object-color: #bbbb44;
+        --command-color: #56bd9a;
+        --event-color: #56bd9a;
+        --argument-container-color: #777777;
+        --argument-object-color: #dfa0ab;
+        --argument-parameter-color: #bfa4a1;
+        --mountable-object-color: #b3e0ff;
+        --mountpoint-object-color: #3da8ef;
+        --stripe-color-deprecated: #555555;
+        --stripe-color-obsoleted: #444444;
+        --stripe-color-deleted: #333333;
+      }
+      .hoverlink {
+        filter: invert(1);
+      }
+    }
+
+    body, table {
+        background-color: var(--background-color);
+        color: var(--foreground-color);
+        font-family: sans-serif;
+        font-size: 9pt;
+    }
+
+    h1 {
+        font-size: 14pt;
+    }
+
+    h2 {
+        font-size: 12pt;
+    }
+
+    h3 {
+        font-size: 10pt;
+    }
+
+    a:link, a:visited {
+        color: var(--link-color);
+    }
+
+    sup {
+        vertical-align: super;
+    }
+
+    table {
+        text-align: left;
+        vertical-align: top;
+    }
+
+    td, th {
+        padding: 2px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    /* this is intended for hoverlinks */
+    td span {
+        padding-right: 2px;
+    }
+
+    table.middle-width {
+        width: 60%;
+    }
+
+    table.full-width {
+        width: 100%;
+    }
+
+    thead th {
+        background-color: #999999;
+    }
+
+    table.partial-border {
+        border-left-style: hidden;
+        border-right-style: hidden;
+        border-collapse: collapse;
+    }
+
+    table.partial-border th,
+    table.partial-border td {
+        border-style: solid;
+        border-width: 1px;
+        border-color: lightgray;
+    }
+
+    td > div,
+    td > p {
+        margin-block-start: 0;
+        margin-block-end: 1em;
+    }
+
+    td > div:last-of-type,
+    td > p:last-of-type {
+        margin-block-end: 0;
+    }
+
+    .centered {
+        text-align: center;
+    }
+
+    .inserted {
+        color: blue;
+        margin-block-end: 0;
+    }
+
+    .removed {
+        color: red;
+        text-decoration: line-through;
+        margin-block-end: 0;
+    }
+
+    /* XXX this is a bad name */
+    .diffs {
+        background-color: var(--diff-background-color);
+        opacity: 0.8;
+    }
+
+    .parameter {
+        background-color: var(--parameter-color);
+    }
+
+    .deprecated-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--parameter-color),
+            var(--parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--parameter-color),
+            var(--parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--parameter-color),
+            var(--parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .object {
+        background-color: var(--object-color);
+    }
+
+    .deprecated-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--object-color),
+            var(--object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--object-color),
+            var(--object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--object-color),
+            var(--object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .command {
+        background-color: var(--command-color);
+    }
+
+    .deprecated-command {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--command-color),
+            var(--command-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-command {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--command-color),
+            var(--command-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-command {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--command-color),
+            var(--command-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .event {
+        background-color: var(--event-color);
+    }
+
+    .deprecated-event {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--event-color),
+            var(--event-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-event {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--event-color),
+            var(--event-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-event {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--event-color),
+            var(--event-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .argument-container {
+        background-color: var(--argument-container-color);
+    }
+
+    .deprecated-argument-container {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-container-color),
+            var(--argument-container-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-argument-container {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-container-color),
+            var(--argument-container-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-argument-container {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-container-color),
+            var(--argument-container-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .argument-parameter {
+        background-color: var(--argument-parameter-color);
+    }
+
+    .deprecated-argument-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-parameter-color),
+            var(--argument-parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-argument-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-parameter-color),
+            var(--argument-parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-argument-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-parameter-color),
+            var(--argument-parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .argument-object {
+        background-color: var(--argument-object-color);
+    }
+
+    .deprecated-argument-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-object-color),
+            var(--argument-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-argument-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-object-color),
+            var(--argument-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-argument-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-object-color),
+            var(--argument-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .mountable-object {
+        background-color: var(--mountable-object-color);
+    }
+
+    .deprecated-mountable-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountable-object-color),
+            var(--mountable-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-mountable-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountable-object-color),
+            var(--mountable-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-mountable-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountable-object-color),
+            var(--mountable-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .mountpoint-object {
+        background-color: var(--mountpoint-object-color);
+    }
+
+    .deprecated-mountpoint-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountpoint-object-color),
+            var(--mountpoint-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-mountpoint-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountpoint-object-color),
+            var(--mountpoint-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-mountpoint-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountpoint-object-color),
+            var(--mountpoint-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+    </style>
+
+    <!-- Local styles (that affect only data model tables) -->
+    <style>
+    /* center column 2 (Base Type) */
+    .data-type-table th:nth-child(2),
+    .data-type-table td:nth-child(2) {
+        text-align: center;
+    }
+
+    /* center columns 3 (Write), 5 (Object Default), 6 (Version) */
+    .data-model-table th:nth-child(3),
+    .data-model-table td:nth-child(3),
+    .data-model-table th:nth-child(5),
+    .data-model-table td:nth-child(5),
+    .data-model-table th:nth-child(6),
+    .data-model-table td:nth-child(6)
+    {
+        text-align: center;
+    }
+
+    .data-model-table th,
+    .data-model-table td {
+        hyphenate-character: "";
+    }
+
+    /* word wrap/break column 1 (Name) */
+    .data-model-table td:first-child {
+        word-wrap: break-word;
+        word-break: break-all;
+        min-width: 27ch;
+    }
+
+    /* word wrap/break column 2 (Base Type) */
+    .data-model-table td:nth-child(2) {
+        word-wrap: break-word;
+        word-break: break-all;
+        min-width: 12ch;
+    }
+
+    /* word wrap/break column 3 (Write) */
+    .data-model-table td:nth-child(3) {
+        min-width: 1ch;
+    }
+
+    /* word wrap/break column 5 (Object Default) */
+    .data-model-table td:nth-child(5) {
+        word-wrap: break-word;
+        word-break: break-all;
+        min-width: 12ch;
+    }
+
+    /* word wrap/break column 6 (Version) */
+    .data-model-table td:nth-child(6) {
+        min-width: 6ch;
+    }
+
+    /* center column 1 (Abbreviation) */
+    .profile-notation-table th:nth-child(1),
+    .profile-notation-table td:nth-child(1) {
+        text-align: center;
+    }
+
+    /* center column 2 (Requirement) */
+    .profile-requirements-table th:nth-child(2),
+    .profile-requirements-table td:nth-child(2) {
+        text-align: center;
+    }
+    </style>
 </head>
+
 <body>
 <div id="main">
 <table class="full-width">
 <colgroup>
-<col style="width: 3.0%;"></col>
-<col style="width: 22.0%;"></col>
-<col style="width: 50.0%;"></col>
-<col style="width: 25.0%;"></col></colgroup>
+<col style="width: 3%;">
+<col style="width: 22%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
 <tbody>
-<tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
-<td class="centered" rowspan="1"><p></p>
-
-<h1 id="tr-069-data-model-data-types" class="unnumbered unlisted">TR-069 Data Model Data Types</h1>
-
-<h1 id="tr-106-typesxml" class="unnumbered unlisted"><a href="./#tr-106-types.xml">tr-106-types.xml</a></h1></td>
-<td rowspan="1"></td></tr>
-<tr>
-<td></td>
-<td><h3 id="data-model-definition" class="unnumbered unlisted">DATA MODEL DEFINITION</h3></td></tr></tbody></table>
-
+<tr><td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></a></td><td class="centered" rowspan="1"><p></p><h1 class="unnumbered unlisted">TR-069 Data Model Data Types</h1><h1 class="unnumbered unlisted"><a href="./#tr-106-types.xml">tr-106-types.xml</a></h1></td><td rowspan="1"></td></tr>
+<tr><td></td><td><h3 id="data-model-definition" class="unnumbered unlisted">DATA MODEL DEFINITION</h3></td></tr>
+</tbody>
+</table>
 <h1 id="license">License</h1>
 
 <p>Copyright (c) 2008-2023, Broadband Forum</p>
-
 <p>The undersigned members have elected to grant the copyright to
-their contributed material used in this software:<br/>    Copyright (c) 2017-2018 ARRIS Enterprises, LLC.</p>
-
+their contributed material used in this software:<br />
+    Copyright (c) 2017-2018 ARRIS Enterprises, LLC.</p>
 <p>Redistribution and use in source and binary forms, with or
 without modification, are permitted provided that the following
 conditions are met:</p>
-
 <ol>
-<li>Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above
+<li>
+<p>Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.</p>
+</li>
+<li>
+<p>Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following
 disclaimer in the documentation and/or other materials
-provided with the distribution.</li>
-<li>Neither the name of the copyright holder nor the names of its
+provided with the distribution.</p>
+</li>
+<li>
+<p>Neither the name of the copyright holder nor the names of its
 contributors may be used to endorse or promote products
 derived from this software without specific prior written
-permission.</li></ol>
-
+permission.</p>
+</li>
+</ol>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-CONTRIBUTORS &ldquo;AS IS&rdquo; AND ANY EXPRESS OR IMPLIED WARRANTIES,
+CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
@@ -856,23 +852,18 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-
 <p>The above license is used as a license under copyright only.
 Please reference the Forum IPR Policy for patent licensing terms
 <a href="https://www.broadband-forum.org/ipr-policy">https://www.broadband-forum.org/ipr-policy</a>.</p>
-
 <p>Any moral rights which are necessary to exercise under the above
 license grant are also deemed granted under this license.</p>
-
 <h1 id="data-types">Data Types</h1>
-
 <p>The Parameters defined in this specification make use of a
 limited subset of the default SOAP data types [<a href="#R.SOAP1.1">SOAP1.1</a>]. These data
 types and the named data types used by this specification
 are described below.</p>
-
 <p>Note: A Parameter that is defined to be one of the named data
-types is reported as such at the beginning of the Parameter’s
+types is reported as such at the beginning of the Parameter's
 description via a reference back to the associated data type
 definition (e.g. <em>[MACAddress]</em>). However, such parameters
 still indicate their SOAP data types.</p>
@@ -882,145 +873,139 @@ still indicate their SOAP data types.</p>
 <tr>
 <th>Data Type</th>
 <th>Base Type</th>
-<th>Description</th></tr></thead>
+<th>Description</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td><span id="T.base64">base64</span></td>
-<td>-</td>
-<td><p>Base64 encoded binary (no line-length limitation).</p>
-
-<p>A minimum and maximum allowed length can be indicated using the form
-<em>base64(Min:Max)</em>, where <em>Min</em> and <em>Max</em> are the minimum and maximum
-length in characters before Base64 encoding. If either <em>Min</em> or
-<em>Max</em> are missing, this indicates no limit, and if <em>Min</em> is missing
-the colon can also be omitted, as in <em>base64(Max)</em>. Multiple
-comma-separate ranges can be specified, in which case the length
-MUST be in one of the ranges.</p></td></tr>
-<tr>
-<td><span id="T.boolean">boolean</span></td>
-<td>-</td>
-<td>Boolean, where the allowed values are <em>0</em> or <em>1</em> (or equivalently,
-<em>true</em> or <em>false</em>).</td></tr>
-<tr>
-<td><span id="T.dateTime">dateTime</span></td>
-<td>-</td>
-<td>The subset of the ISO 8601 date-time format defined by the SOAP
-<em>dateTime</em> type [<a href="#R.SOAP1.1">SOAP1.1</a>].</td></tr>
-<tr>
-<td><span id="T.decimal">decimal</span></td>
-<td>-</td>
-<td><p>Decimal number, with optional sign and optional fractional part.</p>
-
-<p>For some <em>decimal</em> types, a value range is given using the form
-<em>decimal(Min:Max)</em> or <em>decimal(Min:Max step Step)</em> where the <em>Min</em>
-and <em>Max</em> values are inclusive. If either <em>Min</em> or <em>Max</em> are missing,
-this indicates no limit. If <em>Step</em> is missing, this indicates a
-step of <em>1.0</em>. Multiple comma-separated ranges can be specified,
-in which case the value will be in one of the ranges.</p></td></tr>
-<tr>
-<td><span id="T.hexBinary">hexBinary</span></td>
-<td>-</td>
-<td><p>Hex encoded binary.</p>
-
-<p>A minimum and maximum allowed length can be indicated using the form
-<em>hexBinary(Min:Max)</em>, where <em>Min</em> and <em>Max</em> are the minimum and
-maximum length in characters before Hex Binary encoding. If either
-<em>Min</em> or <em>Max</em> are missing, this indicates no limit, and if <em>Min</em>
-is missing the colon can also be omitted, as in <em>hexBinary(Max)</em>.
-Multiple comma-separated ranges can be specified, in which case the
-length MUST be in one of the ranges.</p></td></tr>
-<tr>
-<td><span id="T.int">int</span></td>
-<td>-</td>
-<td><p>Integer in the range <em>-2147483648</em> to <em>+2147483647</em>, inclusive.</p>
-
+<td>
+<p><span id="T.int">int</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>Integer in the range <em>-2147483648</em> to <em>+2147483647</em>, inclusive.</p>
 <p>For some <em>int</em> types, a value range is given using the form
 <em>int(Min:Max)</em> or <em>int(Min:Max step Step)</em> where the <em>Min</em> and <em>Max</em>
 values are inclusive. If either <em>Min</em> or <em>Max</em> are missing,
 this indicates no limit. If <em>Step</em> is missing, this indicates a
 step of <em>1</em>. Multiple comma-separated ranges can be specified,
-in which case the value will be in one of the ranges.</p></td></tr>
+in which case the value will be in one of the ranges.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.long">long</span></td>
-<td>-</td>
-<td><p>Long integer in the range <em>-9223372036854775808</em> to
-<em>9223372036854775807</em>, inclusive.</p>
-
-<p>For some <em>long</em> types, a value range is given using the form
-<em>long(Min:Max)</em> or <em>long(Min:Max step Step)</em>, where the <em>Min</em> and
-<em>Max</em> values are inclusive. If either <em>Min</em> or <em>Max</em> are missing,
-this indicates no limit. If <em>Step</em> is missing, this indicates a
-step of <em>1</em>. Multiple comma-separated ranges can be specified,
-in which case the value will be in one of the ranges.</p></td></tr>
-<tr>
-<td><span id="T.string">string</span></td>
-<td>-</td>
-<td>For strings, a minimum and maximum allowed length can be indicated
+<td>
+<p><span id="T.string">string</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>For strings, a minimum and maximum allowed length can be indicated
 using the form <em>string(Min:Max)</em>, where <em>Min</em> and <em>Max</em> are the minimum
 and maximum string length in characters. If either <em>Min</em> or <em>Max</em>
 are missing, this indicates no limit, and if <em>Min</em> is missing the
 colon can also be omitted, as in <em>string(Max)</em>. Multiple
 comma-separated ranges can be specified, in which case the string
-length will be in one of the ranges.</td></tr>
+length will be in one of the ranges.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.unsignedInt">unsignedInt</span></td>
-<td>-</td>
-<td><p>Unsigned integer in the range <em>0</em> to <em>4294967295</em>, inclusive.</p>
-
+<td>
+<p><span id="T.unsignedInt">unsignedInt</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>Unsigned integer in the range <em>0</em> to <em>4294967295</em>, inclusive.</p>
 <p>For some <em>unsignedInt</em> types, a value range is given using the form
 <em>unsignedInt(Min:Max)</em> or <em>unsigned(Min:Max step Step)</em>, where the
 <em>Min</em> and <em>Max</em> values are inclusive. If either <em>Min</em> or <em>Max</em> are
 missing, this indicates no limit. If <em>Step</em> is missing,
 this indicates a step of <em>1</em>. Multiple comma-separated ranges can be
-specified, in which case the value will be in one of the ranges.</p></td></tr>
+specified, in which case the value will be in one of the ranges.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.unsignedLong">unsignedLong</span></td>
-<td>-</td>
-<td><p>Unsigned long integer in the range <em>0</em> to <em>18446744073709551615</em>,
+<td>
+<p><span id="T.unsignedLong">unsignedLong</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>Unsigned long integer in the range <em>0</em> to <em>18446744073709551615</em>,
 inclusive.</p>
-
 <p>For some <em>unsignedLong</em> types, a value range is given using the form
 <em>unsignedLong(Min:Max)</em> or <em>unsignedLong(Min:Max step Step)</em>, where
 the <em>Min</em> and <em>Max</em> values are inclusive. If either <em>Min</em> or <em>Max</em>
 are missing, this indicates no limit. If <em>Step</em> is missing,
 this indicates a step of <em>1</em>. Multiple comma-separated ranges can be
-specified, in which case the value will be in one of the ranges.</p></td></tr>
+specified, in which case the value will be in one of the ranges.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.Alias">Alias</span></td>
-<td><a href="#T.string">string</a>(:64)</td>
-<td><p>A non-volatile handle used to reference this instance. Alias provides a
+<td>
+<p><span id="T.Alias">Alias</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(:64)</p>
+</td>
+<td>
+<p>A non-volatile handle used to reference this instance. Alias provides a
 mechanism for an ACS to label this instance for future reference.</p>
-
 <p>If the CPE supports the Alias-based Addressing feature as defined in
 [<a href="#R.TR-069">Section 3.6.1/TR-069</a>] and described in [<a href="#R.TR-069">Appendix II/TR-069</a>],
 the following mandatory constraints MUST be enforced:</p>
-
 <ul>
-<li>Its value MUST NOT be empty.</li>
-<li>Its value MUST start with a letter.</li>
-<li>If its value is not assigned by the ACS, it MUST start with a &ldquo;cpe-&rdquo;
-prefix.</li>
-<li>The CPE MUST NOT change the parameter value.</li></ul></td></tr>
+<li>
+<p>Its value MUST NOT be empty.</p>
+</li>
+<li>
+<p>Its value MUST start with a letter.</p>
+</li>
+<li>
+<p>If its value is not assigned by the ACS, it MUST start with a &quot;cpe-&quot;
+prefix.</p>
+</li>
+<li>
+<p>The CPE MUST NOT change the parameter value.</p>
+</li>
+</ul>
+</td>
+</tr>
 <tr>
-<td><span id="T.Dbm1000">Dbm1000</span></td>
-<td><a href="#T.int">int</a></td>
-<td>The value is measured in <em>dBm/1000</em>, i.e. the value divided by 1000 is
+<td>
+<p><span id="T.Dbm1000">Dbm1000</span></p>
+</td>
+<td>
+<p><a href="#T.int">int</a></p>
+</td>
+<td>
+<p>The value is measured in <em>dBm/1000</em>, i.e. the value divided by 1000 is
 dB relative to 1 mW. For example, -12345 means -12.345 dBm, 0 means 0 dBm
-(1 mW) and 12345 means 12.345 dBm.</td></tr>
+(1 mW) and 12345 means 12.345 dBm.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.DiagnosticsState">DiagnosticsState</span></td>
-<td><a href="#T.string">string</a></td>
-<td><p>Indicates the availability of diagnostics data. Enumeration of:</p>
-
+<td>
+<p><span id="T.DiagnosticsState">DiagnosticsState</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a></p>
+</td>
+<td>
+<p>Indicates the availability of diagnostics data. Enumeration of:</p>
 <p>Enumeration of:</p>
-
 <ul>
 <li><span id="D..None"><em>None</em></span> (READONLY)</li>
 <li><span id="D..Requested"><em>Requested</em></span></li>
 <li><span id="D..Canceled"><em>Canceled</em></span> (OPTIONAL)</li>
 <li><span id="D..Complete"><em>Complete</em></span> (READONLY)</li>
-<li><span id="D..Error"><em>Error</em></span> (READONLY, OPTIONAL)</li></ul>
-
+<li><span id="D..Error"><em>Error</em></span> (READONLY, OPTIONAL)</li>
+</ul>
 <p>If the ACS sets the value of this parameter to <a href="#D..Requested"><em>Requested</em></a>, the
 CPE MUST initiate the corresponding diagnostic test. When writing, the
 only allowed values are <a href="#D..Requested"><em>Requested</em></a> and <a href="#D..Canceled"><em>Canceled</em></a>. To
@@ -1029,182 +1014,249 @@ this object), the test parameters MUST be set, and any errors or
 inconsistencies in the test parameters MUST be detected, either prior to
 or at the same time as (in the same SetParameterValues) setting this
 parameter to <a href="#D..Requested"><em>Requested</em></a>.</p>
-
 <p>When requested, the CPE SHOULD wait until after completion of the
 communication session with the ACS before starting the diagnostic test.</p>
-
 <p>When the test is completed, the value of this parameter MUST be either
 <a href="#D..Complete"><em>Complete</em></a> (if the test completed successfully), or one of the
 <em>Error</em> values listed above.</p>
-
 <p>If the value of this parameter is anything other than <a href="#D..Complete"><em>Complete</em></a>,
 the values of the results parameters for this test are indeterminate.</p>
-
 <p>When the diagnostic initiated by the ACS is completed (successfully or
 not), but not if it is canceled for any reason, the CPE MUST establish a
 new connection to the ACS to allow the ACS to view the results,
 indicating the Event code <em>8 DIAGNOSTICS COMPLETE</em> in the Inform
 message.</p>
-
 <p>After the diagnostic is complete, the value of all result parameters (all
 read-only parameters in this object) MUST be retained by the CPE until
 either this diagnostic is run again, or the CPE reboots. After a reboot,
 if the CPE has not retained the result parameters from the most recent
 test, it MUST set the value of this parameter to <a href="#D..None"><em>None</em></a>.</p>
-
 <p>Modifying any of the writable parameters in this object except for this
 one MUST result in the value of this parameter being set to
 <a href="#D..None"><em>None</em></a>.</p>
-
 <p>While the test is in progress, modifying any of the writable parameters
 in this object except for this one MUST result in the test being
 terminated and the value of this parameter being set to <a href="#D..None"><em>None</em></a>.</p>
-
 <p>While the test is in progress, setting this parameter to
 <a href="#D..Requested"><em>Requested</em></a> (and possibly modifying other writable parameters in
 this object) MUST result in the test being terminated and then restarted
 using the current values of the test parameters.</p>
-
 <p>While the test is in progress, setting this parameter to
 <a href="#D..Canceled"><em>Canceled</em></a> MUST result in the test being canceled and the value of
 this parameter being set to <a href="#D..None"><em>None</em></a>. If the CPE does not support
-the <a href="#D..Canceled"><em>Canceled</em></a> value, it MUST return a SPV error with &ldquo;Invalid
-Parameter value&rdquo; (9007) to the ACS instead.</p></td></tr>
+the <a href="#D..Canceled"><em>Canceled</em></a> value, it MUST return a SPV error with &quot;Invalid
+Parameter value&quot; (9007) to the ACS instead.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.IEEE_EUI64">IEEE_EUI64</span></td>
-<td><a href="#T.string">string</a>(:23)</td>
-<td><p>The IEEE EUI 64-bit identifier as defined in [<a href="#R.IEEE_EUI64">IEEE_EUI64</a>]. The
+<td>
+<p><span id="T.IEEE_EUI64">IEEE_EUI64</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(:23)</p>
+</td>
+<td>
+<p>The IEEE EUI 64-bit identifier as defined in [<a href="#R.IEEE_EUI64">IEEE_EUI64</a>]. The
 IEEE defined 64-bit extended unique identifier (EUI-64) is a
 concatenation of:</p>
-
 <ul>
-<li>The 24-bit (OUI-24) or 36-bit (OUI-36) company_id value assigned by the
-IEEE Registration Authority (IEEE-RA), and</li>
-<li>The extension identifier (40 bits for OUI-24 or 28 bits for OUI-36)
-assigned by the organization with that company_id assignment.</li></ul>
-
+<li>
+<p>The 24-bit (OUI-24) or 36-bit (OUI-36) company_id value assigned by the
+IEEE Registration Authority (IEEE-RA), and</p>
+</li>
+<li>
+<p>The extension identifier (40 bits for OUI-24 or 28 bits for OUI-36)
+assigned by the organization with that company_id assignment.</p>
+</li>
+</ul>
 <p>Possible patterns:</p>
-
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li><span id="D..0-9A-Fa-f0-9A-Fa-f:70-9A-Fa-f0-9A-Fa-f"><code>([0-9A-Fa-f][0-9A-Fa-f]:){7}([0-9A-Fa-f][0-9A-Fa-f])</code></span></li></ul></td></tr>
+<li><span id="D..0-9A-Fa-f0-9A-Fa-f:70-9A-Fa-f0-9A-Fa-f"><code>([0-9A-Fa-f][0-9A-Fa-f]:){7}([0-9A-Fa-f][0-9A-Fa-f])</code></span></li>
+</ul>
+</td>
+</tr>
 <tr>
-<td><span id="T.IPAddress">IPAddress</span></td>
-<td><a href="#T.string">string</a>(:45)</td>
-<td><p>IP address, i.e. IPv4 address (or IPv4 subnet mask) or IPv6 address.</p>
-
+<td>
+<p><span id="T.IPAddress">IPAddress</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(:45)</p>
+</td>
+<td>
+<p>IP address, i.e. IPv4 address (or IPv4 subnet mask) or IPv6 address.</p>
 <p>All IPv4 addresses and subnet masks MUST be represented as strings in
 IPv4 dotted-decimal notation. Here are some examples of valid IPv4
 address textual representations:</p>
-
 <ul>
-<li>216.52.29.100</li>
-<li>192.168.1.254</li></ul>
-
+<li>
+<p>216.52.29.100</p>
+</li>
+<li>
+<p>192.168.1.254</p>
+</li>
+</ul>
 <p>All IPv6 addresses MUST be represented using any of the 3 standard
 textual representations defined in [<a href="#R.RFC4291">RFC4291</a>] Sections 2.2.1,
 2.2.2 and 2.2.3. Both lower-case and upper-case letters can be used, but
 use of lower-case letters is RECOMMENDED. Here are some examples of valid
 IPv6 address textual representations:</p>
-
 <ul>
-<li>1080:0:0:800:ba98:3210:11aa:12dd</li>
-<li>1080::800:ba98:3210:11aa:12dd</li>
-<li>0:0:0:0:0:0:13.1.68.3</li></ul>
-
+<li>
+<p>1080:0:0:800:ba98:3210:11aa:12dd</p>
+</li>
+<li>
+<p>1080::800:ba98:3210:11aa:12dd</p>
+</li>
+<li>
+<p>0:0:0:0:0:0:13.1.68.3</p>
+</li>
+</ul>
 <p>IPv6 addresses MUST NOT include zone identifiers. Zone identifiers are
 discussed in [<a href="#R.RFC4007">Section 6/RFC4007</a>].</p>
-
 <p>Unspecified or inapplicable addresses (or IPv4 subnet masks) MUST be
 represented as empty strings unless otherwise specified by the parameter
-definition.</p></td></tr>
+definition.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.IPPrefix">IPPrefix</span></td>
-<td><a href="#T.string">string</a>(:49)</td>
-<td><p>IPv4 or IPv6 routing prefix in Classless Inter-Domain Routing (CIDR)
+<td>
+<p><span id="T.IPPrefix">IPPrefix</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(:49)</p>
+</td>
+<td>
+<p>IPv4 or IPv6 routing prefix in Classless Inter-Domain Routing (CIDR)
 notation [<a href="#R.RFC4632">RFC4632</a>]. This is specified as an IP address followed
-by an appended &ldquo;/n&rdquo; suffix, where <em>n</em> (the prefix size) is an integer
+by an appended &quot;/n&quot; suffix, where <em>n</em> (the prefix size) is an integer
 in the range 0-32 (for IPv4) or 0-128 (for IPv6) that indicates the
-number of (leftmost) &lsquo;1&rsquo; bits of the routing prefix.</p>
-
+number of (leftmost) '1' bits of the routing prefix.</p>
 <ul>
-<li>IPv4 example: 192.168.1.0/24</li>
-<li>IPv6 example: 2001:edff:fe6a:f76::/64</li></ul>
-
+<li>
+<p>IPv4 example: 192.168.1.0/24</p>
+</li>
+<li>
+<p>IPv6 example: 2001:edff:fe6a:f76::/64</p>
+</li>
+</ul>
 <p>This notation can also represent individual addresses by specifying all
 bits.</p>
-
 <ul>
-<li>IPv4 example: 192.168.1.1/32</li>
-<li>IPv6 example: 2001:edff:fe6a:f76::1/128</li></ul>
-
+<li>
+<p>IPv4 example: 192.168.1.1/32</p>
+</li>
+<li>
+<p>IPv6 example: 2001:edff:fe6a:f76::1/128</p>
+</li>
+</ul>
 <p>If the IP address part is unspecified or inapplicable, it MUST be
 an empty string unless otherwise specified by the parameter definition. In this
-case the IP prefix will be of the form &ldquo;/n&rdquo;.</p>
-
+case the IP prefix will be of the form &quot;/n&quot;.</p>
 <p>If the entire IP prefix is unspecified or inapplicable, it MUST be
-an empty string unless otherwise specified by the parameter definition.</p></td></tr>
+an empty string unless otherwise specified by the parameter definition.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.IPv4Address">IPv4Address</span></td>
-<td><a href="#T.IPAddress">IPAddress</a>(:45)</td>
-<td><p>IPv4 address (or subnet mask).</p>
-
+<td>
+<p><span id="T.IPv4Address">IPv4Address</span></p>
+</td>
+<td>
+<p><a href="#T.IPAddress">IPAddress</a>(:45)</p>
+</td>
+<td>
+<p>IPv4 address (or subnet mask).</p>
 <p>Can be any IPv4 address that is permitted by the <em>IPAddress</em> data type.</p>
-
 <p>Possible patterns:</p>
-
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li><span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-9"><code>((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])</code></span></li></ul></td></tr>
+<li><span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-9"><code>((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])</code></span></li>
+</ul>
+</td>
+</tr>
 <tr>
-<td><span id="T.IPv4Prefix">IPv4Prefix</span></td>
-<td><a href="#T.IPPrefix">IPPrefix</a>(:49)</td>
-<td><p>IPv4 address prefix.</p>
-
+<td>
+<p><span id="T.IPv4Prefix">IPv4Prefix</span></p>
+</td>
+<td>
+<p><a href="#T.IPPrefix">IPPrefix</a>(:49)</p>
+</td>
+<td>
+<p>IPv4 address prefix.</p>
 <p>Can be any IPv4 prefix that is permitted by the <em>IPPrefix</em> data type.</p>
-
 <p>Possible patterns:</p>
-
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
 <li><span id="D..30-20120-9"><code>/(3[0-2]|[012]?[0-9])</code></span></li>
-<li><span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-930-20120-9"><code>((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])/(3[0-2]|[012]?[0-9])</code></span></li></ul></td></tr>
+<li><span id="D..250-520-40-9010-90-9.3250-520-40-9010-90-930-20120-9"><code>((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])/(3[0-2]|[012]?[0-9])</code></span></li>
+</ul>
+</td>
+</tr>
 <tr>
-<td><span id="T.IPv6Address">IPv6Address</span></td>
-<td><a href="#T.IPAddress">IPAddress</a>(:45)</td>
-<td><p>IPv6 address.</p>
-
-<p>Can be any IPv6 address that is permitted by the <em>IPAddress</em> data type.</p></td></tr>
+<td>
+<p><span id="T.IPv6Address">IPv6Address</span></p>
+</td>
+<td>
+<p><a href="#T.IPAddress">IPAddress</a>(:45)</p>
+</td>
+<td>
+<p>IPv6 address.</p>
+<p>Can be any IPv6 address that is permitted by the <em>IPAddress</em> data type.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.IPv6Prefix">IPv6Prefix</span></td>
-<td><a href="#T.IPPrefix">IPPrefix</a>(:49)</td>
-<td><p>IPv6 address prefix.</p>
-
-<p>Can be any IPv6 prefix that is permitted by the <em>IPPrefix</em> data type.</p></td></tr>
+<td>
+<p><span id="T.IPv6Prefix">IPv6Prefix</span></p>
+</td>
+<td>
+<p><a href="#T.IPPrefix">IPPrefix</a>(:49)</p>
+</td>
+<td>
+<p>IPv6 address prefix.</p>
+<p>Can be any IPv6 prefix that is permitted by the <em>IPPrefix</em> data type.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.JSONObject">JSONObject</span></td>
-<td><a href="#T.string">string</a></td>
-<td>A JSON Object as defined in [<a href="#R.RFC7159">Section 4/RFC7159</a>].</td></tr>
+<td>
+<p><span id="T.JSONObject">JSONObject</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a></p>
+</td>
+<td>
+<p>A JSON Object as defined in [<a href="#R.RFC7159">Section 4/RFC7159</a>].</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.MACAddress">MACAddress</span></td>
-<td><a href="#T.string">string</a>(:17)</td>
-<td><p>All MAC addresses are represented as strings of 12 hexadecimal digits
+<td>
+<p><span id="T.MACAddress">MACAddress</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(:17)</p>
+</td>
+<td>
+<p>All MAC addresses are represented as strings of 12 hexadecimal digits
 (digits 0-9, letters A-F or a-f) displayed as six pairs of digits
 separated by colons. Unspecified or inapplicable MAC addresses MUST be
 represented as empty strings unless otherwise specified by the parameter
 definition.</p>
-
 <p>Possible patterns:</p>
-
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li><span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f"><code>([0-9A-Fa-f][0-9A-Fa-f]:){5}([0-9A-Fa-f][0-9A-Fa-f])</code></span></li></ul></td></tr>
+<li><span id="D..0-9A-Fa-f0-9A-Fa-f:50-9A-Fa-f0-9A-Fa-f"><code>([0-9A-Fa-f][0-9A-Fa-f]:){5}([0-9A-Fa-f][0-9A-Fa-f])</code></span></li>
+</ul>
+</td>
+</tr>
 <tr>
-<td><span id="T.Order">Order</span></td>
-<td><a href="#T.unsignedInt">unsignedInt</a>(1:)</td>
-<td><p>Position of the <em>object</em> entry in the order of precedence. A value
+<td>
+<p><span id="T.Order">Order</span></p>
+</td>
+<td>
+<p><a href="#T.unsignedInt">unsignedInt</a>(1:)</p>
+</td>
+<td>
+<p>Position of the <em>object</em> entry in the order of precedence. A value
 of <em>1</em> indicates the first entry to be considered (highest precedence).</p>
-
 <p>When a <em>object</em> instance is created, or when an existing <em>parameter</em>
 value is modified, if the value matches that of an existing
 entry, the <em>parameter</em> values for the existing entry and all lower
@@ -1212,145 +1264,284 @@ entry, the <em>parameter</em> values for the existing entry and all lower
 uniqueness of this value. A deletion causes <em>parameter</em> values to be
 compacted. When a value is changed, incrementing occurs before
 compaction.</p>
-
 <p>If no <em>parameter</em> value is supplied on creation of a <em>object</em> instance,
 it MUST be assigned a value that is one more than the largest current
-value (lowest precedence).</p></td></tr>
+value (lowest precedence).</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.StatsCounter32">StatsCounter32</span></td>
-<td><a href="#T.unsignedInt">unsignedInt</a></td>
-<td><p>A 32-bit statistics parameter, e.g. a byte counter.</p>
-
+<td>
+<p><span id="T.PLMNId">PLMNId</span></p>
+</td>
+<td>
+<p><a href="#T.unsignedInt">unsignedInt</a></p>
+</td>
+<td>
+<p>Public Land Mobile Network Identifier. PLMN-Id is a concatenation of
+Mobile Country Code (MCC) and Mobile Network Code (MNC) as described in
+[<a href="#R.3GPP-TS.23.003">Clause 12.1/3GPP-TS.23.003</a>]. MCC value is always 3 digits,
+while the MNC value is either 2 or 3 digits.</p>
+<p>For example, a PLMN-Id value of 310410 refers to MCC 310 (USA) and MNC
+410 (AT&amp;T Mobility). A PLMN-Id value of 51001 refers to MCC 501
+(Australia) and MNC 01 (Telstra). Refer &lt;<a href="https://mcc-mnc.net">https://mcc-mnc.net</a>&gt; for
+the list of PLMN-Ids assigned to various operators around the world.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span id="T.StatsCounter32">StatsCounter32</span></p>
+</td>
+<td>
+<p><a href="#T.unsignedInt">unsignedInt</a></p>
+</td>
+<td>
+<p>A 32-bit statistics parameter, e.g. a byte counter.</p>
 <p>This data type SHOULD NOT be used for statistics parameters whose values
 might become greater than the maximum value that can be represented as an
 <em>unsignedInt</em> (i.e. 0xffffffff, referred to below as <em>maxval</em>).
 <em>StatsCounter64</em> SHOULD be used for such parameters.</p>
-
 <p>The value <em>maxval</em> indicates that no data is available for this
 parameter. In the unlikely event that the actual value of the statistic
 is <em>maxval</em>, the CPE SHOULD return <em>maxval - 1</em>.</p>
-
 <p>The actual value of the statistic might be greater than <em>maxval</em>. Such
 values SHOULD wrap around through zero.</p>
-
 <p>The term <em>packet</em> is to be interpreted as the transmission unit
 appropriate to the protocol layer in question, e.g. an IP packet or an
-Ethernet frame.</p></td></tr>
+Ethernet frame.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.StatsCounter64">StatsCounter64</span></td>
-<td><a href="#T.unsignedLong">unsignedLong</a></td>
-<td><p>A 64-bit statistics parameter, e.g. a byte counter.</p>
-
+<td>
+<p><span id="T.StatsCounter64">StatsCounter64</span></p>
+</td>
+<td>
+<p><a href="#T.unsignedLong">unsignedLong</a></p>
+</td>
+<td>
+<p>A 64-bit statistics parameter, e.g. a byte counter.</p>
 <p>This data type SHOULD be used for all statistics parameters whose values
 might become greater than the maximum value that can be represented as an
 <em>unsignedInt</em>.</p>
-
 <p>The maximum value that can be represented as an <em>unsignedLong</em> (i.e.
 0xffffffffffffffff) indicates that no data is available for this
 parameter.</p>
-
 <p>The term <em>packet</em> is to be interpreted as the transmission unit
 appropriate to the protocol layer in question, e.g. an IP packet or an
-Ethernet frame.</p></td></tr>
+Ethernet frame.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.URI">URI</span></td>
-<td><a href="#T.string">string</a>(:2048)</td>
-<td>Uniform Resource Identifier. See [<a href="#R.RFC3986">RFC3986</a>].</td></tr>
+<td>
+<p><span id="T.URI">URI</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(:2048)</p>
+</td>
+<td>
+<p>Uniform Resource Identifier. See [<a href="#R.RFC3986">RFC3986</a>].</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.URL">URL</span></td>
-<td><a href="#T.URI">URI</a>(:2048)</td>
-<td>Uniform Resource Locator. See [<a href="#R.RFC3986">RFC3986</a>] (URI),
+<td>
+<p><span id="T.URL">URL</span></p>
+</td>
+<td>
+<p><a href="#T.URI">URI</a>(:2048)</p>
+</td>
+<td>
+<p>Uniform Resource Locator. See [<a href="#R.RFC3986">RFC3986</a>] (URI),
 [<a href="#R.IANA-uri-schemes">IANA-uri-schemes</a>], and individual URI scheme RFCs such as
 [<a href="#R.RFC7252">RFC7252</a>] (<em>coap</em>, <em>coaps</em>) and [<a href="#R.RFC7230">RFC7230</a>]
-(<em>http</em>, <em>https</em>).</td></tr>
+(<em>http</em>, <em>https</em>).</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.URN">URN</span></td>
-<td><a href="#T.URI">URI</a>(:2048)</td>
-<td><p>Uniform Resource Name. See [<a href="#R.RFC3986">RFC3986</a>] (URI) and
+<td>
+<p><span id="T.URN">URN</span></p>
+</td>
+<td>
+<p><a href="#T.URI">URI</a>(:2048)</p>
+</td>
+<td>
+<p>Uniform Resource Name. See [<a href="#R.RFC3986">RFC3986</a>] (URI) and
 [<a href="#R.RFC8141">RFC8141</a>] (<em>urn</em> URI scheme).</p>
-
 <p>Possible patterns:</p>
-
 <ul>
-<li><span id="D..urn:A-Za-z0-9A-Za-z0-9-030A-Za-z0-9:."><code>urn:[A-Za-z0-9][A-Za-z0-9-]{0,30}[A-Za-z0-9]:.+</code></span></li></ul></td></tr>
+<li><span id="D..urn:A-Za-z0-9A-Za-z0-9-030A-Za-z0-9:."><code>urn:[A-Za-z0-9][A-Za-z0-9-]{0,30}[A-Za-z0-9]:.+</code></span></li>
+</ul>
+</td>
+</tr>
 <tr>
-<td><span id="T.UUID">UUID</span></td>
-<td><a href="#T.string">string</a>(36)</td>
-<td><p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>].</p>
-
+<td>
+<p><span id="T.UUID">UUID</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(36)</p>
+</td>
+<td>
+<p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>].</p>
 <p>Possible patterns:</p>
-
 <ul>
-<li><span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912"><code>[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}</code></span></li></ul></td></tr>
+<li><span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912"><code>[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}</code></span></li>
+</ul>
+</td>
+</tr>
 <tr>
-<td><span id="T.ZigBeeNetworkAddress">ZigBeeNetworkAddress</span></td>
-<td><a href="#T.string">string</a>(:4)</td>
-<td><p>The ZigBee 16-bit network address (NWK) as defined in
+<td>
+<p><span id="T.ZigBeeNetworkAddress">ZigBeeNetworkAddress</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(:4)</p>
+</td>
+<td>
+<p>The ZigBee 16-bit network address (NWK) as defined in
 [<a href="#R.ZigBee2007">ZigBee2007</a>]. The address is assigned to a device by the network
 layer and used by the network layer for routing messages between devices.</p>
-
 <p>Possible patterns:</p>
-
 <ul>
 <li><span id="D.."><em>&lt;Empty&gt;</em></span> (an empty string)</li>
-<li><span id="D..0-9A-Fa-f4"><code>([0-9A-Fa-f]){4}</code></span></li></ul></td></tr></tbody></table>
-
+<li><span id="D..0-9A-Fa-f4"><code>([0-9A-Fa-f]){4}</code></span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <h1 id="references">References</h1>
 
 <table>
 <tbody>
 <tr>
-<td><a href="https://www.iana.org/assignments/uri-schemes">[<span id="R.IANA-uri-schemes">IANA-uri-schemes</span>]</a></td>
-<td>IANA Uniform Resource Identifier (URI) Schemes Registry, <em>Uniform Resource Identifier (URI) Schemes</em>, IANA.</td></tr>
+<td>
+<p>[<span id="R.3GPP-TS.23.003"><a href="https://www.3gpp.org/ftp/Specs/html-info/23003.htm">3GPP-TS.23.003</a></span>]</p>
+</td>
+<td>
+<p>3GPP TS 23.003, <em>Numbering, addressing and identification</em>, 3GPP CT WG4.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://standards.ieee.org/regauth/oui/tutorials/EUI64.html">[<span id="R.IEEE_EUI64">IEEE_EUI64</span>]</a></td>
-<td>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority, <em>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority</em>, IEEE, March 1997.</td></tr>
+<td>
+<p>[<span id="R.IANA-uri-schemes"><a href="https://www.iana.org/assignments/uri-schemes">IANA-uri-schemes</a></span>]</p>
+</td>
+<td>
+<p>IANA Uniform Resource Identifier (URI) Schemes Registry, <em>Uniform Resource Identifier (URI) Schemes</em>, IANA.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc3986">[<span id="R.RFC3986">RFC3986</span>]</a></td>
-<td>RFC 3986, <em>Uniform Resource Identifier (URI): Generic Syntax</em>, IETF.</td></tr>
+<td>
+<p>[<span id="R.IEEE_EUI64"><a href="https://standards.ieee.org/regauth/oui/tutorials/EUI64.html">IEEE_EUI64</a></span>]</p>
+</td>
+<td>
+<p>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority, <em>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority</em>, IEEE, March 1997.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4007">[<span id="R.RFC4007">RFC4007</span>]</a></td>
-<td>RFC 4007, <em>IPv6 Scoped Address Architecture</em>, IETF.</td></tr>
+<td>
+<p>[<span id="R.RFC3986"><a href="https://www.rfc-editor.org/rfc/rfc3986">RFC3986</a></span>]</p>
+</td>
+<td>
+<p>RFC 3986, <em>Uniform Resource Identifier (URI): Generic Syntax</em>, IETF.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4122">[<span id="R.RFC4122">RFC4122</span>]</a></td>
-<td>RFC 4122, <em>A Universally Unique IDentifier (UUID) URN Namespace</em>, IETF, 2005.</td></tr>
+<td>
+<p>[<span id="R.RFC4007"><a href="https://www.rfc-editor.org/rfc/rfc4007">RFC4007</a></span>]</p>
+</td>
+<td>
+<p>RFC 4007, <em>IPv6 Scoped Address Architecture</em>, IETF.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4291">[<span id="R.RFC4291">RFC4291</span>]</a></td>
-<td>RFC 4291, <em>IP Version 6 Addressing Architecture</em>, IETF, 2006.</td></tr>
+<td>
+<p>[<span id="R.RFC4122"><a href="https://www.rfc-editor.org/rfc/rfc4122">RFC4122</a></span>]</p>
+</td>
+<td>
+<p>RFC 4122, <em>A Universally Unique IDentifier (UUID) URN Namespace</em>, IETF, 2005.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4632">[<span id="R.RFC4632">RFC4632</span>]</a></td>
-<td>RFC 4632, <em>Classless Inter-domain Routing (CIDR): The Internet Address Assignment
-and Aggregation Plan</em>, IETF, 2006.</td></tr>
+<td>
+<p>[<span id="R.RFC4291"><a href="https://www.rfc-editor.org/rfc/rfc4291">RFC4291</a></span>]</p>
+</td>
+<td>
+<p>RFC 4291, <em>IP Version 6 Addressing Architecture</em>, IETF, 2006.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc7159">[<span id="R.RFC7159">RFC7159</span>]</a></td>
-<td>RFC7159, <em>The JavaScript Object Notation (JSON) Data Interchange Format</em>, IETF, March 2014.</td></tr>
+<td>
+<p>[<span id="R.RFC4632"><a href="https://www.rfc-editor.org/rfc/rfc4632">RFC4632</a></span>]</p>
+</td>
+<td>
+<p>RFC 4632, <em>Classless Inter-domain Routing (CIDR): The Internet Address Assignment
+and Aggregation Plan</em>, IETF, 2006.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc7230">[<span id="R.RFC7230">RFC7230</span>]</a></td>
-<td>RFC 7230, <em>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</em>, IETF, June 2014.</td></tr>
+<td>
+<p>[<span id="R.RFC7159"><a href="https://www.rfc-editor.org/rfc/rfc7159">RFC7159</a></span>]</p>
+</td>
+<td>
+<p>RFC7159, <em>The JavaScript Object Notation (JSON) Data Interchange Format</em>, IETF, March 2014.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc7252">[<span id="R.RFC7252">RFC7252</span>]</a></td>
-<td>RFC 7252, <em>The Constrained Application Protocol (CoAP)</em>, IETF, June 2014.</td></tr>
+<td>
+<p>[<span id="R.RFC7230"><a href="https://www.rfc-editor.org/rfc/rfc7230">RFC7230</a></span>]</p>
+</td>
+<td>
+<p>RFC 7230, <em>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</em>, IETF, June 2014.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc8141">[<span id="R.RFC8141">RFC8141</span>]</a></td>
-<td>RFC 8141, <em>Uniform Resource Names (URNs)</em>, IETF, April 2017.</td></tr>
+<td>
+<p>[<span id="R.RFC7252"><a href="https://www.rfc-editor.org/rfc/rfc7252">RFC7252</a></span>]</p>
+</td>
+<td>
+<p>RFC 7252, <em>The Constrained Application Protocol (CoAP)</em>, IETF, June 2014.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.w3.org/TR/2000/NOTE-SOAP-20000508">[<span id="R.SOAP1.1">SOAP1.1</span>]</a></td>
-<td>Simple Object Access Protocol (SOAP) 1.1, W3C.</td></tr>
+<td>
+<p>[<span id="R.RFC8141"><a href="https://www.rfc-editor.org/rfc/rfc8141">RFC8141</a></span>]</p>
+</td>
+<td>
+<p>RFC 8141, <em>Uniform Resource Names (URNs)</em>, IETF, April 2017.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.broadband-forum.org/download/TR-069.pdf">[<span id="R.TR-069">TR-069</span>]</a></td>
-<td>TR-069 Amendment 6, <em>CPE WAN Management Protocol</em>, Broadband Forum, April 2018.</td></tr>
+<td>
+<p>[<span id="R.SOAP1.1"><a href="https://www.w3.org/TR/2000/NOTE-SOAP-20000508">SOAP1.1</a></span>]</p>
+</td>
+<td>
+<p>Simple Object Access Protocol (SOAP) 1.1, W3C.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://csa-iot.org/all-solutions/zigbee">[<span id="R.ZigBee2007">ZigBee2007</span>]</a></td>
-<td>ZigBee 2007 Specification, <em>ZigBee 2007 Specification</em>, ZigBee Alliance, October 2007.</td></tr></tbody></table>
-
-<hr/>
-
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.2.0 (2024-07-23 version) on 2024-09-04 at 10:47:45 UTC.<br/>report.py –output <stdout> –all –format markdown tr-106-types.xml</p></div>
-
-<div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
-
+<td>
+<p>[<span id="R.TR-069"><a href="https://www.broadband-forum.org/download/TR-069.pdf">TR-069</a></span>]</p>
+</td>
+<td>
+<p>TR-069 Amendment 6, <em>CPE WAN Management Protocol</em>, Broadband Forum, April 2018.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>[<span id="R.ZigBee2007"><a href="https://csa-iot.org/all-solutions/zigbee">ZigBee2007</a></span>]</p>
+</td>
+<td>
+<p>ZigBee 2007 Specification, <em>ZigBee 2007 Specification</em>, ZigBee Alliance, October 2007.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.3.0 (2025-03-17 version) on 2025-04-10 at 06:53:43 UTC.<br />
+report.py --output tr-106-types.html --all --format html tr-106-types.xml</p>
+</div>
+<div id="TOC">
+<h1>Table of Contents</h1>
 <ul class="collapsed expanded">
-<li><a href="#data-types">Data Types</a></li>
-<li><a href="#references">References</a></li></ul></div>
+  <li><a href="#data-types">Data Types</a></li>
+  <li><a href="#references">References</a></li>
+</ul>
+</div>
 </body>
-</html>

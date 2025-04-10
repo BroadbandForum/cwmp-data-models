@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [PDU]
+
+  Copyright (c) 2010-2024, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-19-0-pdu"
+    file="tr-181-2-19-0-pdu.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Address"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <dataType name="SST">
+    <description>
+      Service Slice Type (SST). {{enum}}
+
+      See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}.
+    </description>
+    <string>
+      <enumeration value="eMBB">
+        <description>5G Enhanced Mobile Broadband</description>
+      </enumeration>
+      <enumeration value="URLLC">
+        <description>Ultra-Reliable Low Latency Communications</description>
+      </enumeration>
+      <enumeration value="MIoT">
+        <description>Massive IoT</description>
+      </enumeration>
+      <enumeration value="V2X">
+        <description>Vehicle to Everything</description>
+      </enumeration>
+    </string>
+  </dataType>
+  <!-- Templates used in object and/or parameter descriptions -->
+
+  <component name="s-nssai">
+    <description>
+      The components necessary to uniquely describe a S-NSSAI. {{enum}}
+
+      For example
+
+      * The most common usage where network slicing is not used:
+
+      * ServiceSliceType=eMBB
+
+      * When network slicng is used
+
+      * ServiceSliceType=eMBB
+
+      * SliceDifferentiator=3
+    </description>
+
+    <parameter name="SliceServiceType" access="readOnly" version="2.14" status="deprecated">
+      <description>
+        The Slice Service Type (SST). {{enum}}
+
+        See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}.
+
+        {{deprecated|2.19| due to entire PDU object being moved to
+        {{object|Device.SessionManagement.PDU.{i}}}}}
+      </description>
+      <syntax>
+        <dataType ref="SST"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SliceDifferentiator" access="readOnly" version="2.14" status="deprecated">
+      <description>
+        The Slice differentiator is an optional number used to differentiate
+        network slices with the same SST.
+
+        See {{bibref|3GPP-TS.23.501|Clause 5.15.2.1}}.
+
+        {{deprecated|2.19| due to entire PDU object being moved to
+        {{object|Device.SessionManagement.PDU.{i}}}}}
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="PDU">
+
+    <object name="Device.PDU." access="readOnly" minEntries="1" maxEntries="1" status="deprecated"
+        version="2.14">
+      <description>
+        The logical connection between the 5G-RG and data network is the
+        Protocol Data Unit (PDU). The Device.PDU subtree describes each PDU
+        sessions properties together with the QoS rules specific to that PDU
+        session.
+
+        {{deprecated|2.19|because it is no longer a top level object}}
+      </description>
+
+      <parameter name="SessionNumberOfEntries" access="readOnly" status="deprecated">
+        <description>
+          {{numentries}}
+          
+          {{deprecated|2.19|because it is no longer a top level object}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PDU.Session.{i}." access="readOnly" status="deprecated"
+        numEntriesParameter="SessionNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.14">
+      <description>
+        Contains all the properties of a PDU session instance, ranging from
+        maximum bitrate through to assigned network slice. This object contains
+        the {{object}} table.
+
+        {{deprecated|2.19|because it has moved to
+        {{object|Device.SessionManagement.PDU.{i}}}}}
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Interface" access="readOnly" status="deprecated">
+        <description>
+          {{reference}} The IP Interface associated with the ''PDU'' entry.
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.Session.{i}}}}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="##.IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionID" access="readOnly" status="deprecated">
+        <description>
+          PDU session identity. See {{bibref|3GPP-TS.24.501|Clause 9.4}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.Session.{i}}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="15"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PTI" access="readOnly" status="deprecated">
+        <description>
+          Procedure transaction identity. See {{bibref|3GPP-TS.24.501|Clause
+          9.6}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.PDU.{i}}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionType" access="readOnly" status="deprecated">
+        <description>
+          The PDU session type indicating the protocol the PDU is capable of
+          carrying. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.11}}. {{enum}}
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.Session.{i}}}}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="IPv4"/>
+            <enumeration value="IPv6"/>
+            <enumeration value="IPv4v6"/>
+            <enumeration value="Unstructured"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSC" access="readOnly" status="deprecated">
+        <description>
+          Session and Service Continuity (SSC) Mode: Indicates that the traffic
+          of the matching application shall be routed via a PDU Session
+          supporting the included SSC Mode. See {{bibref|3GPP-TS.24.501|Clause
+          9.11.4.16}}
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.PDU.{i}}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="3"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionAMBRDownlink" access="readOnly" status="deprecated">
+        <description>
+          Downlink Aggregate Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.PDU.{i}}}}}
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionAMBRUplink" access="readOnly" status="deprecated">
+        <description>
+          Uplink Aggregate Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.PDU.{i}}}}}
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastError" access="readOnly" status="deprecated">
+        <description>
+          Error code. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.2}}
+
+          {{deprecated|2.19|because it is no longer required}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PDUIPv4Address" access="readOnly" status="deprecated">
+        <description>
+          The IPv4 address allocated to the PDU session by the SMF. This
+          parameter is only valid if {{param|SessionType}} has a value of
+          {{enum|IPv4|SessionType}} or {{enum|IPv4v6|SessionType}}. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.10}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.Session.{i}.Interface}}}}
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PDUIPv6InterfaceIdentifier" access="readOnly" status="deprecated">
+        <description>
+          The interface identifier for the IPv6 link local address allocated to
+          the PDU session by the SMF. This parameter is only valid if
+          {{param|SessionType}} has a value of {{enum|IPv6|SessionType}} or
+          {{enum|IPv4v6|SessionType}}. See {{bibref|3GPP-TS.24.501|Clause
+          9.11.4.10}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.Session.{i}.Interface}}}}
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RQTimerValue" access="readOnly" status="deprecated">
+        <description>
+          Reflective QoS timeout in {{units}}. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.2.3}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.PDU.{i}}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AlwaysOn" access="readOnly" status="deprecated">
+        <description>
+          Always on PDU session indication. The purpose of the Always-on PDU
+          session indication information element is to indicate whether a PDU
+          session is established as an always-on PDU session.
+
+          See {{bibref|3GPP-TS.24.501|clause 9.11.4.3}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{object|Device.SessionManagement.PDU.{i}}}}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DNN" access="readOnly" status="deprecated">
+        <description>
+          The Data Network Name used by the PDU. The DNN value may be from the
+          optional S-NSSAI specified at the time of PDU establishment or a
+          default determined by the 5G core. A DNN is analogous to an LTE APN
+          used the same format defined in {{bibref|3GPP-TS.24.501|clause
+          9.11.2.1A}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.Session.{i}.APN}}}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="100"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="QoSRuleNumberOfEntries" access="readOnly" status="deprecated">
+        <description>
+          {{numentries}}
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRuleNumberOfEntries}}}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="QoSFlowNumberOfEntries" access="readOnly" status="deprecated">
+        <description>
+          {{numentries}}
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlowNumberOfEntries}}}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PDU.Session.{i}.PCO." access="readOnly" status="deprecated"
+        minEntries="1" maxEntries="1" version="2.14">
+      <description>
+        Policy Configuration Options (PCO) is an optional set of configuration
+        parameters supplied by the network at the request of the 5G-RG as
+        defined in {{bibref|3GPP-TS.24.008|clause 10.5.6.3}}.
+
+        {{deprecated|2.19|because it has moved to
+        {{object|Device.SessionManagement.Session.{i}.PCO}}}}
+      </description>
+
+      <parameter name="IPv6PCSCF" access="readOnly" status="deprecated">
+        <description>
+          The IPv6 address of the P-CSCF used for VoLTE telephony.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.Session.{i}.PCO.IPv6PCSCF}}}}
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6DNS" access="readOnly" status="deprecated">
+        <description>
+          Each entry is an IPv6 DNS server.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.Session.{i}.PCO.IPv6DNS}}}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4PCSCF" access="readOnly" status="deprecated">
+        <description>
+          The IPv4 address of the P-CSCF used for VoLTE telephony.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.Session.{i}.PCO.IPv4PCSCF}}}}
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4DNS" access="readOnly" status="deprecated">
+        <description>
+          Each entry is an IPv4 DNS server.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.Session.{i}.PCO.IPv4DNS}}}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PDU.Session.{i}.NetworkSlice." access="readOnly" status="deprecated"
+        minEntries="1" maxEntries="1" version="2.14">
+      <description>
+        Describes a S-NSSAI Information element providing network slice
+        specification.
+
+        See {{bibref|3GPP-TS.24.501|Clause 9.11.2.8}}
+
+        {{deprecated|2.19|because it has moved to
+        {{object|Device.SessionManagement.PDU.{i}.NetworkSlice}}}}
+      </description>
+      <component ref="s-nssai"/>
+    </object>
+
+    <object name="Device.PDU.Session.{i}.QoSRule.{i}." access="readOnly" status="deprecated"
+        numEntriesParameter="QoSRuleNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.14">
+      <description>
+        This object describes the PDU QoS Rule table. The purpose of the QoS
+        Rule table is to assign a QFI to mark traffic based on a set of
+        classification rules. The rules are set by the network operator and are
+        specific for each PDU.
+
+        For example:
+
+        * A QoS Rule with a default used for general traffic has the following
+          parameters.
+
+        * QFI=1
+
+        * DQR=1 - Default rule
+
+        * Filter 1 for rule
+
+        * Direction=bidirectional
+
+        * Type=1 - Match all
+
+        * A QoS Rule matching a voice service.
+
+        * QFI=32
+
+        * DQR=0
+
+        * Filter 1 for rule
+
+        * Direction=bidirectional
+
+        * Type=33 - Destination IPv6 range
+
+        * Value=2001:8000/48 - Destination IPv6 range
+
+        * Filter 2 for rule
+
+        * Direction=bidirectional
+
+        * Type=16 - Destination IPv4 address with netmask
+
+        * Value=203.1.0.0 255.255.255.0 - Destination IPv4 address with netmask
+
+        A full description can be found at {{bibref|3GPP-TS.24.501|clause
+        9.11.4.13}} QoS Rules
+
+        {{deprecated|2.19|because it has moved to
+        {{object|Device.SessionManagement.PDU.{i}.QoSRule.{i}}}}}
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Identifier"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Identifier" access="readOnly" status="deprecated">
+        <description>
+          The QoS rule identifier field is used to identify the QoS rule.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Identifier}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Precedence" access="readOnly" status="deprecated">
+        <description>
+          The QoS rule precedence field is used to specify the precedence of
+          the QoS rule among all QoS rules. The higher the value of the QoS
+          rule precedence field, the lower the precedence of that QoS rule is.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Precedence}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Segregation" access="readOnly" status="deprecated">
+        <description>
+          In the UE to network direction the segregation bit indicates whether
+          the UE is requesting the network to bind service data flows described
+          by the QoS rule to a dedicated QoS Flow. When {{true}} segregation is
+          requested.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Segregation}}}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="QFI" access="readOnly" status="deprecated">
+        <description>
+          QoS Flow identifier.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.QFI}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="63"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DQR" access="readOnly" status="deprecated">
+        <description>
+          Default QoS rule flag. When {{true}} this QoS rule is the default QoS
+          rule.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.DQR}}}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FilterNumberOfEntries" access="readOnly" status="deprecated">
+        <description>
+          {{numentries}}
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.FilterNumberOfEntries}}}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PDU.Session.{i}.QoSRule.{i}.Filter.{i}." status="deprecated"
+        access="readOnly" numEntriesParameter="FilterNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.14">
+      <description>
+        This object describes the PDU QoS Rule Filter table. As each packet
+        filter is logically anded with the others, there shall not be more than
+        one occurrence of each packet filter component type.
+
+        {{deprecated|2.19|because it has moved to
+        {{object|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}}}}}
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Direction" access="readOnly" status="deprecated">
+        <description>
+          The packet filter direction field is used to indicate for what
+          traffic direction the filter applies. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}} {{enum}}
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.Direction}}}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="downlink"/>
+            <enumeration value="uplink"/>
+            <enumeration value="bidirectional"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readOnly" status="deprecated">
+        <description>
+          Packet filter component type identifier. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.Type}}}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly" status="deprecated">
+        <description>
+          Matching value for the component type. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.Value}}}}
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PDU.Session.{i}.QoSFlow.{i}." access="readOnly" status="deprecated"
+        numEntriesParameter="QoSFlowNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.14">
+      <description>
+        Table of all QoS Flow Indicators (QFI) and their properties supported
+        by the access network for this particular PDU.
+
+        For example:
+
+        * A QoS Flow with a QFI of 1 used for general traffic has the following
+          parameters.
+
+        * FiveQI=8
+
+        * A QoS Flow with a QFI of 32 used for voice traffic with a guaranteed
+          bitrate of 150k has the following parameters.
+
+        * FiveQI=1
+
+        * GFBRUplink=150
+
+        * GFBRDownlink=150
+
+        {{deprecated|2.19|because it has moved to
+        {{object|Device.SessionManagement.PDU.{i}}}}}
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="QFI"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="QFI" access="readOnly" status="deprecated">
+        <description>
+          QoS Flow Identifier.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.QFI}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="63"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="FiveQI" access="readOnly" status="deprecated">
+        <description>
+          5G QoS Identifier. See {{bibref|3GPP-TS.23.501|Clause 5.7.4}} for a
+          table of standardised 5QI QoS characteristics.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.FiveQI}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="GFBRUplink" access="readOnly" status="deprecated">
+        <description>
+          Guaranteed Flow Bitrate - Upstream (expressed in {{units}}).
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.GFBRUplink}}}}
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="GFBRDownlink" access="readOnly" status="deprecated">
+        <description>
+          Guaranteed Flow Bitrate - Downstream (expressed in {{units}}).
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.GFBRDownlink}}}}
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="MFBRUplink" access="readOnly" status="deprecated">
+        <description>
+          Maximum Flow Bitrate - Upstream (expressed in {{units}}).
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.MFBRUplink}}}}
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="MFBRDownlink" access="readOnly" status="deprecated">
+        <description>
+          Maximum Flow Bitrate - Downstream (expressed in {{units}}).
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.MFBRDownlink}}}}
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="AveragingWindow" access="readOnly" status="deprecated">
+        <description>
+          Averaging window for both uplink and downlink in {{units}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.AveragingWindow}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="EPSBearer" access="readOnly" status="deprecated">
+        <description>
+          EPS Bearer Identity. See {{bibref|3GPP-TS.24.301|Clause 9.3.2}}.
+
+          {{deprecated|2.19|because it has moved to
+          {{param|Device.SessionManagement.PDU.{i}.QoSFlow.{i}.EPSBearer}}}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="PDU:2.19">
+    <component ref="Root"/>
+    <component ref="PDU"/>
+  </model>
+</dm:document>

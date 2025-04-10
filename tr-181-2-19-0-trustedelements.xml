@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Trusted Elements definitions
+
+  Copyright (c) 2024-2025, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-14
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-19-0-trustedelements"
+    file="tr-181-2-19-0-trustedelements.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="IPAddress"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="TrustedElements">
+
+    <object name="Device.TrustedElements." version="2.19">
+      <description>
+        This object models Trusted Elements, specialized components in
+        home gateways that create secure environments for sensitive data,
+        cryptographic keys, and trusted applications.
+        Essential for securing SIM/eSIM data, managing IoT devices, and
+        encrypting network traffic, Trusted Elements protect home networks
+        by preventing unauthorized access and ensuring data integrity.
+      </description>
+
+      <parameter name="SIMNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.TrustedElements.SIM.{i}."
+        numEntriesParameter="SIMNumberOfEntries"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        This object models SIM (Subscriber Identity Module) parameters
+        for the interface, including support for eSIM (embedded SIM)
+        functionality.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Status" access="readWrite">
+        <description>
+          The current status of the SIM.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None">
+              <description>No card available</description>
+            </enumeration>
+            <enumeration value="Available">
+              <description>Card is available but not verified</description>
+            </enumeration>
+            <enumeration value="Valid">
+              <description>
+                Card can be used; either valid PIN was entered, or PIN check is
+                deactivated
+              </description>
+            </enumeration>
+            <enumeration value="Blocked">
+              <description>
+                SIM is blocked because the maximum number of invalid PIN
+                entries was exceeded
+              </description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>An error was detected with the card</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IMSI">
+        <description>
+          International Mobile Subscriber Identity represented as a string with
+          either 14 or 15 digits (digits 0-9). The first 3 digits are the
+          mobile country code (MCC), which are followed by the mobile network
+          code (MNC), either 2 digits (European standard) or 3 digits (North
+          American standard), followed by the mobile subscription
+          identification number (MSIN).
+        </description>
+        <syntax>
+          <string>
+            <size minLength="14" maxLength="15"/>
+            <pattern value="[0-9]{14,15}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ICCID">
+        <description>
+          Integrated Circuit Card Identifier represented as a string of up to
+          20 digits (digits 0-9). The number is composed of the following
+          parts:
+
+          * Major industry identifier (MII), 2 fixed digits, 89 for
+            telecommunication purposes.
+
+          * Country code, 1–3 digits, as defined by ITU-T recommendation
+            {{bibref|ITU-E.164}}.
+
+          * identifier, 1–4 digits.
+
+          * Individual account identification number. Its length is variable,
+            but every number under one IIN will have the same length.
+
+          * Single check digit calculated from the other digits using the Luhn
+            algorithm.
+
+          For cards using an ICCID according to {{bibref|ITU-E.118}} the
+          maximum length is 19 Digits, for GSM cards 20 digits.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="6" maxLength="20"/>
+            <pattern value="[0-9]{6,20}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MSISDN">
+        <description>
+          Mobile Subscriber Integrated Service Digital Network Number, a number
+          uniquely identifying a subscription in a GSM, UMTS, or LTE mobile
+          network. {{bibref|ITU-E.164}}
+        </description>
+        <syntax>
+          <string>
+            <size minLength="14" maxLength="15"/>
+            <pattern value="[0-9]{14,15}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SMSC" access="readWrite">
+        <description>
+          The SMSC (SMS Center address) is part of the mobile network
+          provider's configuration and is included on the SIM card or
+          in the network provisioning package when the phone is initialized.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="EID">
+        <description>
+          Reports the unique identifier for the eUICC (Embedded Universal Integrated Circuit Card),
+          which is a built-in SIM that can store multiple carrier profiles and be updated remotely.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProfileNumberOfEntries">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ESIMProfileAddStatus">
+        <description>
+          Reports the operational status of the last network initiated Profile Add attempt for the embedded SIM (eSIM).
+          The ESIM prefix indicates that this parameter is related to eSIM functionality.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ESIMClassEnabledProfile">
+        <description>
+          References the currently activated {{object|Profile.}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="Profile." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ESIMTestMode" access="readOnly">
+        <description>
+          Allows the cellular network to enable or disable the Test profile. When set to {{true}},
+          any currently active profile is disabled, and the {{param|ESIMClassEnabledProfile}} is ignored.
+          When set to {{false}}, the previously active profile is re-enabled.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type">
+        <description>
+          The current type of the SIM card.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None">
+              <description>No card available</description>
+            </enumeration>
+            <enumeration value="USIM">
+              <description>Traditional SIM</description>
+            </enumeration>
+            <enumeration value="eSIM">
+              <description>eSIM</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="GID1">
+        <description>
+          A hexadecimal identifier used to differentiate between different SIM card tariffs or derive APNs.
+          For more details, refer to {{bibref|3GPP-TS.31.102}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Usage">
+        <description>
+          Indicates the usage of the SIM instance.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="UICC"/>
+            <enumeration value="DRM"/>
+            <enumeration value="WWC"/>
+            <enumeration value="CA"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PINCheck" access="readWrite">
+        <description>
+          Controls the PIN verification of the USIM card.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="OnNetworkAccess">
+              <description>
+                Check the PIN with each access to a new network
+              </description>
+            </enumeration>
+            <enumeration value="Reboot">
+              <description>
+                Check the PIN with first access after (re)boot
+              </description>
+            </enumeration>
+            <enumeration value="Off">
+              <description>Disable the PIN check</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PIN" access="readWrite">
+        <description>
+          Allows the Controller to change the USIM PIN used for SIM card
+          activation.
+        </description>
+        <syntax secured="true">
+          <string>
+            <size maxLength="4"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtectionScheme">
+        <description>
+          Protection Scheme Field—This field is a 4-bit value ranging 0–15,
+          which identifies the protection scheme used to generate the SUCI.
+          The following values are currently defined:
+          - Null Scheme—0x00
+          - Profile &lt;A&gt;—0x1
+          - Profile &lt;B&gt;—0x2
+          - Other Values (3–15)—Reserved for future use
+        </description>
+        <syntax>
+            <unsignedInt>
+              <range minInclusive="0" maxInclusive="15"/>
+            </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HomeNetworkPublicKeyID">
+        <description>
+          Home Network Public Key ID Field—This field is an 8-bit value ranging 0–255,
+          which identifies the public key provisioned by the Home Public Land Mobile
+          Network (HPLMN) and used for SUPI protection. When the Null Scheme is used,
+          this field is set to 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RoutingIndicator">
+        <description>
+          Routing Indicator Field—This field is a numerical value consisting of 1–4
+          decimal digits. It's assigned by the home network operator and securely
+          provisioned within the SIM/eSIM profile.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="9999"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.TrustedElements.SIM.{i}.Profile.{i}."
+        numEntriesParameter="ProfileNumberOfEntries"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        Profile table for SIM.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Name">
+        <description>
+          Indicates the profile name.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IMSI">
+        <description>
+          International Mobile Subscriber Identity represented as a string with
+          either 14 or 15 digits (digits 0-9). The first 3 digits are the
+          mobile country code (MCC), which are followed by the mobile network
+          code (MNC), either 2 digits (European standard) or 3 digits (North
+          American standard), followed by the mobile subscription
+          identification number (MSIN).
+        </description>
+        <syntax>
+          <string>
+            <size minLength="14" maxLength="15"/>
+            <pattern value="[0-9]{14,15}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ICCID">
+        <description>
+          Indicates the profile ICCID.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="State">
+        <description>
+          Indicates the profile state.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Active"/>
+            <enumeration value="Inactive"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Class">
+        <description>
+          Indicates the profile class.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Provisioning"/>
+            <enumeration value="Test"/>
+            <enumeration value="Operational"/>
+            <enumeration value="Unknown"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="GID1">
+        <description>
+          Differentiate e.g. different tariffs of SIM card, derive APNs etc. (as ASCII Hex dump)
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="TrustedElements:2.19">
+    <component ref="Root"/>
+    <component ref="TrustedElements"/>
+  </model>
+</dm:document>

@@ -1,855 +1,851 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" xml:lang="en-us">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tr-135-1-4-1-cwmp.xml</title>
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
+    <meta charset="utf-8" />
+    <meta name="generator" content="pandoc" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,
+          user-scalable=yes" />
+    <title>tr-135-1-4-1-cwmp.xml</title>
+    <style>
+        code{white-space: pre-wrap;}
+        span.smallcaps{font-variant: small-caps;}
+        div.columns{display: flex; gap: min(4vw, 1.5em);}
+        div.column{flex: auto; overflow-x: auto;}
+        div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+        /* The extra [class] is a hack that increases specificity enough to
+           override a similar rule in reveal.js */
+        ul.task-list[class]{list-style: none;}
+        ul.task-list li input[type="checkbox"] {
+            font-size: inherit;
+            width: 0.8em;
+            margin: 0 0.8em 0.2em -1.6em;
+            vertical-align: middle;
+        }
+    </style>
+
+    <!-- Sidebar ToC styles -->
+    <style>
+    @media screen and (min-width: 60em) {
+        body {
+            display: flex;
+            align-items: stretch;
+            margin: 0px;
+            /* XXX this is experimental; may need to insert zero-width spaces */
+            overflow-wrap: break-word;
+        }
+
+        #main {
+            flex: 4 2 auto;
+            overflow: auto;
+            order: 2;
+            padding: 5px;
+        }
+
+        #TOC {
+            position: sticky;
+            order: 1;
+            flex: 1 0 auto;
+            margin: 0 0;
+            top: 0px;
+            left: 0px;
+            height: 100vh;
+            line-height: 1.4;
+            resize: horizontal;
+            font-size: larger;
+            overflow: auto;
+            border-right: 1px solid #73AD21;
+            padding: 5px;
+            max-width: 20%;
+        }
+
+        #TOC ul {
+            margin: 0.35em 0;
+            padding: 0 0 0 1em;
+            list-style-type: none;
+        }
+
+        #TOC ul ul {
+            margin: 0.25em 0;
+        }
+
+        #TOC ul ul ul {
+            margin: 0.15em 0;
+        }
+
+        #TOC {
+            z-index: 1;
+        }
     }
-  </style>
-  <!-- Sidebar ToC styles -->
+    </style>
 
-  <style>
-  @media screen and (min-width: 60em) {
-      body {
-          display: flex;
-          align-items: stretch;
-          margin: 0px;
-          /* XXX this is experimental; may need to insert zero-width spaces */
-          overflow-wrap: break-word;
-      }
+    <!-- ToC expansion and contraction script -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var expandables = document.getElementsByClassName('expandable');
+        for (i = 0; i < expandables.length; i++) {
+            expandables[i].addEventListener('click', function() {
+                this.parentElement.querySelector('.collapsed').classList
+                    .toggle('expanded');
+                this.classList.toggle('collapsible');
+            });
+        }
+    });
+    </script>
 
-      #main {
-          flex: 4 2 auto;
-          overflow: auto;
-          order: 2;
-          padding: 5px;
-      }
+    <!-- ToC expansion and contraction styles -->
+    <style>
+    .expandable {
+        cursor: pointer;
+        user-select: none;
+        display: list-item;
+        /* Circled Plus + non-breakable space */
+        list-style-type: "\2295\A0";
+    }
 
-      #TOC {
-          position: sticky;
-          order: 1;
-          flex: 1 0 auto;
-          margin: 0 0;
-          top: 0px;
-          left: 0px;
-          height: 100vh;
-          line-height: 1.4;
-          resize: horizontal;
-          font-size: larger;
-          overflow: auto;
-          border-right: 1px solid #73AD21;
-          padding: 5px;
-          max-width: 20%;
-      }
+    .collapsible {
+        /* Circled Minus + non-breakable space */
+        list-style-type: "\2296\A0";
+    }
 
-      #TOC ul {
-          margin: 0.35em 0;
-          padding: 0 0 0 1em;
-          list-style-type: none;
-      }
+    .collapsed {
+        display: none;
+    }
 
-      #TOC ul ul {
-          margin: 0.25em 0;
-      }
+    .expanded {
+        display: grid; /* needed by the 'order' property */
+    }
+    </style>
 
-      #TOC ul ul ul {
-          margin: 0.15em 0;
-      }
+    <!-- ToC sorting script (works for object names and profile headers) -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        /* 'A.B.' -> {prefix: '', name: 'A.B.', 'version': ''}
+           '_Baseline:1' -> {prefix: '_', name: 'Baseline', version: '1'} */
+        var regex = /^(?<prefix>_?)(?<name>[^:]*)(:?)(?<version>\d*)/;
+        var lists = document.getElementsByClassName('ordered');
+        for (var i = 0; i < lists.length; i++) {
+            var items = lists[i].children;
+            var temp = [];
+            for (var j = 0; j < items.length; j++) {
+                /* this assumes that the first child contains the text */
+                temp.push([j, items[j].children[0].innerText]);
+            }
+            temp.sort((a, b) => {
+                /* 'Notation' (which is used for profiles) must come first */
+                var a1 = a[1] == 'Notation' ? ' Notation' : a[1];
+                var b1 = b[1] == 'Notation' ? ' Notation' : b[1];
+                var a1_groups = a1.match(regex).groups;
+                var b1_groups = b1.match(regex).groups;
+                var a1_tuple =  [
+                    a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
+                    parseInt(a1_groups.version || 0)];
+                var b1_tuple =  [
+                    b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
+                    parseInt(b1_groups.version || 0)];
+                return a1_tuple < b1_tuple ? -1 : a1_tuple > b1_tuple ? 1 : 0;
+            });
+            temp.forEach((order_text, j) => {
+                var k = order_text[0];
+                items[k].style.order = j;
+            });
+        }
+    });
+    </script>
 
-      #TOC {
-          z-index: 1;
-      }
-  }
-  </style>
+    <!-- Automatic title generation (from anchor ids) script
+         XXX only works for non-deprecated object parameters and doesn't
+             show correct full paths; should get rid of it? -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var pars = document.getElementsByClassName('parameter');
+        var regex = /\w\.\w+:[0-9.]+\./;
+        for (var i = 0; i < pars.length; i++) {
+            if (pars[i].firstElementChild && pars[i].firstElementChild.
+                    firstElementChild) {
+                pars[i].firstElementChild.title =
+                    pars[i].firstElementChild.firstElementChild.id.
+                    replace(regex, '');
+            }
+        }
+    });
+    </script>
 
-  <!-- ToC expansion and contraction script -->
+    <!-- Automatic on-hover link generation script -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var hoverlink = null;
 
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var expandables = document.getElementsByClassName('expandable');
-      for (i = 0; i < expandables.length; i++) {
-          expandables[i].addEventListener('click', function() {
-              this.parentElement.querySelector('.collapsed').classList
-                  .toggle('expanded');
-              this.classList.toggle('collapsible');
+        var anchors = document.querySelectorAll('td span[id]:not(:empty)');
+        for (var i = 0; i < anchors.length; i++) {
+          var cell = anchors[i].parentElement;
+
+          cell.addEventListener('mouseenter', event => {
+            var target = event.target;
+            var anchor = target.querySelector('span[id]:not(:empty)');
+
+            /* derive the item type from the row's first class item,
+             * which might have a leading 'deprecated-' etc. and
+             * might also contain additional hyphens */
+            var itemType = (target.parentElement.classList.item(0) || 'item').
+                replace(/^\w+-/, '').replace(/-/g, ' ');
+
+            if (hoverlink) {
+              hoverlink.remove();
+              hoverlink = null;
+            }
+
+            hoverlink = document.createElement('a');
+            hoverlink.href = '#' + anchor.id;
+            hoverlink.className = 'hoverlink';
+            hoverlink.title = 'Permalink to this ' + itemType;
+            target.appendChild(hoverlink);
           });
-      }
-  });
-  </script>
 
-  <!-- ToC expansion and contraction styles -->
-
-  <style>
-  .expandable {
-      cursor: pointer;
-      user-select: none;
-      display: list-item;
-      /* Circled Plus + non-breakable space */
-      list-style-type: "\2295\A0";
-  }
-
-  .collapsible {
-      /* Circled Minus + non-breakable space */
-      list-style-type: "\2296\A0";
-  }
-
-  .collapsed {
-      display: none;
-  }
-
-  .expanded {
-      display: grid; /* needed by the 'order' property */
-  }
-  </style>
-
-  <!-- ToC sorting script (works for object names and profile headers) -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      /* 'A.B.' -> {prefix: '', name: 'A.B.', 'version': ''}
-         '_Baseline:1' -> {prefix: '_', name: 'Baseline', version: '1'} */
-      var regex = /^(?<prefix>_?)(?<name>[^:]*)(:?)(?<version>\d*)/;
-      var lists = document.getElementsByClassName('ordered');
-      for (var i = 0; i < lists.length; i++) {
-          var items = lists[i].children;
-          var temp = [];
-          for (var j = 0; j < items.length; j++) {
-              /* this assumes that the first child contains the text */
-              temp.push([j, items[j].children[0].innerText]);
-          }
-          temp.sort((a, b) => {
-              /* 'Notation' (which is used for profiles) must come first */
-              var a1 = a[1] == 'Notation' ? ' Notation' : a[1];
-              var b1 = b[1] == 'Notation' ? ' Notation' : b[1];
-              var a1_groups = a1.match(regex).groups;
-              var b1_groups = b1.match(regex).groups;
-              var a1_tuple =  [
-                  a1_groups.name.toLowerCase() + (a1_groups.prefix || '~'),
-                  parseInt(a1_groups.version || 0)];
-              var b1_tuple =  [
-                  b1_groups.name.toLowerCase() + (b1_groups.prefix || '~'),
-                  parseInt(b1_groups.version || 0)];
-              return a1_tuple < b1_tuple ? -1 : a1_tuple > b1_tuple ? 1 : 0;
+          cell.addEventListener('mouseleave', () => {
+            if (hoverlink) {
+              hoverlink.remove();
+              hoverlink = null;
+            }
           });
-          temp.forEach((order_text, j) => {
-              var k = order_text[0];
-              items[k].style.order = j;
-          });
-      }
-  });
-  </script>
+        }
+    });
+    </script>
 
-  <!-- Automatic title generation (from anchor ids) script
-       XXX only works for non-deprecated object parameters and doesn't
-           show correct full paths; should get rid of it? -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var pars = document.getElementsByClassName('parameter');
-      var regex = /\w\.\w+:[0-9.]+\./;
-      for (var i = 0; i < pars.length; i++) {
-          if (pars[i].firstElementChild && pars[i].firstElementChild.
-                  firstElementChild) {
-              pars[i].firstElementChild.title =
-                  pars[i].firstElementChild.firstElementChild.id.
-                  replace(regex, '');
-          }
-      }
-  });
-  </script>
-
-  <!-- Automatic on-hover link generation script -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var hoverlink = null;
-
-      var anchors = document.querySelectorAll('td span[id]:not(:empty)');
-      for (var i = 0; i < anchors.length; i++) {
-        var cell = anchors[i].parentElement;
-
-        cell.addEventListener('mouseenter', event => {
-          var target = event.target;
-          var anchor = target.querySelector('span[id]:not(:empty)');
-
-          /* derive the item type from the row's first class item,
-           * which might have a leading 'deprecated-' etc. and
-           * might also contain additional hyphens */
-          var itemType = (target.parentElement.classList.item(0) || 'item').
-              replace(/^\w+-/, '').replace(/-/g, ' ');
-
-          if (hoverlink) {
-            hoverlink.remove();
-            hoverlink = null;
-          }
-
-          hoverlink = document.createElement('a');
-          hoverlink.href = '#' + anchor.id;
-          hoverlink.className = 'hoverlink';
-          hoverlink.title = 'Permalink to this ' + itemType;
-          target.appendChild(hoverlink);
-        });
-
-        cell.addEventListener('mouseleave', () => {
-          if (hoverlink) {
-            hoverlink.remove();
-            hoverlink = null;
-          }
-        });
-      }
-  });
-  </script>
-
-  <!-- Hoverlink styles -->
-
-  <style>
-  :root {
-      --hoverlink-size: 0.9em;
-  }
-
-  .hoverlink {
-      text-decoration: none;
-  }
-
-  .hoverlink::after {
-      position: absolute;
-      display: inline-block;
-      content: "";
-      width: var(--hoverlink-size);
-      height: var(--hoverlink-size);
-      background-size: var(--hoverlink-size) var(--hoverlink-size);
-      background-image: url(data:image/png;base64,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);
-  }
-  </style>
-
-  <!-- Table body expansion and contraction script -->
-
-  <script>
-  window.addEventListener('DOMContentLoaded', function() {
-      var showables = document.getElementsByClassName('showable');
-      for (var i = 0; i < showables.length; i++) {
-          var showable = showables[i];
-          showable.addEventListener('click', function() {
-              this.classList.toggle('show');
-          });
-      }
-
-      showables = document.getElementsByClassName('showable2');
-      for (var i = 0; i < showables.length; i++) {
-          var showable = showables[i];
-          showable.addEventListener('click', function(event) {
-              this.classList.toggle('show2');
-              event.stopPropagation();
-          });
-      }
-  });
-  </script>
-
-  <!-- Table body expansion and contraction styles -->
-
-  <style>
-  .chevron {
-      color: var(--link-color);
-      cursor: pointer;
-  }
-
-  .chevron::before {
-      /* Single Right-Pointing Angle Quotation Mark */
-      content: "\00203A ";
-  }
-
-  .chevron .click::after {
-      content: " Click to show/hide...";
-  }
-
-  .hide {
-      display: none;
-  }
-
-  .show tr {
-      display: table-row;
-  }
-
-  .show td div, .show ul, .show ol {
-      display: block;
-  }
-
-  .show td span {
-      display: inline;
-  }
-
-  .show2 *.hide {
-      display: none;
-  }
-
-  </style>
-
-  <!-- Global styles (that affect the entire document) -->
-
-  <style>
-  /* light mode support */
-  @media (prefers-color-scheme: light) {
+    <!-- Hoverlink styles -->
+    <style>
     :root {
-      --background-color: white;
-      --foreground-color: black;
-      --diff-background-color: aliceblue;
-      --link-color: blue;
-      --parameter-color: white;
-      --object-color: #ffff99;
-      --command-color: #66cdaa;
-      --event-color: #66cdaa;
-      --argument-container-color: silver;
-      --argument-object-color: pink;
-      --argument-parameter-color: #ffe4e1;
-      --mountable-object-color: #b3e0ff;
-      --mountpoint-object-color: #4db8ff;
-      --stripe-direction: 90deg;
-      --stripe-stop-point-1: 1%;
-      --stripe-stop-point-2: 2%;
-      --stripe-color-deprecated: #eeeeee;
-      --stripe-color-obsoleted: #dddddd;
-      --stripe-color-deleted: #cccccc;
+        --hoverlink-size: 0.9em;
     }
-  }
 
-  /* dark mode support */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background-color: black;
-      --foreground-color: white;
-      --diff-background-color: #0f0700;
-      --link-color: lightblue;
-      --parameter-color: black;
-      --object-color: #bbbb44;
-      --command-color: #56bd9a;
-      --event-color: #56bd9a;
-      --argument-container-color: #777777;
-      --argument-object-color: #dfa0ab;
-      --argument-parameter-color: #bfa4a1;
-      --mountable-object-color: #b3e0ff;
-      --mountpoint-object-color: #3da8ef;
-      --stripe-color-deprecated: #555555;
-      --stripe-color-obsoleted: #444444;
-      --stripe-color-deleted: #333333;
-    }
     .hoverlink {
-      filter: invert(1);
+        text-decoration: none;
     }
-  }
-
-  body, table {
-      background-color: var(--background-color);
-      color: var(--foreground-color);
-      font-family: helvetica, arial, sans-serif;
-      font-size: 9pt;
-  }
-
-  h1 {
-      font-size: 14pt;
-  }
-
-  h2 {
-      font-size: 12pt;
-  }
-
-  h3 {
-      font-size: 10pt;
-  }
-
-  a:link, a:visited {
-      color: var(--link-color);
-  }
-
-  sup {
-      vertical-align: super;
-  }
-
-  table {
-      text-align: left;
-      vertical-align: top;
-  }
-
-  td, th {
-      padding: 2px;
-      text-align: left;
-      vertical-align: top;
-  }
-
-  /* this is intended for hoverlinks */
-  td span {
-      padding-right: 2px;
-  }
-
-  table.middle-width {
-      width: 60%;
-  }
-
-  table.full-width {
-      width: 100%;
-  }
-
-  thead th {
-      background-color: #999999;
-  }
-
-  table.partial-border {
-      border-left-style: hidden;
-      border-right-style: hidden;
-      border-collapse: collapse;
-  }
-
-  table.partial-border th,
-  table.partial-border td {
-      border-style: solid;
-      border-width: 1px;
-      border-color: lightgray;
-  }
-
-  td > div,
-  td > p {
-      margin-block-start: 0;
-      margin-block-end: 1em;
-  }
-
-  td > div:last-of-type,
-  td > p:last-of-type {
-      margin-block-end: 0;
-  }
-
-  .centered {
-      text-align: center;
-  }
-
-  .inserted {
-      color: blue;
-  }
-
-  .removed {
-      color: red;
-      text-decoration: line-through;
-  }
-
-  /* XXX this is a bad name */
-  .diffs {
-      background-color: var(--diff-background-color);
-      opacity: 0.8;
-  }
-
-  .parameter {
-      background-color: var(--parameter-color);
-  }
-
-  .deprecated-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--parameter-color),
-          var(--parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--parameter-color),
-          var(--parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--parameter-color),
-          var(--parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .object {
-      background-color: var(--object-color);
-  }
-
-  .deprecated-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--object-color),
-          var(--object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--object-color),
-          var(--object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--object-color),
-          var(--object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .command {
-      background-color: var(--command-color);
-  }
-
-  .deprecated-command {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--command-color),
-          var(--command-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-command {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--command-color),
-          var(--command-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-command {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--command-color),
-          var(--command-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .event {
-      background-color: var(--event-color);
-  }
-
-  .deprecated-event {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--event-color),
-          var(--event-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-event {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--event-color),
-          var(--event-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-event {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--event-color),
-          var(--event-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .argument-container {
-      background-color: var(--argument-container-color);
-  }
-
-  .deprecated-argument-container {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-container-color),
-          var(--argument-container-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-argument-container {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-container-color),
-          var(--argument-container-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-argument-container {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-container-color),
-          var(--argument-container-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .argument-parameter {
-      background-color: var(--argument-parameter-color);
-  }
-
-  .deprecated-argument-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-parameter-color),
-          var(--argument-parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-argument-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-parameter-color),
-          var(--argument-parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-argument-parameter {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-parameter-color),
-          var(--argument-parameter-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .argument-object {
-      background-color: var(--argument-object-color);
-  }
-
-  .deprecated-argument-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-object-color),
-          var(--argument-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-argument-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-object-color),
-          var(--argument-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-argument-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--argument-object-color),
-          var(--argument-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .mountable-object {
-      background-color: var(--mountable-object-color);
-  }
-
-  .deprecated-mountable-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountable-object-color),
-          var(--mountable-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-mountable-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountable-object-color),
-          var(--mountable-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-mountable-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountable-object-color),
-          var(--mountable-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-
-  .mountpoint-object {
-      background-color: var(--mountpoint-object-color);
-  }
-
-  .deprecated-mountpoint-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountpoint-object-color),
-          var(--mountpoint-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-1),
-          var(--stripe-color-deprecated) var(--stripe-stop-point-2));
-  }
-
-  .obsoleted-mountpoint-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountpoint-object-color),
-          var(--mountpoint-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
-          var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
-  }
-
-  .deleted-mountpoint-object {
-      background-image: repeating-linear-gradient(
-          var(--stripe-direction),
-          var(--mountpoint-object-color),
-          var(--mountpoint-object-color) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-1),
-          var(--stripe-color-deleted) var(--stripe-stop-point-2));
-  }
-  </style>
-
-  <!-- Local styles (that affect only data model tables) -->
-
-  <style>
-  /* center column 2 (Base Type) */
-  .data-type-table th:nth-child(2),
-  .data-type-table td:nth-child(2) {
-      text-align: center;
-  }
-
-  /* center columns 3 (Write), 5 (Object Default), 6 (Version) */
-  .data-model-table th:nth-child(3),
-  .data-model-table td:nth-child(3),
-  .data-model-table th:nth-child(5),
-  .data-model-table td:nth-child(5),
-  .data-model-table th:nth-child(6),
-  .data-model-table td:nth-child(6)
-  {
-      text-align: center;
-  }
-
-  .data-model-table th,
-  .data-model-table td {
-      hyphenate-character: "";
-  }
-
-  /* word wrap/break column 1 (Name) */
-  .data-model-table td:first-child {
-      word-wrap: break-word;
-      word-break: break-all;
-      min-width: 27ch;
-  }
-
-  /* word wrap/break column 2 (Base Type) */
-  .data-model-table td:nth-child(2) {
-      word-wrap: break-word;
-      word-break: break-all;
-      min-width: 12ch;
-  }
-
-  /* word wrap/break column 3 (Write) */
-  .data-model-table td:nth-child(3) {
-      min-width: 1ch;
-  }
-
-  /* word wrap/break column 5 (Object Default) */
-  .data-model-table td:nth-child(5) {
-      word-wrap: break-word;
-      word-break: break-all;
-      min-width: 12ch;
-  }
-
-  /* word wrap/break column 6 (Version) */
-  .data-model-table td:nth-child(6) {
-      min-width: 6ch;
-  }
-
-  /* center column 1 (Abbreviation) */
-  .profile-notation-table th:nth-child(1),
-  .profile-notation-table td:nth-child(1) {
-      text-align: center;
-  }
-
-  /* center column 2 (Requirement) */
-  .profile-requirements-table th:nth-child(2),
-  .profile-requirements-table td:nth-child(2) {
-      text-align: center;
-  }
-  </style>
-
-  <style>
-  /* enabled if the --show option was specified (to avoid confusion between
-     links and inserted text) */
-  a:link, a:visited, a:hover, a:active {
-      color: inherit;
-  }
-  </style>
+
+    .hoverlink::after {
+        position: absolute;
+        display: inline-block;
+        content: "";
+        width: var(--hoverlink-size);
+        height: var(--hoverlink-size);
+        background-size: var(--hoverlink-size) var(--hoverlink-size);
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAECgAwAEAAAAAQAAAEAAAAAAtWsvswAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAACn9JREFUeAHNW9luHMcV7ekZkuIicuiI0BJDUARDIiBISKwHQRZg6SEWwCyIk4DxbtgP9g94i9/8D16+JY4XwMljHFmmGNkJ8p4gj7a8aMv4nDv3NKuHNb3NDDkNtKpZU9u5y6lbt1tJgmtzc7ONosXbn/e7jsua4T+4FtM0fRflf3F/22q1/oLyMm5ebDPKmvvgr1y50uFAKA9w1M3NM7Pnz5+3wfe6ztdi4LvdpAvA27h7WFYPgsjK2dnZZ7jWS5cuHWTZcM3E3de8gBK4g0/2qc4Wtbq6ugLgN9PUwH8P8P/HWiGE1h2v6y0uLj5HAFjvQsM10+p3NB+Cv3jx4rwPnglkD+ocfBKCv72j+RYFQCu43273reHAgQPPcp24ZmIKi63Z25nLy9cpxb0EmkQWVhW8XOE+heECeaovg8QwyBoic+TmhSBsztB/cg2qDjSGdnXBG3CAvw/gvXa7TaswIWAtCxRGGXhyBtuZBYwBQOmEBXM0BS9CNCHQEuQOFy5cWCY2zlkwbyILMF9wvyjtVCbZogkjfeuAJwmGZi9XoDVYPX6PEmNkXoLnjrevJFgHfKZlgL1HoFWJsQR8a79IsA54B9xiEPRPB3+3X2YkKIGEFlJKjHKBvSbBJuBJdL8G6LTT6dxw8NgeBwMkE0glYtwvEmwK/nGAlrXOw/yvO/hYjEBryFymiBhlAXtFgiOB95DXxjh9+jTD32seDJklRKyhkBj3mgRHAh9uawGprVAIBI77Np7FA/zbbtQVRYx7FgmmvV6v5QcbxfbDTFeER583sw/Ba4uF9pYALqEl0B0IHtZwh2UAXgIZSoxygUmSYGtjY2MOC5sFg3/GxeG5Cvjfol0SAy8LUIlm8yDGLZQEb+7Qf9bJMU6M586dW0S7yUaCOqpCS284eJ7qPILLzJSaCjVfCj6I8Dq0LsAgMX5eIuCQGO0ofeLECTv+T5IEmWhJoKGPUOSA+mJzdTD7HHhq2TXdlsYD8IkTWVNifJZr45UlQsLBYxPWrfMFco4/OWPfI/Ai8G41bfk7O/uV0p1UH64leCYxfsYECuZwTthlcRkxou1l7a0TOQNoYfPz83/EZFwUXCALXnaZfbjVOXf8/ODBhZfQ9xHculIJNlQY6kJi9GBpx7WCeemCdygk3Eyv5dJJo5zqYn1Fgh2Y96e+CGR0dgIVmb2Dt1TY2lr3p1jWTSU9uFi0+xh1q56zTEPwErRKtEvR/t8oKfQsHhD/uIVQEN+YBcTMahx1rqkUEyUgnC6KLQdli8Iif8ffQvCHDq08jKqvvB3TX3dxmznPzHQohGRj46G5M2f653mBdoFYLmBlZekPaPadA/VUWs4VrA6/M9E6PCc4MLhpp0md+pw9e3YV823REgDe9vkI+K8D8BlfoM6E0O0uPcpF48oRo7a15eVFHoJo3qZ9PkvznJc36rQbvY3nkUiw5QDa1LYDjZKqt0uOHDlyYm5u7hec2P3WBOuaF3hqXYsVAKubmZl5gX01HjVfE7zikK3Dhw8vjkKCxspcTHg5eUV9lELq9fpJiKtXLRCpCp7CMOLCXI/5fLZT1AR/x61re339xz/K1h3k1GNEFqtTADIL83oD+zx9832cvN5EmXMVmb/7KH9Lm4JvtZIvNB45YAzg201I0AIPj+0V3jIW9wgvvXb8+HH6es5MRaq0AgmpgtlT83fpz+hz69ixtZ9xXI4xBvAdvQWrEwnGTnUkFO7pDHK0z9+Ahh7QYscB/ujRo+c5Hi0A4xnbg/CeRlUZ4cXMvuOKIPbKJBgDL0IxwiJxYTxNeAMk8xOOj1vBSx2fzzQv8AQ+ZvCVc4JVwZOxeeiwfR5s/0s8Jw18fhd4mvwYwVvkCyswXOCB7GVolPAIYnW19HUVwYfhre3z0wq+ak6wjuZD8Haqg4QZn49k9pPQPCzJ1iQLGEaCI4EviPBiQU6O7UOf17Y3BsLLHfjKSHAqwPsik+XlpSdhSaOw/TDwURLcd/A0e4Hvdrs8MBE8t1nP6ijmyMJl7TxhhKetLgdeFkU3kAuEJDgV4N1H07feMpZ+EOS67VtsbNu9HQlvS8HnSNAl0RR8eKqzMepGePJ5JzwRFCNGS6mdPHmSmR4dpRls0RpIut83AT9Ighinz9RNtzrP3tpiPZmh83xlwgvBh2aq5/X1dR5e/kZL8NBY4fffT506dYggcJVqPgBPAVskaBIf+CYnZmrRfd7B8wjc8ZPgF64V+5bHTZd9/aywE9tL81jUgvu8Isac3+I3S3exDQ5er2Hh76P8AOUr7IuSVxPwJoBk1JcW0hIW8dgI4BP3eTvmSlMam8KlkA1q8I9SZC7AnODUl2MNjse/Nd4iTKqIZAY1/xvOH7600ERIYL6Mn2xPr6J5mr36gu3JJQ9ybNWpDABUTsBE+mbjcryMBGGa77lPKU1EAHb3weQSmLvAu2TN/9H+EsdCf0tfBWavZMYtmb37fJjDQ7902wkvgXbM7APwOQA+70h1soD/OVBPHubAq+5b5PB+hXbRM75L25KfaGcvQeAKFAJJsBB8EOQoe7vlhIfkZ/w9wJjAZyT4XaCpUPMkLVsUtPolnlP3t05MK06AaJasevbWxqJFIJPzpZIZ6BscaXdFeApoPqVQXUOtMnOuKxCMK/CtBAv8KxZtZhvxW9bbIQesewPt7ONJLUhlIBAJCcS69CgSmC+iz1W1Y0kBoK4ovLWkCuZ7ne3C5GddoJo3WF/OZeQCl2kBDh4az7Yr1aHUq+f0un+ckKDzLh91ySJZ+hDfCOcu/lYBPOe8R6tB5z/7ANFdYRioqkLKSJCT+IfHCizM7CPWgNjAFnYNkzAyM2nGJvSXFm3XXjufwNxl9hSwYgQTAIbuwQI+5BwuOItVyjQaW0tRHca2bdUGx4fHz3NigsQ97NChuPuaLAF9SgMQMj7B4I3NE5yDGi6YQ+Htq+wj0CoJqAhU1XYULIa3QEh7a8IPilzLWODO9hfUUVNmCfj9Op7n/f18lBi50JrgMwGj74KT7mRJUKlhTghAvJ7CViaT1NZEgaiO2rNvcmCmn6P9UGKsCV47wHYQ20dD46paLmsnFwiPw+YOFAK17pqPEqPv8xRMlBgbgv9H8Mam1LVGcYWMBGkBAwOZEPz7uqbEqAivis9L83sGXnhlASSCwReaBqAhMRqxVCS8/QS/Q4LOiLmTlA47VYmxz+zpFoSZAvzvUZax/TSAj+YEs62nJjHaAQjE+C+A54fN5BCLIgcIlGS6b+BDYpQLhCQYgtd+W5kYAdQAl+zzUwG+iARzruASq0OM3Dr9FJnbOqdG81VI0ACH5iJ38P+qZlskgA6LGLk9hnFDCP5msM9PdKsT0AEchs15rx8Jxkgw1qkmMUpI0wy+lATFAyE31IkYpw58qNiqJBiCl0CqEqNi+6kw+xC8n1jzH0vHXKGgLkaMlv5yElSOEeCPFebtC+bIEfIE2tlxOIwEWyQObRE+4dA6xfsiRt/+nPyMBHGw2QV+6HhV5x2lnTQvbIhJLOlASUgQJhU0qFSHL0AZUvK6DAF8gvIWyv+gfGdtbc2yRnhu62iLZ3uJgjKpOscE2yU/ABJADkcmdn30AAAAAElFTkSuQmCC);
+    }
+    </style>
+
+    <!-- Table body expansion and contraction script -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var showables = document.getElementsByClassName('showable');
+        for (var i = 0; i < showables.length; i++) {
+            var showable = showables[i];
+            showable.addEventListener('click', function() {
+                this.classList.toggle('show');
+            });
+        }
+
+        showables = document.getElementsByClassName('showable2');
+        for (var i = 0; i < showables.length; i++) {
+            var showable = showables[i];
+            showable.addEventListener('click', function(event) {
+                this.classList.toggle('show2');
+                event.stopPropagation();
+            });
+        }
+    });
+    </script>
+
+    <!-- Table body expansion and contraction styles -->
+    <style>
+    .chevron {
+        color: var(--link-color);
+        cursor: pointer;
+        margin-block-end: 0;
+    }
+
+    .chevron::before {
+        /* Single Right-Pointing Angle Quotation Mark */
+        content: "\00203A ";
+    }
+
+    .chevron .click::after {
+        content: " Click to show/hide...";
+    }
+
+    .chevron p {
+        display: inline;
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .show tr {
+        display: table-row;
+    }
+
+    .show td div, .show ul, .show ol {
+        display: block;
+    }
+
+    .show td span {
+        display: inline;
+    }
+
+    .show2 *.hide {
+        display: none;
+    }
+
+    </style>
+
+    <!-- Global styles (that affect the entire document) -->
+    <style>
+    /* light mode support */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --background-color: white;
+        --foreground-color: black;
+        --diff-background-color: aliceblue;
+        --link-color: blue;
+        --parameter-color: white;
+        --object-color: #ffff99;
+        --command-color: #66cdaa;
+        --event-color: #66cdaa;
+        --argument-container-color: silver;
+        --argument-object-color: pink;
+        --argument-parameter-color: #ffe4e1;
+        --mountable-object-color: #b3e0ff;
+        --mountpoint-object-color: #4db8ff;
+        --stripe-direction: 90deg;
+        --stripe-stop-point-1: 1%;
+        --stripe-stop-point-2: 2%;
+        --stripe-color-deprecated: #eeeeee;
+        --stripe-color-obsoleted: #dddddd;
+        --stripe-color-deleted: #cccccc;
+      }
+    }
+
+    /* dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background-color: black;
+        --foreground-color: white;
+        --diff-background-color: #0f0700;
+        --link-color: lightblue;
+        --parameter-color: black;
+        --object-color: #bbbb44;
+        --command-color: #56bd9a;
+        --event-color: #56bd9a;
+        --argument-container-color: #777777;
+        --argument-object-color: #dfa0ab;
+        --argument-parameter-color: #bfa4a1;
+        --mountable-object-color: #b3e0ff;
+        --mountpoint-object-color: #3da8ef;
+        --stripe-color-deprecated: #555555;
+        --stripe-color-obsoleted: #444444;
+        --stripe-color-deleted: #333333;
+      }
+      .hoverlink {
+        filter: invert(1);
+      }
+    }
+
+    body, table {
+        background-color: var(--background-color);
+        color: var(--foreground-color);
+        font-family: sans-serif;
+        font-size: 9pt;
+    }
+
+    h1 {
+        font-size: 14pt;
+    }
+
+    h2 {
+        font-size: 12pt;
+    }
+
+    h3 {
+        font-size: 10pt;
+    }
+
+    a:link, a:visited {
+        color: var(--link-color);
+    }
+
+    sup {
+        vertical-align: super;
+    }
+
+    table {
+        text-align: left;
+        vertical-align: top;
+    }
+
+    td, th {
+        padding: 2px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    /* this is intended for hoverlinks */
+    td span {
+        padding-right: 2px;
+    }
+
+    table.middle-width {
+        width: 60%;
+    }
+
+    table.full-width {
+        width: 100%;
+    }
+
+    thead th {
+        background-color: #999999;
+    }
+
+    table.partial-border {
+        border-left-style: hidden;
+        border-right-style: hidden;
+        border-collapse: collapse;
+    }
+
+    table.partial-border th,
+    table.partial-border td {
+        border-style: solid;
+        border-width: 1px;
+        border-color: lightgray;
+    }
+
+    td > div,
+    td > p {
+        margin-block-start: 0;
+        margin-block-end: 1em;
+    }
+
+    td > div:last-of-type,
+    td > p:last-of-type {
+        margin-block-end: 0;
+    }
+
+    .centered {
+        text-align: center;
+    }
+
+    .inserted {
+        color: blue;
+        margin-block-end: 0;
+    }
+
+    .removed {
+        color: red;
+        text-decoration: line-through;
+        margin-block-end: 0;
+    }
+
+    /* XXX this is a bad name */
+    .diffs {
+        background-color: var(--diff-background-color);
+        opacity: 0.8;
+    }
+
+    .parameter {
+        background-color: var(--parameter-color);
+    }
+
+    .deprecated-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--parameter-color),
+            var(--parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--parameter-color),
+            var(--parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--parameter-color),
+            var(--parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .object {
+        background-color: var(--object-color);
+    }
+
+    .deprecated-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--object-color),
+            var(--object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--object-color),
+            var(--object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--object-color),
+            var(--object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .command {
+        background-color: var(--command-color);
+    }
+
+    .deprecated-command {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--command-color),
+            var(--command-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-command {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--command-color),
+            var(--command-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-command {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--command-color),
+            var(--command-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .event {
+        background-color: var(--event-color);
+    }
+
+    .deprecated-event {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--event-color),
+            var(--event-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-event {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--event-color),
+            var(--event-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-event {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--event-color),
+            var(--event-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .argument-container {
+        background-color: var(--argument-container-color);
+    }
+
+    .deprecated-argument-container {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-container-color),
+            var(--argument-container-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-argument-container {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-container-color),
+            var(--argument-container-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-argument-container {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-container-color),
+            var(--argument-container-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .argument-parameter {
+        background-color: var(--argument-parameter-color);
+    }
+
+    .deprecated-argument-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-parameter-color),
+            var(--argument-parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-argument-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-parameter-color),
+            var(--argument-parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-argument-parameter {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-parameter-color),
+            var(--argument-parameter-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .argument-object {
+        background-color: var(--argument-object-color);
+    }
+
+    .deprecated-argument-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-object-color),
+            var(--argument-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-argument-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-object-color),
+            var(--argument-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-argument-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--argument-object-color),
+            var(--argument-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .mountable-object {
+        background-color: var(--mountable-object-color);
+    }
+
+    .deprecated-mountable-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountable-object-color),
+            var(--mountable-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-mountable-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountable-object-color),
+            var(--mountable-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-mountable-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountable-object-color),
+            var(--mountable-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+
+    .mountpoint-object {
+        background-color: var(--mountpoint-object-color);
+    }
+
+    .deprecated-mountpoint-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountpoint-object-color),
+            var(--mountpoint-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-1),
+            var(--stripe-color-deprecated) var(--stripe-stop-point-2));
+    }
+
+    .obsoleted-mountpoint-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountpoint-object-color),
+            var(--mountpoint-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-1),
+            var(--stripe-color-obsoleted) var(--stripe-stop-point-2));
+    }
+
+    .deleted-mountpoint-object {
+        background-image: repeating-linear-gradient(
+            var(--stripe-direction),
+            var(--mountpoint-object-color),
+            var(--mountpoint-object-color) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-1),
+            var(--stripe-color-deleted) var(--stripe-stop-point-2));
+    }
+    </style>
+
+    <!-- Local styles (that affect only data model tables) -->
+    <style>
+    /* center column 2 (Base Type) */
+    .data-type-table th:nth-child(2),
+    .data-type-table td:nth-child(2) {
+        text-align: center;
+    }
+
+    /* center columns 3 (Write), 5 (Object Default), 6 (Version) */
+    .data-model-table th:nth-child(3),
+    .data-model-table td:nth-child(3),
+    .data-model-table th:nth-child(5),
+    .data-model-table td:nth-child(5),
+    .data-model-table th:nth-child(6),
+    .data-model-table td:nth-child(6)
+    {
+        text-align: center;
+    }
+
+    .data-model-table th,
+    .data-model-table td {
+        hyphenate-character: "";
+    }
+
+    /* word wrap/break column 1 (Name) */
+    .data-model-table td:first-child {
+        word-wrap: break-word;
+        word-break: break-all;
+        min-width: 27ch;
+    }
+
+    /* word wrap/break column 2 (Base Type) */
+    .data-model-table td:nth-child(2) {
+        word-wrap: break-word;
+        word-break: break-all;
+        min-width: 12ch;
+    }
+
+    /* word wrap/break column 3 (Write) */
+    .data-model-table td:nth-child(3) {
+        min-width: 1ch;
+    }
+
+    /* word wrap/break column 5 (Object Default) */
+    .data-model-table td:nth-child(5) {
+        word-wrap: break-word;
+        word-break: break-all;
+        min-width: 12ch;
+    }
+
+    /* word wrap/break column 6 (Version) */
+    .data-model-table td:nth-child(6) {
+        min-width: 6ch;
+    }
+
+    /* center column 1 (Abbreviation) */
+    .profile-notation-table th:nth-child(1),
+    .profile-notation-table td:nth-child(1) {
+        text-align: center;
+    }
+
+    /* center column 2 (Requirement) */
+    .profile-requirements-table th:nth-child(2),
+    .profile-requirements-table td:nth-child(2) {
+        text-align: center;
+    }
+    </style>
+
+    <style>
+    /* enabled if the --show option was specified (to avoid confusion between
+       links and inserted text) */
+    a:link, a:visited, a:hover, a:active {
+        color: inherit;
+    }
+    </style>
 </head>
+
 <body>
 <div id="main">
 <table class="full-width">
 <colgroup>
-<col style="width: 3.0%;"></col>
-<col style="width: 22.0%;"></col>
-<col style="width: 50.0%;"></col>
-<col style="width: 25.0%;"></col></colgroup>
+<col style="width: 3%;">
+<col style="width: 22%;">
+<col style="width: 50%;">
+<col style="width: 25%;">
+</colgroup>
 <tbody>
-<tr>
-<td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif" alt="Broadband Forum"></img></a></td>
-<td class="centered" rowspan="1"><p></p>
-
-<h1 id="stbservice14-service-object-definition-cwmp-changes" class="unnumbered unlisted">STBService:1.4 Service Object definition [CWMP] (changes)</h1>
-
-<h1 id="tr-135-1-4-1-cwmpxml" class="unnumbered unlisted"><a href="./#tr-135-1-4-1-cwmp.xml">tr-135-1-4-1-cwmp.xml</a></h1></td>
-<td rowspan="1"></td></tr>
-<tr>
-<td></td>
-<td><h3 id="data-model-definition" class="unnumbered unlisted">DATA MODEL DEFINITION</h3></td></tr></tbody></table>
-
+<tr><td colspan="2"><a href="https://www.broadband-forum.org"><img width="100%" alt="Broadband Forum" src="https://www.broadband-forum.org/images/logo-broadband-forum.gif"></a></td><td class="centered" rowspan="1"><p></p><h1 class="unnumbered unlisted">STBService:1.4 Service Object definition [CWMP] (changes)</h1><h1 class="unnumbered unlisted"><a href="./#tr-135-1-4-1-cwmp.xml">tr-135-1-4-1-cwmp.xml</a></h1></td><td rowspan="1"></td></tr>
+<tr><td></td><td><h3 id="data-model-definition" class="unnumbered unlisted">DATA MODEL DEFINITION</h3></td></tr>
+</tbody>
+</table>
 <h1 id="license">License</h1>
 
 <p>Copyright (c) 2009-2019, Broadband Forum</p>
-
 <p>Redistribution and use in source and binary forms, with or
 without modification, are permitted provided that the following
 conditions are met:</p>
-
 <ol>
-<li>Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above
+<li>
+<p>Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.</p>
+</li>
+<li>
+<p>Redistributions in binary form must reproduce the above
 copyright notice, this list of conditions and the following
 disclaimer in the documentation and/or other materials
-provided with the distribution.</li>
-<li>Neither the name of the copyright holder nor the names of its
+provided with the distribution.</p>
+</li>
+<li>
+<p>Neither the name of the copyright holder nor the names of its
 contributors may be used to endorse or promote products
 derived from this software without specific prior written
-permission.</li></ol>
-
+permission.</p>
+</li>
+</ol>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-CONTRIBUTORS &ldquo;AS IS&rdquo; AND ANY EXPRESS OR IMPLIED WARRANTIES,
+CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
@@ -861,23 +857,18 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-
 <p>The above license is used as a license under copyright only.
 Please reference the Forum IPR Policy for patent licensing terms
 <a href="https://www.broadband-forum.org/ipr-policy">https://www.broadband-forum.org/ipr-policy</a>.</p>
-
 <p>Any moral rights which are necessary to exercise under the above
 license grant are also deemed granted under this license.</p>
-
 <h1 id="data-types">Data Types</h1>
-
 <p>The Parameters defined in this specification make use of a
 limited subset of the default SOAP data types [<a href="#R.SOAP1.1">SOAP1.1</a>]. These data
 types and the named data types used by this specification
 are described below.</p>
-
 <p>Note: A Parameter that is defined to be one of the named data
-types is reported as such at the beginning of the Parameter’s
+types is reported as such at the beginning of the Parameter's
 description via a reference back to the associated data type
 definition (e.g. <em>[MACAddress]</em>). However, such parameters
 still indicate their SOAP data types.</p>
@@ -887,114 +878,280 @@ still indicate their SOAP data types.</p>
 <tr>
 <th>Data Type</th>
 <th>Base Type</th>
-<th>Description</th></tr></thead>
+<th>Description</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td><span id="T.boolean">boolean</span></td>
-<td>-</td>
-<td>Boolean, where the allowed values are <em>0</em> or <em>1</em> (or equivalently,
-<em>true</em> or <em>false</em>).</td></tr>
+<td>
+<p><span id="T.boolean">boolean</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>Boolean, where the allowed values are <em>0</em> or <em>1</em> (or equivalently,
+<em>true</em> or <em>false</em>).</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.dateTime">dateTime</span></td>
-<td>-</td>
-<td>The subset of the ISO 8601 date-time format defined by the SOAP
-<em>dateTime</em> type [<a href="#R.SOAP1.1">SOAP1.1</a>].</td></tr>
+<td>
+<p><span id="T.dateTime">dateTime</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>The subset of the ISO 8601 date-time format defined by the SOAP
+<em>dateTime</em> type [<a href="#R.SOAP1.1">SOAP1.1</a>].</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.string">string</span></td>
-<td>-</td>
-<td>For strings, a minimum and maximum allowed length can be indicated
+<td>
+<p><span id="T.int">int</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>Integer in the range <em>-2147483648</em> to <em>+2147483647</em>, inclusive.</p>
+<p>For some <em>int</em> types, a value range is given using the form
+<em>int(Min:Max)</em> or <em>int(Min:Max step Step)</em> where the <em>Min</em> and <em>Max</em>
+values are inclusive. If either <em>Min</em> or <em>Max</em> are missing,
+this indicates no limit. If <em>Step</em> is missing, this indicates a
+step of <em>1</em>. Multiple comma-separated ranges can be specified,
+in which case the value will be in one of the ranges.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span id="T.string">string</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>For strings, a minimum and maximum allowed length can be indicated
 using the form <em>string(Min:Max)</em>, where <em>Min</em> and <em>Max</em> are the minimum
 and maximum string length in characters. If either <em>Min</em> or <em>Max</em>
 are missing, this indicates no limit, and if <em>Min</em> is missing the
 colon can also be omitted, as in <em>string(Max)</em>. Multiple
 comma-separated ranges can be specified, in which case the string
-length will be in one of the ranges.</td></tr>
+length will be in one of the ranges.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.unsignedInt">unsignedInt</span></td>
-<td>-</td>
-<td><p>Unsigned integer in the range <em>0</em> to <em>4294967295</em>, inclusive.</p>
-
+<td>
+<p><span id="T.unsignedInt">unsignedInt</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>Unsigned integer in the range <em>0</em> to <em>4294967295</em>, inclusive.</p>
 <p>For some <em>unsignedInt</em> types, a value range is given using the form
 <em>unsignedInt(Min:Max)</em> or <em>unsigned(Min:Max step Step)</em>, where the
 <em>Min</em> and <em>Max</em> values are inclusive. If either <em>Min</em> or <em>Max</em> are
 missing, this indicates no limit. If <em>Step</em> is missing,
 this indicates a step of <em>1</em>. Multiple comma-separated ranges can be
-specified, in which case the value will be in one of the ranges.</p></td></tr>
+specified, in which case the value will be in one of the ranges.</p>
+</td>
+</tr>
 <tr>
-<td><span id="T.UUID">UUID</span></td>
-<td><a href="#T.string">string</a>(36)</td>
-<td><p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>].</p>
-
+<td>
+<p><span id="T.unsignedLong">unsignedLong</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>Unsigned long integer in the range <em>0</em> to <em>18446744073709551615</em>,
+inclusive.</p>
+<p>For some <em>unsignedLong</em> types, a value range is given using the form
+<em>unsignedLong(Min:Max)</em> or <em>unsignedLong(Min:Max step Step)</em>, where
+the <em>Min</em> and <em>Max</em> values are inclusive. If either <em>Min</em> or <em>Max</em>
+are missing, this indicates no limit. If <em>Step</em> is missing,
+this indicates a step of <em>1</em>. Multiple comma-separated ranges can be
+specified, in which case the value will be in one of the ranges.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span id="T.UUID">UUID</span></p>
+</td>
+<td>
+<p><a href="#T.string">string</a>(36)</p>
+</td>
+<td>
+<p>Universally Unique Identifier. See [<a href="#R.RFC4122">RFC4122</a>].</p>
 <p>Possible patterns:</p>
-
 <ul>
-<li><span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912"><code>[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}</code></span></li></ul></td></tr></tbody></table>
-
+<li><span id="D..A-Fa-f0-98-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-94-A-Fa-f0-912"><code>[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}</code></span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <h1 id="references">References</h1>
 
 <table>
 <tbody>
 <tr>
-<td>[<span id="R.D-Book">D-Book</span>]</td>
-<td>DGTVi D-Book v1.0, <em>Compatible receivers for the Italian market</em>, Sep 2004.</td></tr>
+<td>
+<p>[<span id="R.3GPP-TS.23.003"><a href="https://www.3gpp.org/ftp/Specs/html-info/23003.htm">3GPP-TS.23.003</a></span>]</p>
+</td>
+<td>
+<p>3GPP TS 23.003, <em>Numbering, addressing and identification</em>, 3GPP CT WG4.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.iana.org/assignments/uri-schemes">[<span id="R.IANA-uri-schemes">IANA-uri-schemes</span>]</a></td>
-<td>IANA Uniform Resource Identifier (URI) Schemes Registry, <em>Uniform Resource Identifier (URI) Schemes</em>, IANA.</td></tr>
+<td>
+<p>[<span id="R.D-Book">D-Book</span>]</p>
+</td>
+<td>
+<p>DGTVi D-Book v1.0, <em>Compatible receivers for the Italian market</em>, Sep 2004.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://standards.ieee.org/regauth/oui/tutorials/EUI64.html">[<span id="R.IEEE_EUI64">IEEE_EUI64</span>]</a></td>
-<td>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority, <em>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority</em>, IEEE, March 1997.</td></tr>
+<td>
+<p>[<span id="R.IANA-uri-schemes"><a href="https://www.iana.org/assignments/uri-schemes">IANA-uri-schemes</a></span>]</p>
+</td>
+<td>
+<p>IANA Uniform Resource Identifier (URI) Schemes Registry, <em>Uniform Resource Identifier (URI) Schemes</em>, IANA.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc3986">[<span id="R.RFC3986">RFC3986</span>]</a></td>
-<td>RFC 3986, <em>Uniform Resource Identifier (URI): Generic Syntax</em>, IETF.</td></tr>
+<td>
+<p>[<span id="R.IEEE_EUI64"><a href="https://standards.ieee.org/regauth/oui/tutorials/EUI64.html">IEEE_EUI64</a></span>]</p>
+</td>
+<td>
+<p>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority, <em>Guidelines for 64-bit Global Identifier (EUI-64) Registration Authority</em>, IEEE, March 1997.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4007">[<span id="R.RFC4007">RFC4007</span>]</a></td>
-<td>RFC 4007, <em>IPv6 Scoped Address Architecture</em>, IETF.</td></tr>
+<td>
+<p>[<span id="R.RFC3986"><a href="https://www.rfc-editor.org/rfc/rfc3986">RFC3986</a></span>]</p>
+</td>
+<td>
+<p>RFC 3986, <em>Uniform Resource Identifier (URI): Generic Syntax</em>, IETF.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4122">[<span id="R.RFC4122">RFC4122</span>]</a></td>
-<td>RFC 4122, <em>A Universally Unique IDentifier (UUID) URN Namespace</em>, IETF, 2005.</td></tr>
+<td>
+<p>[<span id="R.RFC4007"><a href="https://www.rfc-editor.org/rfc/rfc4007">RFC4007</a></span>]</p>
+</td>
+<td>
+<p>RFC 4007, <em>IPv6 Scoped Address Architecture</em>, IETF.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4291">[<span id="R.RFC4291">RFC4291</span>]</a></td>
-<td>RFC 4291, <em>IP Version 6 Addressing Architecture</em>, IETF, 2006.</td></tr>
+<td>
+<p>[<span id="R.RFC4122"><a href="https://www.rfc-editor.org/rfc/rfc4122">RFC4122</a></span>]</p>
+</td>
+<td>
+<p>RFC 4122, <em>A Universally Unique IDentifier (UUID) URN Namespace</em>, IETF, 2005.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc4632">[<span id="R.RFC4632">RFC4632</span>]</a></td>
-<td>RFC 4632, <em>Classless Inter-domain Routing (CIDR): The Internet Address Assignment
-and Aggregation Plan</em>, IETF, 2006.</td></tr>
+<td>
+<p>[<span id="R.RFC4291"><a href="https://www.rfc-editor.org/rfc/rfc4291">RFC4291</a></span>]</p>
+</td>
+<td>
+<p>RFC 4291, <em>IP Version 6 Addressing Architecture</em>, IETF, 2006.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc7159">[<span id="R.RFC7159">RFC7159</span>]</a></td>
-<td>RFC7159, <em>The JavaScript Object Notation (JSON) Data Interchange Format</em>, IETF, March 2014.</td></tr>
+<td>
+<p>[<span id="R.RFC4632"><a href="https://www.rfc-editor.org/rfc/rfc4632">RFC4632</a></span>]</p>
+</td>
+<td>
+<p>RFC 4632, <em>Classless Inter-domain Routing (CIDR): The Internet Address Assignment
+and Aggregation Plan</em>, IETF, 2006.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc7230">[<span id="R.RFC7230">RFC7230</span>]</a></td>
-<td>RFC 7230, <em>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</em>, IETF, June 2014.</td></tr>
+<td>
+<p>[<span id="R.RFC7159"><a href="https://www.rfc-editor.org/rfc/rfc7159">RFC7159</a></span>]</p>
+</td>
+<td>
+<p>RFC7159, <em>The JavaScript Object Notation (JSON) Data Interchange Format</em>, IETF, March 2014.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc7252">[<span id="R.RFC7252">RFC7252</span>]</a></td>
-<td>RFC 7252, <em>The Constrained Application Protocol (CoAP)</em>, IETF, June 2014.</td></tr>
+<td>
+<p>[<span id="R.RFC7230"><a href="https://www.rfc-editor.org/rfc/rfc7230">RFC7230</a></span>]</p>
+</td>
+<td>
+<p>RFC 7230, <em>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</em>, IETF, June 2014.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.rfc-editor.org/rfc/rfc8141">[<span id="R.RFC8141">RFC8141</span>]</a></td>
-<td>RFC 8141, <em>Uniform Resource Names (URNs)</em>, IETF, April 2017.</td></tr>
+<td>
+<p>[<span id="R.RFC7252"><a href="https://www.rfc-editor.org/rfc/rfc7252">RFC7252</a></span>]</p>
+</td>
+<td>
+<p>RFC 7252, <em>The Constrained Application Protocol (CoAP)</em>, IETF, June 2014.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.w3.org/TR/2000/NOTE-SOAP-20000508">[<span id="R.SOAP1.1">SOAP1.1</span>]</a></td>
-<td>Simple Object Access Protocol (SOAP) 1.1, W3C.</td></tr>
+<td>
+<p>[<span id="R.RFC8141"><a href="https://www.rfc-editor.org/rfc/rfc8141">RFC8141</a></span>]</p>
+</td>
+<td>
+<p>RFC 8141, <em>Uniform Resource Names (URNs)</em>, IETF, April 2017.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.broadband-forum.org/download/TR-069.pdf">[<span id="R.TR-069">TR-069</span>]</a></td>
-<td>TR-069 Amendment 6, <em>CPE WAN Management Protocol</em>, Broadband Forum, April 2018.</td></tr>
+<td>
+<p>[<span id="R.SOAP1.1"><a href="https://www.w3.org/TR/2000/NOTE-SOAP-20000508">SOAP1.1</a></span>]</p>
+</td>
+<td>
+<p>Simple Object Access Protocol (SOAP) 1.1, W3C.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://www.broadband-forum.org/download/TR-135.pdf">[<span id="R.TR-135">TR-135</span>]</a></td>
-<td>TR-135 Amendment 3, <em>Data Model for a TR-069 Enabled STB</em>, Broadband Forum, November 2012.</td></tr>
+<td>
+<p>[<span id="R.TR-069"><a href="https://www.broadband-forum.org/download/TR-069.pdf">TR-069</a></span>]</p>
+</td>
+<td>
+<p>TR-069 Amendment 6, <em>CPE WAN Management Protocol</em>, Broadband Forum, April 2018.</p>
+</td>
+</tr>
 <tr>
-<td><a href="https://csa-iot.org/all-solutions/zigbee">[<span id="R.ZigBee2007">ZigBee2007</span>]</a></td>
-<td>ZigBee 2007 Specification, <em>ZigBee 2007 Specification</em>, ZigBee Alliance, October 2007.</td></tr></tbody></table>
-
+<td>
+<p>[<span id="R.TR-135"><a href="https://www.broadband-forum.org/download/TR-135.pdf">TR-135</a></span>]</p>
+</td>
+<td>
+<p>TR-135 Amendment 3, <em>Data Model for a TR-069 Enabled STB</em>, Broadband Forum, November 2012.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>[<span id="R.ZigBee2007"><a href="https://csa-iot.org/all-solutions/zigbee">ZigBee2007</a></span>]</p>
+</td>
+<td>
+<p>ZigBee 2007 Specification, <em>ZigBee 2007 Specification</em>, ZigBee Alliance, October 2007.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h1 id="legend">Legend</h1>
 
 <table class="middle-width partial-border">
 <tbody>
 <tr class="object">
-<td>Object definition.</td></tr>
+<td>
+<p>Object definition.</p>
+</td>
+</tr>
 <tr class="parameter">
-<td>Parameter definition.</td></tr></tbody></table>
-
+<td>
+<p>Parameter definition.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h1 id="stbservice14-data-model">STBService:1.4 Data Model</h1>
-
 <p>For a given implementation of this data model, the Agent MUST
 indicate support for the highest version number of any object
 or parameter that it supports. For example, even if the Agent
@@ -1002,11 +1159,12 @@ supports only a single parameter that was introduced in version
 1.4, then it will indicate support for version 1.4. The version
 number associated with each object and parameter is shown in
 the <strong>Version</strong> column.</p>
-
-<div class="diffs"><p><strong>Changes in 1.4:</strong></p>
-
+<div class="diffs">
+<p><strong>Changes since 1.4:</strong></p>
 <ul>
-<li>Changed name = <em>STBService:1.3</em> ⇒ <em>STBService:1.4</em></li></ul></div>
+<li>Changed name = <em>STBService:1.3</em> ⇒ <em>STBService:1.4</em></li>
+</ul>
+</div>
 
 <table class="full-width partial-border data-model-table">
 <thead>
@@ -1016,362 +1174,796 @@ the <strong>Version</strong> column.</p>
 <th>Write</th>
 <th>Description</th>
 <th>Object Default</th>
-<th>Version</th></tr></thead>
+<th>Version</th>
+</tr>
+</thead>
 <tbody>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.">STBService.{i}.</span></td>
-<td><span title="object(0:∞)">object(0:)</span></td>
-<td>R</td>
-<td><p>The top-level object for an STB CPE.</p>
-
-<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.Alias"><em>Alias</em></a>.</p></td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.">STBService.{i}.</span></p>
+</td>
+<td>
+<p><span title="object(0:∞)">object(0:)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>The top-level object for an STB CPE.</p>
+<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.Alias"><em>Alias</em></a>.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Capabilities.">STBService.{i}.Capabilities.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>The overall capabilities of the STB CPE. This is a constant read-only object, meaning that only a firmware update will cause these values to be altered.</td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Capabilities.">STBService.{i}.Capabilities.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>The overall capabilities of the STB CPE.  This is a constant read-only object, meaning that only a firmware update will cause these values to be altered.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Capabilities.VideoDecoder.">STBService.{i}.Capabilities.VideoDecoder.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>Video decoder capabilities.</td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Capabilities.VideoDecoder.">STBService.{i}.Capabilities.VideoDecoder.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Video decoder capabilities.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.">STBService.{i}.Capabilities.VideoDecoder.MPEG4Part10.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>Object describing the set of supported profiles and levels for this STB. It also describes the set of audio standards supported when MPEG4 Part 10 is used as the video standard.</td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.">STBService.{i}.Capabilities.VideoDecoder.MPEG4Part10.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Object describing the set of supported profiles and levels for this STB. It also describes the set of audio standards supported when MPEG4 Part 10 is used as the video standard.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.">STBService.{i}.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.{i}.</span></td>
-<td><span title="object(0:∞)">object(0:)</span></td>
-<td>R</td>
-<td>Table to describe the set of profiles and levels combinations supported by the STB when MPEG4 Part 10 is used as video standard. <span class="removed"><strong>{{enum: empty param arg only valid in parameter descriptions}}</strong></span><span class="inserted">At most one entry in this table can exist with the same values for both <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Profile"><em>Profile</em></a> and <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Level"><em>Level</em></a>, or with a given value for <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Alias"><em>Alias</em></a>.</span> The table MUST include a distinct entry for each supported combination of these parameters.</td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.">STBService.{i}.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.{i}.</span></p>
+</td>
+<td>
+<p><span title="object(0:∞)">object(0:)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Table to describe the set of profiles and levels combinations supported by the STB when MPEG4 Part 10 is used as video standard. <span class="removed">{{enum}}</span><span class="inserted">At most one entry in this table can exist with the same values for both <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Profile"><em>Profile</em></a> and <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Level"><em>Level</em></a>, or with a given value for <a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.Alias"><em>Alias</em></a>.</span> The table MUST include a distinct entry for each supported combination of these parameters.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Capabilities.ServiceMonitoring.">STBService.{i}.Capabilities.ServiceMonitoring.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>This object describes the capabilities of the <a href="#D.STBService:1.STBService.ServiceMonitoring."><em>ServiceMonitoring</em></a> object.
-
-<div class="diffs"><p><strong>Changes in 1.4:</strong></p>
-
+<td>
+<p><span id="D.STBService:1.STBService.Capabilities.ServiceMonitoring.">STBService.{i}.Capabilities.ServiceMonitoring.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>This object describes the capabilities of the <a href="#D.STBService:1.STBService.ServiceMonitoring."><em>ServiceMonitoring</em></a> object.</p>
+<div class="diffs">
+<p><strong>Changes since 1.4:</strong></p>
 <ul>
-<li>Added <a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries"><em>MaxMainStreamEventLogEntries</em></a> parameter</li></ul></div></td>
-<td>-</td>
-<td>1.0</td></tr>
+<li>Added <a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries"><em>MaxMainStreamEventLogEntries</em></a> parameter</li>
+</ul>
+</div>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries">MaxMainStreamEventLogEntries</span></td>
-<td>unsignedInt</td>
-<td>R</td>
-<td>Maximum number of event log entries that the STB is able to record for a MainStream object instance.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries">MaxMainStreamEventLogEntries</span></p>
+</td>
+<td>
+<p>unsignedInt</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Maximum number of event log entries that the STB is able to record for a MainStream object instance.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Components.">STBService.{i}.Components.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>Details of STB logical or physical internal components. Unlike the <a href="#D.STBService:1.STBService.Capabilities."><em>Capabilities</em></a> object, which is read-only and which doesn’t describe individual instances, this object contains some writeable parameters.</td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Components.">STBService.{i}.Components.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Details of STB logical or physical internal components. Unlike the <a href="#D.STBService:1.STBService.Capabilities."><em>Capabilities</em></a> object, which is read-only and which doesn't describe individual instances, this object contains some writeable parameters.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.">STBService.{i}.Components.FrontEnd.{i}.</span></td>
-<td><span title="object(0:∞)">object(0:)</span></td>
-<td>R</td>
-<td><p>FrontEnd instance table. Each front-end instance, including vendor-specific front-end types, will normally have a sub-object that corresponds to the front-end type (e.g. DVB-T or IP).</p>
-
-<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.Components.FrontEnd.Name"><em>Name</em></a>, or with a given value for <a href="#D.STBService:1.STBService.Components.FrontEnd.Alias"><em>Alias</em></a>.</p></td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Components.FrontEnd.">STBService.{i}.Components.FrontEnd.{i}.</span></p>
+</td>
+<td>
+<p><span title="object(0:∞)">object(0:)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>FrontEnd instance table. Each front-end instance, including vendor-specific front-end types, will normally have a sub-object that corresponds to the front-end type (e.g. DVB-T or IP).</p>
+<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.Components.FrontEnd.Name"><em>Name</em></a>, or with a given value for <a href="#D.STBService:1.STBService.Components.FrontEnd.Alias"><em>Alias</em></a>.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.">STBService.{i}.Components.FrontEnd.{i}.DVBT.</span></td>
-<td><span title="object(0:1)">object(0:1)</span></td>
-<td>R</td>
-<td><p>DVB-T front-end details. This object will normally be present if and only if this front-end is a DVB-T front-end.
+<td>
+<p><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.">STBService.{i}.Components.FrontEnd.{i}.DVBT.</span></p>
+</td>
+<td>
+<p><span title="object(0:1)">object(0:1)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>DVB-T front-end details. This object will normally be present if and only if this front-end is a DVB-T front-end.
 Parameters are taken from the DGTVi D-Book [<a href="#R.D-Book">D-Book</a>].</p>
-
-<p>This object is a member of a union, i.e., it is a member of a group of objects of which only one can exist at a given time.</p></td>
-<td>-</td>
-<td>1.0</td></tr>
+<p>This object is a member of a union, i.e., it is a member of a group of objects of which only one can exist at a given time.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.">STBService.{i}.Components.FrontEnd.{i}.DVBT.Modulation.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>DVB-T modulation details.</td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.">STBService.{i}.Components.FrontEnd.{i}.DVBT.Modulation.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>DVB-T modulation details.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="parameter">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation">HierarchicalInformation</span></td>
-<td>string</td>
-<td>W</td>
-<td><p>Hierarchical parameter alpha. The higher the value of alpha, the more noise-immune the High Priority Modulation is.</p>
-
+<td>
+<p><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation">HierarchicalInformation</span></p>
+</td>
+<td>
+<p>string</p>
+</td>
+<td>
+<p>W</p>
+</td>
+<td>
+<p>Hierarchical parameter alpha. The higher the value of alpha, the more noise-immune the High Priority Modulation is.</p>
 <p>Enumeration of:</p>
-
 <ul>
 <li><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation.0"><em>0</em></span> (no hierarchy)</li>
-<li><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation.1"><em>1</em></span> (</li></ul>
-
-<div class="diffs"><p><strong>Changes in 1.4:</strong></p>
-
-<ul>
-<li>Removed description</li></ul></div>
-
-<p>)</p>
-
-<ul>
+<li><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation.1"><em>1</em></span> (:::: diffs <strong>Changes since 1.4:</strong> * Removed  description ::::)</li>
 <li><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation.2"><em>2</em></span></li>
-<li><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation.4"><em>4</em></span></li></ul></td>
-<td>-</td>
-<td>1.0</td></tr>
+<li><span id="D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.HierarchicalInformation.4"><em>4</em></span></li>
+</ul>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.IP.">STBService.{i}.Components.FrontEnd.{i}.IP.</span></td>
-<td><span title="object(0:1)">object(0:1)</span></td>
-<td>R</td>
-<td><p>IP front-end details. This object will normally be present if and only if the front-end is an IP front-end.</p>
-
-<p>This object is a member of a union, i.e., it is a member of a group of objects of which only one can exist at a given time.</p></td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Components.FrontEnd.IP.">STBService.{i}.Components.FrontEnd.{i}.IP.</span></p>
+</td>
+<td>
+<p><span title="object(0:1)">object(0:1)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>IP front-end details. This object will normally be present if and only if the front-end is an IP front-end.</p>
+<p>This object is a member of a union, i.e., it is a member of a group of objects of which only one can exist at a given time.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.">STBService.{i}.Components.FrontEnd.{i}.IP.ForceMonitor.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>Parameters used to describe the force monitoring operation.
-When running in the force monitoring mode, the STB MUST automatically connect to a test URI defined by the <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.URI"><em>URI</em></a> parameter whenever it detects that the IP tuner is not not receiving any data from the WAN.
+<td>
+<p><span id="D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.">STBService.{i}.Components.FrontEnd.{i}.IP.ForceMonitor.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Parameters used to describe the force monitoring operation.
+When running in the force monitoring mode, the STB MUST automatically connect to a test URI  defined by the <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.URI"><em>URI</em></a> parameter whenever it detects that the IP tuner is not not receiving any data from the WAN.
 When running in normal mode, the STB does not perform any action when it does not receive any data from the IP tuner coming from the WAN.
-The force monitor mode allows to maintain an active stream coming from the network so as to keep collecting statistics.</td>
-<td>-</td>
-<td>1.1</td></tr>
+The force monitor mode allows to maintain an active stream coming from the network so as to keep collecting statistics.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.1</p>
+</td>
+</tr>
 <tr class="parameter">
-<td><span id="D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.URI">URI</span></td>
-<td>string(:256)</td>
-<td>W</td>
-<td><span class="removed">describes</span><span class="inserted">Describes</span> the service to connect to for force monitoring purposes with the same <span class="removed">syntaxt</span><span class="inserted">syntax</span> as <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI"><em>ServiceConnect.URI</em></a><span class="removed"> </span><span class="inserted">.</span>If a <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream."><em>ServiceMonitoring.MainStream</em></a> instance with <em>ServiceType</em> = <em>TEST</em> or <em>IP-All</em> is currently enabled, the STB MUST ensure that performance data for this service is collected in that instance. The value when read is not specified and need not be the value that was most recently written.</td>
-<td>-</td>
-<td>1.1</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.URI">URI</span></p>
+</td>
+<td>
+<p>string(:256)</p>
+</td>
+<td>
+<p>W</p>
+</td>
+<td>
+<p><span class="removed">describes</span><span class="inserted">Describes</span> the service to connect to for force monitoring purposes with the same <span class="removed">syntaxt</span><span class="inserted">syntax</span> as <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI"><em>ServiceConnect.URI</em></a><span class="removed"> </span><span class="inserted">.</span>If a <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream."><em>ServiceMonitoring.MainStream</em></a> instance with <em>ServiceType</em> = <em>TEST</em> or <em>IP-All</em> is currently enabled, the STB MUST ensure that performance data for this service is collected in that instance. The value when read is not specified and need not be the value that was most recently written.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.1</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.">STBService.{i}.ServiceMonitoring.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td><span class="removed">Contains statistics relating to the</span><span class="inserted">Records events and collects</span> QoS / QoE <span class="removed">of</span><span class="inserted">related statistics for</span> Main AV streams. These statistics are broken down into categories, e.g. de-jittering and RTP, and for each category there are two types of statistics: * <strong>Total</strong> statistics, which count the number of occurrences of something. * <strong>Sample</strong> statistics, which are measured over a sample interval, and are made available to the ACS as a list of the most recent n samples. Total statistics are always collected (collection cannot be disabled, but the values can be reset). For Sample statistics, an STB uses a single sample interval and number of samples (n) for all <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream."><em>MainStream</em></a> instances. The sample interval can be aligned with absolute time. When Sample statistics collection is enabled, statistics collection MUST proceed regardless of whether there are any active Main AV streams. For example, even when the STB is not receiving any data, sample intervals will continue to be timed as normal. Refer to [<a href="#R.TR-135">I.3/TR-135</a>] for non-normative explanation of the operation of the <em>ServiceMonitoring</em> object.
-
-<div class="diffs"><p><strong>Changes in 1.4:</strong></p>
-
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.">STBService.{i}.ServiceMonitoring.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p><span class="removed">Contains statistics relating to the</span><span class="inserted">Records events and collects</span> QoS / QoE <span class="removed">of</span><span class="inserted">related statistics for</span> Main AV streams. These statistics are broken down into categories, e.g. de-jittering and RTP, and for each category there are two types of statistics: * <strong>Total</strong> statistics, which count the number of occurrences of something. * <strong>Sample</strong> statistics, which are measured over a sample interval, and are made available to the ACS as a list of the most recent n samples. Total statistics are always collected (collection cannot be disabled, but the values can be reset). For Sample statistics, an STB uses a single sample interval and number of samples (n) for all <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream."><em>MainStream</em></a> instances. The sample interval can be aligned with absolute time. When Sample statistics collection is enabled, statistics collection MUST proceed regardless of whether there are any active Main AV streams. For example, even when the STB is not receiving any data, sample intervals will continue to be timed as normal. Refer to [<a href="#R.TR-135">I.3/TR-135</a>] for non-normative explanation of the operation of the <em>ServiceMonitoring</em> object.</p>
+<div class="diffs">
+<p><strong>Changes since 1.4:</strong></p>
 <ul>
-<li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable"><em>EventCollectionEnable</em></a> parameter</li></ul></div></td>
-<td>-</td>
-<td>1.0</td></tr>
+<li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable"><em>EventCollectionEnable</em></a> parameter</li>
+</ul>
+</div>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="parameter">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.ForceSample">ForceSample</span></td>
-<td>boolean</td>
-<td>W</td>
-<td>When set to <em>true</em>, forces statistics for the current sample to be calculated and updated in the data model. Setting it to <em>false</em> has no effect. The value is not saved in device state and is always <em>false</em> when read.
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.ForceSample">ForceSample</span></p>
+</td>
+<td>
+<p>boolean</p>
+</td>
+<td>
+<p>W</p>
+</td>
+<td>
+<p>When set to <em>true</em>, forces statistics for the current sample to be calculated and updated in the data model.  Setting it to <em>false</em> has no effect.  The value is not saved in device state and is always <em>false</em> when read.
 If this is the first time that <em>ForceSample</em> has been set to true during the current sample interval, this MUST cause a new value to be added to each of the Sample statistics comma-separated list parameters, and the <a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime"><em>ReportEndTime</em></a> and all <em>SampleSeconds</em> parameters MUST be updated accordingly.
 If this is not the first time that <em>ForceSample</em> has been set to <em>true</em> during the current sample interval, then the new values that were added as described in the previous paragraph, and the <a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime"><em>ReportEndTime</em></a> and all <em>SampleSeconds</em> parameters, MUST be updated accordingly.
-Note that <em>ForceSample</em> just provides a <em>sneak preview</em> of the current sample. It does not create a new sample and it does not interfere with the sample interval schedule.
-At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime"><em>ReportEndTime</em></a> and all <em>SampleSeconds</em> parameters, will be updated accordingly. In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.
-
-<div class="diffs"><p><strong>Changes in 1.4:</strong></p>
-
+Note that <em>ForceSample</em> just provides a <em>sneak preview</em> of the current sample.  It does not create a new sample and it does not interfere with the sample interval schedule.
+At the end of each sample interval, if <em>ForceSample</em> was set to <em>true</em> during the sample interval then the new values that were added as described above, and the <a href="#D.STBService:1.STBService.ServiceMonitoring.ReportEndTime"><em>ReportEndTime</em></a> and all <em>SampleSeconds</em> parameters, will be updated accordingly.  In other words, the partial sample data that was created when <em>ForceSample</em> was set to <em>true</em> will be updated one last time at the end of the sample interval.</p>
+<div class="diffs">
+<p><strong>Changes since 1.4:</strong></p>
 <ul>
-<li>Removed <em>boolean[]</em> syntax <em>[]</em> list</li></ul></div></td>
-<td>-</td>
-<td>1.0</td></tr>
+<li>Removed <em>boolean[]</em> syntax <em>[]</em>  list</li>
+</ul>
+</div>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable">EventCollectionEnable</span></td>
-<td>boolean</td>
-<td>W</td>
-<td>Enables or disables the collection of the events for all main streams.
-When the collection of events is enabled, any previously collected events are discarded and the collection of new events begins immediately.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable">EventCollectionEnable</span></p>
+</td>
+<td>
+<p>boolean</p>
+</td>
+<td>
+<p>W</p>
+</td>
+<td>
+<p>Enables or disables the collection of the events for all main streams.
+When the collection of events is enabled, any previously collected events are discarded and the collection of new events begins immediately.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="object">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.">STBService.{i}.ServiceMonitoring.MainStream.{i}.</span></td>
-<td><span title="object(0:∞)">object(0:)</span></td>
-<td>R</td>
-<td><p>List of Main AV stream objects. Each instance is associated with a specified service type and will collect statistics only for the main stream that matches that service type. Note that this means that streams that do not match an instance’s service type MUST NOT contribute to the instance’s Total and Sample statistics. It is up to the STB to determine which AV stream should be regarded as the Main AV stream for a given service type at any given time. For example, if two active streams are associated with the same service type, the STB might prefer streams that are associated with an AV player, or if more than one stream is associated with an AV player, the STB might prefer a player that is outputting a DVI stream to a player that is outputting an RF stream.<span class="removed"> </span>Note that some parameters, e.g. <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI"><em>Components.FrontEnd.{i}.IP.ServiceConnect.URI</em></a>, include requirements that restrict the STB’s freedom to determine which AV stream should be regarded as the Main AV stream for a given service.</p>
-
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.">STBService.{i}.ServiceMonitoring.MainStream.{i}.</span></p>
+</td>
+<td>
+<p><span title="object(0:∞)">object(0:)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>List of Main AV stream objects. Each instance is associated with a specified service type and will collect statistics only for the main stream that matches that service type. Note that this means that streams that do not match an instance's service type MUST NOT contribute to the instance's Total and Sample statistics. It is up to the STB to determine which AV stream should be regarded as the Main AV stream for a given service type at any given time. For example, if two active streams are associated with the same service type, the STB might prefer streams that are associated with an AV player, or if more than one stream is associated with an AV player, the STB might prefer a player that is outputting a DVI stream to a player that is outputting an RF stream.<span class="removed"> </span><span class="inserted">Note that some parameters, e.g. <a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ServiceConnect.URI"><em>Components.FrontEnd.{i}.IP.ServiceConnect.URI</em></a>, include requirements that restrict the STB's freedom to determine which AV stream should be regarded as the Main AV stream for a given service.</span></p>
 <p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.ServiceType"><em>ServiceType</em></a>, or with a given value for <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Alias"><em>Alias</em></a>.</p>
-
-<div class="diffs"><p><strong>Changes in 1.4:</strong></p>
-
+<div class="diffs">
+<p><strong>Changes since 1.4:</strong></p>
 <ul>
 <li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.SessionId"><em>SessionId</em></a> parameter</li>
-<li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog."><em>EventLog.</em></a> object</li></ul></div></td>
-<td>-</td>
-<td>1.0</td></tr>
+<li>Added <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog."><em>EventLog.</em></a> object</li>
+</ul>
+</div>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="parameter">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Enable">Enable</span></td>
-<td>boolean</td>
-<td>W</td>
-<td>Enables or disables collection of Total and Sample statistics <span class="inserted">and events </span>for this object instance.<span class="inserted"> The collection of events requires the value of this parameter to be <em>true</em> and the value of the <a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable"><em>ServiceMonitoring.EventCollectionEnable</em></a> to be <em>true</em>.</span></td>
-<td>-</td>
-<td>1.0</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Enable">Enable</span></p>
+</td>
+<td>
+<p>boolean</p>
+</td>
+<td>
+<p>W</p>
+</td>
+<td>
+<p>Enables or disables collection of Total and Sample statistics <span class="inserted">and events </span>for this object instance.<span class="inserted"> The collection of events requires the value of this parameter to be <em>true</em> and the value of the <a href="#D.STBService:1.STBService.ServiceMonitoring.EventCollectionEnable"><em>ServiceMonitoring.EventCollectionEnable</em></a> to be <em>true</em>.</span></p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="parameter">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Status">Status</span></td>
-<td>string</td>
-<td>R</td>
-<td><p>Total and Sample statistics<span class="inserted"> and event</span> collection status for this object instance. Enumeration of:</p>
-
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Status">Status</span></p>
+</td>
+<td>
+<p>string</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Total and Sample statistics<span class="inserted"> and event</span> collection status for this object instance.  Enumeration of:</p>
 <ul>
 <li><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Status.Disabled"><em>Disabled</em></span></li>
 <li><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Status.Enabled"><em>Enabled</em></span></li>
 <li><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.Status.Error"><em>Error</em></span> (OPTIONAL)
-The <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Status.Error"><em>Error</em></a> value MAY be used by the CPE to indicate a locally defined error condition.</li></ul></td>
-<td>-</td>
-<td>1.0</td></tr>
+The <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.Status.Error"><em>Error</em></a> value MAY be used by the CPE to indicate a locally defined error condition.</li>
+</ul>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.0</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.SessionId">SessionId</span></td>
-<td><span title="UUID">string(36)</span></td>
-<td>R</td>
-<td>[<a href="#T.UUID">UUID</a>] Time based UUID [<a href="#R.RFC4122">Section 4.2/RFC4122</a>] that is the identifier for the associated <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.AVStream"><em>AVStream</em></a> parameter when available to the device.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.SessionId">SessionId</span></p>
+</td>
+<td>
+<p><span title="UUID">string(36)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>[<a href="#T.UUID">UUID</a>] Time based UUID [<a href="#R.RFC4122">Section 4.2/RFC4122</a>] that is the identifier for the associated <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.AVStream"><em>AVStream</em></a> parameter when available to the device.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="object inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.">STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.</span></td>
-<td><span title="object">object</span></td>
-<td>R</td>
-<td>This object represents the log entries of events recorded by the MainStream object instance.
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.">STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.</span></p>
+</td>
+<td>
+<p><span title="object">object</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>This object represents the log entries of events recorded by the MainStream object instance.
 When the number of log entries in the EventLog exceeds the value of the <a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries"><em>Capabilities.ServiceMonitoring.MaxMainStreamEventLogEntries</em></a> parameter, the Entry object with the lowest SequenceNumber value is replaced by the new EventLog Entry object.
-Log entries are persisted across reboots of the CPE.</td>
-<td>-</td>
-<td>1.4</td></tr>
+Log entries are persisted across reboots of the CPE.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Reset">Reset</span></td>
-<td>boolean</td>
-<td>W</td>
-<td>When set to true, clears the events from the event log and the value of <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber"><em>Entry.{i}.SequenceNumber</em></a> parameter is reset to the parameter’s minimum value.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Reset">Reset</span></p>
+</td>
+<td>
+<p>boolean</p>
+</td>
+<td>
+<p>W</p>
+</td>
+<td>
+<p>When set to true, clears the events from the event log and the value of <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber"><em>Entry.{i}.SequenceNumber</em></a> parameter is reset to the parameter's minimum value.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.EntryNumberOfEntries">EntryNumberOfEntries</span></td>
-<td>unsignedInt</td>
-<td>R</td>
-<td>The number of entries in the <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry."><em>Entry</em></a> table.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.EntryNumberOfEntries">EntryNumberOfEntries</span></p>
+</td>
+<td>
+<p>unsignedInt</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>The number of entries in the <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry."><em>Entry</em></a> table.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="object inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.">STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.Entry.{i}.</span></td>
-<td><span title="object(0:∞)">object(0:)</span></td>
-<td>R</td>
-<td><p>This object represents an entry (e.g., start session, channel change) in the event log.</p>
-
-<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber"><em>SequenceNumber</em></a>.</p></td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.">STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.Entry.{i}.</span></p>
+</td>
+<td>
+<p><span title="object(0:∞)">object(0:)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>This object represents an entry (e.g., start session, channel change) in the event log.</p>
+<p>At most one entry in this table can exist with a given value for <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber"><em>SequenceNumber</em></a>.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber">SequenceNumber</span></td>
-<td>unsignedInt(1:)</td>
-<td>R</td>
-<td>The sequence number of the event within the EventLog.
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.SequenceNumber">SequenceNumber</span></p>
+</td>
+<td>
+<p>unsignedInt(1:)</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>The sequence number of the event within the EventLog.
 This parameter is incremented by one (1) for each entry within the EventLog.
-When the value of the parameter exceeds the maximium range, the lowest value of this parameter that is not contained in current EventLog entries is used.</td>
-<td>-</td>
-<td>1.4</td></tr>
+When the value of the parameter exceeds the maximium range, the lowest value of this parameter that is not contained in current EventLog entries is used.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Type">Type</span></td>
-<td>string</td>
-<td>R</td>
-<td>Type of the event. The values for this parameter are vendor specific.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Type">Type</span></p>
+</td>
+<td>
+<p>string</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Type of the event. The values for this parameter are vendor specific.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Time">Time</span></td>
-<td>dateTime</td>
-<td>R</td>
-<td>Timestamp of the event.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Time">Time</span></p>
+</td>
+<td>
+<p>dateTime</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Timestamp of the event.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.ParameterNumberOfEntries">ParameterNumberOfEntries</span></td>
-<td>unsignedInt</td>
-<td>R</td>
-<td>The number of entries in the <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter."><em>Parameter</em></a> table.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.ParameterNumberOfEntries">ParameterNumberOfEntries</span></p>
+</td>
+<td>
+<p>unsignedInt</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>The number of entries in the <a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter."><em>Parameter</em></a> table.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="object inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.">STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.Entry.{i}.Parameter.{i}.</span></td>
-<td><span title="object(0:∞)">object(0:)</span></td>
-<td>R</td>
-<td>This object represents an instance of a parameter that is associated with the Entry object Instance.</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.">STBService.{i}.ServiceMonitoring.MainStream.{i}.EventLog.Entry.{i}.Parameter.{i}.</span></p>
+</td>
+<td>
+<p><span title="object(0:∞)">object(0:)</span></p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>This object represents an instance of a parameter that is associated with the Entry object Instance.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.Name">Name</span></td>
-<td>string</td>
-<td>R</td>
-<td>Name of the parameter (vendor-specific).</td>
-<td>-</td>
-<td>1.4</td></tr>
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.Name">Name</span></p>
+</td>
+<td>
+<p>string</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Name of the parameter (vendor-specific).</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
 <tr class="parameter inserted">
-<td><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.Value">Value</span></td>
-<td>string</td>
-<td>R</td>
-<td>Value of the parameter.</td>
-<td>-</td>
-<td>1.4</td></tr></tbody></table>
-
-<hr/>
-
-<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.2.0 (2024-07-23 version) on 2024-09-04 at 10:52:16 UTC.<br/>report.py –include ../../install/cwmp –output <stdout> –transform diff –format markdown tr-135-1-3-0.xml tr-135-1-4-1-cwmp.xml</p></div>
-
-<div id="TOC"><h1 id="table-of-contents">Table of Contents</h1>
-
+<td>
+<p><span id="D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.Value">Value</span></p>
+</td>
+<td>
+<p>string</p>
+</td>
+<td>
+<p>R</p>
+</td>
+<td>
+<p>Value of the parameter.</p>
+</td>
+<td>
+<p>-</p>
+</td>
+<td>
+<p>1.4</p>
+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Generated by <a href="https://www.broadband-forum.org">Broadband Forum</a> <a href="https://pypi.org/project/bbfreport">bbfreport</a> v2.3.0 (2025-03-17 version) on 2025-04-10 at 06:58:13 UTC.<br />
+report.py --include ../../install/cwmp --output tr-135-1-4-1-cwmp-diffs.html --show --transform diff --format html tr-135-1-3-0.xml tr-135-1-4-1-cwmp.xml</p>
+</div>
+<div id="TOC">
+<h1>Table of Contents</h1>
 <ul class="collapsed expanded">
-<li><a href="#data-types">Data Types</a></li>
-<li><a href="#references">References</a></li>
-<li><a href="#legend">Legend</a></li>
-<li><span class="collapsible expandable"><a href="#stbservice14-data-model">STBService:1.4 Data Model</a></span>
-
-<ul class="collapsed expanded">
-<li><span class="collapsible expandable"><a href="#D.STBService:1.STBService.">STBService.{i}.</a></span>
-
-<ul class="collapsed expanded ordered">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.Capabilities.">Capabilities.</a></span>
-
-<ul class="collapsed">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.">VideoDecoder.</a></span>
-
-<ul class="collapsed">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.">MPEG4Part10.</a></span>
-
-<ul class="collapsed">
-<li><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.">ProfileLevel.{i}.</a></li></ul></li></ul></li>
-<li><a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.">ServiceMonitoring.</a></li></ul></li>
-<li><span class="expandable"><a href="#D.STBService:1.STBService.Components.">Components.</a></span>
-
-<ul class="collapsed">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.Components.FrontEnd.">FrontEnd.{i}.</a></span>
-
-<ul class="collapsed">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.">DVBT.</a></span>
-
-<ul class="collapsed">
-<li><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.">Modulation.</a></li></ul></li>
-<li><span class="expandable"><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.">IP.</a></span>
-
-<ul class="collapsed">
-<li><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.">ForceMonitor.</a></li></ul></li></ul></li></ul></li>
-<li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.">ServiceMonitoring.</a></span>
-
-<ul class="collapsed">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.">MainStream.{i}.</a></span>
-
-<ul class="collapsed">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.">EventLog.</a></span>
-
-<ul class="collapsed">
-<li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.">Entry.{i}.</a></span>
-
-<ul class="collapsed">
-<li><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.">Parameter.{i}.</a></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></div>
+  <li><a href="#data-types">Data Types</a></li>
+  <li><a href="#references">References</a></li>
+  <li><a href="#legend">Legend</a></li>
+  <li><span class="collapsible expandable"><a href="#stbservice14-data-model">STBService:1.4 Data Model</a></span>
+    <ul class="collapsed expanded">
+      <li><span class="collapsible expandable"><a href="#D.STBService:1.STBService.">STBService.{i}.</a></span>
+        <ul class="collapsed expanded ordered">
+          <li><span class="expandable"><a href="#D.STBService:1.STBService.Capabilities.">Capabilities.</a></span>
+            <ul class="collapsed">
+              <li><span class="expandable"><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.">VideoDecoder.</a></span>
+                <ul class="collapsed">
+                  <li><span class="expandable"><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.">MPEG4Part10.</a></span>
+                    <ul class="collapsed">
+                      <li><a href="#D.STBService:1.STBService.Capabilities.VideoDecoder.MPEG4Part10.ProfileLevel.">ProfileLevel.{i}.</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="#D.STBService:1.STBService.Capabilities.ServiceMonitoring.">ServiceMonitoring.</a></li>
+            </ul>
+          </li>
+          <li><span class="expandable"><a href="#D.STBService:1.STBService.Components.">Components.</a></span>
+            <ul class="collapsed">
+              <li><span class="expandable"><a href="#D.STBService:1.STBService.Components.FrontEnd.">FrontEnd.{i}.</a></span>
+                <ul class="collapsed">
+                  <li><span class="expandable"><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.">DVBT.</a></span>
+                    <ul class="collapsed">
+                      <li><a href="#D.STBService:1.STBService.Components.FrontEnd.DVBT.Modulation.">Modulation.</a></li>
+                    </ul>
+                  </li>
+                  <li><span class="expandable"><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.">IP.</a></span>
+                    <ul class="collapsed">
+                      <li><a href="#D.STBService:1.STBService.Components.FrontEnd.IP.ForceMonitor.">ForceMonitor.</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.">ServiceMonitoring.</a></span>
+            <ul class="collapsed">
+              <li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.">MainStream.{i}.</a></span>
+                <ul class="collapsed">
+                  <li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.">EventLog.</a></span>
+                    <ul class="collapsed">
+                      <li><span class="expandable"><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.">Entry.{i}.</a></span>
+                        <ul class="collapsed">
+                          <li><a href="#D.STBService:1.STBService.ServiceMonitoring.MainStream.EventLog.Entry.Parameter.">Parameter.{i}.</a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+</div>
 </body>
-</html>

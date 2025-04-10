@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [SessionManagement]
+
+  Copyright (c) 2010-2023, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-19-0-sessionmanagement"
+    file="tr-181-2-19-0-sessionmanagement.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="IPAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <dataType name="SST">
+    <description>
+      Service Slice Type (SST). {{enum}}
+
+      See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}.
+    </description>
+    <string>
+      <enumeration value="eMBB">
+        <description>5G Enhanced Mobile Broadband</description>
+      </enumeration>
+      <enumeration value="URLLC">
+        <description>Ultra-Reliable Low Latency Communications</description>
+      </enumeration>
+      <enumeration value="MIoT">
+        <description>Massive IoT</description>
+      </enumeration>
+      <enumeration value="V2X">
+        <description>Vehicle to Everything</description>
+      </enumeration>
+    </string>
+  </dataType>
+  <!-- Templates used in object and/or parameter descriptions -->
+
+  <component name="s-nssai">
+    <description>
+      The components necessary to uniquely describe a S-NSSAI. {{enum}}
+
+      For example
+
+      * The most common usage where network slicing is not used:
+
+      * ServiceSliceType=eMBB
+
+      * When network slicing is used
+
+      * ServiceSliceType=eMBB
+
+      * SliceDifferentiator=3
+    </description>
+
+    <parameter name="SliceServiceType" access="readOnly" version="2.19">
+      <description>
+        The Slice Service Type (SST). {{enum}}
+
+        See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}.
+      </description>
+      <syntax>
+        <dataType ref="SST"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="SliceDifferentiator" access="readOnly" version="2.19">
+      <description>
+        The Slice differentiator is an optional number used to differentiate
+        network slices with the same SST.
+
+        See {{bibref|3GPP-TS.23.501|Clause 5.15.2.1}}.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="SessionManagement">
+    <object name="Device.SessionManagement." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.19">
+      <description>
+        The logical connection between an RG and a data network using 3GPP 
+        technologies (FN-RG cellular and 5G-RG ALL) are considered data sessions.
+        The Device.SessionManagement subtree describes each sessions properties
+        together with the QoS rules specific to that access technology.
+      </description>
+
+      <parameter name="SessionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PDPNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PDNNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PDUNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SessionManagement.Session.{i}." access="readOnly"
+        numEntriesParameter="SessionNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+      Contains all the properties of a 3GPP session instance common to all generations.
+        This object contains the {{object}} table.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="SessionID"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Interface" access="readOnly">
+        <description>
+          {{reference}} The IP Interface associated with the ''Session'' entry.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="##.IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionID" access="readOnly">
+        <description>
+          3GPP session identity. For 3G and 4G, this will be the cid as defined 
+          in TS27.007 10.1.1. For 5G see {{bibref|3GPP-TS.24.501|Clause 9.4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="15"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionType" access="readOnly">
+        <description>
+          The data session type indicating the protocol the session is capable of
+          carrying. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.11}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="IPv4"/>
+            <enumeration value="IPv6"/>
+            <enumeration value="IPv4v6"/>
+            <enumeration value="Unstructured"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="APN" access="readOnly">
+        <description>
+          The Access Point Name terminating the data session. For 3G and 4G it 
+          will be an APN, whilst 5G uses DNN. For all 3GPP generations, the APN 
+          can be specified at the time of session establishment or assigned by 
+          the network based on subscription. The format is defined in 
+          {{bibref|3GPP-TS.24.501|clause 9.11.2.1A}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="100"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Reference" access="readOnly">
+        <description>
+          Indicates the data session type.
+          
+          When the {{param}} is {{empty}} the data session is unknown.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.PDP.
+              #.PDN.
+              #.PDU." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SessionManagement.Session.{i}.PCO." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.19">
+      <description>
+        Policy Configuration Options (PCO) is an optional set of configuration
+        parameters supplied by the network as defined in 
+        {{bibref|3GPP-TS.24.008|clause 10.5.6.3}}.
+      </description>
+
+      <parameter name="IPv6PCSCF" access="readOnly">
+        <description>
+          The IPv6 address of the P-CSCF used for VoLTE telephony.
+        </description>
+        <syntax>
+          <dataType ref="IPv6Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv6DNS" access="readOnly">
+        <description>
+          Each entry is an IPv6 DNS server.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4PCSCF" access="readOnly">
+        <description>
+          The IPv4 address of the P-CSCF used for VoLTE telephony.
+        </description>
+        <syntax>
+          <dataType ref="IPv4Address"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="IPv4DNS" access="readOnly">
+        <description>
+          Each entry is an IPv4 DNS server.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SessionManagement.PDP.{i}." access="readOnly"
+        numEntriesParameter="PDPNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        Contains all 3G specific attributes needed to establish a PDP Context. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+      
+      <parameter name="TrafficClass" access="readOnly">
+        <description>
+          Indicates the type of application for which the PDP session is optimised.
+          See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Conversational"/>
+            <enumeration value="Streaming"/>
+            <enumeration value="Interactive"/>
+            <enumeration value="Background"/>
+            <enumeration value="SubscribedValue"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpstreamMaxBitRate" access="readOnly">
+        <description>
+          Upstream Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="DownstreamMaxBitRate" access="readOnly">
+        <description>
+          Downstream Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpstreamGuaranteedBitRate" access="readOnly">
+        <description>
+          Upstream Guaranteed Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="DownstreamGuaranteedBitRate" access="readOnly">
+        <description>
+          Downstream Guaranteed Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeliveryOrder" access="readOnly">
+        <description>
+          Indicates whether the PDP session shall provide in-sequence SDU delivery or not.
+          See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="No"/>
+            <enumeration value="Yes"/>
+            <enumeration value="SubscribedValue"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaximumSDUSize" access="readOnly">
+        <description>
+          Indicates the maximum allowed SDU size in octets.
+          See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SDUErrorRatio" access="readOnly">
+        <description>
+          Indicates the target value for the fraction of SDUs lost or detected as erroneous. 
+          SDUs. SDU error ratio is defined only for conforming traffic. The value is specified
+          as "mEe". As an example a target residual bit error ratio of 5•10-3 would be specified
+          as "5E3", "0E0" means subscribed value 
+          See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="10"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResidualBitErrorRatio" access="readOnly">
+        <description>
+          Indicates the target value for the undetected bit error ratio in the delivered 
+          SDUs. If no error detection is requested, Residual bit error ratio indicates the 
+          bit error ratio in the delivered SDUs. The value is specified as "mEe". As an 
+          example a target residual bit error ratio of 5•10-3 would be specified as "5E3" 
+          "0E0" means subscribed value 
+          See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="10"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeliveryOfErroneousSDUs" access="readOnly">
+        <description>
+          Indicates whether SDUs detected as erroneous shall be delivered or not.
+          See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="No"/>
+            <enumeration value="Yes"/>
+            <enumeration value="NoDetect"/>
+            <enumeration value="SubscribedValue"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransferDelay" access="readOnly">
+        <description>
+          indicates the targeted time between request to transfer an SDU at one SAP 
+          to its delivery at the other SAP, in {{units}}.
+          See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="Milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.SessionManagement.PDN.{i}." access="readOnly"
+        numEntriesParameter="PDNNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        Contains all 4G specific attributes needed to establish a PDN session.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="QCI" access="readOnly">
+        <description>
+          QoS Class Identifier. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpstreamMaxBitRate" access="readOnly">
+        <description>
+          Upstream Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="DownstreamMaxBitRate" access="readOnly">
+        <description>
+          Downstream Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpstreamGuaranteedBitRate" access="readOnly">
+        <description>
+          Upstream Guaranteed Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="DownstreamGuaranteedBitRate" access="readOnly">
+        <description>
+          Downstream Guaranteed Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="UpstreamAggregateBitRate" access="readOnly">
+        <description>
+          Upstream Aggregate Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="DownstreamAggregateBitRate" access="readOnly">
+        <description>
+          Downstream Aggregate Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="Kbps"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SessionManagement.PDU.{i}." access="readOnly"
+        numEntriesParameter="PDUNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        Contains all 5G specific attributes needed to establish a PDU session.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="PTI" access="readOnly">
+        <description>
+          Procedure transaction identity. See {{bibref|3GPP-TS.24.501|Clause
+          9.6}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="254"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSC" access="readOnly">
+        <description>
+          Session and Service Continuity (SSC) Mode: Indicates that the traffic
+          of the matching application shall be routed via a PDU Session
+          supporting the included SSC Mode. See {{bibref|3GPP-TS.24.501|Clause
+          9.11.4.16}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="3"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionAMBRDownlink" access="readOnly">
+        <description>
+          Downlink Aggregate Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionAMBRUplink" access="readOnly">
+        <description>
+          Uplink Aggregate Maximum Bit Rate in {{units}}. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}.
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="RQTimerValue" access="readOnly">
+        <description>
+          Reflective QoS timeout in {{units}}. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.2.3}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="AlwaysOn" access="readOnly">
+        <description>
+          Always on PDU session indication. The purpose of the Always-on PDU
+          session indication information element is to indicate whether a PDU
+          session is established as an always-on PDU session.
+
+          See {{bibref|3GPP-TS.24.501|clause 9.11.4.3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="QoSRuleNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="QoSFlowNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SessionManagement.PDU.{i}.NetworkSlice." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.19">
+      <description>
+        Describes a S-NSSAI Information element providing network slice
+        specification.
+
+        See {{bibref|3GPP-TS.24.501|Clause 9.11.2.8}}
+      </description>
+      <component ref="s-nssai"/>
+    </object>
+
+    <object name="Device.SessionManagement.PDU.{i}.QoSRule.{i}." access="readOnly"
+        numEntriesParameter="QoSRuleNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        This object describes the PDU QoS Rule table. The purpose of the QoS
+        Rule table is to assign a QFI to mark traffic based on a set of
+        classification rules. The rules are set by the network operator and are
+        specific for each PDU.
+
+        For example:
+
+        * A QoS Rule with a default used for general traffic has the following
+          parameters.
+
+        * QFI=1
+
+        * DQR=1 - Default rule
+
+        * Filter 1 for rule
+
+        * Direction=bidirectional
+
+        * Type=1 - Match all
+
+        * A QoS Rule matching a voice service.
+
+        * QFI=32
+
+        * DQR=0
+
+        * Filter 1 for rule
+
+        * Direction=bidirectional
+
+        * Type=33 - Destination IPv6 range
+
+        * Value=2001:8000/48 - Destination IPv6 range
+
+        * Filter 2 for rule
+
+        * Direction=bidirectional
+
+        * Type=16 - Destination IPv4 address with netmask
+
+        * Value=203.1.0.0 255.255.255.0 - Destination IPv4 address with netmask
+
+        A full description can be found at {{bibref|3GPP-TS.24.501|clause
+        9.11.4.13}} QoS Rules
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Identifier"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Identifier" access="readOnly">
+        <description>
+          The QoS rule identifier field is used to identify the QoS rule.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Precedence" access="readOnly">
+        <description>
+          The QoS rule precedence field is used to specify the precedence of
+          the QoS rule among all QoS rules. The higher the value of the QoS
+          rule precedence field, the lower the precedence of that QoS rule is.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Segregation" access="readOnly">
+        <description>
+          In the UE to network direction the segregation bit indicates whether
+          the UE is requesting the network to bind service data flows described
+          by the QoS rule to a dedicated QoS Flow. When {{true}} segregation is
+          requested.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="QFI" access="readOnly">
+        <description>
+          QoS Flow identifier.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="63"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DQR" access="readOnly">
+        <description>
+          Default QoS rule flag. When {{true}} this QoS rule is the default QoS
+          rule.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FilterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}."
+        access="readOnly" numEntriesParameter="FilterNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.19">
+      <description>
+        This object describes the PDU QoS Rule Filter table. As each packet
+        filter is logically anded with the others, there shall not be more than
+        one occurrence of each packet filter component type.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Direction" access="readOnly">
+        <description>
+          The packet filter direction field is used to indicate for what
+          traffic direction the filter applies. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}} {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="downlink"/>
+            <enumeration value="uplink"/>
+            <enumeration value="bidirectional"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readOnly">
+        <description>
+          Packet filter component type identifier. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Value" access="readOnly">
+        <description>
+          Matching value for the component type. See
+          {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="1024"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SessionManagement.PDU.{i}.QoSFlow.{i}." access="readOnly"
+        numEntriesParameter="QoSFlowNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        Table of all QoS Flow Indicators (QFI) and their properties supported
+        by the access network for this particular PDU.
+
+        For example:
+
+        * A QoS Flow with a QFI of 1 used for general traffic has the following
+          parameters.
+
+        * FiveQI=8
+
+        * A QoS Flow with a QFI of 32 used for voice traffic with a guaranteed
+          bitrate of 150k has the following parameters.
+
+        * FiveQI=1
+
+        * GFBRUplink=150
+
+        * GFBRDownlink=150
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="QFI"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="QFI" access="readOnly">
+        <description>
+          QoS Flow Identifier.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="63"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="FiveQI" access="readOnly">
+        <description>
+          5G QoS Identifier. See {{bibref|3GPP-TS.23.501|Clause 5.7.4}} for a
+          table of standardised 5QI QoS characteristics.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="GFBRUplink" access="readOnly">
+        <description>
+          Guaranteed Flow Bitrate - Upstream (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="GFBRDownlink" access="readOnly">
+        <description>
+          Guaranteed Flow Bitrate - Downstream (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="MFBRUplink" access="readOnly">
+        <description>
+          Maximum Flow Bitrate - Upstream (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="MFBRDownlink" access="readOnly">
+        <description>
+          Maximum Flow Bitrate - Downstream (expressed in {{units}}).
+        </description>
+        <syntax>
+          <unsignedLong>
+            <units value="bits per second"/>
+          </unsignedLong>
+        </syntax>
+      </parameter>
+
+      <parameter name="AveragingWindow" access="readOnly">
+        <description>
+          Averaging window for both uplink and downlink in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="EPSBearer" access="readOnly">
+        <description>
+          EPS Bearer Identity. See {{bibref|3GPP-TS.24.301|Clause 9.3.2}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+</dm:document>
+

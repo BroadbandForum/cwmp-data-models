@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [RadSecProxy]
+
+  Copyright (c) 2024, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-14
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-19-0-radsecproxy"
+    file="tr-181-2-19-0-radsecproxy.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="IPv4Address"/>
+    <dataType name="IPv6Prefix"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-security.xml">
+    <component name="ClientCerts"/>
+  </import>
+
+  <component name="RadSecProxy">
+
+    <object name="Device.RadSecProxy." version="2.19">
+      <description>
+        This object contains configurations pertaining to the RadSecProxy
+        service which implements the RadSec protocol for transporting RADIUS
+        datagrams over TCP and TLS as detailed in {{bibref|RFC6614|Appendix B}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the RadSecProxy service.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Status of the RadSecProxy service. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ListenConfigNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SourceConfigNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RealmNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ServerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TLSNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RadSecProxy.ListenConfig.{i}." access="readOnly"
+        numEntriesParameter="ListenConfigNumberOfEntries" minEntries="1"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        Specifies the Listen configurations of the RadSecProxy service
+        for each type of {{param|Protocol}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          Specifies the listening protocol.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="UDP"/>
+            <enumeration value="TCP"/>
+            <enumeration value="TLS"/>
+            <enumeration value="DTLS"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          The IP interface on which the RadSecProxy service
+          listen for the corresponding {{param|Protocol}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Specifies the port used to receive corresponding {{param|Protocol}}
+          packets. UDP {{param|Protocol}} will default to port 1812 and TCP and TLS
+          {{param|Protocol}} will default to 2083.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RadSecProxy.SourceConfig.{i}." access="readOnly"
+        numEntriesParameter="SourceConfigNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        Specifies the source configurations of the RadSecProxy service which
+        is used for connecting to servers in order to send messages for each
+        type of {{param|Protocol}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          Specifies the source Protocol of the RadSecProxy service.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="UDP"/>
+            <enumeration value="TCP"/>
+            <enumeration value="TLS"/>
+            <enumeration value="DTLS"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          The IP interface which the RadSecProxy service
+          uses as the source for the corresponding {{param|Protocol}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Port" access="readWrite">
+        <description>
+          Specifies the port used to receive corresponding {{param|Protocol}}
+          packets. UDP {{param|Protocol}} will default to port 1812 and TCP and TLS
+          {{param|Protocol}} will default to 2083.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RadSecProxy.Realm.{i}." access="readWrite"
+        numEntriesParameter="RealmNumberOfEntries" enableParameter="Enable"
+        minEntries="1" maxEntries="unbounded" version="2.19">
+      <description>
+        Realm block configuration of the RadSecProxy service as defined in
+        {{bibref|RFC6614|Appendix B}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Pattern"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable or disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Pattern" access="readWrite">
+        <description>
+          Specifies the regular expression pattern against which the Username
+          attribute in the Access-Request is matched to determine the
+          corresponding Realm block. This is used to determine the
+          {{param|Server}} to which the Access-Request should be forwarded. The
+          format is implementation specific.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Server" access="readWrite">
+        <description>
+          Specifies the server to which requests for this realm should be
+          forwarded. If no server is configured, the RadSecProxy service will
+          deny all Access-Requests for this realm.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.Server."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccountingServer" access="readWrite">
+        <description>
+          Specifies the accounting Server. If no accounting Server is configured,
+          the RadSecProxy service will silently ignore all Accounting-Requests
+          for this realm unless {{param|AccountingResponse}} is set to {{true}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.Server."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AccountingResponse" access="readWrite">
+        <description>
+          Enable sending Accounting-Response instead of ignoring
+          Accounting-Requests when no accounting servers are configured.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RadSecProxy.Server.{i}." access="readWrite"
+        numEntriesParameter="ServerNumberOfEntries" enableParameter="Enable"
+        minEntries="0" maxEntries="unbounded" version="2.19">
+      <description>
+        Server block configuration of the RadSecProxy service.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Address"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable or disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Address" access="readWrite">
+        <description>
+          Specifies the Fully Qualified Domain Name (FQDN) or IP address of the
+          RADIUS server that the RadSecProxy service communicates with.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          Specifies the type (protocol) of the Server.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="UDP"/>
+            <enumeration value="TCP"/>
+            <enumeration value="TLS"/>
+            <enumeration value="DTLS"/>
+          </string>
+        </syntax>
+      </parameter>
+     <parameter name="Port" access="readWrite">
+        <description>
+          Specifies the port (UDP/TCP) to connect to. If omitted, UDP and TCP
+          will default to 1812 while TLS and DTLS {{bibref|RFC9147}} will default to
+          2083.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      <parameter name="Secret" access="readWrite">
+        <description>
+           Specifies the shared RADIUS key with the client. This option is
+           optional for TLS/DTLS and if omitted will default to "radsec".
+           Note that using a secret other than "radsec" for TLS is a violation
+           of the standard {{bibref|RFC6614}} and that the proposed standard for
+           DTLS {{bibref|RFC9147}} stipulates that the secret must be "radius/dtls".
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="TLS" access="readWrite">
+        <description>
+          Specifies the TLS Block to be used for this server.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.TLS." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RadSecProxy.Client.{i}." access="readWrite"
+        numEntriesParameter="ClientNumberOfEntries" enableParameter="Enable"
+        minEntries="1" maxEntries="unbounded" version="2.19">
+      <description>
+        Client block configuration of the RadSecProxy service.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Address"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enable or disable this {{object}} instance.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Address" access="readWrite">
+        <description>
+          Specifies the Fully Qualified Domain Name (FQDN) or IP address of
+          RADIUS client that the RadSecProxy service communicates with.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          Specifies the type (protocol) of the Client.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="UDP"/>
+            <enumeration value="TCP"/>
+            <enumeration value="TLS"/>
+            <enumeration value="DTLS"/>
+          </string>
+        </syntax>
+      </parameter>
+      <parameter name="Secret" access="readWrite">
+        <description>
+           Specifies the shared RADIUS key with the server. This option is
+           optional for TLS/DTLS and if omitted will default to "radsec".
+           Note that using a secret other than "radsec" for TLS is a violation
+           of the standard {{bibref|RFC6614}} and that the proposed standard for
+           DTLS stipulates that the secret must be "radius/dtls".
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="TLS" access="readWrite">
+        <description>
+          Specifies the TLS Block to be used by this client.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent="#.TLS." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.RadSecProxy.TLS.{i}." access="readWrite"
+        numEntriesParameter="TLSNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        TLS block configuration of the RadSecProxy service.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <component ref="Alias"/>
+
+      <component ref="ClientCerts" version="2.19"/>
+
+      <parameter name="TLSVersion" access="readWrite">
+        <description>
+          Specifies the TLS/DTLS protocol version to be used by the RadSecProxy service.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="SSL3">
+              <description>
+                Support Secure Socket Layer version 3 (SSLv3).
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_Only">
+              <description>
+                Support Transport Layer Security version 1.0 only.
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_Or_Later">
+              <description>
+                Support Transport Layer Security version 1.0 or later version.
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_1_Only">
+              <description>
+                Support Transport Layer Security version 1.1 only.
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_1_Or_Later">
+              <description>
+                Support Transport Layer Security version 1.1 or later versions.
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_2_Only">
+              <description>
+                Support Transport Layer Security version 1.2 only.
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_2_Or_Later">
+              <description>
+                Support Transport Layer Security version 1.2 or later version.
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_3_Only">
+              <description>
+                Support Transport Layer Security version 1.3 only.
+              </description>
+            </enumeration>
+            <enumeration value="TLS1_3_Or_Later">
+              <description>
+                Support Transport Layer Security version 1.3 or later version.
+              </description>
+            </enumeration>
+            <enumeration value="DTLS1_Only">
+              <description>
+                Support Datagram Transport Layer Security version 1.0 only.
+              </description>
+            </enumeration>
+            <enumeration value="DTLS1_Or_Later">
+              <description>
+                Support Datagram Transport Layer Security version 1.0 or later version.
+              </description>
+            </enumeration>
+            <enumeration value="DTLS1_2_Only">
+              <description>
+                Support Datagram Transport Layer Security version 1.2 only.
+              </description>
+            </enumeration>
+            <enumeration value="DTLS1_2_Or_Later">
+              <description>
+                Support Datagram Transport Layer Security version 1.2 or later version.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+     </object>
+
+    <profile name="RadSecProxy:1" version="2.19">
+      <object ref="Device.RadSecProxy." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="ListenConfigNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="SourceConfigNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="RealmNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="TLSNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ServerNumberOfEntries" requirement="readOnly"/>
+        <parameter ref="ClientNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.RadSecProxy.ListenConfig.{i}." requirement="present">
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+      </object>
+      <object ref="Device.RadSecProxy.Realm.{i}." requirement="createDelete">
+        <parameter ref="Pattern" requirement="readWrite"/>
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Server" requirement="readWrite"/>
+        <parameter ref="AccountingServer" requirement="readWrite"/>
+        <parameter ref="AccountingResponse" requirement="readWrite"/>
+      </object>
+      <object ref="Device.RadSecProxy.TLS.{i}." requirement="createDelete">
+        <parameter ref="CABundle" requirement="readWrite"/>
+        <parameter ref="Certificate" requirement="readWrite"/>
+        <parameter ref="TLSVersion" requirement="readWrite"/>
+      </object>
+      <object ref="Device.RadSecProxy.Server.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Address" requirement="readWrite"/>
+        <parameter ref="Port" requirement="readWrite"/>
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="Secret" requirement="readWrite"/>
+        <parameter ref="TLS" requirement="readWrite"/>
+      </object>
+      <object ref="Device.RadSecProxy.Client.{i}." requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Address" requirement="readWrite"/>
+        <parameter ref="Protocol" requirement="readWrite"/>
+        <parameter ref="Secret" requirement="readWrite"/>
+        <parameter ref="TLS" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="RadSecProxy:2.19">
+    <component ref="Root"/>
+    <component ref="RadSecProxy"/>
+  </model>
+</dm:document>

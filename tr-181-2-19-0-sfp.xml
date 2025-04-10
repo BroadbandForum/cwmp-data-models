@@ -1,0 +1,1546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Small Form-Factor Pluggable [SFP]
+
+  Copyright (c) 2024 Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-19-0-sfp"
+    file="tr-181-2-19-0-sfp.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-16-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="SFP">
+
+    <object name="Device.SFPs." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.19">
+      <description>
+        This object describes the Small Form-Factor Pluggable (SFP) cages and the transceivers hosted in them.
+        The object definition is based on parts of {{bibref|SFF-8024}} and {{bibref|SFF-8472}}.  This data model
+        is extensible to support new SFP management protocol standards in the future. 
+      </description>
+
+      <parameter name="SFPCageNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SFPs.SFPCage.{i}." access="readOnly"
+        numEntriesParameter="SFPCageNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true" version="2.19">
+      <description>
+        This object describes a cage into which an SFP is inserted. 
+        This object can also describe an instance of 
+        Small Form Factor (SFF) units soldered on to the platform.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The internal name used to identify the SFP Cage instance. 
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+      <parameter name="SFPPresent" access="readOnly">
+        <description>
+          The value {{true}} indicates the presence of a SFP in the SFP Cage instance. 
+          The value is always {{true}} for a SFF. Note: A value of 0x02 in 
+          {{param|SFF8024Identifier}} will also indicate the presence of an SFF.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SFF8024Identifier" access="readOnly">
+        <description>
+          Ths identifier describes the type of SFP and the management protocol
+          as per "Identifier Value" listed in {{bibref|SFF-8024|Table 4-1}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MgmtInterface" access="readOnly">
+        <description>
+          This parameter indicates the management interface used by the SFP.
+          Refer {{bibref|SFF-8024|Table 4-1}} and {{bibref|SFF-8472}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="SFF-8472">
+              <description>SFF 8472</description>
+            </enumeration>
+            <enumeration value="Unknown">
+              <description>Unknown Mgmt Interface</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SFPType" access="readOnly">
+        <description>
+          This value is applicable only when {{param|SFPPresent}} is {{true}}. 
+          The SFP Type is classified as one of: GPON, XGS-PON, Optical Ethernet, Copper Ethernet.
+          If the SFP Type cannot be classified, the value is reported as "Unsupported".
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Unsupported">
+              <description>Unclassified SFP</description>
+            </enumeration>
+            <enumeration value="G-PON">
+              <description>GPON SFP</description>
+            </enumeration>
+            <enumeration value="XG-PON">
+              <description>XG-PON SFP</description>
+            </enumeration>
+            <enumeration value="NG-PON2">
+              <description>NG-PON2 SFP</description>
+            </enumeration>
+            <enumeration value="XGS-PON">
+              <description>XGS-PON SFP</description>
+            </enumeration>
+            <enumeration value="EPON">
+              <description>EPON SFP</description>
+            </enumeration>
+            <enumeration value="MoCA">
+              <description>MoCA SFP</description>
+            </enumeration>
+            <enumeration value="Optical Ethernet">
+              <description>Optical Ethernet</description>
+            </enumeration>
+            <enumeration value="Electrical Ethernet">
+              <description>Electrical Ethernet</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+ 
+      <parameter name="SFPReference" access="readOnly">
+        <description>
+          The path to the SFP management object associated with this interface.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="##.SFPs.Mgmt.SFF8472."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SFPs.Mgmt." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.19">
+       <description>
+         This object describes the elements of a SFP that are exposed through 
+         the given Managment interface.
+       </description>
+       <parameter name="SFF8472NumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SFPs.Mgmt.SFF8472.{i}." access="readOnly" 
+        numEntriesParameter="SFF8472NumberOfEntries" minEntries="0"
+        maxEntries="unbounded" dmr:fixedObject="true" version="2.19">
+      <description>
+        This object describes an SFP in a cage or the SFF present that can be managed as per SFF-8472 standard.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <component ref="Alias"/>
+      <parameter name="Name" access="readOnly">
+        <description>
+          The internal name used to identify this SFP instance. 
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.19">
+      <description>
+        This object describes the Transceiver present in the SFP.  The Transceiver object 
+        here models the electrical interface to the SFP from the host and the function that
+        enables transmission and reception of electrical or optical signals over the link connected.
+        The Transceiver object is agnostic of the underlying protocol used in the transmission. 
+      </description>
+
+      <parameter name="Connector" access="readOnly">
+        <description>
+          The connector value as per {{bibref|SFF-8024|Table 4-3}} indicates
+          the external optical or electrical
+          cable connector provided as the media interface.
+        </description>
+        <syntax>
+           <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="Transceiver" access="readOnly">
+        <description>
+          This field contains code for electronic or optical compatibility
+          as per {{bibref|SFF-8472|Table 5-3}} and 
+          {{bibref|SFF-8024|Table 4-4}}. It corresponds to the values 
+          of DMM address 0xA0, bytes 3-10
+          and 36. The associated bit significant indicators (as identified in
+          the above referenced tables) define the electronic or optical
+          interfaces that are supported by the transceiver. At least one bit
+          will be set in this field.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="9" maxLength="9"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="Encoding" access="readOnly">
+        <description>
+          This contains the code for high speed serial encoding algorithm
+          as per {{bibref|SFF-8024|Table 4-2}}.
+       </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="BRNominal" access="readOnly">
+        <description>
+          This field contains the Nominal bit signaling rate, in 
+          units of {{units}} as per {{bibref|SFF-8472|Section 5-6}}.
+          The bit rate includes those bits necessary to encode and 
+          delimit the signal as well as those bits carrying data information. 
+          A value of 0 indicates that the
+          bit rate is not specified and must be determined from the transceiver
+          technology. If the value is 255 (indicating 25.4GBd) then
+          {{param|BRMax}} contains rate in units of 250MBd.
+        </description>
+        <syntax>
+          <int>
+            <units value="100 MBd"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="RateIdentifier" access="readOnly">
+        <description>
+          The rate identifier byte as per {{bibref|SFF-8472|Table 5-6}} 
+          refers to several (optional) industry standard definitions of 
+          Rate_Select or Application_Select control
+          behaviors, intended to manage transceiver optimization for multiple
+          operating rates.
+        </description>
+        <syntax>
+           <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorName" access="readOnly">
+        <description>
+          The vendor name is a string contains ASCII
+          characters that contain the full name of the corporation, a commonly
+          accepted abbreviation of the name of the corporation, the SCSI
+          company code for the corporation, or the stock exchange code for the
+          corporation. At least one of VendorName or VendorOUT shall contain valid data. 
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorOUI" access="readOnly">
+        <description>
+          The vendor organizationally unique identifier field (vendor OUI) is
+          a string that contains the IEEE Company Identifier for
+          the vendor. An empty value indicates that the vendor OUI is unspecified.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="3" maxLength="3"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorPN" access="readOnly">
+        <description>
+          The vendor part number provided by Transceiver vendor
+          is a string of maximum 16 ASCII characters. 
+          An empty string indicates that the vendor PN is unspecified.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorRev" access="readOnly">
+        <description>
+          The vendor revision number provided by Transceiver vendor 
+          is a string of maximum 4 ASCII characters.
+          An empty string indicates that the vendor revision is unspecified.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="4"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BRMax" access="readOnly">
+        <description>
+          This is the upper bit rate margin in units of 1%, within which the transceiver will still meet
+          its specifications (BR, max) is specified in units of 1% above the
+          nominal bit rate. A value of zero indicates that this field is not specified.  However this 
+          field may contain the nominal bit rate in units of 250MBd if the value in {{param|BRNominal}} is 255. 
+          See {{bibref|SFF-8472|Section 8.4}}} - Address 0xA0, Byte 66.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="BRMin" access="readOnly">
+        <description>
+          This is the lower bit rate margin in units of {{units}}, within which the transceiver will still meet
+          its specifications (BR, min) is specified in units of 1{{units}} below the
+          nominal bit rate. A value of zero indicates that this field is not specified.  However this 
+          field may also specify range of signaling rates specified in units of +/- 1{{units}} around the nominal
+          signaling rate. See {{bibref|SFF-8472|Section 8.5}}} - Address 0xA0, Byte 67.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="percent"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="VendorSN" access="readOnly">
+        <description>
+          The serial number provided by the Transceiver vendor 
+          is a string of maximum 16 ASCII characters.
+          An empty string indicates that the vendor SN is unspecified.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DateCode" access="readOnly">
+        <description>
+          The transceiver vendor date code.
+          The format is YYMMDDLL where
+          YY - year (00 = 2000), MM - month (01 = January), DD - day
+          (01 to 31), LL - optional vendor lot code.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="8"/>
+            <pattern value="\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[A-Za-z0-9]{0,2}"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LengthSMFkm" access="readOnly">
+        <description>
+          This value specifies the link length in {{units}} that is supported by the
+          transceiver while operating in compliance with the applicable
+          standards using single mode fiber. The value is in units of kilometers.
+          A value of 255 means that the transceiver supports a link length
+          greater than 254 km. A value of zero means that the transceiver does not
+          support single mode fiber or that the length information must be determined
+          from the transceiver technology.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="kilometers"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LengthSMF" access="readOnly">
+        <description>
+          This value specifies link length that is supported by the transceiver
+          while operating in compliance with applicable standards using 50 micron
+          multimode OM2 [500MHz*km at 850nm] fiber. The value is in units of {{units}}.
+          A value of 255 means that the transceiver supports a link length
+          greater than 2.54 km A value of zero means that the transceiver does not
+          support 50 micron multimode fiber or that the length information must be
+          determined from the transceiver technology.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="10 meters"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LengthOM2" access="readOnly">
+        <description>
+          This value specifies link length that is supported by the transceiver
+          while operating in compliance with applicable standards using 50 micron
+          multimode OM2 [500MHz*km at 850nm,] fiber. The value is in units of {{units}}.
+          A value of 255 means that the transceiver supports a link length
+          greater than 2.54 km A value of zero means that the transceiver does not support
+          50 micron multimode fiber or that the length information must be determined from
+          the transceiver technology.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="10 meters"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LengthOM1" access="readOnly">
+        <description>
+          This value specifies link length that is supported by the transceiver
+          while operating in compliance with applicable standards using 62.5 micron
+          multimode OM1 [200 MHzkm at 850nm, 500 MHzkm at 1310nm] fiber.
+          The value is in units of {{units}} . A value of 255 means that the transceiver
+          supports a link length greater than 2.54 km. A value of zero means that the
+          transceiver does not support 62.5 micron multimode fiber or that the length
+          information must be determined from the transceiver technology.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="10 meters"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LengthOM3" access="readOnly">
+        <description>
+          This value specifies link length that is supported by the transceiver
+          while operating in compliance with applicable standards using 50 micron
+          multimode OM3 [2000 MHz*km] fiber. The value is in units of {{units}}.
+          A value of 255 means that the transceiver supports a link length
+          greater than 2.54 km. A value of zero means that the transceiver
+          does not support 50 micron multimode fiber or that the length information
+          must be determined from the transceiver Technology.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+            <units value="10 meters"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Wavelength" access="readOnly">
+        <description>
+        This value denotes the nominal transmitter output wavelength at room temperature measured in {{units}}.
+        This field allows the user to read the laser wavelength directly,
+        so it is not necessary to infer it from the transceiver
+        “Code for Electronic Compatibility”. This also allows specification
+        of wavelengths not covered in those fields,
+        such as those used in coarse WDM systems.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+            <units value="nanometers"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="VerCompliance" access="readOnly">
+        <description>
+          The value indicates which revision of SFF requirements the transceiver
+          complies with. See {{bibref|SFF-8472|Table 8-8}}.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+ 
+      <parameter name="OptCooledTrans" access="readOnly">
+        <description>
+          A value of {{false}} identifies a conventional uncooled
+          (or unspecified) laser implementation. A value of {{true}} identifies
+          a cooled laser transmitter implementation.
+          See {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptPowerlvl" access="readOnly">
+        <description>
+          A value of {{false}} identifies Power Level 1 (or unspecified) requirements.
+          A value of {{true}} identifies Power Level 2 requirement.
+          See {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptLinearRcvr" access="readOnly">
+        <description>
+          A value of {{false}} identifies a conventional limiting (or unspecified)
+          receiver output. A value of {{true}} identifies a linear receiver output.
+          See {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptRateSelect" access="readOnly">
+        <description>
+          A value of {{true}} indicates that the optional RATE_SELECT functionality is implemented.
+          See {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptTxDisable" access="readOnly">
+        <description>
+          A value of {{true}} indicates that the optional TX_DISABLE functionality is implemented.
+          See {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptTxFault" access="readOnly">
+        <description>
+          A value of {{true}} indicates that the optional Tx Fault monitoring is implemented.
+          See {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OptInvertedLOS" access="readOnly">
+        <description>
+          A value of {{true}} indicates that Loss of Signal implemented 
+          with signal inverted from standard definition
+          in SFP MSA (called “Signal Detect”) as per {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+       <parameter name="OptLOS" access="readOnly">
+        <description>
+          A value of {{true}} indicates that this optional transceiver signal 
+          for Loss of signal is implemented.
+          See {{bibref|SFF-8472|Table 8-3}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DMCtypeImplemented" access="readOnly">
+        <description>
+          A value of {{true}} indicates that Digital Diagnostic monitoring is implemented. 
+          See {{bibref|SFF-8472| Section 8-8}}. 
+          If set to {{true}}, received power monitoring, transmitted power monitoring, 
+          bias current monitoring, supply voltage monitoring and 
+          temperature monitoring are all implemented.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DMCtypeInternalCal" access="readOnly">
+        <description>
+          A value of {{true}} indicates that transceiver is Internally calibrated. 
+          The transceiver directly reports calibrated
+          values in units of current, power etc.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DMCtypeExternalCal" access="readOnly">
+        <description>
+          A value of {{true}} indicates that transceiver is Externally calibrated.
+          The reported values are A/D counts which must be converted
+          to real world units using calibration values read using additional information
+          from the SFP memory.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DMCtypeRxAvgPwr" access="readOnly">
+        <description>
+          This value indicates the Received power measurement type. 
+          If {{true}}, average received power is monitored. If {{false}}, OMA is monitored.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EOCalarmsImplemented" access="readOnly">
+        <description>
+          A value of {{true}} indicates that Alarms/Warnings flags for monitored quantities
+          are implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EOCSoftTxDisable" access="readOnly">
+        <description>
+          A value of {{true}} indicates that Soft TX_DISABLE control and monitoring 
+          is implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EOCSoftTxFault" access="readOnly">
+        <description>
+          A value of {{true}} indicates that soft TX_FAULT monitoring is implemented in the
+          transceiver.  See {{bibref|SFF-8472|Table 8-6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EOCSoftRxLOS" access="readOnly">
+        <description>
+          A value of {{true}} indicates that soft RX_LOS is implemented in the
+          transceiver.  See {{bibref|SFF-8472|Table 8-6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EOCSoftRateSelect" access="readOnly">
+        <description>
+          A value of {{true}} indicates that this soft Rate Select and Control is implemented
+          in the transceiver.  See {{bibref|SFF-8472|Table 8-6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SFF8079AppSelect" access="readOnly">
+        <description>
+          A value of {{true}} indicates that application rate select feature is implemented in the
+          transceiver.  See {{bibref|SFF-8472|Table 8-6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SFF8431SoftRateSelect" access="readOnly">
+        <description>
+          A value of {{true}} indicates that Soft Rate Select as per SFF-8431 is implemented
+          in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+     <parameter name="EMCSPowerLvlOp" access="readOnly">
+        <description>
+          A value of {{true}} indicates Power Level Operation control and status is implemented in transceiver. 
+          See {{bibref|SFF-8472|Table 10-1}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EMCSPowerLvlSelect" access="readOnly">
+        <description>
+          A value of {{true}} enables selection of power level to transmit.
+          See {{bibref|SFF-8472|Table 10-1}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+    
+    <object name="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Thresholds." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.19">
+      <description>
+        Each alarm and warning quantity has a corresponding high alarm,
+        low alarm, high warning and low warning threshold. These factory preset values
+        allows the determination of when a particular value is outside of “normal” limits
+        as determined by the transceiver manufacturer. It is assumed that these values will
+        vary with different technologies and different implementations and are vendor specific.
+        The values here represent the values after any required calibration.
+        See {{bibref|SFF-8472|Table 9-5}}.
+      </description>
+
+      <parameter name="HighTempAlarm" access="readOnly">
+        <description>
+          Temperature, measured in {{units}}, at which a high temperature alarm will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighTempWarning" access="readOnly">
+        <description>
+          Temperature, measured in {{units}}, at which a high temperature warning will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowTempWarning" access="readOnly">
+        <description>
+          Temperature, measured in {{units}}, below which a low temperature warning will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowTempAlarm" access="readOnly">
+        <description>
+          Temperature, measured in {{units}}, below which a low temperature alarm will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighVccAlarm" access="readOnly">
+        <description>
+          Voltage, measured in {{units}}, above which a high Vcc alarm will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+            <units value="mV"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighVccWarning" access="readOnly">
+        <description>
+          Voltage, measured in {{units}}, above which a high Vcc warning will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+            <units value="mV"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowVccWarning" access="readOnly">
+        <description>
+          Voltage, measured in {{units}}, below which a low Vcc warning will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+            <units value="mV"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowVccAlarm" access="readOnly">
+        <description>
+          Voltage, measured in {{units}}, below which a low Vcc alarm will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+            <units value="mV"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighTxBiasAlarm" access="readOnly">
+        <description>
+          Tx Bias, current measured in {{units}}, above which a High Tx Bias alarm will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="µA"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighTxBiasWarning" access="readOnly">
+        <description>
+          Tx Bias, current measured in {{units}}, above which a High Tx Bias warning will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="µA"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowTxBiasWarning" access="readOnly">
+        <description>
+          Tx Bias, current measured in {{units}}, below which a Low Tx Bias warning will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="µA"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowTxBiasAlarm" access="readOnly">
+        <description>
+          Tx Bias, current measured in {{units}}, below which a Low Tx Bias alarm will be triggered.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="µA"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighTxPowerAlarm" access="readOnly">
+        <description>
+          Tx Power, measured in {{units}}, above which a High Tx Power alarm will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighTxPowerWarning" access="readOnly">
+        <description>
+          Tx Power, measured in {{units}}, above which a High Tx Power warning will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowTxPowerWarning" access="readOnly">
+        <description>
+          Tx Power, measured in {{units}}, below which a Low Tx Power warning will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowTxPowerAlarm" access="readOnly">
+        <description>
+          Tx Power, measured in {{units}}, below which a Low Tx Power alarm will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighRxPowerAlarm" access="readOnly">
+        <description>
+          Rx Power, measured in {{units}}, above which a High Rx Power alarm will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="HighRxPowerWarning" access="readOnly">
+        <description>
+          Rx Power, measured in {{units}}, above which a High Rx Power warning will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowRxPowerWarning" access="readOnly">
+        <description>
+          Rx Power, measured in {{units}}, below which a Low Rx Power warning will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="LowRxPowerAlarm" access="readOnly">
+        <description>
+          Rx Power, measured in {{units}}, below which a Low Rx Power alarm will be triggered.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Status." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.19">
+      <description>
+        This object contains real time diagnostic and control values and status fields.
+        See {{bibref|SFF-8472|Table 9-16}}.
+        The CPE MUST reset the interface’s Stats parameters
+        (unless otherwise stated in individual object or parameter
+        descriptions) either when the interface becomes operationally
+        down due to a previous administrative down (i.e. the interface’s
+        Status parameter transitions to a down state after the interface
+        is disabled) or when the interface becomes administratively up
+        (i.e. the interface’s Enable parameter transitions from false to true).
+        Administrative and operational interface status is discussed
+        in [Section 4.2.2/TR-181i2].
+      </description>
+
+      <parameter name="Temperature" access="readOnly">
+        <description>
+          Internally measured module temperature measured in {{units}}.
+          See {{bibref|SFF-8472|Table 9-16}}.
+          A value of -274 indicates that a good reading could not be obtained.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-274"/>
+            <units value="degrees celsius"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="Vcc" access="readOnly">
+        <description>
+          Internally measured supply voltage in transceiver measured in {{units}}.
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+            <units value="mV"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxBias" access="readOnly">
+        <description>
+          Internally measured TX Bias Current measured in {{units}}. 
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="µA"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPower" access="readOnly">
+        <description>
+          Measured TX output power measured in {{units}}. See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPower" access="readOnly">
+        <description>
+          Measured RX input power measured in {{units}}. See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <int>
+            <units value="0.1 dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxDisableState" access="readOnly">
+        <description>
+          The digital state of the TX Disable Input Pin.
+          Updated within 100ms of change on pin.
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SoftTxDisableSelect" access="readOnly">
+        <description>
+          This optional status control bit allows software disable of laser.
+          See {{bibref|SFF-8472|Table 9-16}}.
+          Setting this flag {{true}} disables the laser.
+          If Soft TX Disable is not implemented,
+          the transceiver ignores the value of this bit. Default power up value is zero/low.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RS1State" access="readOnly">
+        <description>
+          An optional digital state of SFP input pin AS(1) per {{bibref|SFF-8079}} or RS(1) per {{bibref|SFF-8431}}.
+          Updated within 100ms of change on pin. See 0xA2 Byte 118, Bit 3 for Soft
+          RS(1) Select control information.
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RateSelectState" access="readOnly">
+        <description>
+          An optional digital state of SFP input pin AS(0) Rate_Select State [aka. “RS(0)”]. 
+          Updated within 100ms of change on pin. Note: This pin is also known
+          as AS(0) in {{bibref|SFF-8079}} and RS(0) in {{bibref|SFF-8431}}.
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SoftRateSelectSelect" access="readOnly">
+        <description>
+          Soft Rate_Select Select (aka. “RS(0)”). An optional Status or Control Bit.
+          This flag allows software rate select control. Setting this flag
+          {{true}} selects full bandwidth operation. This bit is logical OR with
+          the hard Rate_Select, AS(0) or RS(0) pin value. Default at
+          power up is logic zero/low. If Soft Rate Select is not implemented,
+          the transceiver ignores the value of this bit. Note: Specific transceiver
+          behaviors of this bit are identified in referenced documents.
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TXFaultState" access="readOnly">
+        <description>
+          An optional digital state of the TX Fault Output Pin.
+          Updated within 100ms of change on pin.
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxLOSState" access="readOnly">
+        <description>
+          An optional digital state of the RX_LOS Output Pin.
+          Updated within 100ms of change on pin.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DataReadyBarState" access="readOnly">
+        <description>
+          An optional flag that indicates the transceiver has achieved power up and data is ready.
+          The flag remains high until data is ready to be read at which time the
+          device sets the bit low. The default value SHOULD be false.
+          See {{bibref|SFF-8472|Table 9-16}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+    <object name="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Alarms." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.19">
+      <description>
+        This object contains the state of the SFP internal Diagnostic
+        Alarms Flags {{bibref|SFF-8472|Table 9-17}}. 
+      </description>
+
+      <parameter name="TemperatureHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the internal temperature exceeds the high alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TemperatureLow" access="readOnly">
+        <description>
+          Set to {{true}} when the internal temperature is below the low alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VccHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the internal supply voltage exceeds the high alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VccLow" access="readOnly">
+        <description>
+          Set to {{true}} when the internal supply voltage is below the low alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxBiasHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the TX Bias current exceeds the high alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxBiasLow" access="readOnly">
+        <description>
+          Set to {{true}} when the TX Bias current is below the low alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPowerHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the TX output power exceeds the high alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPowerLow" access="readOnly">
+        <description>
+          Set to {{true}} when the TX output power is below the low alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPowerHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the Received Power exceeds the high alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPowerLow" access="readOnly">
+        <description>
+          Set to {{true}} when the Received Power is below the low alarm level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Warnings." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.19">
+      <description>
+        This object contains the state of the SFP internal Diagnostic
+        Warning Flags {{bibref|SFF-8472|Table 9-17}}. Warning flags
+        indicate conditions outside the normally guaranteed bounds
+        but not necessarily causes of immediate link failures.
+        Certain warning flags may also be defined by the manufacturer
+        as end-of-life indicators (such as for higher than expected
+        bias currents in a constant power control loop). A flag is
+        set for each warning that is active. Implementation is
+        vendor specific. A SFP module has the ability to monitor
+        and warn on a high or low readings for a number of situations.
+        This ability is internal to the SFP and is part of the
+        digital diagnostic interface common to many SFPs. The
+        associated field changes from {{false}} to {{true}} to signal a
+        warning and changes from {{true}} to {{false}} to indicate that
+        the warning has cleared. It is recommended that detection
+        of an asserted flag bit will be verified by a second read
+        of the flag at least 100ms later.
+      </description>
+
+      <parameter name="TemperatureHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the internal temperature exceeds the high warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TemperatureLow" access="readOnly">
+        <description>
+          Set to {{true}} when the internal temperature is below the low warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VccHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the internal supply voltage exceeds the high warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VccLow" access="readOnly">
+        <description>
+          Set to {{true}} when the internal supply voltage is below the low warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxBiasHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the TX Bias current exceeds the high warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxBiasLow" access="readOnly">
+        <description>
+          Set to {{true}} when the TX Bias current is below the low warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPowerHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the TX output power exceeds the high warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TxPowerLow" access="readOnly">
+        <description>
+          Set to {{true}} when the TX output power is below the low warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPowerHigh" access="readOnly">
+        <description>
+          Set to {{true}} when the Received Power exceeds the high warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RxPowerLow" access="readOnly">
+        <description>
+          Set to {{true}} when the Received Power is below the low warning level.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <profile name="SFP:1" version="2.19">
+      <object ref="Device.SFPs." requirement="present">
+        <parameter ref="SFPCageNumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.SFPCage.{i}." requirement="present">
+        <parameter ref="Alias" requirement="readOnly"/>
+        <parameter ref="Name" requirement="readOnly"/>
+        <parameter ref="SFPPresent" requirement="readOnly"/>
+        <parameter ref="SFF8024Identifier" requirement="readOnly"/>
+        <parameter ref="MgmtInterface" requirement="readOnly"/>
+        <parameter ref="SFPType" requirement="readOnly"/>
+        <parameter ref="SFPReference" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.Mgmt." requirement="present">
+        <parameter ref="SFF8472NumberOfEntries" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.Mgmt.SFF8472.{i}." requirement="present">
+        <parameter ref="Alias" requirement="readOnly"/>
+        <parameter ref="Name" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver." requirement="present">
+        <parameter ref="Connector" requirement="readOnly"/>
+        <parameter ref="Transceiver" requirement="readOnly"/>
+        <parameter ref="Encoding" requirement="readOnly"/>
+        <parameter ref="BRNominal" requirement="readOnly"/>
+        <parameter ref="RateIdentifier" requirement="readOnly"/>
+        <parameter ref="VendorName" requirement="readOnly"/>
+        <parameter ref="VendorOUI" requirement="readOnly"/>
+        <parameter ref="VendorPN" requirement="readOnly"/>
+        <parameter ref="VendorRev" requirement="readOnly"/>
+        <parameter ref="BRMax" requirement="readOnly"/>
+        <parameter ref="BRMin" requirement="readOnly"/>
+        <parameter ref="VendorSN" requirement="readOnly"/>
+        <parameter ref="DateCode" requirement="readOnly"/>
+        <parameter ref="LengthSMFkm" requirement="readOnly"/>
+        <parameter ref="LengthSMF" requirement="readOnly"/>
+        <parameter ref="LengthOM2" requirement="readOnly"/>
+        <parameter ref="LengthOM1" requirement="readOnly"/>
+        <parameter ref="LengthOM3" requirement="readOnly"/>
+        <parameter ref="Wavelength" requirement="readOnly"/>
+        <parameter ref="VerCompliance" requirement="readOnly"/>
+        <parameter ref="OptCooledTrans" requirement="readOnly"/>
+        <parameter ref="OptPowerlvl" requirement="readOnly"/>
+        <parameter ref="OptLinearRcvr" requirement="readOnly"/>
+        <parameter ref="OptRateSelect" requirement="readOnly"/>
+        <parameter ref="OptTxDisable" requirement="readOnly"/>
+        <parameter ref="OptTxFault" requirement="readOnly"/>
+        <parameter ref="OptInvertedLOS" requirement="readOnly"/>
+        <parameter ref="OptLOS" requirement="readOnly"/>
+        <parameter ref="DMCtypeImplemented" requirement="readOnly"/>
+        <parameter ref="DMCtypeInternalCal" requirement="readOnly"/>
+        <parameter ref="DMCtypeExternalCal" requirement="readOnly"/>
+        <parameter ref="DMCtypeRxAvgPwr" requirement="readOnly"/>
+        <parameter ref="EOCalarmsImplemented" requirement="readOnly"/>
+        <parameter ref="EOCSoftTxDisable" requirement="readOnly"/>
+        <parameter ref="EOCSoftTxFault" requirement="readOnly"/>
+        <parameter ref="EOCSoftRxLOS" requirement="readOnly"/>
+        <parameter ref="EOCSoftRateSelect" requirement="readOnly"/>
+        <parameter ref="SFF8079AppSelect" requirement="readOnly"/>
+        <parameter ref="SFF8431SoftRateSelect" requirement="readOnly"/>
+        <parameter ref="EMCSPowerLvlOp" requirement="readOnly"/>
+        <parameter ref="EMCSPowerLvlSelect" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Thresholds." requirement="present">
+        <parameter ref="HighTempAlarm" requirement="readOnly"/>
+        <parameter ref="HighTempWarning" requirement="readOnly"/>
+        <parameter ref="LowTempWarning" requirement="readOnly"/>
+        <parameter ref="LowTempAlarm" requirement="readOnly"/>
+        <parameter ref="HighVccAlarm" requirement="readOnly"/>
+        <parameter ref="HighVccWarning" requirement="readOnly"/>
+        <parameter ref="LowVccWarning" requirement="readOnly"/>
+        <parameter ref="LowVccAlarm" requirement="readOnly"/>
+        <parameter ref="HighTxBiasAlarm" requirement="readOnly"/>
+        <parameter ref="HighTxBiasWarning" requirement="readOnly"/>
+        <parameter ref="LowTxBiasWarning" requirement="readOnly"/>
+        <parameter ref="LowTxBiasAlarm" requirement="readOnly"/>
+        <parameter ref="HighTxPowerAlarm" requirement="readOnly"/>
+        <parameter ref="HighTxPowerWarning" requirement="readOnly"/>
+        <parameter ref="LowTxPowerWarning" requirement="readOnly"/>
+        <parameter ref="LowTxPowerAlarm" requirement="readOnly"/>
+        <parameter ref="HighRxPowerAlarm" requirement="readOnly"/>
+        <parameter ref="HighRxPowerWarning" requirement="readOnly"/>
+        <parameter ref="LowRxPowerWarning" requirement="readOnly"/>
+        <parameter ref="LowRxPowerAlarm" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Status." requirement="present">
+        <parameter ref="TxDisableState" requirement="readOnly"/>
+        <parameter ref="SoftTxDisableSelect" requirement="readOnly"/>
+        <parameter ref="RS1State" requirement="readOnly"/>
+        <parameter ref="RateSelectState" requirement="readOnly"/>
+        <parameter ref="SoftRateSelectSelect" requirement="readOnly"/>
+        <parameter ref="TXFaultState" requirement="readOnly"/>
+        <parameter ref="RxLOSState" requirement="readOnly"/>
+        <parameter ref="DataReadyBarState" requirement="readOnly"/>
+        <parameter ref="Temperature" requirement="readOnly"/>
+        <parameter ref="Vcc" requirement="readOnly"/>
+        <parameter ref="TxBias" requirement="readOnly"/>
+        <parameter ref="TxPower" requirement="readOnly"/>
+        <parameter ref="RxPower" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Alarms." requirement="present">
+        <parameter ref="TemperatureHigh" requirement="readOnly"/>
+        <parameter ref="TemperatureLow" requirement="readOnly"/>
+        <parameter ref="VccHigh" requirement="readOnly"/>
+        <parameter ref="VccLow" requirement="readOnly"/>
+        <parameter ref="TxBiasHigh" requirement="readOnly"/>
+        <parameter ref="TxBiasLow" requirement="readOnly"/>
+        <parameter ref="TxPowerHigh" requirement="readOnly"/>
+        <parameter ref="TxPowerLow" requirement="readOnly"/>
+        <parameter ref="RxPowerHigh" requirement="readOnly"/>
+        <parameter ref="RxPowerLow" requirement="readOnly"/>
+      </object>
+      <object ref="Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Warnings." requirement="present">
+        <parameter ref="TemperatureHigh" requirement="readOnly"/>
+        <parameter ref="TemperatureLow" requirement="readOnly"/>
+        <parameter ref="VccHigh" requirement="readOnly"/>
+        <parameter ref="VccLow" requirement="readOnly"/>
+        <parameter ref="TxBiasHigh" requirement="readOnly"/>
+        <parameter ref="TxBiasLow" requirement="readOnly"/>
+        <parameter ref="TxPowerHigh" requirement="readOnly"/>
+        <parameter ref="TxPowerLow" requirement="readOnly"/>
+        <parameter ref="RxPowerHigh" requirement="readOnly"/>
+        <parameter ref="RxPowerLow" requirement="readOnly"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="SFP:2.19">
+    <component ref="Root"/>
+    <component ref="SFP"/>
+  </model>
+</dm:document>

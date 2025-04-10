@@ -7,6 +7,56 @@ can be found at <https://cwmp-data-models.broadband-forum.org>.
 
 [CWMP]: https://www.broadband-forum.org/technical/download/TR-069.pdf
 
+## 2025-04-10: TR-106 Amendment 15 and [TR-181 Issue 2 Amendment 19]
+
+*Tags: [v2025.1] (data models), 
+       [v2.19.0][TR-181-v2.19.0] (TR-181), 
+       [v1.15.0][TR-106-v1.15.0] (TR-106)*
+
+### TR-106
+* Allow versions with 3 components
+* Allow overriding Command version
+* Allow overriding Event version
+
+### TR-181
+* Included LinkReadWrite component instead of Link component on all networking interfaces and automatically create most of the Parameters
+* Added support for Cellular short message service
+* Revamped Device.Cellular.Interface.
+* Made previously USP-only Device.CollectionDevice. available to CWMP
+* Added note about limited abilities of Device.SoftwareModules. in CWMP
+* Addressed some versioning issues in the CWMP specific datamodel
+* Added ability to rotate KernelFault and ProcessFault entries
+* Added more features to DHCP configuration and Stats for DHCP use
+* Added logging support for Firewall in Device.Firewall.Log.{i}.
+* Added BlobSensor to IoT
+* Added the latest IPLayerCapacity diagnostics features, including authentication, better status and results
+* Added more LED control parameters
+* Added ALPN support to MQTT
+* Added SFP support via Device.SFPs.
+* Added SFP support to Device.Optical.Interface.{i}.
+* Deprecated Device.PDU.
+* Added new 3GPP mobile network session management support via Device.SessionManagement.
+* Added Radius security via Device.RadSecProxy.
+* Added TLS support to SysLog
+* Added support for the Thread protocol via Device.Thread.
+* Added support for trusted elements (e.g. mobile SIM) via Device.TrustedElements.
+* Added support for Wi-Fi DataElements r4
+* Added support for Ethernet advertised link modes
+* Changed writeOnceReadOnly Parameters to readOnly in CWMP
+* Added support for power monitoring via Device.DeviceInfo.PowerStatus.
+* Added selection of IPv4/IPv6 mode to NTP client
+* Added new permission system for USP services
+* Revamped Bitrate parameters into a component
+* Revamped IPVersion parameters into a component
+* Revamped DHCP client configuration into components
+* Added some missing units to IoT
+* Revamped client certificates into a component
+* Added support for CA bundles in Device.Security.CABundle.{i}.
+* Refactored Device.SoftwareModules. into its own file
+* Added Privileged parameter to Device.SoftwareModules.ExecutionUnit.{i}.
+* Added Device.Thread.MLE.{i}.AssociatedNode.{i}.Neighbor.{i}.
+* Added RegisterTrustPaths parameter in InstallDU() and Update() commands and Device.USPServices.Trust.{i}.
+
 ## 2024-09-04: TR-181 Issue 2 Amendment 18 Corrigendum 1
 
 *Tags: [v1.6.10] (data models), 
@@ -341,6 +391,7 @@ version of the BBF report tool
 [TR-106-v1.12.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.12.0
 [TR-106-v1.13.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.13.0
 [TR-106-v1.14.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.14.0
+[TR-106-v1.15.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.15.0
 [TR-181 Issue 2 Amendment 12]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-12.pdf
 [TR-181 Issue 2 Amendment 13]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-13.pdf
 [TR-181 Issue 2 Amendment 14]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-14.pdf
@@ -348,6 +399,7 @@ version of the BBF report tool
 [TR-181 Issue 2 Amendment 16]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-16.pdf
 [TR-181 Issue 2 Amendment 17]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-17.pdf
 [TR-181 Issue 2 Amendment 18]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-18.pdf
+[TR-181 Issue 2 Amendment 19]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-19.pdf
 [TR-181-v2.12.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.12.0
 [TR-181-v2.13.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.13.0
 [TR-181-v2.14.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.14.0
@@ -358,6 +410,7 @@ version of the BBF report tool
 [TR-181-v2.17.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.17.0
 [TR-181-v2.18.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.18.0
 [TR-181-v2.18.1]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.18.1
+[TR-181-v2.19.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.19.0
 [v1.6.0]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0
 [v1.6.0+]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0+
 [v1.6.0c1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0c1
@@ -371,3 +424,4 @@ version of the BBF report tool
 [v1.6.7]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.7
 [v1.6.8]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.8
 [v1.6.9]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.9
+[v2025.1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2025.1
