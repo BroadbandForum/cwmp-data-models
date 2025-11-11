@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Device:2 Root Data Model: Common Object definitions [HardwareCPUs]
+
+Copyright (c) 2024, Broadband Forum
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the following
+conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The above license is used as a license under copyright only.
+Please reference the Forum IPR Policy for patent licensing terms
+<https://www.broadband-forum.org/ipr-policy>.
+
+Any moral rights which are necessary to exercise under the above
+license grant are also deemed granted under this license.
+
+Comments or questions about this Broadband Forum data model should be
+directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  urn:broadband-forum-org:cwmp:datamodel-1-14
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-1-0
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-20-0-hardware"
+  file="tr-181-2-20-0-hardware.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-20-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-powermanagement.xml"
+    spec="urn:broadband-forum-org:tr-181-2-20-powermanagement">
+    <component name="DevicePowerManagement"/>
+    <component name="DevicePowerManagementUSP"/>
+  </import>
+
+  <component name="Hardware">
+    <object name="Device.Hardware." access="readOnly" minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        Represents the hardware configuration of the device, including details about the CPU, memory, and other hardware components.
+      </description>
+      <component ref="HardwareCPUs"/>
+      <component ref="DevicePowerManagement"/>
+    </object>
+  </component>
+
+  <component name="HardwareCPUs">
+    <object name="CPUs." access="readOnly" minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        Represents the system's CPU configuration, providing details about each individual processor core, its capabilities, and its current operating state.
+      </description>
+
+      <parameter name="CPUNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="CPUs.CPU.{i}." access="readOnly" numEntriesParameter="CPUNumberOfEntries"
+      minEntries="0" maxEntries="unbounded" version="2.20">
+      <description>
+        Represents a single CPU instance with configurable parameters
+        related to its operational settings.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+    </object>
+
+    <object name="CPUs.CPU.{i}.DVFS." access="readOnly" minEntries="1"
+      maxEntries="1" version="2.20">
+      <description>
+        Represents the CPU's Dynamic Voltage and Frequency Scaling (DVFS) configuration.
+        DVFS allows the operating voltage and frequency of the CPU to be dynamically
+        adjusted to optimize power consumption and performance based on workload demands.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables Dynamic Voltage and Frequency Scaling (DVFS) for this CPU.
+
+          This parameter is only applicable if {{param|Supported}} is {{true}}.
+
+          If {{param|Supported}} is {{false}} and this parameter is {{true}} the {{param|Status}}
+          will be set to {{enum|Unsupported|Status}}. When this parameter is set to {{false}}, the
+          {{param|Status}} will be set to {{enum|Disabled|Status}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the status of Dynamic Voltage and Frequency Scaling (DVFS) for this CPU.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                Indicates that DVFS is disabled.
+              </description>
+            </enumeration>
+            <enumeration value="Enabled">
+              <description>
+                Indicates that DVFS is enabled and supported by the CPU.
+              </description>
+            </enumeration>
+            <enumeration value="Unsupported">
+              <description>
+                Indicates that this CPU does not support DVFS, in which case {{param|Supported}} will be {{false}}.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Supported" access="readOnly">
+        <description>
+          Indicates whether this CPU supports DVFS.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CurrentFrequency" access="readOnly">
+        <description>
+          The current operating frequency of the CPU in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kHz"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MinFrequency" access="readOnly">
+        <description>
+          The minimum frequency that the CPU hardware is capable of operating at, in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kHz"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxFrequency" access="readOnly">
+        <description>
+          The maximum frequency that the CPU hardware is capable of operating at, in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kHz"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScalingMinFrequency" access="readWrite">
+        <description>
+          The minimum operating frequency allowed for the CPU in {{units}}.
+
+          This value must be between {{param|MinFrequency}} and {{param|MaxFrequency}}, and part of the
+          {{param|ScalingAvailableFrequencies}} list.
+
+          This value must be less than {{param|ScalingMaxFrequency}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kHz"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScalingMaxFrequency" access="readWrite">
+        <description>
+          The maximum operating frequency allowed for the CPU in {{units}}.
+
+          This value must be between {{param|MinFrequency}} and {{param|MaxFrequency}}, and part of the
+          {{param|ScalingAvailableFrequencies}} list.
+
+          This value must be greater than {{param|ScalingMinFrequency}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="kHz"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScalingAvailableFrequencies" access="readOnly">
+        <description>
+          The available frequencies for CPU scaling in {{units}}.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <units value="kHz"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScalingGovernor" access="readWrite">
+        <description>
+          Indicates the CPU frequency governor to be used.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="ScalingAvailableGovernors"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ScalingAvailableGovernors" access="readOnly">
+        <description>
+          A list of available CPU frequency governors for this CPU.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="conservative"/>
+            <enumeration value="userspace"/>
+            <enumeration value="powersave"/>
+            <enumeration value="ondemand"/>
+            <enumeration value="performance"/>
+            <enumeration value="schedutil"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="HardwareUSP">
+    <object base="Device.Hardware.">
+      <component ref="DevicePowerManagementUSP"/>
+    </object>
+  </component>
+
+  <model name="HardwareCPUs:2.20">
+    <component ref="Root"/>
+    <component ref="HardwareCPUs"/>
+  </model>
+</dm:document>

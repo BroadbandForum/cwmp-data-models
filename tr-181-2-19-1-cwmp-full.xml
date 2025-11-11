@@ -51537,6 +51537,531 @@
       </parameter>
     </object>
 
+    <object name="Device.WiFi.CCAMeasurementDiagnostic." access="readOnly"
+        minEntries="1" maxEntries="1"
+        dmr:previousObject="Device.WiFi.Radio.{i}." version="2.15">
+      <description>
+        This object is to provide diagnostic information on a Clear Channel
+        Assessment (CCA) measurement scan on this radio on the given channel
+        using a specific {{param|DwellTime}}.
+      </description>
+
+      <parameter name="DiagnosticsState" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readWrite" version="2.15">
+        <description>
+          The number of the Wi-Fi channel the clear channel assessment (CCA)
+          measurement is run on.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Frequency" access="readWrite" version="2.16">
+        <description>
+          Frequency of the channel the clear channel assessment (CCA)
+          measurement is run on.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="2.4GHz"/>
+            <enumeration value="5GHz"/>
+            <enumeration value="6GHz" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="DwellTime" access="readWrite" version="2.15">
+        <description>
+          The duration of the CCA measurement in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="CCAReport" access="readOnly" version="2.15">
+        <description>
+          The clear channel assessment (CCA) report in the format specified in
+          {{bibref|802.11-2020|Section 9.4.2.21.3}}.
+
+          When read, the value of this parameter MUST correspond to
+          {{param|Channel}}. How this is achieved is a local matter to the CPE.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="12" maxLength="12"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.RemoteMeasurementDiagnostic." access="readOnly"
+        minEntries="1" maxEntries="1"
+        dmr:previousObject="Device.WiFi.Radio.{i}." version="2.15">
+      <description>
+        This object is to provide diagnostic information on a Remote
+        Measurement of a Wi-Fi BSS.
+      </description>
+
+      <parameter name="DiagnosticsState" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="TargetBSS" access="readWrite" version="2.15">
+        <description>
+          The BSSID of the remote BSS.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Timeout" access="readWrite" version="2.15">
+        <description>
+          The duration after which the request is timed out in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingClass" access="readWrite" version="2.15">
+        <description>
+          The Operating Class in {{bibref|802.11-2020|Table E-4}} for which the
+          measurement is requested.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readWrite" version="2.15">
+        <description>
+          The number of the channel for which the measurement is requested.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly" version="2.15">
+        <description>
+          The received signal strength (RSSI) as received by the radio measured
+          in {{units}}. RSSI is encoded as per {{bibref|802.11-2020|Table
+          9-176}}. Reserved: 221 - 255.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+            <units value="dBm"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Noise" access="readOnly" version="2.15">
+        <description>
+          An indicator of the average radio noise plus interference power as
+          received by the radio. Encoded as defined for ANPI in
+          {{bibref|802.11-2020|Section 11.10.9.4}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.NeighboringWiFiDiagnostic." access="readOnly"
+        minEntries="1" maxEntries="1"
+        dmr:previousObject="Device.WiFi.Radio.{i}." version="2.7">
+      <description>
+        This object defines access to other WiFi SSIDs that this device is able
+        to receive.
+      </description>
+
+      <parameter name="DiagnosticsState" access="readWrite">
+        <description>
+          {{datatype|expand}}
+        </description>
+        <syntax>
+          <dataType ref="DiagnosticsState">
+            <enumeration value="None" access="readOnly"/>
+            <enumeration value="Requested"/>
+            <enumeration value="Canceled" optional="true"/>
+            <enumeration value="Complete" access="readOnly"/>
+            <enumeration value="Error" access="readOnly" optional="true"/>
+            <enumeration value="Completed" access="readOnly" status="deleted">
+              <description>
+                {{deprecated|2.13|because it's a typo for {{enum|Complete}}}}
+
+                {{obsoleted|2.16}}
+
+                {{deleted|2.17}}
+              </description>
+            </enumeration>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ResultNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.NeighboringWiFiDiagnostic.Result.{i}."
+        access="readOnly" numEntriesParameter="ResultNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.7">
+      <description>
+        Neighboring SSID table. This table models other WiFi SSIDs that this
+        device is able to receive.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="BSSID"/>
+      </uniqueKey>
+
+      <parameter name="Radio" access="readOnly">
+        <description>
+          The Radio that detected the neighboring WiFi SSID.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="Device.WiFi.Radio."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSID" access="readOnly">
+        <description>
+          The current service set identifier in use by the neighboring WiFi
+          SSID. The value MAY be empty for hidden SSIDs.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="32"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BSSID" access="readOnly">
+        <description>
+          The BSSID used for the neighboring WiFi SSID.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Mode" access="readOnly">
+        <description>
+          The mode the neighboring WiFi radio is operating in.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="AdHoc"/>
+            <enumeration value="Infrastructure"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Channel" access="readOnly">
+        <description>
+          The current radio channel used by the neighboring WiFi radio.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignalStrength" access="readOnly">
+        <description>
+          An indicator of radio signal strength (RSSI) of the neighboring WiFi
+          radio measured in {{units}}, as an average of the last 100 packets
+          received.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityModeEnabled" access="readOnly">
+        <description>
+          The type of encryption the neighboring WiFi SSID advertises.
+
+          The {{enum|WEP}} value indicates either WEP-64 or WEP-128.
+
+          The {{enum|WPA}} value is the same as WPA-Personal.
+
+          The {{enum|WPA2}} value is the same as WPA2-Personal.
+
+          The {{enum|WPA-WPA2}} value is the same as WPA-WPA2-Personal.
+
+          The {{enum|WPA3-SAE}} value is the same as WPA3-Personal.
+
+          The {{enum|WPA2-PSK-WPA3-SAE}} value is the same as
+          WPA3-Personal-Transition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None"/>
+            <enumeration value="WEP"/>
+            <enumeration value="WPA"/>
+            <enumeration value="WPA2"/>
+            <enumeration value="WPA-WPA2"/>
+            <enumeration value="WPA-Enterprise"/>
+            <enumeration value="WPA2-Enterprise"/>
+            <enumeration value="WPA-WPA2-Enterprise"/>
+            <enumeration value="WPA3-SAE"/>
+            <enumeration value="WPA2-PSK-WPA3-SAE"/>
+            <enumeration value="WPA3-Enterprise"/>
+            <enumeration value="OWE" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EncryptionMode" access="readOnly">
+        <description>
+          The type of encryption the neighboring WiFi SSID advertises.
+
+          When {{param|SecurityModeEnabled}} is one of
+          {{enum|WPA3-SAE|SecurityModeEnabled}},
+          {{enum|WPA2-PSK-WPA3-SAE|SecurityModeEnabled}}, or
+          {{enum|WPA3-Enterprise|SecurityModeEnabled}}, {{enum|TKIP}} is not
+          valid, and should not be in the list.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="TKIP"/>
+            <enumeration value="AES"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingFrequencyBand" access="readOnly">
+        <description>
+          Indicates the frequency band at which the radio this SSID instance is
+          operating.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="2.4GHz"/>
+            <enumeration value="5GHz"/>
+            <enumeration value="6GHz" version="2.16"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedStandards" access="readOnly">
+        <description>
+          {{list}} List items indicate which IEEE 802.11 standards this
+          {{object}} instance can support simultaneously, in the frequency band
+          specified by {{param|OperatingFrequencyBand}}. {{enum}}
+
+          Each value indicates support for the indicated standard.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}},
+          {{enum|g}}, {{enum|n}}, {{enum|ax}}, {{enum|be}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}},
+          {{enum|n}}, {{enum|ac}}, {{enum|ax}}, {{enum|be}} are allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|6GHz|OperatingFrequencyBand}}, only values {{enum|ax}},
+          {{enum|be}} are allowed.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="a">
+              <description>{{bibref|802.11a-1999}}</description>
+            </enumeration>
+            <enumeration value="b">
+              <description>{{bibref|802.11b-1999}}</description>
+            </enumeration>
+            <enumeration value="g">
+              <description>{{bibref|802.11g-2003}}</description>
+            </enumeration>
+            <enumeration value="n">
+              <description>{{bibref|802.11n-2009}}</description>
+            </enumeration>
+            <enumeration value="ac">
+              <description>{{bibref|802.11ac-2013}}</description>
+            </enumeration>
+            <enumeration value="ax">
+              <description>{{bibref|802.11ax}}</description>
+            </enumeration>
+            <enumeration value="be" version="2.17">
+              <description>{{bibref|802.11be}}</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingStandards" access="readOnly">
+        <description>
+          {{list}} List items indicate which IEEE 802.11 standard that is
+          detected for this {{object}}.
+
+          Each value indicates support for the indicated standard.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|2.4GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values
+          {{enum|b}}, {{enum|g}}, {{enum|n}}, {{enum|ax}}, {{enum|be}} are
+          allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|5GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values
+          {{enum|a}}, {{enum|n}}, {{enum|ac}}, {{enum|ax}}, {{enum|be}} are
+          allowed.
+
+          If {{param|OperatingFrequencyBand}} is set to
+          {{enum|6GHz|##.Radio.{i}.SupportedFrequencyBands}}, only value
+          {{enum|ax}}, {{enum|be}} are allowed.
+
+          For example, a value of "g,b" (or "b,g" - order is not important)
+          means that the 802.11g standard {{bibref|802.11g-2003}} is used with
+          a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A
+          value of "g" means that only the 802.11g standard can be used.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumerationRef targetParam="SupportedStandards"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingChannelBandwidth" access="readOnly">
+        <description>
+          Indicates the bandwidth at which the channel is operating.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="20MHz"/>
+            <enumeration value="40MHz"/>
+            <enumeration value="80MHz"/>
+            <enumeration value="160MHz"/>
+            <enumeration value="320MHz-1" version="2.17"/>
+            <enumeration value="320MHz-2" version="2.17"/>
+            <enumeration value="Auto"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BeaconPeriod" access="readOnly">
+        <description>
+          Time interval (in {{units}}) between transmitting beacons.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="ms"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Noise" access="readOnly">
+        <description>
+          Indicator of average noise strength (in {{units}}) received from the
+          neighboring WiFi radio.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-200" maxInclusive="0"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="BasicDataTransferRates" access="readOnly">
+        <description>
+          {{list}} Basic data transmit rates (in Mbps) for the SSID. For
+          example, if {{param}} is "1,2", this indicates that the SSID is
+          operating with basic rates of 1 Mbps and 2 Mbps.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedDataTransferRates" access="readOnly">
+        <description>
+          {{list}} Data transmit rates (in Mbps) for unicast frames at which
+          the SSID will permit a station to connect. For example, if {{param}}
+          is "1,2,5.5", this indicates that the SSID will only permit
+          connections at 1 Mbps, 2 Mbps and 5.5 Mbps.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DTIMPeriod" access="readOnly">
+        <description>
+          The number of beacon intervals (measured in {{units}}) that elapse
+          between transmission of Beacon frames containing a TIM element whose
+          DTIM count field is 0. This value is transmitted in the DTIM Period
+          field of beacon frames. {{bibref|802.11-2020}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="ms"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+
     <object name="Device.WiFi.Radio.{i}.Stats." minEntries="1" maxEntries="1"
         version="2.0">
       <description>
@@ -51907,531 +52432,6 @@
         </description>
         <syntax>
           <unsignedInt/>
-        </syntax>
-      </parameter>
-    </object>
-
-    <object name="Device.WiFi.CCAMeasurementDiagnostic." access="readOnly"
-        minEntries="1" maxEntries="1"
-        dmr:previousObject="Device.WiFi.Radio.{i}.Stats." version="2.15">
-      <description>
-        This object is to provide diagnostic information on a Clear Channel
-        Assessment (CCA) measurement scan on this radio on the given channel
-        using a specific {{param|DwellTime}}.
-      </description>
-
-      <parameter name="DiagnosticsState" access="readWrite">
-        <description>
-          {{datatype|expand}}
-        </description>
-        <syntax>
-          <dataType ref="DiagnosticsState">
-            <enumeration value="None" access="readOnly"/>
-            <enumeration value="Requested"/>
-            <enumeration value="Canceled" optional="true"/>
-            <enumeration value="Complete" access="readOnly"/>
-            <enumeration value="Error" access="readOnly" optional="true"/>
-          </dataType>
-        </syntax>
-      </parameter>
-
-      <parameter name="Channel" access="readWrite" version="2.15">
-        <description>
-          The number of the Wi-Fi channel the clear channel assessment (CCA)
-          measurement is run on.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
-      <parameter name="Frequency" access="readWrite" version="2.16">
-        <description>
-          Frequency of the channel the clear channel assessment (CCA)
-          measurement is run on.
-        </description>
-        <syntax>
-          <string>
-            <enumeration value="2.4GHz"/>
-            <enumeration value="5GHz"/>
-            <enumeration value="6GHz" version="2.16"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="DwellTime" access="readWrite" version="2.15">
-        <description>
-          The duration of the CCA measurement in {{units}}.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <units value="milliseconds"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="CCAReport" access="readOnly" version="2.15">
-        <description>
-          The clear channel assessment (CCA) report in the format specified in
-          {{bibref|802.11-2020|Section 9.4.2.21.3}}.
-
-          When read, the value of this parameter MUST correspond to
-          {{param|Channel}}. How this is achieved is a local matter to the CPE.
-        </description>
-        <syntax>
-          <hexBinary>
-            <size minLength="12" maxLength="12"/>
-          </hexBinary>
-        </syntax>
-      </parameter>
-    </object>
-
-    <object name="Device.WiFi.RemoteMeasurementDiagnostic." access="readOnly"
-        minEntries="1" maxEntries="1"
-        dmr:previousObject="Device.WiFi.Radio.{i}.Stats." version="2.15">
-      <description>
-        This object is to provide diagnostic information on a Remote
-        Measurement of a Wi-Fi BSS.
-      </description>
-
-      <parameter name="DiagnosticsState" access="readWrite">
-        <description>
-          {{datatype|expand}}
-        </description>
-        <syntax>
-          <dataType ref="DiagnosticsState">
-            <enumeration value="None" access="readOnly"/>
-            <enumeration value="Requested"/>
-            <enumeration value="Canceled" optional="true"/>
-            <enumeration value="Complete" access="readOnly"/>
-            <enumeration value="Error" access="readOnly" optional="true"/>
-          </dataType>
-        </syntax>
-      </parameter>
-
-      <parameter name="TargetBSS" access="readWrite" version="2.15">
-        <description>
-          The BSSID of the remote BSS.
-        </description>
-        <syntax>
-          <dataType ref="MACAddress"/>
-        </syntax>
-      </parameter>
-
-      <parameter name="Timeout" access="readWrite" version="2.15">
-        <description>
-          The duration after which the request is timed out in {{units}}.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <units value="seconds"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="OperatingClass" access="readWrite" version="2.15">
-        <description>
-          The Operating Class in {{bibref|802.11-2020|Table E-4}} for which the
-          measurement is requested.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <range maxInclusive="255"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="Channel" access="readWrite" version="2.15">
-        <description>
-          The number of the channel for which the measurement is requested.
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-
-      <parameter name="SignalStrength" access="readOnly" version="2.15">
-        <description>
-          The received signal strength (RSSI) as received by the radio measured
-          in {{units}}. RSSI is encoded as per {{bibref|802.11-2020|Table
-          9-176}}. Reserved: 221 - 255.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <range maxInclusive="255"/>
-            <units value="dBm"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="Noise" access="readOnly" version="2.15">
-        <description>
-          An indicator of the average radio noise plus interference power as
-          received by the radio. Encoded as defined for ANPI in
-          {{bibref|802.11-2020|Section 11.10.9.4}}.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <range maxInclusive="255"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-    </object>
-
-    <object name="Device.WiFi.NeighboringWiFiDiagnostic." access="readOnly"
-        minEntries="1" maxEntries="1"
-        dmr:previousObject="Device.WiFi.Radio.{i}.Stats." version="2.7">
-      <description>
-        This object defines access to other WiFi SSIDs that this device is able
-        to receive.
-      </description>
-
-      <parameter name="DiagnosticsState" access="readWrite">
-        <description>
-          {{datatype|expand}}
-        </description>
-        <syntax>
-          <dataType ref="DiagnosticsState">
-            <enumeration value="None" access="readOnly"/>
-            <enumeration value="Requested"/>
-            <enumeration value="Canceled" optional="true"/>
-            <enumeration value="Complete" access="readOnly"/>
-            <enumeration value="Error" access="readOnly" optional="true"/>
-            <enumeration value="Completed" access="readOnly" status="deleted">
-              <description>
-                {{deprecated|2.13|because it's a typo for {{enum|Complete}}}}
-
-                {{obsoleted|2.16}}
-
-                {{deleted|2.17}}
-              </description>
-            </enumeration>
-          </dataType>
-        </syntax>
-      </parameter>
-
-      <parameter name="ResultNumberOfEntries" access="readOnly">
-        <description>
-          {{numentries}}
-        </description>
-        <syntax>
-          <unsignedInt/>
-        </syntax>
-      </parameter>
-    </object>
-
-    <object name="Device.WiFi.NeighboringWiFiDiagnostic.Result.{i}."
-        access="readOnly" numEntriesParameter="ResultNumberOfEntries"
-        minEntries="0" maxEntries="unbounded" version="2.7">
-      <description>
-        Neighboring SSID table. This table models other WiFi SSIDs that this
-        device is able to receive.
-      </description>
-      <uniqueKey functional="true">
-        <parameter ref="BSSID"/>
-      </uniqueKey>
-
-      <parameter name="Radio" access="readOnly">
-        <description>
-          The Radio that detected the neighboring WiFi SSID.
-        </description>
-        <syntax>
-          <string>
-            <pathRef refType="strong" targetParent="Device.WiFi.Radio."
-                targetType="row"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="SSID" access="readOnly">
-        <description>
-          The current service set identifier in use by the neighboring WiFi
-          SSID. The value MAY be empty for hidden SSIDs.
-        </description>
-        <syntax>
-          <string>
-            <size maxLength="32"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="BSSID" access="readOnly">
-        <description>
-          The BSSID used for the neighboring WiFi SSID.
-        </description>
-        <syntax>
-          <dataType ref="MACAddress"/>
-        </syntax>
-      </parameter>
-
-      <parameter name="Mode" access="readOnly">
-        <description>
-          The mode the neighboring WiFi radio is operating in.
-        </description>
-        <syntax>
-          <string>
-            <enumeration value="AdHoc"/>
-            <enumeration value="Infrastructure"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="Channel" access="readOnly">
-        <description>
-          The current radio channel used by the neighboring WiFi radio.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <range minInclusive="1" maxInclusive="255"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="SignalStrength" access="readOnly">
-        <description>
-          An indicator of radio signal strength (RSSI) of the neighboring WiFi
-          radio measured in {{units}}, as an average of the last 100 packets
-          received.
-        </description>
-        <syntax>
-          <int>
-            <range minInclusive="-200" maxInclusive="0"/>
-            <units value="dBm"/>
-          </int>
-        </syntax>
-      </parameter>
-
-      <parameter name="SecurityModeEnabled" access="readOnly">
-        <description>
-          The type of encryption the neighboring WiFi SSID advertises.
-
-          The {{enum|WEP}} value indicates either WEP-64 or WEP-128.
-
-          The {{enum|WPA}} value is the same as WPA-Personal.
-
-          The {{enum|WPA2}} value is the same as WPA2-Personal.
-
-          The {{enum|WPA-WPA2}} value is the same as WPA-WPA2-Personal.
-
-          The {{enum|WPA3-SAE}} value is the same as WPA3-Personal.
-
-          The {{enum|WPA2-PSK-WPA3-SAE}} value is the same as
-          WPA3-Personal-Transition.
-        </description>
-        <syntax>
-          <string>
-            <enumeration value="None"/>
-            <enumeration value="WEP"/>
-            <enumeration value="WPA"/>
-            <enumeration value="WPA2"/>
-            <enumeration value="WPA-WPA2"/>
-            <enumeration value="WPA-Enterprise"/>
-            <enumeration value="WPA2-Enterprise"/>
-            <enumeration value="WPA-WPA2-Enterprise"/>
-            <enumeration value="WPA3-SAE"/>
-            <enumeration value="WPA2-PSK-WPA3-SAE"/>
-            <enumeration value="WPA3-Enterprise"/>
-            <enumeration value="OWE" version="2.16"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="EncryptionMode" access="readOnly">
-        <description>
-          The type of encryption the neighboring WiFi SSID advertises.
-
-          When {{param|SecurityModeEnabled}} is one of
-          {{enum|WPA3-SAE|SecurityModeEnabled}},
-          {{enum|WPA2-PSK-WPA3-SAE|SecurityModeEnabled}}, or
-          {{enum|WPA3-Enterprise|SecurityModeEnabled}}, {{enum|TKIP}} is not
-          valid, and should not be in the list.
-        </description>
-        <syntax>
-          <list/>
-          <string>
-            <enumeration value="TKIP"/>
-            <enumeration value="AES"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="OperatingFrequencyBand" access="readOnly">
-        <description>
-          Indicates the frequency band at which the radio this SSID instance is
-          operating.
-        </description>
-        <syntax>
-          <string>
-            <enumeration value="2.4GHz"/>
-            <enumeration value="5GHz"/>
-            <enumeration value="6GHz" version="2.16"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="SupportedStandards" access="readOnly">
-        <description>
-          {{list}} List items indicate which IEEE 802.11 standards this
-          {{object}} instance can support simultaneously, in the frequency band
-          specified by {{param|OperatingFrequencyBand}}. {{enum}}
-
-          Each value indicates support for the indicated standard.
-
-          If {{param|OperatingFrequencyBand}} is set to
-          {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}},
-          {{enum|g}}, {{enum|n}}, {{enum|ax}}, {{enum|be}} are allowed.
-
-          If {{param|OperatingFrequencyBand}} is set to
-          {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}},
-          {{enum|n}}, {{enum|ac}}, {{enum|ax}}, {{enum|be}} are allowed.
-
-          If {{param|OperatingFrequencyBand}} is set to
-          {{enum|6GHz|OperatingFrequencyBand}}, only values {{enum|ax}},
-          {{enum|be}} are allowed.
-        </description>
-        <syntax>
-          <list/>
-          <string>
-            <enumeration value="a">
-              <description>{{bibref|802.11a-1999}}</description>
-            </enumeration>
-            <enumeration value="b">
-              <description>{{bibref|802.11b-1999}}</description>
-            </enumeration>
-            <enumeration value="g">
-              <description>{{bibref|802.11g-2003}}</description>
-            </enumeration>
-            <enumeration value="n">
-              <description>{{bibref|802.11n-2009}}</description>
-            </enumeration>
-            <enumeration value="ac">
-              <description>{{bibref|802.11ac-2013}}</description>
-            </enumeration>
-            <enumeration value="ax">
-              <description>{{bibref|802.11ax}}</description>
-            </enumeration>
-            <enumeration value="be" version="2.17">
-              <description>{{bibref|802.11be}}</description>
-            </enumeration>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="OperatingStandards" access="readOnly">
-        <description>
-          {{list}} List items indicate which IEEE 802.11 standard that is
-          detected for this {{object}}.
-
-          Each value indicates support for the indicated standard.
-
-          If {{param|OperatingFrequencyBand}} is set to
-          {{enum|2.4GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values
-          {{enum|b}}, {{enum|g}}, {{enum|n}}, {{enum|ax}}, {{enum|be}} are
-          allowed.
-
-          If {{param|OperatingFrequencyBand}} is set to
-          {{enum|5GHz|##.Radio.{i}.SupportedFrequencyBands}}, only values
-          {{enum|a}}, {{enum|n}}, {{enum|ac}}, {{enum|ax}}, {{enum|be}} are
-          allowed.
-
-          If {{param|OperatingFrequencyBand}} is set to
-          {{enum|6GHz|##.Radio.{i}.SupportedFrequencyBands}}, only value
-          {{enum|ax}}, {{enum|be}} are allowed.
-
-          For example, a value of "g,b" (or "b,g" - order is not important)
-          means that the 802.11g standard {{bibref|802.11g-2003}} is used with
-          a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A
-          value of "g" means that only the 802.11g standard can be used.
-        </description>
-        <syntax>
-          <list/>
-          <string>
-            <enumerationRef targetParam="SupportedStandards"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="OperatingChannelBandwidth" access="readOnly">
-        <description>
-          Indicates the bandwidth at which the channel is operating.
-        </description>
-        <syntax>
-          <string>
-            <enumeration value="20MHz"/>
-            <enumeration value="40MHz"/>
-            <enumeration value="80MHz"/>
-            <enumeration value="160MHz"/>
-            <enumeration value="320MHz-1" version="2.17"/>
-            <enumeration value="320MHz-2" version="2.17"/>
-            <enumeration value="Auto"/>
-          </string>
-        </syntax>
-      </parameter>
-
-      <parameter name="BeaconPeriod" access="readOnly">
-        <description>
-          Time interval (in {{units}}) between transmitting beacons.
-        </description>
-        <syntax>
-          <unsignedInt>
-            <units value="ms"/>
-          </unsignedInt>
-        </syntax>
-      </parameter>
-
-      <parameter name="Noise" access="readOnly">
-        <description>
-          Indicator of average noise strength (in {{units}}) received from the
-          neighboring WiFi radio.
-        </description>
-        <syntax>
-          <int>
-            <range minInclusive="-200" maxInclusive="0"/>
-            <units value="dBm"/>
-          </int>
-        </syntax>
-      </parameter>
-
-      <parameter name="BasicDataTransferRates" access="readOnly">
-        <description>
-          {{list}} Basic data transmit rates (in Mbps) for the SSID. For
-          example, if {{param}} is "1,2", this indicates that the SSID is
-          operating with basic rates of 1 Mbps and 2 Mbps.
-        </description>
-        <syntax>
-          <list>
-            <size maxLength="256"/>
-          </list>
-          <string/>
-        </syntax>
-      </parameter>
-
-      <parameter name="SupportedDataTransferRates" access="readOnly">
-        <description>
-          {{list}} Data transmit rates (in Mbps) for unicast frames at which
-          the SSID will permit a station to connect. For example, if {{param}}
-          is "1,2,5.5", this indicates that the SSID will only permit
-          connections at 1 Mbps, 2 Mbps and 5.5 Mbps.
-        </description>
-        <syntax>
-          <list>
-            <size maxLength="256"/>
-          </list>
-          <string/>
-        </syntax>
-      </parameter>
-
-      <parameter name="DTIMPeriod" access="readOnly">
-        <description>
-          The number of beacon intervals (measured in {{units}}) that elapse
-          between transmission of Beacon frames containing a TIM element whose
-          DTIM count field is 0. This value is transmitted in the DTIM Period
-          field of beacon frames. {{bibref|802.11-2020}}
-        </description>
-        <syntax>
-          <unsignedInt>
-            <units value="ms"/>
-          </unsignedInt>
         </syntax>
       </parameter>
     </object>
@@ -120015,9 +120015,8 @@
           The following describes the meaning of the permissions for Object
           type of Targets:
 
-          # Read: Grants the capability for Get to resolve Object paths. Grants
-            the capability to read the meta-information of the Object via
-            GetSupportedDM.
+          # Read: Grants the capability to read the meta-information of the
+            Object via GetSupportedDM.
 
           # Write: Grants no capabilities for Static Objects. Grants the
             capability to create a new instance of a Multi-Instanced Object via

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [PowerManagement]
+
+  Copyright (c) 2024, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-10 https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+                      urn:broadband-forum-org:cwmp:datamodel-report-1-0 https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-20-0-powermanagement.xml"
+  file="tr-181-2-20-0-powermanagement.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069" />
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-20-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-schedules.xml"
+      spec="urn:broadband-forum-org:tr-181-2-20-schedules">
+    <component name="ScheduleRefNoDefault"/>
+  </import>
+
+  <component name="PowerManagement">
+    <parameter name="PowerCapability" access="readOnly" version="2.20">
+      <description>
+        Describes the possible power states of the {{object}} regardless of its current
+        administrative state.
+      </description>
+      <syntax>
+        <list />
+        <string>
+          <enumeration value="On">
+            <description>
+              Indicates that the {{object}} is powered on.
+            </description>
+          </enumeration>
+          <enumeration value="Off">
+            <description>
+              Indicates that the {{object}} is powered off, using no power.
+
+              When powered off, the {{object}} must be properly stopped.
+              In particular, if applicable, a dying gasp message on the interface MUST be properly
+              administered according to the respective standards.
+            </description>
+          </enumeration>
+          <enumeration value="LowPower" optional="true">
+            <description>
+              Indicates that the {{object}} is in a low-power state, using minimal power.
+            </description>
+          </enumeration>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="PowerStatus" access="readOnly" version="2.20">
+      <description>
+        Reports the current power status of the {{object}}.
+
+        {{reference}}
+
+        {{enum}}
+      </description>
+      <syntax>
+        <string>
+          <enumerationRef targetParam="PowerCapability" nullValue="Error"/>
+        </string>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="PowerManagementCommands">
+    <command name="ChangePowerMode()" async="true" version="2.20">
+      <description>
+        Sets the power state of the {{object}} asynchronously.
+      </description>
+      <input>
+        <parameter name="PowerState" mandatory="true">
+          <description>
+            Targeted power state.
+
+            {{enum}}
+          </description>
+          <syntax>
+            <string>
+              <enumerationRef targetParam="PowerCapability" />
+            </string>
+          </syntax>
+        </parameter>
+      </input>
+    </command>
+  </component>
+
+  <component name="PowerManagementUSP">
+    <object base="Device.Ethernet.Interface.{i}.">
+      <component ref="PowerManagementCommands"/>
+    </object>
+
+    <object base="Device.Thread.Radio.{i}.">
+      <component ref="PowerManagementCommands" />
+    </object>
+
+    <object base="Device.USB.Port.{i}.">
+      <component ref="PowerManagementCommands" />
+    </object>
+
+    <object base="Device.WiFi.Radio.{i}.">
+      <component ref="PowerManagementCommands" />
+    </object>
+
+    <object base="Device.XPON.ONU.{i}.">
+      <component ref="PowerManagementCommands" />
+    </object>
+  </component>
+
+  <component name="DevicePowerManagement">
+    <object name="PowerManagement." access="readOnly" minEntries="1" maxEntries="1"
+      version="2.20">
+      <description>
+        This object describes the overall power management capabilities and status of the device,
+        typically referring to the main gateway's power states and features.
+      </description>
+    </object>
+
+    <object name="PowerManagement.Standby." access="readOnly" minEntries="1" maxEntries="1"
+      version="2.20">
+      <description>
+        This object provides the capability for the Device to enter and exit standby. This
+        functionality allows the Device to operate in a low-power condition.
+      </description>
+
+      <parameter name="Capability" access="readOnly">
+        <description>
+          Describes the possible standby states of the Device.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="DeepSleep">
+              <description>Deep sleep functionality is currently enabled and operational.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the current operational status of the standby feature.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>The standby functionality is currently disabled.</description>
+            </enumeration>
+            <enumeration value="Scheduled">
+              <description>Standby functionality is currently enabled and scheduled.</description>
+            </enumeration>
+            <enumeration value="Error" optional="true">
+              <description>An unspecified error has occurred with the standby feature.</description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured">
+              <description>Standby functionality is enabled but is misconfigured, preventing proper operation.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="ScheduleRefNoDefault"/>
+      <parameter base="ScheduleRef">
+        <description action="replace">
+          Each reference provides a specific schedule entry that triggers the device to enter and exit standby mode.
+          The referenced schedule defines when the standby transition should occur and when the device should wake up.
+
+          Overlapping schedules are not allowed.
+        </description>
+      </parameter>
+
+      <parameter name="StandbyOccurred" access="readOnly" version="2.20">
+        <description>
+          Indicates that the current boot cycle was a result of exiting standby mode.
+          The parameter value is only set during the device boot process.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax> 
+      </parameter>
+
+      <parameter name="NetworkAware" access="readOnly">
+        <description>
+          Indicates that the device is capable of maintaining a network
+          connection and responding to communications via the network
+          connection while in a standby state.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TimerAware" access="readOnly">
+        <description>
+          Indicates that the device is capable of maintaining and responding to
+          timers while in a standby state.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="DevicePowerManagementUSP">
+    <object base="PowerManagement.Standby.">
+      <command name="EnterStandbyMode()" async="false" version="2.20">
+        <description>
+          Request the Device to enter a specific standby mode, allowing it to enter a low-power state.
+        </description>
+        <input>
+          <parameter name="Mode" mandatory="true">
+            <description>
+              The targeted standby mode to enter. 
+
+              {{reference}}
+
+              {{enum}}
+            </description>
+            <syntax>
+              <string>
+                <enumerationRef targetParam="Capability"/>
+              </string>
+            </syntax>
+          </parameter>
+        </input>
+      </command>
+    </object>
+  </component>
+
+  <model name="PowerManagement:2.20">
+    <component ref="Root"/>
+    <object name="Device.Interface." version="2.20">
+      <description>
+        {{object}} supporting power management parameters.
+      </description>
+      <component ref="PowerManagement"/>
+      <component ref="PowerManagementUSP"/>
+      <component ref="DevicePowerManagement"/>
+    </object>
+  </model>
+</dm:document>

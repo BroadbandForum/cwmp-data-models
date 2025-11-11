@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Device:2 Root Data Model: Common Object definitions [PeriodicFileTransfer]
+
+Copyright (c) 2025, Broadband Forum
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the following
+conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The above license is used as a license under copyright only.
+Please reference the Forum IPR Policy for patent licensing terms
+<https://www.broadband-forum.org/ipr-policy>.
+
+Any moral rights which are necessary to exercise under the above
+license grant are also deemed granted under this license.
+
+Comments or questions about this Broadband Forum data model should be
+directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  urn:broadband-forum-org:cwmp:datamodel-1-10
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-1-0
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-20-0-periodicfiletransfer"
+  file="tr-181-2-20-0-periodicfiletransfer.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="IPAddress"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-20-root">
+    <component name="Root"/>
+  </import>
+  <import file="tr-181-2-security.xml"
+      spec="urn:broadband-forum-org:tr-181-2-20-security">
+    <component name="ClientCerts"/>
+  </import>
+  <import file="tr-181-2-ip.xml"
+    spec="urn:broadband-forum-org:tr-181-2-20-ip">
+    <component name="IPVersion"/>
+  </import>
+  
+  <component name="PeriodicFileTransfer">
+    <object name="Device.PeriodicFileTransfer." access="readOnly" version="2.20">
+      <description>
+        This object serves as the central control for managing file uploads to a remote server.
+        It allows for periodic transfers of various file types, such as logs,
+        crash dumps, and kernel oopses. Individual upload configurations are defined within
+        instances of the {{object|Profile}} object.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Globally enables or disables the entire file transfer service managed by this object.
+          When disabled, no file transfers will occur, regardless of individual profile or
+          transfer configurations.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProtocolsSupported" access="readOnly">
+        <description>
+          Indicates the protocols that are supported.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HTTP">
+              <description>As defined in {{bibref|RFC9110}}.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TypesSupported" access="readWrite">
+        <description>
+          Indicates the file types that are supported for upload. 
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="VendorLogFile">
+              <description>
+                The file to be uploaded is a vendor-specific log file and is part of
+                {{object|.DeviceInfo.VendorLogFile.}}.
+              </description>
+            </enumeration>
+            <enumeration value="ProcessFaults">
+              <description>
+                The file to be uploaded is a process fault file and is part of
+                {{object|.DeviceInfo.ProcessFaults.}}.
+              </description>
+            </enumeration>
+            <enumeration value="KernelFaults">
+              <description>
+                The file to be uploaded is a kernel fault file and is part of
+                {{object|.DeviceInfo.KernelFaults.}}.
+              </description>
+            </enumeration>
+            <enumeration value="LogRotate">
+              <description>
+                The file to be uploaded is a log file that is rotated and is part of
+                {{object|.DeviceInfo.LogRotate.}}.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+
+      <parameter name="HTTPCompressionsSupported" access="readOnly">
+        <description>
+          Indicates the HTTP Compression mechanism(s) supported by this Device
+          for the purposes of transferring the data.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="GZIP">
+              <description>
+                As defined in {{bibref|RFC2616|Section 3.5}}
+              </description>
+            </enumeration>
+            <enumeration value="Compress">
+              <description>
+                As defined in {{bibref|RFC2616|Section 3.5}}
+              </description>
+            </enumeration>
+            <enumeration value="Deflate">
+              <description>
+                As defined in {{bibref|RFC2616|Section 3.5}}
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HTTPMethodsSupported" access="readOnly">
+        <description>
+          Indicates the HTTP method(s) supported by this Device for the purposes
+          of transferring data.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="POST">
+              <description>
+                As defined in {{bibref|RFC2616|Section 9.5}}
+              </description>
+            </enumeration>
+            <enumeration value="PUT">
+              <description>
+                As defined in {{bibref|RFC2616|Section 9.6}}
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProfileNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransferNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicFileTransfer.Profile.{i}." access="readWrite"
+      numEntriesParameter="ProfileNumberOfEntries"
+      minEntries="0" maxEntries="unbounded" version="2.20">
+      <description>
+        This object defines a reusable profile for configuring file uploads. Each profile
+        specifies the common parameters for transferring files to a remote server, such as
+        the protocol to be used. Multiple transfer tasks ({{object|#.Transfer}}) can reference
+        the same profile.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          The textual name of the profile as assigned by the Device.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Protocol" access="readWrite">
+        <description>
+          Protocol being used.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.ProtocolsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicFileTransfer.Profile.{i}.HTTP." access="readOnly" version="2.20">
+      <description>
+        This object defines the HTTP/HTTPS transport properties for a transfer file upload profile.
+        This object is used when the {{param|#.Protocol}} parameter has a value of {{enum|HTTP|##.ProtocolsSupported}}.
+
+        For authentication purposes the Device MUST support HTTP Basic and Digest Access Authentication
+        as defined in {{bibref|RFC7617}} and {{bibref|RFC7616}}.
+      </description>
+
+      <parameter name="URL" access="readWrite">
+        <description>
+          The URL of the server receiving the periodic file uploads.
+        </description>
+        <syntax>
+          <dataType ref="URL"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Username" access="readWrite">
+        <description>
+          Username used to authenticate the Device when making a connection to
+          the file upload server.
+
+          {{empty}} indicates that the username will not be used during the
+          authentication process.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Password" access="readWrite">
+        <description>
+          Password used to authenticate the Device when making a connection to
+          the file upload server.
+
+          {{empty}} indicates that the password will not be used during the
+          authentication process.
+        </description>
+        <syntax secured="true">
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="ClientCerts"/>
+      <component ref="IPVersion"/>
+
+      <parameter name="Compression" access="readWrite">
+        <description>
+          The value of this parameter represents the HTTP Compression mechanism
+          to be used by the Device when transferring data to the file upload
+          server.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.HTTPCompressionsSupported" nullValue="None"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Method" access="readWrite">
+        <description>
+          The value of this parameter represents the HTTP method to be used by
+          the Device when transferring data to the file upload server.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="##.HTTPMethodsSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryEnable" access="readWrite">
+        <description>
+          When {{true}}, the Device retries unsuccessful attempts to transfer
+          the remaining files.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryMinimumWaitInterval" access="readWrite">
+        <description>
+          Configures the data transfer retry wait interval, in {{units}}.
+
+          The device MUST use a random value between {{param}} and ({{param}} *
+          {{param|RetryIntervalMultiplier}} / 1000) as the first retry wait
+          interval. Other values in the retry pattern MUST be calculated using
+          this value as a starting point.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryMaximumWaitInterval" access="readWrite">
+        <description>
+          Configures the data transfer retry maximum wait interval, in {{units}}.
+          If the calculated interval is higher than the specifed {{param}} value then
+          {{param}} value should be used.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+            <range minInclusive="1" maxInclusive="4294967295"/>
+          </unsignedInt>
+          <default type="object" value="4294967295"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetryIntervalMultiplier" access="readWrite">
+        <description>
+          Configures the retry interval multiplier.
+
+          This value is expressed in units of 0.001. Hence the values of the
+          multiplier range between 1.000 and 65.535.
+
+          The device MUST use a random value between
+          {{param|RetryMinimumWaitInterval}} and
+          ({{param|RetryMinimumWaitInterval}} * {{param}} / 1000) as the first
+          retry wait interval. Other values in the retry pattern MUST be
+          calculated using this value as a starting point.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1000" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+      
+      <parameter name="RequestURIParameterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RequestHeaderParameterNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicFileTransfer.Profile.{i}.HTTP.RequestURIParameter.{i}."
+      access="readWrite"
+      numEntriesParameter="RequestURIParameterNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" dmr:noUniqueKeys="true" version="2.20">
+      <description>
+        This object represents an instance of a parameter to be used in the
+        report header used as part of the HTTP Request-URI transmitted by the
+        CPE to the collection server using the Request-URI in addition to the
+        parameters required by {{template|BULK-DATA-HTTP-QUERY-REF}}.
+      </description>
+
+      <parameter name="Name" access="readWrite">
+        <description>
+          Name of the Request-URI parameter.
+
+          If {{param}} is {{empty}}, the name of the Request-URI parameter is
+          the value of {{param|Reference}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64" />
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Reference" access="readWrite">
+        <description>
+          The value MUST be the path name of a parameter to be used as the
+          Request-URI parameter.
+
+          If the value of this parameter is {{empty}}, then this object is not
+          encoded in the report header.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicFileTransfer.Profile.{i}.HTTP.RequestHeaderParameter.{i}."
+      access="readWrite"
+      numEntriesParameter="RequestHeaderParameterNumberOfEntries" minEntries="0"
+      maxEntries="unbounded" dmr:noUniqueKeys="true" version="2.20">
+    <description>
+        This object allows defining custom HTTP request header fields to be included
+        in the outbound HTTP requests to the remote server when using this profile.
+        As defined in {{bibref|RFC2616|Section 5.3 Request Header Fields}}.
+        Each instance can specify either a static value or dynamically reference a device parameter.
+    </description>
+
+    <parameter name="Name" access="readWrite">
+      <description>
+        The name of the custom HTTP header field to be added to the request.
+
+        Either {{param|Value}} or {{param|Reference}} MUST be specified. If both are
+        specified, the value of {{param|Value}} will be used. If both are
+        {{empty}}, this object is not included in the HTTP request.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="64" />
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="Value" access="readWrite">
+      <description>
+        The static value of the HTTP header field. If this parameter is {{empty}},
+        the value of the header field will be the current value of the device parameter
+        specified in {{param|Reference}}.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="64" />
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="Reference" access="readWrite">
+      <description>
+          The path name of a device parameter whose current value will be used as the
+          value of this HTTP header field. 
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+        </string>
+        <default type="object" value=""/>
+      </syntax>
+    </parameter>
+  </object>
+
+    <object name="Device.PeriodicFileTransfer.Transfer.{i}." access="readWrite"
+      numEntriesParameter="TransferNumberOfEntries" enableParameter="Enable"
+      minEntries="0" maxEntries="unbounded" version="2.20">
+      <description>
+        This object specifies the parameters for an individual file transfer task. Each instance
+        specifies a file to be transferred, the method of transfer (periodic or on-demand),
+        and a reference to a {{object|#.Profile.{i}.}} object containing the server
+        connection details.
+
+        The {{param|Status}} parameter reflects the current state of the transfer process,
+        which can transition through the following sequences:
+        * Idle → Uploading → Success → Idle
+        * Idle → Uploading → Error → Idle
+        * Idle → Creating → Error → Idle
+        * Idle → Creating → Uploading → Success → Idle
+        * Idle → Creating → Uploading → Error → Idle 
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this specific file transfer task. If this entry is disabled then the
+          transfer is not performed.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="implementation" value="false"/>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          Indicates the current status of this file transfer task.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Idle">
+              <description>
+                The transfer task is currently inactive and waiting for a trigger or scheduled time.
+              </description>
+            </enumeration>
+            <enumeration value="Creating">
+              <description>
+                The Device is currently preparing the file for transfer
+                (e.g., running a pre-hook script).
+              </description>
+            </enumeration>
+            <enumeration value="Uploading">
+              <description>
+                The Device is currently in the process of uploading the
+                file to the remote server.
+              </description>
+            </enumeration>
+            <enumeration value="Success">
+              <description>
+                The file transfer was completed successfully.
+              </description>
+            </enumeration>
+            <enumeration value="Error">
+              <description>
+                The file transfer encountered an error.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+      
+      <parameter name="Origin" access="readOnly">
+        <description>
+          Indicates the Origin of the {{object}} instance.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="User">
+              <description>
+                Used for indicating that the transfer task was created by the
+                end-user. For example through the web user interface.
+              </description>
+            </enumeration>
+            <enumeration value="System">
+              <description>
+                Used for indicating that the transfer task was created by the
+                system itself.
+              </description>
+            </enumeration>
+            <enumeration value="Controller">
+              <description>
+                Used for indicating that the transfer task was created by a
+                Controller.
+              </description>
+            </enumeration>
+          </string>
+          <default type="object" value="Controller"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Type" access="readWrite">
+        <description>
+          Specifies the type of file to be uploaded. The actual file path and any pre- or
+          post-processing scripts associated with this file type are implementation-specific
+          on the Device.
+        </description>
+        <syntax>
+          <string>
+            <enumerationRef targetParam="#.TypesSupported"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="FileReference" access="readWrite">
+        <description>
+          The path reference to the object that contains the file(s) to be uploaded.
+          Only applicable when {{param|Type}} matches values of {{enum|VendorLogFile|Type}} or {{enum|LogRotate|Type}}.
+          For other {{param|Type}} values, this parameter is not applicable, because all files of the selected type will be uploaded, e.g. when {{param|Type}} equals {{enum|ProcessFaults|Type}} all process faults will be uploaded.
+          
+          
+          When {{param}} is {{empty}}, depending on the {{param|Type}} all references will be uploaded.
+        </description>
+        <syntax>
+          <string>
+            <pathRef targetType="row" targetParent=".DeviceInfo.VendorLogFile.
+              .DeviceInfo.LogRotate." refType="strong"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ProfileReference" access="readWrite">
+        <description>
+          Reference to profile instance to be used to perform the transfer.
+        </description>
+        <syntax>
+          <string>
+            <pathRef targetType="row" targetParent=".PeriodicFileTransfer.Profile." refType="strong" />
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="UploadInterval" access="readWrite">
+        <description>
+          The file upload interval in {{units}}. Each file upload is tried based
+          on this interval and {{param|TimeReference}}.
+
+          File upload intervals MUST begin every {{param}} {{units}}.
+
+          If {{param}} is changed while Periodic File Upload is enabled, the first
+          file upload interval begins immediately.
+
+          For example, if {{param}} is 86400 (a day) and if
+          {{param|TimeReference}} is set to UTC midnight on some day (in the
+          past, present, or future) then the Device will upload
+          its file(s) at midnight every 24 hours.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" />
+            <units value="seconds" />
+          </unsignedInt>
+          <default type="object" value="86400" />
+        </syntax>
+      </parameter>
+
+      <parameter name="TimeReference" access="readWrite">
+        <description>
+          An absolute time reference in UTC to determine when the file will be
+          transmitted. Each file upload interval MUST complete at this reference
+          time plus or minus an integer multiple of
+          {{param|UploadInterval}}, unless unable to due to higher
+          prioritized operations.
+
+          {{param}} is used only to set the "phase" of the file upload intervals.
+          The actual value of {{param}} can be arbitrarily far into the past or
+          future.
+
+          If {{param}} is changed while periodic file upload is enabled, the
+          first file upload interval begins immediately.
+
+          The Unknown Time value as defined in {{bibref|TR-106}} indicates that
+          no particular time reference is specified. That is, the Device MAY
+          locally choose the time reference, and is required only to adhere to
+          the specified file upload intervals.
+
+          If absolute time is not available to the Device, its file upload interval
+          behavior MUST be the same as if the {{param}} parameter was set to
+          the Unknown Time value.
+
+          For example, if {{param|UploadInterval}} is 86400 (a day) and if
+          {{param}} is set to UTC midnight on some day (in the past, present,
+          or future) then the Device will upload its file(s) at
+          midnight every 24 hours.
+
+          Note that, if {{param}} is set to a time other than the Unknown Time,
+          the first file upload interval (which has to begin immediately) will
+          almost certainly be shorter than {{param|UploadInterval}}). This
+          is why {{param}} is defined in terms of when file upload intervals
+          complete rather than start.
+        </description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value="0001-01-01T00:00:00Z"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NextTransferDate" access="readOnly">
+        <description>
+          The UTC date and time of the next scheduled file upload for this periodic
+          transfer task.
+        </description>
+        <syntax>
+          <dateTime/>
+          <default type="object" value="0001-01-01T00:00:00Z"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicFileTransfer.Transfer.{i}.Stats." access="readOnly" version="2.20">
+      <description>
+        This object provides statistical information about the success and failure of
+        individual file transfer tasks.
+      </description>
+ 
+      <parameter name="LastSuccess" access="readOnly">
+        <description>
+          The date and time at which of the last successful transfer.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastFailed" access="readOnly">
+        <description>
+          The date and time at which of the last failed transfer.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastErrorCode" access="readOnly">
+        <description>
+          Error code of the last failed transfer as described in https://tr369.org/tr-369-usp-error-code-details/.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SuccessCount" access="readOnly">
+        <description>
+          Counter of successful transfer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FailedCount" access="readOnly">
+        <description>
+          Counter of failed transfer.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.PeriodicFileTransfer.Stats." access="readOnly" version="2.20">
+      <description>
+        This object provides aggregated statistical information about all file upload
+        activities managed by the {{object|Device.PeriodicFileTransfer.}} object.
+      </description>
+
+      <parameter name="UploadSuccessful" access="readOnly">
+        <description>
+          A counter representing the total number of successful file uploads across all
+          transfer tasks since the last system reset or counter reset.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UploadFailed" access="readOnly">
+        <description>
+          A counter representing the total number of failed file uploads across all
+          transfer tasks since the last system reset or counter reset.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="PeriodicFileTransferUSP">
+    <object base="Device.PeriodicFileTransfer." >
+      <parameter base="ProtocolsSupported">
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="HTTP"/>
+            <enumeration value="USPEventNotif">
+              <description>
+                User Services Platform (USP - {{bibref|TR-369|Annex A}}) Event
+                Notification
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.PeriodicFileTransfer.Profile.{i}.">
+      <parameter name="Controller" access="readOnly" dmr:previousParameter="Name" version="2.20">
+        <description>
+          {{reference|the {{object|.LocalAgent.Controller}} instance that
+          created {{object}}|delete}}
+
+          The value of this parameter is automatically populated by the USP
+          Agent upon {{object}} creation using the reference to the USP
+          Controller that created the instance.
+
+          Only the USP Controller referenced by {{param}} parameter will receive a
+          {{event|#.Transfer.{i}.Push!}} Event (assuming it has an associated Subscription) when the
+          Profile has {{param|Protocol}} configured to {{enum|USPEventNotif|Protocol}}, even if
+          another USP Controller has an associated Subscription.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent=".LocalAgent.Controller."
+              targetType="row" />
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.PeriodicFileTransfer.Transfer.{i}.">
+      <command name="ForceTransfer()" async="true">
+        <description>
+          This command forces the Device to immediately attempt to transfer the file
+          associated with this transfer task, regardless of the scheduled time; 
+          The {{param|Status}} is updated to {{enum|Uploading|Status}}, the
+          {{param|NextTransferDate}} remains unchanged.
+
+          All results of the actual upload will be contained within the
+          {{event|.LocalAgent.TransferComplete!}} event.
+        </description>
+      </command>
+
+      <event name="Push!">
+        <description>
+          Push event for delivering a periodic file transfer report within a USP
+          Notification message.
+        </description>
+
+        <parameter name="Data">
+          <description>
+            The contents of the periodic file transfer report.
+          </description>
+          <syntax>
+            <string/>
+          </syntax>
+        </parameter>
+      </event>
+    </object>
+  </component>
+
+  <model name="PeriodicFileTransfer:2.20">
+    <component ref="Root"/>
+    <component ref="PeriodicFileTransfer"/>
+  </model>
+</dm:document>
