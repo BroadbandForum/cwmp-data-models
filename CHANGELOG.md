@@ -7,6 +7,22 @@ can be found at <https://cwmp-data-models.broadband-forum.org>.
 
 [CWMP]: https://www.broadband-forum.org/technical/download/TR-069.pdf
 
+## 2025-12-01: TR-106 Amendment 16 Corrigendum 1 and [TR-181 Issue 2 Amendment 20 Corrigendum 1]
+
+*Tags: [v2025.4] (data models), 
+       [v2.20.1][TR-181-v2.20.1] (TR-181), 
+       [v1.16.1][TR-106-v1.16.1] (TR-106)*
+
+### TR-106
+* Add more bibrefs
+
+### TR-181
+* Fixed Cellular APN type to be compatible with the 5G Data Network Name
+* Changed Cellular SIM Location parameter to be read-only
+* Added additional bibrefs to PON power safe parameter
+* Changed TrustedElement PIN from being a string with maximum size 4 to be a digit-only string with a size between 4 to 8
+* Changed TrustedElement Status parameter to be read-only
+
 ## 2025-11-11: TR-106 Amendment 16 and [TR-181 Issue 2 Amendment 20]
 
 *Tags: [v2025.3] (data models), 
@@ -450,6 +466,7 @@ version of the BBF report tool
 [TR-106-v1.14.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.14.0
 [TR-106-v1.15.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.15.0
 [TR-106-v1.16.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.16.0
+[TR-106-v1.16.1]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.16.1
 [TR-181 Issue 2 Amendment 12]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-12.pdf
 [TR-181 Issue 2 Amendment 13]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-13.pdf
 [TR-181 Issue 2 Amendment 14]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-14.pdf
@@ -460,6 +477,7 @@ version of the BBF report tool
 [TR-181 Issue 2 Amendment 19]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-19.pdf
 [TR-181 Issue 2 Amendment 19 Corrigendum 1]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-19_Corrigendum-1.pdf
 [TR-181 Issue 2 Amendment 20]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-20.pdf
+[TR-181 Issue 2 Amendment 20 Corrigendum 1]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-20_Corrigendum-1.pdf
 [TR-181-v2.12.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.12.0
 [TR-181-v2.13.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.13.0
 [TR-181-v2.14.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.14.0
@@ -473,6 +491,7 @@ version of the BBF report tool
 [TR-181-v2.19.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.19.0
 [TR-181-v2.19.1]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.19.1
 [TR-181-v2.20.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.20.0
+[TR-181-v2.20.1]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.20.1
 [v1.6.0]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0
 [v1.6.0+]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0+
 [v1.6.0c1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0c1
@@ -489,3 +508,4 @@ version of the BBF report tool
 [v2025.1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2025.1
 [v2025.2]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2025.2
 [v2025.3]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2025.3
+[v2025.4]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2025.4
