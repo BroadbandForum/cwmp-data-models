@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Device:2 Root Data Model: Common Object definitions [ConnectionMonitoring]
+
+Copyright (c) 2021-2025, Broadband Forum
+
+Redistribution and use in source and binary forms, with or
+without modification, are permitted provided that the following
+conditions are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following
+disclaimer in the documentation and/or other materials
+provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products
+derived from this software without specific prior written
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The above license is used as a license under copyright only.
+Please reference the Forum IPR Policy for patent licensing terms
+<https://www.broadband-forum.org/ipr-policy>.
+
+Any moral rights which are necessary to exercise under the above
+license grant are also deemed granted under this license.
+
+Comments or questions about this Broadband Forum data model should be
+directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  urn:broadband-forum-org:cwmp:datamodel-1-14
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+  urn:broadband-forum-org:cwmp:datamodel-report-1-0
+  https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-21-0-connectionmonitoring"
+  file="tr-181-2-21-0-connectionmonitoring.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-21-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-ip.xml"
+       spec="urn:broadband-forum-org:tr-181-2-21-ip">
+    <component name="IPVersion"/>
+  </import>
+
+  <component name="ConnectionMonitoring">
+    <object name="Device.ConnectionMonitoring." access="readOnly" minEntries="1" maxEntries="1"
+      version="2.20">
+      <description>
+        This object contains parameters for monitoring the connection status of interfaces.
+        It allows the Device to monitor interfaces using ARP (Address Resolution Protocol) or ND (Neighbor Discovery)
+        packets, depending on the IP version used by the interface.
+        
+        The CPE can enable or disable the connection monitor and configure individual entries for each interface.
+        Each entry can be enabled or disabled independently, allowing for flexible monitoring configurations.        
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the connection monitor.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the monitor.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ConnectionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ConnectionMonitoring.Connection.{i}." access="readWrite" minEntries="0"
+      maxEntries="unbounded" enableParameter="Enable"
+      numEntriesParameter="ConnectionNumberOfEntries" version="2.20">
+      <description>
+        This object contains parameters for monitoring the connection.
+
+        The device can enable or disable the connection monitor and configure individual entries for
+        different interfaces. Depending on {{param|Method}}, the device can use different methods to
+        test connectivity, such as ARP, ND, Ping, BFDEcho or DNS.
+
+        During normal operation, a connectivity check is performed every {{param|MonitorInterval}}.
+        If a check fails, due to no response within {{param|MaxResponseTimeout}}, then
+        the device enters a failure state. In this failure state, it performs subsequent checks more
+        frequently, every {{param|FailInterval}}. The {{param|NumberOfAttempts}} counter is
+        incremented for each failed check and the value of the parameter {{param|MonitoringStatus}}
+        status is set to {{enum|Unresponsive|MonitoringStatus}}.
+
+        If this counter equals the {{param|Action.{i}.AttemptCount}} threshold, the
+        configured {{param|Action.{i}.Action}} is triggered.
+
+        If a check succeeds at any point, the {{param|NumberOfAttempts}} counter is reset,
+        the monitor interval reverts to the normal {{param|MonitorInterval}} and the
+        {{param|MonitoringStatus}} status is set to {{enum|Up|MonitoringStatus}}.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+     
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the entry.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the entry. 
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error">
+              <description>
+                Indicates an error state for the entry, which may occur if there are issues with the
+                connection monitoring process.
+              </description>
+            </enumeration>
+            <enumeration value="Error_Misconfigured" optional="true">
+              <description>
+                Indicates an error state for the entry due to misconfiguration.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          This parameter specifies the interface to be monitored. 
+          Typically this is the WAN interface.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+            <pathRef refType="strong" targetParent=".IP.Interface." targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MonitorInterval" access="readWrite">
+        <description>
+          The interval at which the Device monitors the connection status of the interface, in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="second"/>
+            <range minInclusive="1" maxInclusive="60"/>
+          </unsignedInt>
+          <default type="object" value="60"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="FailInterval" access="readWrite">
+        <description>
+          The interval at which the Device checks for connection failures after the initial monitor interval, in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="second"/>
+            <range minInclusive="1" maxInclusive="60"/>            
+          </unsignedInt>
+          <default type="object" value="15"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxResponseTimeout" access="readWrite">
+        <description>
+          The maximum time the Device waits for a response after sending a connectivity test packet, in {{units}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="second"/>
+            <range minInclusive="1" maxInclusive="60"/>
+          </unsignedInt>
+          <default type="object" value="1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NumberOfAttempts" access="readOnly">
+        <description>
+          The current number of failed attempts when no reply is obtained.
+
+          This parameter is reset to zero when the last {{object|Action}} has been
+          executed or when a connectivity test succeeds.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Method" access="readWrite">
+        <description>
+          The connectivity test method to be performed on the {{param|Interface}}.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="ARP">
+              <description>
+                Tests Layer 2 connectivity for IPv4 by sending an ARP Request to the default
+                gateway. A successful ARP Reply from the gateway is required to pass the test.
+              </description>
+            </enumeration>
+            <enumeration value="ND">
+              <description>
+                Tests Layer 2 connectivity for IPv6 by sending a Neighbor Solicitation (NS) message
+                to the default gateway. A successful Neighbor Advertisement (NA) response is required
+                to pass the test.
+              </description>
+            </enumeration>
+            <enumeration value="Ping">
+              <description>
+                Tests Layer 3 connectivity by sending ICMP Echo Request packets to the default gateway.
+                A successful ICMP Echo Reply is required to pass the test.
+              </description>
+            </enumeration>
+            <enumeration value="BFDEcho">
+              <description>
+                Tests Layer 2 connectivity by sending a Bidirectional Forwarding Detection Echo packet to the
+                default gateway. A successful Echo Reply is required to pass the test.
+              </description>
+            </enumeration>
+            <enumeration value="DNS">
+              <description>
+                Tests DNS resolution and general Internet access by sending a query to a configured
+                DNS server.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="IPVersion"/>
+
+      <parameter name="DestAddress" access="readWrite">
+        <description>
+          The destination address (IP address or FQDN) to which connectivity test packets are sent.
+          When {{param|IPVersion}} is set to '-1',the implementation will chose and use only one IP
+          version for testing the connectivity. It will try to use IPv6 first, and if that fails, it
+          will fall back to IPv4.
+
+          When {{param|Method}} is set to {{enum|ARP|Method}} or {{enum|ND|Method}}
+          this parameter specifies the IP address of the network device under test.
+          The Device will send ARP requests (for IPv4) or Neighbor Solicitation messages (for IPv6)
+          to this address to check connectivity. When {{empty}} the Device will use the
+          default gateway IP address from the Interface specified in the {{param|Interface}}
+          parameter.
+
+          When {{param|Method}} is set to {{enum|Ping|Method}} this parameter specifies the IP
+          address to which ICMP Echo Request packets are sent. The Device will send ICMP Echo
+          Requests to this address to check connectivity. When {{empty}} the Device will use the
+          default gateway IP address from the Interface specified in the {{param|Interface}}
+          parameter.
+
+          When {{param|Method}} is set to {{enum|BFDEcho|Method}} this parameter specifies the
+          IP address to which BFD echo packets are sent. The Device will send BFD Echo packets to
+          this address to check connectivity. When {{empty}} the Device will use the
+          default gateway IP address from the Interface specified in the {{param|Interface}}
+          parameter.
+
+          When {{param|Method}} is set to {{enum|DNS|Method}} this parameter specifies the DNS
+          server (IP address or FQDN) to which DNS queries are sent.
+          When {{empty}} the Device will use the default DNS server configured on the Interface
+          specified in the {{param|Interface}} parameter.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DSCPMark" access="readWrite">
+        <description>
+          Diffserv code point to be used for outgoing connection monitoring traffic.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="63"/>
+          </unsignedInt>
+          <default type="object" value="48"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EthernetPriority" access="readWrite">
+        <description>
+          The Ethernet Priority for this {{object}} entry, also known as 802.1p Priority,
+          is a 3-bit field used to indicate the priority of network traffic.
+
+          A value of ''-1'' indicates that the Ethernet priority should not be changed for this {{object}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="7"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="MonitoringStatus" access="readOnly">
+        <description>
+          The current monitoring status of the connection.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Up">
+              <description>
+                Indicates that the monitored connection is currently up and responsive.
+              </description>
+            </enumeration>
+            <enumeration value="Unresponsive">
+              <description>
+                Indicates that the monitored connection is currently unresponsive, meaning that
+                connectivity tests have failed.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ActionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ConnectionMonitoring.Connection.{i}.Action.{i}." access="readWrite" minEntries="0"
+      maxEntries="unbounded" enableParameter="Enable" numEntriesParameter="ActionNumberOfEntries" version="2.20">
+      <description>
+        This object contains parameters for actions to be taken when a connection failure is
+        detected.
+        Each action can be configured independently and can be enabled or disabled.
+
+        The Device will perform the specified action when the value of {{param|#.NumberOfAttempts}}
+        equals the value of {{param|AttemptCount}} parameter.
+
+        Multiple actions can be defined for a connection. As failures persist, the
+        {{param|#.NumberOfAttempts}} will continue to increment, which can trigger subsequent
+        actions with higher {{param|AttemptCount}} values. The {{param|#.NumberOfAttempts}}
+        counter is reset to zero only after the last action has been executed or when a connectivity test succeeds.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      
+      <uniqueKey functional="true">
+        <parameter ref="AttemptCount"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the {{object}} entry.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AttemptCount" access="readWrite">
+        <description>
+          Indicates the action to be taken when the connection's {{param|#.NumberOfAttempts}} is equal to the value of this parameter.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="100"/>
+          </unsignedInt>
+          <default type="object" value="5"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Action" access="readWrite">
+        <description>
+          This parameter indicates the action taken by the Device when a connection failure is detected.
+          It can be used to trigger specific actions such as restarting the DHCP client or Interface.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None">
+              <description>
+                No action is taken when a connection failure is detected.
+              </description>
+            </enumeration>
+            <enumeration value="RestartDHCP">
+              <description>
+                Restart the DHCP client.
+              </description>
+            </enumeration>
+            <enumeration value="RestartInterface">
+              <description>
+                Restart the Interface.
+              </description>
+            </enumeration>
+            <enumeration value="Reboot">
+              <description>
+                Reboot the Device.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Reference" access="readWrite">
+        <description>
+          This parameter specifies the object path to which the {{param|Action}} applies.
+          
+          When {{param|Action}} is set to {{enum|RestartDHCP|Action}}, this parameter specifies the path
+          to the DHCPv4 Client instance (e.g., `Device.DHCPv4.Client.1`) that should be restarted.
+          If this parameter is {{empty}}, the Device will attempt to restart the DHCP client associated
+          with the {{param|#.Interface}} of the parent {{object|#.}} object.
+
+          When {{param|Action}} is set to {{enum|RestartInterface|Action}}, this parameter specifies the path
+          to the Interface instance (e.g., `Device.IP.Interface.2` or `Device.Logical.Interface.3`)
+          that should be restarted. If this parameter is {{empty}}, the Device will restart the
+          {{param|#.Interface}} of the parent {{object|#.}} object.
+
+          When {{param|Action}} is set to {{enum|Reboot|Action}} or {{enum|None|Action}}, this parameter
+          is not applicable and its value will be ignored.
+        </description>
+        <syntax>
+          <string>
+            <pathRef targetType="row" targetParent=".IP.Interface.
+            .Logical.Interface.
+            .DHCPv4.Client." refType="strong"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.ConnectionMonitoring.Connection.{i}.Stats." access="readOnly"
+      minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        This object contains statistics for the connection monitoring entry.
+        It provides counters for connection test failures, total triggered actions.
+      </description>
+
+      <parameter name="TotalNumberOfAttempts" access="readOnly" activeNotify="canDeny">
+        <description>
+          The total number of failed attempts when no reply is obtained, since the last boot.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalTriggeredActions" access="readOnly" activeNotify="canDeny">
+        <description>
+          Total amount of triggered actions since last boot.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="ConnectionMonitoring:2.21">
+    <component ref="Root"/>
+    <component ref="ConnectionMonitoring"/>
+  </model>
+</dm:document>

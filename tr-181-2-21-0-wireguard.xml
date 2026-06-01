@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [WireGuard]
+
+  Copyright (c) 2010-2025, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-14
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-21-0-wireguard"
+    file="tr-181-2-21-0-wireguard.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+    <dataType name="Order"/>
+    <dataType name="StatsCounter32"/>
+    <dataType name="StatsCounter64"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-21-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-interface.xml"
+    spec="urn:broadband-forum-org:tr-181-2-21-interface">
+    <component name="Layer3Interface"/>
+  </import>
+
+  <component name="WireGuard">
+    <object name="Device.WireGuard." access="readOnly" minEntries="1" maxEntries="1"
+        version="2.20">
+      <description>
+        This object contains configuration and status for the WireGuard
+        subsystem. The WireGuard subsystem is used to create secure tunnels
+        between devices using the WireGuard protocol.
+      </description>
+
+      <parameter name="TunnelNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PeerNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WireGuard.Tunnel.{i}." access="readWrite"
+        numEntriesParameter="TunnelNumberOfEntries" enableParameter="Enable" 
+        minEntries="0" maxEntries="unbounded" version="2.20">
+      <description>
+        WireGuard Tunnel table, models the WireGuard Tunnel instance and represents the
+        entry point and exit point of the tunnel in relation to the WAN
+        interface. A {{object}} object has one or more {{object|Interface}}
+        objects that further define the sessions or flows within the tunnel.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="PrivateKey"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables the tunnel.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The current operational state of the tunnel.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <!--WireGuard Tunnel parameters-->
+
+      <parameter name="PrivateKey" access="readWrite">
+        <description>
+          The private key for this WireGuard tunnel.
+        </description>
+        <syntax secured="true">
+          <base64/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PublicKey" access="readOnly">
+        <description>
+          The public key for this WireGuard tunnel, corresponding to
+          the {{param|PrivateKey}}.
+        </description>
+        <syntax>
+          <base64/>
+        </syntax>
+      </parameter>
+      
+      <parameter name="ListenPort" access="readWrite">
+        <description>
+          The port on which this WireGuard tunnel will listen for incoming connections. If
+          set to 0, a random port will be chosen by the device.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="65535"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="PeerReferences" access="readWrite">
+        <description>
+          Each element represents a reference to the peers associated with this {{object}} entry.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent="#.Peer." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <!--End of WireGuard Tunnel parameters-->
+      <component ref="Layer3Interface" version="2.20"/>
+    </object>
+
+    <object name="Device.WireGuard.Tunnel.{i}.Stats." access="readOnly"
+        minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        Statistics for this WireGuard tunnel, i.e. all traffic that has passed
+        through the tunnel.
+
+        The device MUST reset the tunnel's Stats parameters (unless otherwise
+        stated in individual object or parameter descriptions) either when the
+        tunnel becomes operationally down due to a previous administrative down
+        (i.e., Status parameter transitions to a disabled state after the
+        tunnel has been disabled) or when the tunnel becomes administratively
+        up (i.e. the Enable parameter transitioned from {{false}} to {{true}}).
+      </description>
+
+      <parameter name="BytesSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="BytesReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="bytes"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsSent" access="readOnly">
+        <description>
+          The total number of {{units}} sent by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="PacketsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsSent" access="readOnly">
+        <description>
+          The total number of {{units}} discarded by the tunnel due to any
+          error. This can include packets dropped due to a lack of transmit
+          buffers.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+
+      <parameter name="ErrorsReceived" access="readOnly">
+        <description>
+          The total number of {{units}} received by the tunnel that contained
+          errors preventing them from being delivered to a higher-layer
+          protocol.
+        </description>
+        <syntax>
+          <dataType ref="StatsCounter64">
+            <units value="packets"/>
+          </dataType>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.WireGuard.Tunnel.{i}.Interface.{i}.">
+      <description action="replace">
+        WireGuard Interface table (a stackable interface object as described in
+        {{bibref|TR-181i2|Section 4.2}}).
+
+        The {{object}} object provides a way to discriminate how sessions or flows are encapsulated
+        within the WireGuard Tunnel. In addition the {{object}} object represents the entry
+        point and exit point of the tunnel in relation to the LAN interface.
+
+        Compared to other tunnel protocols, WireGuard does not have a concept of multiple
+        interfaces within a tunnel. Therefore, a WireGuard Tunnel will only have one
+        {{object}} instance.
+      </description>
+    </object>
+
+    <object name="Device.WireGuard.Peer.{i}." access="readWrite" minEntries="0"
+      maxEntries="unbounded" numEntriesParameter="PeerNumberOfEntries" enableParameter="Enable"
+      version="2.20">
+      <description>
+        WireGuard Peer table, an entry in this table represents a WireGuard peer.
+      </description>
+
+      <uniqueKey functional="false">
+        <parameter ref="Alias" />
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="PublicKey"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this Peer configuration.
+        </description>
+        <syntax>
+          <boolean />
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+        
+      <parameter name="PublicKey" access="readWrite">
+        <description>
+          The base64 encoded public key of the peer.
+
+          Note: The min and max length requirements have been changed in Device:2.21 to reflect 
+          the representation as a base64 encoded key of 32 bytes.
+        </description>
+        <syntax>
+          <string>
+            <size minLength="44" maxLength="44"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PresharedKey" access="readWrite">
+        <description>
+          The base64 encoded pre-shared key for this WireGuard Peer.
+
+          When {{empty}} is provided, no pre-shared key is used.
+
+          Note: The min and max length requirements have been changed in Device:2.21 to reflect 
+          the representation as a base64 encoded key of 32 bytes.
+        </description>
+        <syntax secured="true">
+          <string>
+            <size minLength="0" maxLength="0"/>
+            <size minLength="44" maxLength="44"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AllowedIPs" access="readWrite">
+        <description>
+          Each item represents an IPv4/v6 subnets in CIDR notation from which incoming traffic is
+          allowed and to which outgoing traffic is directed for this peer.
+
+          '0.0.0.0/0' maybe specified for matching all IPv4 addresses and '::/0' for matching all
+          IPv6 addresses.
+
+          When {{empty}} is provided, no traffic is routed to this peer.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="IPAddress"/>
+        </syntax>
+      </parameter>
+        
+      <parameter name="EndpointAddress" access="readWrite">
+        <description>
+          The remote network address (IP or hostname) of the peer.
+
+          {{empty}} indicates that the endpoint address is not used.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EndpointPort" access="readWrite">
+        <description>
+          The UDP port of the remote peer.
+
+          A value of `-1` indicates that the endpoint port is not used.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1" maxInclusive="-1"/>
+            <range minInclusive="1" maxInclusive="65535"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="PersistentKeepalive" access="readWrite">
+        <description>
+          An interval in {{units}} to send an authenticated empty packet to the peer. This
+          is useful for keeping NAT mappings alive. A value of `0` disables this feature.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds" />
+            <range minInclusive="0" maxInclusive="65535" />
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastHandshakeTime" access="readOnly">
+        <description>
+          The amount of time in {{units}} since the last handshake was sent with this peer.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <model name="WireGuard:2.21">
+    <component ref="Root"/>
+    <component ref="WireGuard"/>
+  </model>
+</dm:document>

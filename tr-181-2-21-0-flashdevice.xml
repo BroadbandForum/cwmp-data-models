@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [FlashDevice]
+
+  Copyright (c) 2010-2025, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-14
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-21-0-flashdevice.xml"
+    file="tr-181-2-21-0-flashdevice.xml">
+
+ <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-21-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="FlashDevice">
+      <description>
+        Monitoring Flash Health of Gateway. Flash devices are detected by the
+        gateway during boot. Flash wear monitoring can be enabled per device.
+      </description>
+
+      <parameter name="FlashDeviceNumberOfEntries" access="readOnly"
+        version="2.21">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+    <object name="FlashDevice.{i}." access="readOnly"
+      numEntriesParameter="FlashDeviceNumberOfEntries"
+      minEntries="1" maxEntries="unbounded" version="2.21">
+      <description>
+        Represents the eMMC or NAND flash device present in the gateway.
+      </description>
+
+      <uniqueKey functional="true">
+        <parameter ref="Path" />
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias" />
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="FlashType" access="readOnly">
+        <description>
+          Indicates flash device type.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NAND"/>
+            <enumeration value="EMMC"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          Name for the flash device.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Path" access="readOnly">
+        <description>
+          System Path to the flash device folder based on the uri scheme
+          {{bibref|RFC8089|The file URI Scheme}}.
+        </description>
+        <syntax>
+          <dataType ref="FileURI"/>
+        </syntax>
+        </parameter>
+
+
+      <parameter name="HardwareVersion" access="readOnly">
+        <description>
+          Hardware version of the flash device.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="FlashDevice.{i}.Health." access="readOnly"
+      minEntries="1" maxEntries="1" version="2.21">
+      <description>
+        This gives health status of the flash device(agnostic of NAND or eMMC).
+      </description>
+
+      <parameter name="Enabled" access="readWrite">
+        <description>
+          Indicates whether flash device monitoring is enabled for this device.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="implementation" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MonitoringStatus" access="readOnly">
+        <description>
+          This provides monitoring status of the flash device.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled">
+              <description>
+                Monitoring disabled for the flash device.
+              </description>
+            </enumeration>
+            <enumeration value="Enabled">
+              <description>
+                Successfully monitoring the flash device.
+              </description>
+            </enumeration>
+            <enumeration value="Errored">
+              <description>
+                Flash monitoring errored.
+              </description>
+            </enumeration>
+            <enumeration value="NotSupported">
+              <description>
+                Flash monitoring is not supported for this flash device.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="HealthStatus" access="readOnly">
+        <description>
+          Health Status of monitored flash device.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Normal">
+              <description>
+                Normal health of Flash device.
+              </description>
+            </enumeration>
+            <enumeration value="Critical">
+              <description>
+                Lifetime of the Flash Device is limited.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="EMMCPreEoLInfo" access="readOnly">
+        <description>
+          Overall pre-EOL status information for reserved blocks as specified in
+          bibref|JEDEC84-B50|Section 7.4.21.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NotDefined">
+              <description>
+                Not defined.
+              </description>
+            </enumeration>
+            <enumeration value="Normal">
+              <description>
+                Consumed less than 80% of the reserved blocks.
+              </description>
+            </enumeration>
+            <enumeration value="Warning">
+              <description>
+                Consumed 80% of the reserved blocks.
+              </description>
+            </enumeration>
+            <enumeration value="Urgent">
+              <description>
+                Consumed 90% of the reserved blocks.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeAState" access="readOnly">
+        <description>
+          Life time state reflected by the averaged wear out of
+          memory of Type A relative to its maximum estimated device life time.
+          bibref|JEDEC84-B50|Section 7.4.20.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NotDefined"/>
+            <enumeration value="NormalLife">
+              <description>
+                Indicates NormalLife of the flash device. Percentage of wear out
+                further defined by {{param|LifeTimeAPercent}}.
+              </description>
+            </enumeration>
+            <enumeration value="MaximumExceeded"/>
+            <enumeration value="Reserved"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeAPercent" access="readOnly">
+        <description>
+          Device lifetime in {{units}} represented by the
+          average wear of Type A memory, relative to its maximum estimated
+          lifetime, when {{param|LifeTimeAState}} is Normal, see
+          bibref|JEDEC84-B50|Section 7.4.20.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="Percentage"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeBState" access="readOnly">
+        <description>
+          Life time state reflected by the averaged wear out of
+          memory of Type B relative to its maximum estimated device life time.
+          bibref|JEDEC84-B50|Section 7.4.19.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="NotDefined"/>
+            <enumeration value="NormalLife">
+              <description>
+                Indicates NormalLife of the flash device. Percentage of wear out
+                further defined by {{param|LifeTimeBPercent}}.
+              </description>
+            </enumeration>
+            <enumeration value="MaximumExceeded"/>
+            <enumeration value="Reserved"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeBPercent" access="readOnly">
+        <description>
+          Device lifetime in {{units}} represented by the
+          average wear of Type B memory, relative to its maximum estimated
+          lifetime, when {{param|LifeTimeAState}} is Normal, see
+          bibref|JEDEC84-B50|Section 7.4.19.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+            <units value="Percentage"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeAHex" access="readOnly">
+        <description>
+          Raw DEVICE_LIFE_TIME_EST_TYP_A [268] output as per
+          bibref|JEDEC84-B50|Section 7.4.20. 
+          This field shows an estimated
+          device lifetime based on the average memory wear of Type A compared to
+          its maximum expected lifetime.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeBHex" access="readOnly">
+        <description>
+          Raw DEVICE_LIFE_TIME_EST_TYP_B output as per
+          bibref|JEDEC84-B50|Section 7.4.19. 
+          This field shows an estimated
+          device lifetime based on the average memory wear of Type B compared to
+          its maximum expected lifetime.
+        </description>
+        <syntax>
+          <hexBinary>
+            <size minLength="1" maxLength="1"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeAThreshold" access="readWrite">
+        <description>
+          Threshold value for {{param|LifeTimeAHex}}. If the
+          {{param|LifeTimeAHex}} value crosses this threshold, set
+          {{param|HealthStatus}} as Critical.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+          </unsignedInt>
+          <default type="factory" value="10"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LifeTimeBThreshold" access="readWrite">
+        <description>
+          Threshold value for {{param|LifeTimeBHex}}. If the
+          {{param|LifeTimeBHex}} value crosses this threshold, set
+          {{param|HealthStatus}} as Critical.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="100"/>
+          </unsignedInt>
+          <default type="factory" value="10"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PreEolThreshold" access="readWrite">
+        <description>
+          Threshold value for {{param|EMMCPreEoLInfo}}. If the
+          {{param|EMMCPreEoLInfo}} exceeds this threshold, set
+          {{param|HealthStatus}} as Critical.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="255"/>
+          </unsignedInt>
+          <default type="factory" value="2"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalBadBlocks" access="readOnly">
+        <description>
+          Total Bad Blocks if the flash is a NAND type.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TotalGoodBlocks" access="readOnly">
+        <description>
+          Total Good Blocks if the flash is a NAND type.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BadBlocksThreshold" access="readWrite">
+        <description>
+          Threshold value for Maximum Bad Blocks if the flash is NAND. If
+          {{param|TotalBadBlocks}} exceeds this threshold, set
+          {{param|HealthStatus}} as Critical.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range minInclusive="0" maxInclusive="31"/>
+          </unsignedInt>
+          <default type="factory" value="10"/>
+        </syntax>
+      </parameter>
+    </object>
+  </component>
+
+  <component name="FlashDeviceUSP">
+    <object base="FlashDevice.{i}.Health.">
+      <event name="HealthStatus!" version="2.21">
+        <description>
+          This event is triggered when the flash device health status exceeds
+          the configured threshold. If {{param|Enabled}} is {{true}}, the event
+          occurs when the parameter value exceeds the threshold for any of the          
+          following parameters: {{param|LifeTimeAThreshold}} exceeds {{param|LifeTimeAPercent}},
+          {{param|LifeTimeBThreshold}} exceeds {{param|LifeTimeBPercent}},          
+          {{param|PreEolThreshold}} exceeds {{param|EMMCPreEoLInfo}} in case of eMMC flash device, or
+          {{param|TotalBadBlocks}} exceeds {{param|BadBlocksThreshold}} in case
+          of NAND flash device.
+        </description>
+
+        <parameter name="FlashDeviceName">
+          <description>
+            Name of the flash device associated with this event.
+            {{param|##.FlashDevice.{i}.Name}}.
+          </description>
+          <syntax>
+            <string/>
+          </syntax>
+        </parameter>
+      </event>
+    </object>
+  </component>
+
+  <model name="FlashDevice:2.21">
+    <component ref="Root"/>
+    <component ref="FlashDevice"/>
+    <component ref="FlashDeviceUSP"/>
+  </model>
+</dm:document>

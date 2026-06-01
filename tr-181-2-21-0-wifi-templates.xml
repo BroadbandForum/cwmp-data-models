@@ -1,0 +1,1351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Device:2 Root Data Model: Common Object definitions [WiFi Data Elements]
+
+  Copyright (c) 2010-2025, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2017-2019 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+  xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-14"
+  xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:broadband-forum-org:cwmp:datamodel-1-14 https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-14.xsd
+                      urn:broadband-forum-org:cwmp:datamodel-report-1-0 https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+  spec="urn:broadband-forum-org:tr-181-2-21-0-wifi-templates"
+  file="tr-181-2-21-0-wifi-templates.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+    spec="urn:broadband-forum-org:tr-181-2-21-root">
+    <component name="Root"/>
+  </import>
+
+  <import file="tr-181-2-wifi-base.xml"
+    spec="urn:broadband-forum-org:tr-181-2-21-wifi-base">
+    <component name="WiFiRoot"/>
+  </import>
+
+    <component name="RSNCommon">
+
+      <parameter name="GroupDataCipherSuite" access="readWrite">
+        <description>
+          Cipher suite selector used to protect group addressed data frames.
+          This is the name of a cipher suite, as defined in 
+          {{bibref|802.11-2020|Table 9-149}}.
+
+          The following is an example value: "CCMP-128".
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PairwiseCipherSuite" access="readWrite">
+        <description>
+          {{list}} Each list item is a cipher suite selector used to protect
+          individually addressed Data frames, as defined in
+          {{bibref|802.11-2020|Table 9-149}}.
+
+          The following is an example value: "CCMP-128".
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AKMSuite" access="readWrite">
+        <description>
+          Authentication and Key Management (AKM) suite
+          {{bibref|802.11-2020|Table 9-151}}. {{list}}{{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="psk"><description>
+              indicates AKM 00-0F-AC:2</description>
+            </enumeration>
+            <enumeration value="dpp"><description>
+              indicates AKM 50-6F-9A:2</description>
+            </enumeration>
+            <enumeration value="sae"><description>
+              indicates AKM 00-0F-AC:8</description>
+            </enumeration>
+            <enumeration value="sae-ext-key"><description>
+              indicates AKM 00-0F-AC:24</description>
+            </enumeration>
+            <enumeration value="SuiteSelector"><description>
+              indicates an AKM suite selector, the value of which is
+              indicated in {{param|AKMSuiteSelector}}.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AKMSuiteSelector" access="readWrite">
+        <description>
+          {{list}} AKM suite selector, the AKM suite selector (OUI and type) is
+          encoded as a 4-octet hex-encoded value without internal
+          delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}.
+
+          {{param}} applies if {{param|AKMSuite}}
+          includes value "SuiteSelector".
+        </description>
+        <syntax>
+          <list/>
+          <hexBinary>
+            <size minLength="4" maxLength="4"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="MFP" access="readWrite">
+        <description>
+          Indicates the expected support for Management Frame Protection
+          (MFP), aka Protected Management Frame (PMF).
+
+          {{bibref|WPA3}} and see also the WPA3 and Wi-Fi Enhanced Open
+          Deployment Guide v1.1.pdf, Table 3, row PMF.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Capable"/>
+            <enumeration value="Required"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="GroupManagementCipherSuite" access="readWrite">
+        <description>
+          Cipher suite selector used to protect group addressed robust
+          Management frames.
+          This is the name of a cipher suite, as defined in
+          {{bibref|802.11-2020|Table 9-149}}.
+
+          The following is an example value: "BIP-CMAC-128".
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </component>
+
+  <component name="Templates">
+
+    <object name="Device.WiFi.Templates." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.20">
+      <description>
+        Wi-Fi Configuration Templates provide a comprehensive way to configure
+        Wi-Fi. Configuration Templates can be applied across multiple
+        deployments in an operator's network, and across multiple APs, radios
+        and BSSs. A set of Configuration Templates can be
+        pre-defined, which can then handle many different services and
+        scenarios by matching flags to select a particular template depending
+        on AP or radio capabilities and topology. Different BSSs can be
+        configured across different radios to provision different types of
+        services.
+
+        A detailed description of how to use Wi-Fi Configuration Templates
+        is in {{bibref|DataElements|Section 3.4}}. The Configuration Template
+        Manager (CTM) interprets and implements Configuration Templates
+        for each deployment.
+      </description>
+
+      <parameter name="BSSTemplateNumberOfEntries" access="readOnly" version="2.20">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RadioTemplateNumberOfEntries" access="readOnly" version="2.20">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityTemplateNumberOfEntries" access="readOnly" version="2.20">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityGroupNumberOfEntries" access="readOnly" version="2.20">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="APMLDTemplateNumberOfEntries" access="readOnly" version="2.20">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSCTemplateNumberOfEntries" access="readOnly" version="2.20">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.Templates.Network."
+      access="readOnly" minEntries="1" maxEntries="1"
+          version="2.20">
+      <description>
+        This {{object}} either has the Configuration
+        Template Manager (CTM) deploy BSS(s) according to the templates,
+        or has all BSS(s) be disabled.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Indicates whether any BSS may be deployed in the Wi-Fi network.
+
+          : {{true}}: BSS(s) are deployed according to the template
+          matching process.
+
+          : {{false}}: No BSS is deployed in the network.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TopologyFlag" access="readWrite">
+        <description>
+          The TopologyFlag is used to specify a list of EasyMesh Agents on
+          which BSS(es) are deployed according to the template matching
+          process. If an EasyMesh Agent does not match any value in the list,
+          then no BSS is deployed on this EasyMesh Agent.
+
+          These values refer to the network topology role of the
+          EasyMesh Agent as determined by the EasyMesh Controller.
+
+          This flag matches if any of the list items match (logical OR).
+
+          {{list}}{{enum}} 
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Root"><description>
+              Colocated with the EasyMesh Controller.</description>
+            </enumeration>
+            <enumeration value="Repeater"><description>
+              Not colocated with the EasyMesh Controller.</description>
+            </enumeration>
+            <enumeration value="Wired_Repeater"><description>
+                Uses wired backhaul, i.e. all links between this EasyMesh
+                Agent and the EasyMesh Controller are wired.
+              </description>
+            </enumeration>
+            <enumeration value="Wireless_Repeater"><description>
+                Uses wireless backhaul, i.e. at least one link between this
+                EasyMesh Agent and the EasyMesh Controller is wireless.
+              </description>
+            </enumeration>
+            <enumeration value="ALID"><description>
+              Indicates an IEEE 1905 ALID, the value of which is a list item
+              in {{param|IEEE1905ALID}}.</description>
+            </enumeration>
+         </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEE1905ALID" access="readWrite">
+        <description>
+          {{list}} IEEE 1905 {{bibref|IEEE1905.1a}}
+          Abstraction-Layer ID (ALID).
+
+          This matches if any of the list items match (logical OR).
+          This should match an entry in
+          {{param|##.DataElements.Network.Device.{i}.ID}}.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PrimarySSCTemplateReference"
+        access="readWrite">
+        <description>
+          Indicates the Primary SSCTemplate.
+
+          The PrimaryVLANID in the EasyMesh network is the VLANID of the 
+          SSCTemplate referenced by {{param}}. If this value is empty, then
+          Traffic Separation is not used. {{bibref|EasyMesh|Section 19}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+              targetParent="#.SSCTemplate."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="PrimarySSCTemplateID"
+        access="readOnly">
+        <description>
+          Indicates the Primary SSCTemplate.
+
+          The value must be the {{param|#.SSCTemplate.{i}.SSCTemplateID}} to 
+          identify an instance of {{object|#.SSCTemplate}}.
+          If this value is empty, then
+          Traffic Separation is not used. {{bibref|EasyMesh|Section 19}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.Templates.BSSTemplate.{i}."
+      access="readWrite" numEntriesParameter="BSSTemplateNumberOfEntries"
+      enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+      version="2.20">
+      <description>
+        Table of Basic Service Set (BSS) templates for Wi-Fi configuration.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="BSSTemplateID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="BSSTemplateID" access="writeOnceReadOnly">
+        <description>
+          Static and persistent ID element.
+          At most one {{object}} instance can exist with a given value
+          for {{param}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readWrite">
+        <description>
+          This value indicates in which order the {{object}}
+          are to be matched for a reported radio.
+          255 is the highest priority, 0 is the lowest priority.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter
+        name="RadioTemplateReference" access="readWrite">
+        <description>
+          This {{object}} is linked to {{param}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+              targetParent="#.RadioTemplate."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSCTemplateReference"
+        access="readWrite">
+        <description>
+          This {{object}} is linked to {{param}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+              targetParent="#.SSCTemplate."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="APMLDTemplateReference"
+        access="readWrite">
+        <description>
+          This {{object}} is linked to {{param}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+              targetParent="#.APMLDTemplate."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityGroupReference"
+        access="readWrite">
+        <description>
+          This {{object}} is linked to {{param}}.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+              targetParent="#.SecurityGroup."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter
+        name="LinkedRadioTemplateID" access="readOnly">
+        <description>
+          Indicates the
+          {{param|#.RadioTemplate.{i}.RadioTemplateID}} that is linked with
+          this {{object}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LinkedSSCTemplateID"
+        access="readOnly">
+        <description>
+          Indicates the
+          {{param|#.SSCTemplate.{i}.SSCTemplateID}} that is linked with
+          this {{object}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LinkedAPMLDTemplateID"
+        access="readOnly">
+        <description>
+          Indicates the
+          {{param|#.APMLDTemplate.{i}.APMLDTemplateID}} that is linked with
+          this {{object}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="LinkedSecurityGroupID"
+        access="readOnly">
+        <description>
+          Indicates the {{param|#.SecurityGroup.{i}.SecurityGroupID}}
+          of the {{object|#.SecurityGroup.{i}}} in which a matching
+          {{object|#.SecurityTemplate}} is searched.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TopologyFlag" access="readWrite">
+        <description>
+          The topology flag is used to specify a list of EasyMesh Agents 
+          for which this {{object}} is considered by the Configuration Template
+          Manager during the matching process. If an Agent does not match any
+          value in the list, then no BSS matching this BSSTemplate is deployed
+          on the EasyMesh Agent. These values refer to the network topology
+          point of the EasyMesh Agent as determined by the EasyMesh Controller.
+
+          This flag matches if any of the list items match (logical OR).
+
+          {{list}}{{enum}} 
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Root"><description>
+              Colocated with the EasyMesh Controller.</description>
+            </enumeration>
+            <enumeration value="Repeater"><description>
+              Not colocated with the EasyMesh Controller.</description>
+            </enumeration>
+            <enumeration value="Wired_Repeater"><description>
+                Uses wired backhaul, i.e. all links between this EasyMesh
+                Agent and the EasyMesh Controller are wired.
+              </description>
+            </enumeration>
+            <enumeration value="Wireless_Repeater"><description>
+                Uses wireless backhaul, i.e. at least one link between this
+                EasyMesh Agent and the EasyMesh Controller is wireless.
+              </description>
+            </enumeration>
+            <enumeration value="ALID"><description>
+              Indicates an IEEE 1905 ALID, the value of which is a list item
+              in {{param|IEEE1905ALID}}.</description>
+            </enumeration>
+         </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="IEEE1905ALID" access="readWrite">
+        <description>
+          {{list}} IEEE 1905 {{bibref|IEEE1905.1a}}
+          Abstraction-Layer ID (ALID).
+
+          This flag matches if any of the list items match (logical OR).
+          This should match an entry in
+          {{param|##.DataElements.Network.Device.{i}.ID}}.
+        </description>
+        <syntax>
+          <list/>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter> 
+
+      <parameter name="MaxWLANHopLimitFlag" access="readWrite">
+        <description>
+          Indicates the maximum number of wireless hops (consecutive or not)
+          allowed between the EasyMesh Controller and the EasyMesh Agent.
+
+          In single-AP deployment, this flag is ignored.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter
+        name="SecureEquipmentFlag" access="readWrite">
+        <description>
+          Indicates the 1905 Security of the EasyMesh
+          Agent {{bibref|EasyMesh|Section 17.2.77}}. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="true">
+              <description>Indicates that 1905 Security is supported and
+                being used by the EasyMesh Agent.</description>
+            </enumeration>
+            <enumeration value="false">
+              <description>Indicates that 1905 Security is not
+                being used by the EasyMesh Agent.</description>
+            </enumeration>
+            <enumeration value="null"><description>
+              No requirement for matching.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Determines if this template is considered by the Configuration
+          Template Manager in the template matching process.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSID" access="readWrite">
+        <description>
+          The Service Set Identifier (SSID) used as an identifier
+          by all deployed BSSs linked to this {{object}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeyPassphrase" access="readWrite">
+        <description>
+          The KeyPassphrase to be used by all deployed BSSs linked to this
+          {{object}}.
+        </description>
+        <syntax secured="true">
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="AdvertisementEnable" access="readWrite">
+        <description>
+          Indicates if the {{param|SSID}} is advertised in beacons
+
+          : {{true}}: this {{param|SSID}} is to be advertised in beacons.
+
+          : {{false}}: this {{param|SSID}} is not to be advertised in beacons.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.Templates.RadioTemplate.{i}."
+      access="readWrite" numEntriesParameter="RadioTemplateNumberOfEntries"
+      enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+      version="2.20">
+      <description>
+        Table of RadioTemplates for Wi-Fi configuration.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="RadioTemplateID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="RadioTemplateID" access="writeOnceReadOnly">
+        <description>
+          Static and persistent ID element.
+          At most one {{object}} instance can exist with a given value
+          for {{param}}.
+
+          Note that {{param}} is not the same as
+          {{param|##.DataElements.Network.Device.{i}.Radio.{i}.ID}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readWrite">
+        <description>
+          This value indicates in which order the {{object}}
+          are to be matched for a radio under configuration.
+          255 is the highest priority, 0 is the lowest priority.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Determines if this {{object}} is considered by the Configuration
+          Template Manager (CTM) in the template matching process.
+
+          This value is independent from the value of any 
+          {{param|##.Radio.{i}.Enable}}.
+          This value is also independent from the value of any 
+          {{param|##.DataElements.Network.Device.{i}.Radio.{i}.Enabled}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="OpClassFlag" access="readWrite">
+        <description>
+          {{list}} Each list item is a global valid operating class as
+          defined in {{bibref|802.11ax|Table E-4}}).
+
+          Indicates the Operating Classes the Radio can operate on.
+          Exactly one of {{param}} or {{param|BandFlag}} must be empty
+          and exactly one must be filled in.
+
+          A Radio must be able to operate on at least one channel 
+          of each Operating Class specified in this list to
+          satisfy this condition.
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="BandFlag" access="readWrite">
+        <description>
+          Indicates frequency bands the Radio can operate on. All listed UNII
+          bands are to be in the same 2.4, 5 or 6 GHz band.
+
+          Exactly one of {{param|OpClassFlag}} or {{param}} must be empty.
+
+          {{list}}{{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="2.4">
+              <description>2.4 GHz band</description>
+            </enumeration>
+            <enumeration value="5">
+              <description>The entire 5 GHz band</description>
+            </enumeration>
+            <enumeration value="6">
+              <description>The entire 6 GHz band</description>
+            </enumeration>
+            <enumeration value="5_UNII_1">
+              <description>5 GHz UNII-1 band, 5.15 to 5.25 GHz</description>
+            </enumeration>
+            <enumeration value="5_UNII_2">
+              <description>5 GHz UNII-2 band, 5.25 to 5.725 GHz</description>
+            </enumeration>
+            <enumeration value="5_UNII_3">
+              <description>5 GHz UNII-3 band, 5.725 to 5.85 GHz</description>
+            </enumeration>
+            <enumeration value="5_UNII_4">
+              <description>5 GHz UNII-4 band, 5.85 to 5.925 GHz</description>
+            </enumeration>
+            <enumeration value="6_UNII_5">
+              <description>
+                6 GHz UNII-5 band, 5.925 to 6.425 GHz
+              </description>
+            </enumeration>
+            <enumeration value="6_UNII_6">
+              <description>
+                6 GHz UNII-6 band, 6.425 to 6.525 GHz
+              </description>
+            </enumeration>
+            <enumeration value="6_UNII_7">
+              <description>
+                6 GHz UNII-7 band, 6.525 to 6.875 GHz
+              </description>
+            </enumeration>
+            <enumeration value="6_UNII_8">
+              <description>
+                6 GHz UNII-8 band, 6.875 to 7.125 GHz
+              </description>
+            </enumeration>
+            <enumeration value="Sub_1GHz">
+              <description>
+                Sub 1 GHz band, 800 MHz to 928 MHz
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedGenerationFlag" access="readWrite">
+        <description>
+          {{list}} Each list item indicates a supported Wi-Fi Generation.
+          Each list item indicates a Supported Generation
+          of Generational Capabilities Indication attribute.
+
+          For example {{param}} could be "5,6,7".
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="DFSSupportFlag" access="readWrite">
+        <description>
+          Indicates Dynamic Frequency Selection (DFS)
+          support. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="true">
+              <description>Device supports DFS.</description>
+            </enumeration>
+            <enumeration value="false">
+              <description>Device does not support DFS.</description>
+            </enumeration>            
+            <enumeration value="null">
+              <description>No requirement for matching.</description>
+            </enumeration>
+            </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="AFCSupportFlag" access="readWrite">
+        <description>
+          Indicates Automated Frequency Coordination (AFC)
+          support. {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="true">
+              <description>Device supports AFC.</description>
+            </enumeration>
+            <enumeration value="false">
+              <description>Device does not support AFC.</description>
+            </enumeration>            
+            <enumeration value="null">
+              <description>No requirement for matching.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitPowerLimit" access="readWrite">
+        <description>
+          This is the upper limit on nominal transmit Equivalent Isotropically
+          Radiated Power (EIRP) that this radio is allowed to use for the
+          current operating class. In units of decibels relative to 1 mW
+          {{units}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-128" maxInclusive="127"/>
+            <units value="dBm"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingGeneration" access="readWrite">
+        <description>
+          {{list}} Each list item indicates a Wi-Fi Generation deployed on
+          this EasyMesh Agent or this device.
+          The last list item may be followed by a "+" to indicate the
+          inclusion of any existing Wi-Fi Generation above it.
+          If an EasyMesh agent or device supports a Wi-Fi Generation not in
+          the list, then that Wi-Fi Generation is disabled on the EasyMesh
+          agent or device.
+
+          For example, "6,7+" means Wi-Fi 6, Wi-Fi 7 and any newer
+          Wi-Fi Generation.
+
+          Note: {{param}} may include Wi-Fi Generations not supported by a
+          radio to which this {{object}} is deployed.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.Templates.SecurityTemplate.{i}."
+      access="readWrite" numEntriesParameter="SecurityTemplateNumberOfEntries"
+      enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+      version="2.20">
+      <description>
+        Table of SecurityTemplates for Wi-Fi configuration
+        {{bibref|WPA3}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="SecurityTemplateID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="SecurityTemplateID" access="writeOnceReadOnly">
+        <description>
+          Static and persistent ID element.
+          At most one {{object}} instance can exist with a given value
+          for {{param}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Determines if this template is considered by the Configuration
+          Template Manager in the template matching process.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Priority" access="readWrite">
+        <description>
+          This value indicates in which order the {{object}}
+          are to be matched.
+          255 is the highest priority, 0 is the lowest priority.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="RSNOSupportFlag" access="readWrite">
+        <description>
+          Indicates support for Robust Security Network (RSN) Overriding
+          (RSNO). RSN Overriding (RSNO) is also known as MRSNO and
+          is used in WPA3-Personal Compatibility Mode.
+          {{enum}}
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="true"><description>
+              The AP shall indicate support for RSNO for this
+              flag to match.</description>
+            </enumeration>
+            <enumeration value="false"><description>
+              The AP shall not indicate support for RSNO
+              for this flag to match.</description>
+            </enumeration>
+            <enumeration value="null"><description>
+              This flag matches in all cases.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedAKMSuiteFlag" access="readWrite">
+        <description>
+          {{list}} Authentication and Key Management (AKM) suite selector.
+          Only the listed enumeration values are allowed in this string.
+          {{enum}}
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="psk"><description>
+              indicates AKM 00-0F-AC:2</description>
+            </enumeration>
+            <enumeration value="dpp"><description>
+              indicates AKM 50-6F-9A:2</description>
+            </enumeration>
+            <enumeration value="sae"><description>
+              indicates AKM 00-0F-AC:8</description>
+            </enumeration>
+            <enumeration value="sae-ext-key"><description>
+              indicates AKM 00-0F-AC:24</description>
+            </enumeration>
+            <enumeration value="SuiteSelector"><description>
+              indicates an AKM suite selector, the value of which is
+              indicated in {{param|SupportedAKMSuiteSelectorFlag}}.
+            </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SupportedAKMSuiteSelectorFlag" access="readWrite">
+        <description>
+          {{list}} AKM suite selector, the AKM suite selector (OUI and type) is
+          encoded as a 4-octet hex-encoded value without internal
+          delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}.
+
+          {{param}} applies if {{param|SupportedAKMSuiteFlag}}
+          includes value "SuiteSelector".
+        </description>
+        <syntax>
+          <list/>
+          <hexBinary>
+            <size minLength="4" maxLength="4"/>
+          </hexBinary>
+        </syntax>
+      </parameter>
+
+      <parameter name="OperatingGenerationFlag" access="readWrite">
+        <description>
+          {{list}} The AP advertises support in its beacon frames 
+          for each Wi-Fi generation in this list for this flag to match.
+
+          For example {{param}} could be "5,6,7".
+        </description>
+        <syntax>
+          <list/>
+          <unsignedInt>
+            <range minInclusive="1" maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityIEs" access="readWrite">
+        <description>
+          Concatenation of all BSS Security related IEs with Element IDs,
+          without delimiters as hex encoded octets {{bibref|EasyMesh}}.
+          
+          Note that this {{param}} and the {{object|RSNE}}, {{object|RSNOE}},
+          {{object|RSNO2E}}, {{object|RSNXE}}, {{object|RSNXOE}}
+          objects are independent and may be set separately. 
+          If this {{param}} is not empty, the Configuration Template Manager
+          (CTM) uses the value of this {{param}} and ignores the content
+          of the RSNE/RSNOE/RSNO2E/RSNXE/RSNXOE objects.
+        </description>
+        <syntax>
+          <hexBinary/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.Templates.SecurityGroup.{i}."
+      access="readWrite" numEntriesParameter="SecurityGroupNumberOfEntries"
+      minEntries="0" maxEntries="unbounded"
+      version="2.20">
+      <description>
+        Table of SecurityGroups for Wi-Fi configuration
+        {{bibref|WPA3}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="SecurityGroupID"/>
+      </uniqueKey>
+
+      <parameter name="SecurityGroupID" access="readWrite">
+        <description>
+          This is the friendly name of this {{object}} which may be advertised
+          to the end user in a graphical interface.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SecurityTemplateReferences"
+        access="readWrite">
+        <description>
+          Indicates the list of {{object|#.SecurityTemplate}} for this {{object}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong"
+              targetParent="#.SecurityTemplate."
+              targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LinkedSecurityTemplateID"
+        access="readOnly">
+        <description>
+          Indicates the {{param|#.SecurityTemplate.{i}.SecurityTemplateID}}
+          in this entry of this {{object}}.
+        </description>
+        <syntax>
+          <list/>
+          <string/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.Templates.SecurityTemplate.{i}.RSNE."
+      access="readOnly" minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        This object describes the Robust Security Network Element (RSNE).
+        This object is only used by the Configuration Template Manager
+        if the {{param|#.SecurityIEs}} is empty.
+      </description>
+      
+      <component ref="RSNCommon"/>
+    </object>
+
+    <object name="Device.WiFi.Templates.SecurityTemplate.{i}.RSNOE."
+      access="readOnly" minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        This object describes the RSNOE element.
+        This object is only used by the Configuration Template Manager
+        if the {{param|#.SecurityIEs}} is empty.
+      </description>
+      
+      <component ref="RSNCommon"/>
+    </object>
+
+    <object name="Device.WiFi.Templates.SecurityTemplate.{i}.RSNO2E."
+      access="readOnly" minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        This object describes the RSNO2E element.
+        This object is only used by the Configuration Template Manager
+        if the {{param|#.SecurityIEs}} is empty.
+        </description>
+      <component ref="RSNCommon"/>
+    </object>
+
+
+    <object name="Device.WiFi.Templates.SecurityTemplate.{i}.RSNXE."
+      access="readOnly" minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        This object indicates the value the BSS transmits in the
+        RSNXE element.
+
+        This object is only used by the Configuration Template Manager
+        if the {{param|#.SecurityIEs}} is empty.
+      </description>
+
+      <parameter name="SAEH2E" access="readWrite">
+        <description>
+          Indicates if the BSS will support Simultaneous Authentication of
+          Equals (SAE) hash-to-element {{true}}, or not {{false}}.
+
+          {{true}}: BSS sets SAE hash-to-element to 1.
+          {{false}}: BSS sets SAE hash-to-element to 0.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.Templates.SecurityTemplate.{i}.RSNXOE."
+      access="readOnly" minEntries="1" maxEntries="1" version="2.20">
+      <description>
+        This object indicates the value the BSS transmits in the
+        RSNXOE element.
+        This object is only used by the Configuration Template Manager
+        if the {{param|#.SecurityIEs}} is empty.
+      </description>
+ 
+      <parameter name="SAEH2E" access="readWrite">
+        <description>
+          Indicates if the BSS will support Simultaneous Authentication of
+          Equals (SAE) hash-to-element {{true}}, or not {{false}}.
+
+          {{true}}: BSS sets SAE hash-to-element to 1.
+          {{false}}: BSS sets SAE hash-to-element to 0.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.Templates.APMLDTemplate.{i}."
+      access="readWrite" numEntriesParameter="APMLDTemplateNumberOfEntries"
+      enableParameter="MLOEnable" minEntries="0" maxEntries="unbounded"
+      version="2.20">
+      <description>
+        Table of AP Multi-Link Device (MLD) templates (APMLDTemplate)
+        for Wi-Fi configuration
+        {{bibref|EasyMesh|Section 17.2.96, Agent AP MLD Configuration TLV}}.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="APMLDTemplateID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="APMLDTemplateID" access="writeOnceReadOnly">
+        <description>
+          Static and persistent ID element.
+          At most one {{object}} instance can exist with a given value
+          for {{param}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MLOEnable" access="readWrite">
+        <description>
+          Indicates whether or not Multi-Link Operation (MLO) is enabled.
+          If set to {{false}}, then MLO support is disabled
+          and each deployment of a BSSTemplate related to this {{object}}
+          results in an AP MLD with a single affiliated AP. However, this
+          does not disable the BSSs that are in the 
+          {{object|#.BSSTemplate.{i}}} linked to this {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="STREnable" access="readWrite">
+        <description>
+          Indicates whether or not Simultaneous Transmit and Receive (STR)
+          mode is to be enabled on the AP MLD.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NSTREnable" access="readWrite">
+        <description>
+          Indicates whether or not Non-Simultaneous Transmit and Receive
+          (NSTR) mode is to be enabled on the AP MLD.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EMLSREnable" access="readWrite">
+        <description>
+          Indicates whether or not Enhanced Multi-Link Single-Radio (EMLSR)
+          mode is to be enabled on the AP MLD.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="EMLMREnable" access="readWrite">
+        <description>
+          Indicates whether or not Enhanced Multi-Link Multi-Radio (EMLMR)
+          mode is to be enabled on the AP MLD.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TIDToLinkMapNegotiation" access="readWrite">
+        <description>
+          Indicates whether the TID-to-link Mapping Negotiation Support
+          subfield in the MLD Capabilities and Operations field of the
+          Basic Multi-Link element is (to be) enabled by any deployed
+          AP MLD linked to this {{object}}.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+    </object>
+
+    <object name="Device.WiFi.Templates.SSCTemplate.{i}."
+      access="readWrite" numEntriesParameter="SSCTemplateNumberOfEntries"
+      enableParameter="SSCEnable" minEntries="0" maxEntries="unbounded"
+      version="2.20">
+      <description>
+        Table of Service Set Collection (SSC) templates (SSCTemplate)
+        for Wi-Fi configuration.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="SSCTemplateID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="SSCTemplateID" access="writeOnceReadOnly">
+        <description>
+          Static and persistent ID element.
+          At most one {{object}} instance can exist
+          with a given value for {{param}}.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SSCEnable" access="readWrite">
+        <description>
+          If set to {{false}}, then all BSSs that are linked with this
+          {{object}} are disabled, which means that these BSSs cease to
+          offer service.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="VID" access="readWrite">
+        <description>
+          The VLAN ID (VID) for all BSSs that are part of this {{object}}.
+          A value of 0 indicates that no VLAN shall be configured on the
+          BSSs belonging to this {{object}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="4095"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HaulType" access="readWrite">
+        <description>
+          Indicates the use of the BSSs that are part of this
+          {{object}}. {{list}}{{enum}} 
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="Fronthaul"/>
+            <enumeration value="Backhaul"/>
+          </string>
+        </syntax>
+      </parameter>
+
+    </object>
+
+  </component>
+
+  <model name="Templates:2.21">
+    <component ref="Root"/>
+    <component ref="Templates"/>
+  </model>
+</dm:document>
+

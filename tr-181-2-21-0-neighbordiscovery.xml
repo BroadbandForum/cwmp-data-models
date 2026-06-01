@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [NeighborDiscovery]
+
+  Copyright (c) 2010-2024, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-21-0-neighbordiscovery"
+    file="tr-181-2-21-0-neighbordiscovery.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-21-root">
+    <component name="Root"/>
+  </import>
+
+  <component name="NeighborDiscovery">
+
+    <object name="Device.NeighborDiscovery." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.2">
+      <description>
+        This object describes a unified approach for Layer 3 to Layer 2 address resolution protocols,
+        managing both the Neighbor Discovery Protocol (NDP) for IPv6 {{bibref|RFC4861}} and the
+        Address Resolution Protocol (ARP) for IPv4. It contains an {{object|InterfaceSetting}} table
+        that defines the configuration for individual IP interfaces.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables Neighbor Discovery.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="InterfaceSettingNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.NeighborDiscovery.InterfaceSetting.{i}."
+        access="readWrite"
+        numEntriesParameter="InterfaceSettingNumberOfEntries"
+        enableParameter="Enable" minEntries="0" maxEntries="unbounded"
+        version="2.2">
+      <description>
+        A per-interface configuration entry for address resolution protocols. This entry is
+        associated with a specific IP interface (via {{param|Interface}}) and contains
+        sub-objects for configuring ARP ({{object|ARP}}) for IPv4 and NDP
+        ({{object|NDP}}) for IPv6.
+
+        For this entry to be operational, the {{param|Interface}} parameter MUST be a valid
+        reference to an existing IP interface. If the reference is invalid, this entry is
+        inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Interface"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this entire interface setting entry. If {{false}}, both ARP and NDP are
+          considered disabled for this interface through this object, regardless of their individual
+          {{param|ARP.Enable}} or {{param|NDP.Enable}} settings.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this entry. {{enum}}
+
+          The {{enum|Error_Misconfigured}} value indicates that a necessary
+          configuration value is undefined or invalid.
+
+          The {{enum|Error}} value MAY be used by the CPE to indicate a locally
+          defined error condition.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+            <enumeration value="Error" optional="true"/>
+          </string>
+          <default type="object" value="Disabled"/>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias"/>
+
+      <parameter name="Interface" access="readWrite">
+        <description>
+          This is the IP interface associated with this {{object}} entry.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong" targetParent="##.IP.Interface."
+                targetType="row"/>
+          </string>
+          <default type="object" value=""/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DADTransmits" access="readWrite" version="2.13" status="deprecated">
+        <description>
+          The number of consecutive Neighbor Solicitation messages sent while
+          performing Duplicate Address Detection on a tentative address
+          (see{{bibref|RFC4862|5.1}}).
+
+          A value of zero indicates that Duplicate Address Detection is not
+          performed on tentative addresses.
+
+          A value of one indicates a single transmission with no follow-up
+          retransmissions.
+
+          If the value is greater than 1, {{param|RetransTimer}} defines the
+          delay between consecutive messages.
+
+          {{deprecated|2.21|in favor of {{param|NDP.DADTransmits}}}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransTimer" access="readWrite" status="deprecated">
+        <description>
+          Retransmission interval in {{units}}, as defined in
+          {{bibref|RFC4861}}. For auto-configuration purposes, {{param}}
+          specifies the delay between consecutive Neighbor Solicitation
+          transmissions performed during Duplicate Address Detection (DAD)
+          {{bibref|RFC4862|Section 5.4}}, as well as the time a node waits
+          after sending the last Neighbor Solicitation before ending the DAD
+          process.
+
+          {{deprecated|2.21|in favor of {{param|NDP.RetransTimer}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+            <range minInclusive="1"/>
+          </unsignedInt>
+          <default type="object" value="1000"/>
+        </syntax>
+      </parameter>
+
+
+      <parameter name="RtrSolicitationInterval" access="readWrite" status="deprecated">
+        <description>
+          Retransmission interval in {{units}}, as defined in
+          {{bibref|RFC4861|6.3.7}}. For auto-configuration purposes, {{param}}
+          specifies the delay between consecutive Router Solicitation
+          transmissions.
+
+          {{deprecated|2.21|in favor of {{param|NDP.RtrSolicitationInterval}}}}
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+            <range minInclusive="4000"/>
+          </unsignedInt>
+          <default type="object" value="4000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRtrSolicitations" access="readWrite" status="deprecated">
+        <description>
+          Maximum Number of Router Solicitation Transmission messages, as
+          defined in {{bibref|RFC4861}}. For auto-configuration purposes
+          {{param}} specifies the Maximum Number of Router Solicitation
+          Transmission messages to help the host to conclude that there are no
+          routers on the link.
+          
+          {{deprecated|2.21|in favor of {{param|NDP.MaxRtrSolicitations}}}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="3"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NUDEnable" access="readWrite" status="deprecated">
+        <description>
+          Enables or disables Neighbor Unreachability Detection (NUD)
+          {{bibref|RFC4861|Section 7}}.
+          
+          {{deprecated|2.21|in favor of {{param|NDP.NUDEnable}}}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RSEnable" access="readWrite" status="deprecated">
+        <description>
+          Enables or disables Router Solicitation (RS) on {{param|Interface}}
+          {{bibref|RFC4861|Section 4.1}}.
+          
+          {{deprecated|2.21|in favor of {{param|NDP.RSEnable}}}}
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.NeighborDiscovery.InterfaceSetting.{i}.NDP." access="readOnly" minEntries="1" maxEntries="1" version="2.21">
+      <description>
+        Contains all parameters related to the Neighbor Discovery Protocol (NDP) for this interface,
+        as defined in {{bibref|RFC4861}}.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables NDP functionality for this specific interface. This parameter works
+          in conjunction with {{param|#.Enable}}. If {{param|#.Enable}} is {{false}}, then NDP
+          is considered disabled for this interface regardless of this parameter's value.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this {{object}}. {{enum}}
+
+          A value of {{enum|Error_Misconfigured}} indicates that the referenced
+          {{param|#.Interface}} is not a valid reference to an IPv6-capable interface
+          (that is attached to the IPv6 stack).
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+          </string>
+        </syntax>
+      </parameter>
+      
+      <parameter name="DADTransmits" access="readWrite">
+        <description>
+          The number of consecutive Neighbor Solicitation messages sent while
+          performing Duplicate Address Detection on a tentative address
+          (see{{bibref|RFC4862|5.1}}).
+
+          A value of zero indicates that Duplicate Address Detection is not
+          performed on tentative addresses.
+
+          A value of one indicates a single transmission with no follow-up
+          retransmissions.
+
+          If the value is greater than 1, {{param|RetransTimer}} defines the
+          delay between consecutive messages.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="1"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RetransTimer" access="readWrite">
+        <description>
+          Retransmission interval in {{units}}, as defined in
+          {{bibref|RFC4861}}. For auto-configuration purposes, {{param}}
+          specifies the delay between consecutive Neighbor Solicitation
+          transmissions performed during Duplicate Address Detection (DAD)
+          {{bibref|RFC4862|Section 5.4}}, as well as the time a node waits
+          after sending the last Neighbor Solicitation before ending the DAD
+          process.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="1000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="BaseReachableTime" access="readWrite">
+        <description>
+          The base time in {{units}} for how long a neighbor is considered
+          valid and reachable in the neighbor cache
+          {{bibref|RFC4861|Section 6.3}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="30000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RtrSolicitationInterval" access="readWrite">
+        <description>
+          Retransmission interval in {{units}}, as defined in
+          {{bibref|RFC4861|6.3.7}}. For auto-configuration purposes, {{param}}
+          specifies the delay between consecutive Router Solicitation
+          transmissions. If {{param|MaxRtrSolicitationInterval}} is configured,
+          this parameter serves as the initial retransmission time (IRT), where IRT is set to RTR_SOLICITATION_INTERVAL,
+          for the backoff algorithm, as described in {{bibref|RFC7559}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="4000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRtrSolicitationInterval" access="readWrite">
+       <description>
+          The maximum retransmission time (MRT) in {{units}} between consecutive Router Solicitation transmissions when the
+          device implements a back-off algorithm, as defined in {{bibref|RFC7559}}.
+          It is used together with {{param|RtrSolicitationInterval}} to
+          control back-off behavior.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+            <range minInclusive="1"/>
+          </unsignedInt>
+          <default type="object" value="600000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="UnlimitedMaxRtrSolicitations" access="readWrite">
+        <description>
+          If {{true}}, the number of Router Solicitation transmissions is unlimited, overriding
+          {{param|MaxRtrSolicitations}}. This corresponds to setting MAX_RTR_SOLICITATIONS to
+          infinity, as allowed by {{bibref|RFC7559}}. If {{false}},
+          {{param|MaxRtrSolicitations}} is used.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRtrSolicitations" access="readWrite">
+        <description>
+          Maximum Number of Router Solicitation Transmission messages, as
+          defined in {{bibref|RFC4861}}. For auto-configuration purposes
+          {{param}} specifies the Maximum Number of Router Solicitation
+          Transmission messages to help the host to conclude that there are no
+          routers on the link.
+
+          If {{param|MaxRtrSolicitationInterval}} is configured, This parameter corresponds to the
+          Max Retransmit Count (MRC), where MRC is set to MAX_RTR_SOLICITATIONS as defined in
+          {{bibref|RFC7559}}.
+
+          This parameter is ignored if {{param|UnlimitedMaxRtrSolicitations}} is {{true}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="3"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NUDEnable" access="readWrite">
+        <description>
+          Enables or disables Neighbor Unreachability Detection (NUD)
+          {{bibref|RFC4861|Section 7}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="RSEnable" access="readWrite">
+        <description>
+          Enables or disables Router Solicitation (RS) on {{param|#.Interface}}
+          {{bibref|RFC4861|Section 4.1}}.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRtrSolicitationDelay" access="readWrite">
+        <description>
+          The maximum delay in {{units}} before sending the first Router Solicitation message
+          after the interface is brought up, as defined in {{bibref|RFC4861|Section 6.3.7}}.
+          The actual delay is a random value between 0 and {{param}}.
+          This random delay desynchronizes clients which start at the same time (for example,
+          after a power outage).
+
+          A value of 0 indicates no delay.
+
+          Note: The random delay is not needed if Duplicate Address Detection (DAD) has already
+          introduced sufficient randomization.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="1000"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MaxRtrSolicitationDuration" access="readWrite">
+        <description>
+          The maximum duration in {{units}} during which the client is permitted to retransmit
+          Router Solicitation messages, as defined in {{bibref|RFC7559}}.
+          This parameter corresponds to the Maximum Retransmit Duration (MRD).
+
+          When {{param|MaxRtrSolicitationInterval}} is configured, this parameter works together
+          with the backoff algorithm to control the total time spent soliciting routers.
+
+          A value of 0 indicates that no specific maximum duration is set.
+
+          This parameter is ignored if {{param|UnlimitedMaxRtrSolicitations}} is {{false}} and
+          {{param|MaxRtrSolicitations}} is reached before the duration expires.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="0"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.NeighborDiscovery.InterfaceSetting.{i}.ARP." access="readOnly" minEntries="1" maxEntries="1" version="2.21">
+      <description>
+        Contains all parameters related to the Address Resolution Protocol (ARP) {{bibref|RFC826}} for
+        this interface.
+      </description>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables ARP functionality for this specific interface. This parameter works
+          in conjunction with {{param|#.Enable}}. If {{param|#.Enable}} is {{false}}, then ARP
+          is considered disabled for this interface regardless of this parameter's value.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="true"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Status" access="readOnly">
+        <description>
+          The status of this {{object}}. {{enum}}
+
+          A value of {{enum|Error_Misconfigured}} indicates that the referenced
+          {{param|#.Interface}} is not a valid reference to an IPv4-capable interface.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="Disabled"/>
+            <enumeration value="Enabled"/>
+            <enumeration value="Error_Misconfigured"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BaseReachableTime" access="readWrite">
+        <description>
+          The base time in {{units}} for how long a dynamically learned entry in the ARP cache is
+          considered valid and reachable. This corresponds to the ARP cache aging time discussed in
+          {{bibref|RFC1122}}.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="milliseconds"/>
+          </unsignedInt>
+          <default type="object" value="60000"/>
+        </syntax>
+      </parameter>
+        
+      <parameter name="MaxRetries" access="readWrite">
+        <description>
+          The maximum number of ARP requests to send before considering an address unreachable, as
+          discussed in {{bibref|RFC1122}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+          <default type="object" value="3"/>
+        </syntax>
+      </parameter>
+        
+      <parameter name="RetryInterval" access="readWrite">
+        <description>
+          The interval in {{units}} between consecutive ARP requests, as discussed in
+          {{bibref|RFC1122}}.
+        </description>
+        <syntax>
+          <unsignedInt><units value="milliseconds"/></unsignedInt>
+          <default type="object" value="1000"/>
+        </syntax>
+      </parameter>
+        
+      <parameter name="ProxyARPEnable" access="readWrite">
+        <description>
+          Enables or disables Proxy ARP, as defined in {{bibref|RFC1027}}, on this interface.
+        </description>
+        <syntax>
+          <boolean/>
+          <default type="object" value="false"/>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <profile name="NeighborDiscovery:1" version="2.2" status="deprecated">
+      <description>
+        {{deprecated|2.21|This profile is deprecated in favor of directly configuring parameters
+        under {{object|Device.NeighborDiscovery.InterfaceSetting.{i}.ARP.}}
+        and {{object|Device.NeighborDiscovery.InterfaceSetting.{i}.NDP.}} for improved granularity and
+        support for both IPv4 ARP and IPv6 NDP in a unified structure.}}
+      </description>
+      <object ref="Device.NeighborDiscovery." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.NeighborDiscovery.InterfaceSetting.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+        <parameter ref="RetransTimer" requirement="readWrite"/>
+        <parameter ref="RtrSolicitationInterval" requirement="readWrite"/>
+        <parameter ref="MaxRtrSolicitations" requirement="readWrite"/>
+        <parameter ref="NUDEnable" requirement="readWrite"/>
+        <parameter ref="RSEnable" requirement="readWrite"/>
+      </object>
+    </profile>
+
+   <profile name="NeighborDiscovery:2" version="2.21">
+      <description></description>
+      <object ref="Device.NeighborDiscovery." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="InterfaceSettingNumberOfEntries"
+            requirement="readOnly"/>
+      </object>
+      <object ref="Device.NeighborDiscovery.InterfaceSetting.{i}."
+          requirement="createDelete">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="Interface" requirement="readWrite"/>
+      </object>
+      <object ref="Device.NeighborDiscovery.InterfaceSetting.{i}.NDP." requirement="present">
+        <parameter ref="Enable" requirement="readWrite"/>
+        <parameter ref="Status" requirement="readOnly"/>
+        <parameter ref="RetransTimer" requirement="readWrite"/>
+        <parameter ref="RtrSolicitationInterval" requirement="readWrite"/>
+        <parameter ref="MaxRtrSolicitations" requirement="readWrite"/>
+        <parameter ref="NUDEnable" requirement="readWrite"/>
+        <parameter ref="RSEnable" requirement="readWrite"/>
+      </object>
+    </profile>
+  </component>
+
+  <model name="NeighborDiscovery:2.21">
+    <component ref="Root"/>
+    <component ref="NeighborDiscovery"/>
+  </model>
+</dm:document>
