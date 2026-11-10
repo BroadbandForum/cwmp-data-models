@@ -1,0 +1,1976 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [Security]
+
+  Copyright (c) 2010-2023, Broadband Forum
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-10"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-10
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-10.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-22-0-security"
+    file="tr-181-2-22-0-security.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-22-root">
+    <component name="Root"/>
+  </import>
+
+   <component name="TLSClient">
+    <component ref="ClientCerts"/>
+
+    <parameter name="CipherList" access="readOnly" version="2.21">
+      <description>
+        Each item in this list specifies a cipher that the TLS client is allowed to use.
+        When {{empty}} the system defaults are used.
+      </description>
+      <syntax>
+        <list/>
+        <string/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="TLSServer">
+    <component ref="ServerCerts"/>
+    
+    <parameter name="CipherList" access="readOnly" version="2.21">
+      <description>
+        Each item in this list specifies a cipher that the TLS server is allowed to use.
+        When {{empty}} the system defaults are used.
+      </description>
+      <syntax>
+        <list/>
+        <string/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="ClientCerts">
+    <component ref="ClientCertsNoDefault"/>
+    <parameter base="Certificate">
+      <syntax>
+        <string/>
+        <default type="object" value=""/>
+      </syntax>
+    </parameter>
+    <parameter base="CABundle">
+      <syntax>
+        <string/>
+        <default type="object" value=""/>
+      </syntax>
+    </parameter>
+  </component>
+ 
+  <component name="ClientCertsNoDefault">
+    <parameter name="Certificate" access="readWrite" version="2.0">
+      <description>
+        Specifies the client certificate that must be presented to the remote server for mutual authentication.
+        This certificate is used to authenticate the client by the remote server, ensuring that the remote server is communicating with a trusted client.
+        The client certificate must be issued by a trusted Certificate Authority (CA) and should match the client's private key.
+        This parameter is applicable only when a TLS session is being used.
+      </description>
+      <syntax>
+        <string>
+          <pathRef refType="strong" targetParent=".Security.Certificate." targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="CABundle" access="readWrite" version="2.19">
+      <description>
+        Specifies the group of CA certificate(s) that the client must use to validate the certificate presented by the remote server.
+        These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection.
+        This parameter supports multiple CA certificates to accommodate different server certificate issuers.
+        This parameter is applicable only when a TLS session is being used.
+      </description>
+      <syntax>
+        <string>
+          <pathRef refType="strong" targetParent=".Security.CABundle." targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="ClientCertsCommand">
+    <component ref="ClientCerts"/>
+    <parameter base="Certificate">
+      <description action="append">
+        If neither a {{param}} nor {{param|CABundle}} is provided to this command and an entry exists in {{object|Device.Security.ClientCertificateDefault.{i}}}
+        with {{param|Device.Security.ClientCertificateDefault.{i}.Type}} matching this command, then the Certificate and CABundle values will be used from
+        {{object|Device.Security.ClientCertificateDefault.}}.
+      </description>
+    </parameter>
+    <parameter base="CABundle">
+      <description action="append">
+        If neither a {{param|Certificate}} nor {{param}} is provided to this command and an entry exists in {{object|Device.Security.ClientCertificateDefault.{i}}}
+        with {{param|Device.Security.ClientCertificateDefault.{i}.Type}} matching this command, then the Certificate and CABundle values will be used from
+        {{object|Device.Security.ClientCertificateDefault.}}.
+      </description>
+    </parameter>
+  </component>
+
+  <component name="UploadCommandArgs">
+    <parameter name="URL" mandatory="true">
+      <description>
+        The {{datatype}} specifying the destination file location. The
+        HTTPS transport MUST be supported, and the HTTP transport MAY be
+        supported.
+
+        The PUT request method MUST be used to transfer the file.
+
+        This argument specifies only the destination file location, and
+        does not indicate in any way the name or location of the local
+        file to be uploaded.
+
+        If the Agent receives multiple upload requests with the same URL,
+        the Agent MUST perform each upload as requested, and MUST NOT
+        assume that the content of the file to be uploaded is the same
+        each time.
+
+        This URL MUST NOT include the "userinfo" component, as defined in
+        {{bibref|RFC3986}}.
+      </description>
+      <syntax>
+        <dataType ref="URL"/>
+      </syntax>
+    </parameter>
+
+    <parameter name="Username" mandatory="false">
+      <description>
+        Username to be used by the Agent to authenticate with the file
+        server. If {{param}} is not provided or is set to {{empty}}, an alternative form of
+        authentication (e.g., certificate-based authentication) is required.
+
+        Note: The mandatory requirement for this parameter was removed in Device:2.20.
+      </description>
+      <syntax>
+        <string>
+            <size maxLength="256"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="Password" mandatory="false">
+      <description>
+        Password to be used by the Agent to authenticate with the file
+        server. If {{param}} is not provided or is set to {{empty}}, an alternative form of
+        authentication (e.g., certificate-based authentication) is required.
+
+        Note: The mandatory requirement for this parameter was removed in Device:2.20.
+      </description>
+      <syntax>
+        <string>
+          <size maxLength="256"/>
+        </string>
+      </syntax>
+    </parameter>
+    <component ref="ClientCertsCommand"/>
+  </component>
+
+  <component name="DownloadCommandArgs">
+    <component ref="UploadCommandArgs"/>
+    <parameter base="URL">
+      <description action="replace">
+        The {{datatype}} specifying the source file location. The HTTPS
+        transport MUST be supported, and the HTTP transport MAY be
+        supported.
+
+        If the Agent receives multiple download requests with the same
+        source URL, the Agent MUST perform each download as requested,
+        and MUST NOT assume that the content of the file to be downloaded
+        is the same each time.
+
+        This URL MUST NOT include the "userinfo" component, as defined in
+        {{bibref|RFC3986}}.
+      </description>
+    </parameter>
+    <parameter base="Username">
+      <description action="replace">
+        Username to be used by the Agent to authenticate with the file
+        server. If {{param}} is not provided or is set to {{empty}},
+        either an alternative form of authentication (e.g.,
+        certificate-based authentication) is required or no
+        authentication is required.
+      </description>
+    </parameter>
+
+    <parameter base="Password">
+      <description action="replace">
+        Password to be used by the Agent to authenticate with the file
+        server. If {{param}} is not provided or is set to {{empty}},
+        either an alternative form of authentication (e.g.,
+        certificate-based authentication) is required or no
+        authentication is required.
+      </description>
+    </parameter>
+  </component>
+  <component name="ServerCerts">
+    <component ref="ServerCertsNoDefault"/>
+    <parameter base="Certificate">
+      <syntax>
+        <string/>
+        <default type="object" value=""/>
+      </syntax>
+    </parameter>
+    <parameter base="CABundle">
+      <syntax>
+        <string/>
+        <default type="object" value=""/>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="ServerCertsNoDefault">
+    <parameter name="Certificate" access="readWrite" version="2.16">
+      <description>
+        Specifies the server certificate to be presented by the server during the TLS handshake.
+        This certificate is used to authenticate the server to remote clients, ensuring that the clients are connecting to a legitimate server.
+        The server certificate must be issued by a trusted Certificate Authority (CA) and should match the server's private key.
+        This parameter is applicable only when a TLS session is being used.
+      </description>
+      <syntax>
+        <string>
+          <pathRef refType="strong" targetParent=".Security.Certificate." targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+
+    <parameter name="CABundle" access="readWrite" version="2.19">
+      <description>
+        Specifies the group of CA certificate(s) that the server must use to validate the certificate presented by the remote client.
+        These CA certificates form a trust chain that the client certificate must match, ensuring that only clients with trusted certificates can establish a connection.
+        This parameter supports multiple CA certificates to accommodate different client certificate issuers.
+        This parameter is applicable only when a TLS session is being used.
+      </description>
+      <syntax>
+        <string>
+          <pathRef refType="strong" targetParent=".Security.CABundle." targetType="row"/>
+        </string>
+      </syntax>
+    </parameter>
+  </component>
+
+  <component name="Security">
+    <object name="Device.Security." access="readOnly" minEntries="1"
+        maxEntries="1" version="2.4">
+      <description>
+        This object contains general information related to managing security
+        features on the device.
+      </description>
+
+      <parameter name="CertificateNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CABundleNumberOfEntries" access="readOnly" version="2.19">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ClientCertificateDefaultNumberOfEntries" access="readOnly" version="2.22">
+        <description>
+            {{numentries}}
+        </description>
+        <syntax>
+            <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Security.Certificate.{i}." access="readOnly"
+        numEntriesParameter="CertificateNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.4">
+      <description>
+        This table provides information about all types of public key-based
+        credentials, such as X.509 certificates, see {{bibref|RFC5280}}.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="SerialNumber"/>
+        <parameter ref="Issuer"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this certificate.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias" version="2.21"/>
+
+      <parameter name="Name" access="readOnly" version="2.21">
+        <description>
+          User-defined name to identify and categorize the certificate (e.g.,
+          "mqtt-broker", "webserver", "vpn-client"). The implementation MAY
+          use this name to determine which secure storage to use and how to
+          persist the key.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="LastModif" access="readOnly">
+        <description>
+          The last modification time of this certificate.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SerialNumber" access="readOnly">
+        <description>
+          The Serial Number field in an X.509 certificate, see
+          {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="Issuer" access="readOnly">
+        <description>
+          The Issuer field in an X.509 certificate, see {{bibref|RFC5280}};
+          i.e. the Distinguished Name (DN) of the entity who has signed the
+          certificate.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotBefore" access="readOnly">
+        <description>
+          The beginning of the certificate validity period; i.e. the Not Before
+          field in an X.509 certificate, see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="NotAfter" access="readOnly">
+        <description>
+          The end of the certificate validity period; i.e., the Not After field
+          in an X.509 certificate, see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Subject" access="readOnly">
+        <description>
+          The Distinguished Name (DN) of the entity associated with the Public
+          Key; i.e., the Subject field in an X.509 certificate, see
+          {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SubjectAlt" access="readOnly">
+        <description>
+          {{list}} Each item specifies an identity that is bound to the
+          certificate's subject, and thus bound to the Public Key.
+
+          The Subject Alternative Names extension field in an X.509 certificate,
+          see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <list>
+            <size maxLength="256"/>
+          </list>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SignatureAlgorithm" access="readOnly">
+        <description>
+          The algorithm used in signing the certificate; i.e. the Signature
+          Algorithm field in an X.509 certificate, see {{bibref|RFC5280}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="256"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RenewalMode" access="readWrite" version="2.22">
+        <description>
+          Specifies the automatic certificate update mode. When auto-update
+          is triggered, certificate information is copied from {{object}}
+          to populate the new CSR.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None">
+              <description>
+                Auto-update is disabled.
+              </description>
+            </enumeration>
+            <enumeration value="Renew">
+              <description>
+                When auto-update is triggered, the device creates a new
+                CSR. If an existing key pair is available for this
+                certificate, it is reused (certificate renewal as defined
+                in {{bibref|RFC3647|Section 4.4.6}}). Otherwise, a new
+                key pair is generated.
+              </description>
+            </enumeration>
+            <enumeration value="ReKey">
+              <description>
+                When auto-update is triggered, the device always generates
+                a new key pair and creates a new CSR, regardless of
+                whether an existing private key is available (certificate
+                re-key as defined in {{bibref|RFC3647|Section 4.4.6}}).
+                The existing private key is replaced once the new
+                certificate is installed.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RenewalInterval" access="readWrite" version="2.22">
+        <description>
+          Number of {{units}} before {{param|NotAfter}} at which the
+          device automatically initiates a new CSR, as determined by
+          {{param|RenewalMode}}. A value of 0, or
+          {{enum|None|RenewalMode}} for {{param|RenewalMode}},
+          disables auto-update.
+
+          If {{param}} is greater than or equal to the certificate
+          validity period (the interval between {{param|NotBefore}} and
+          {{param|NotAfter}}), or if the computed trigger date
+          ({{param|NotAfter}} minus {{param}} {{units}}) already lies in
+          the past, the device SHOULD initiate auto-update immediately.
+
+          See {{bibref|RFC5280|Section 4.1.2.5}} for the certificate
+          validity period definition.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="days"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="HasPrivateKey" access="readOnly" version="2.22">
+        <description>
+          {{true}} when the device has the private key for this certificate.
+          {{false}} when the device does not have the private key (e.g.,
+          imported CA certificate for trust chain validation).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Security.CABundle.{i}." access="readOnly"
+        numEntriesParameter="CABundleNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.19">
+      <description>
+        This table stores information about a group of Certificate Authorities (CAs).
+        A CA is a trusted entity that issues digital certificates used to verify the identity of servers,
+        clients, or other entities in secure communication protocols like TLS.
+
+        This group defines a collection of trusted CA certificates that can be used to validate server certificates during TLS connections.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Name"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <parameter name="Enable" access="readWrite">
+        <description>
+          Enables or disables this CA group.
+
+          When disabled, the certificates within this group will not be used for validation.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <component ref="Alias" version="2.22"/>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          The textual name assigned to this CA group for identification.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="CACertificates" access="readWrite" version="2.19">
+        <description>
+          Specifies the CA certificate(s) that the client must use to validate the certificate presented by the remote server.
+          These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection.
+          This parameter supports multiple CA certificates to accommodate different server certificate issuers.
+          This parameter is applicable only when a TLS session is being used.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <pathRef refType="strong" targetParent=".Security.Certificate." targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+
+    <object name="Device.Security.ClientCertificateDefault.{i}." access="readOnly"
+        numEntriesParameter="ClientCertificateDefaultNumberOfEntries" minEntries="0"
+        maxEntries="unbounded" version="2.22">
+      <description>
+       This table provides a default Certificate and CABundle for commands that are invoked without explicitly specifying them as a parameter.
+      </description>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Type"/>
+      </uniqueKey>
+      <component ref="Alias"/>
+      <component ref="ClientCertsNoDefault"/>
+      <parameter name="Type" access="readWrite">
+        <description>
+          Specifies the command this entry applies to.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="FirmwareImageDownload">
+              <description>
+                Default applies to FirmwareImage Download command
+              </description>
+            </enumeration>
+            <enumeration value="KernelFaultUpload">
+              <description>
+                Default applies to KernelFault Upload command
+              </description>
+            </enumeration>
+            <enumeration value="ProcessFaultUpload">
+              <description>
+                Default applies to ProcessFault Upload command
+              </description>
+            </enumeration>
+            <enumeration value="VendorConfigFileBackup">
+              <description>
+                Default applies to VendorConfigFile Backup command
+              </description>
+            </enumeration>
+            <enumeration value="VendorConfigFileRestore">
+              <description>
+                Default applies to VendorConfigFile Restore command
+              </description>
+            </enumeration>
+            <enumeration value="VendorLogFileUpload">
+              <description>
+                Default applies to VendorLogFile Upload command
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+  </component>
+
+  <component name="SecurityUSP">
+    <object base="Device.Security.">
+      <parameter name="CSRNumberOfEntries" access="readOnly" version="2.22">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.Security.CSR.{i}." numEntriesParameter="CSRNumberOfEntries"
+      access="readOnly" minEntries="0" maxEntries="unbounded" version="2.22">
+      <description>
+        This table lists the Certificate Signing Requests (CSRs) created by
+        the device, either automatically to auto-update an existing certificate
+        or in response to a {{command|.Security.CreateCSR()}}. When a
+        certificate is installed whose public key matches that of a CSR, the
+        CSR is automatically deleted.
+
+        If no certificate is installed before the timeout defined by
+        {{param|.Security.CSRTimeout}} expires, the CSR entry is
+        automatically deleted. Its associated private key is also deleted,
+        unless it is already referenced by an existing
+        {{object|#.Certificate}} entry (e.g., in
+        {{enum|Renew|RenewalMode}} mode).
+
+        If a pending entry with the same {{param|Name}} already exists when
+        {{command|.Security.CreateCSR()}} is invoked, the device SHOULD
+        reject the new operation with a 7005 (Resources Exceeded) fault
+        code. The Controller MAY cancel the pending request via
+        {{command|.LocalAgent.Request.{i}.Cancel()}}, which causes the device
+        to remove the CSR entry and its associated private key (unless
+        referenced by an existing {{object|#.Certificate}} entry), before
+        retrying.
+      </description>
+
+      <uniqueKey functional="true">
+        <parameter ref="EncodedCSR"/>
+      </uniqueKey>
+      <uniqueKey functional="true">
+        <parameter ref="Name"/>
+      </uniqueKey>
+
+      <parameter name="EncodedCSR" access="readOnly">
+        <description>
+          The CSR in PEM format (PKCS#10, signed by the device,
+          Base64 encoded with header and footer).
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DateCreated" access="readOnly">
+        <description>
+          Date and time the CSR was created.
+        </description>
+        <syntax>
+          <dateTime/>
+        </syntax>
+      </parameter>
+
+      <parameter name="Name" access="readOnly">
+        <description>
+          User-defined name to identify the certificate, as specified in the
+          {{command|.Security.CreateCSR()}} command that generated this CSR.
+          This name is associated with the certificate when it is added
+          via {{command|.Security.AddCertificate()}}.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="BasicConstraints" access="readOnly">
+        <description>
+          The Basic Constraints extension specified when creating the CSR, as
+          defined in {{bibref|RFC5280|Section 4.2.1.9}}.
+
+          When {{true}}, the certificate is a CA certificate (CA:TRUE). 
+          
+          When {{false}}, the certificate is an end-entity certificate (CA:FALSE).
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+
+      <parameter name="PathLengthConstraint" access="readOnly">
+        <description>
+          The path length constraint specified when creating the CSR, as defined in
+          {{bibref|RFC5280|Section 4.2.1.9}}.
+
+          Specifies the maximum number of non-self-issued intermediate certificates that may
+          follow this certificate in a valid certification path. A value of zero means this
+          certificate may be directly followed only by end-entity certificates. Where no path
+          length constraint was specified, no upper limit is imposed.
+
+          This parameter is meaningful only when {{param|BasicConstraints}} is {{true}} and
+          {{enum|KeyCertSign|KeyUsageList}} is present in {{param|KeyUsageList}}.
+
+          The value -1 indicates that no path length constraint was specified in the CSR,
+          or that {{param|BasicConstraints}} is {{false}}.
+        </description>
+        <syntax>
+          <int>
+            <range minInclusive="-1"/>
+          </int>
+        </syntax>
+      </parameter>
+
+      <parameter name="KeyUsageList" access="readOnly">
+        <description>
+          Each item specifies a Key Usage purpose specified when creating the
+          CSR, as defined in {{bibref|RFC5280|Section 4.2.1.3}}.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="DigitalSignature">
+              <description>Digital signature.</description>
+            </enumeration>
+            <enumeration value="NonRepudiation">
+              <description>Non-repudiation.</description>
+            </enumeration>
+            <enumeration value="KeyEncipherment">
+              <description>Key encipherment.</description>
+            </enumeration>
+            <enumeration value="DataEncipherment">
+              <description>Data encipherment.</description>
+            </enumeration>
+            <enumeration value="KeyAgreement">
+              <description>Key agreement.</description>
+            </enumeration>
+            <enumeration value="KeyCertSign">
+              <description>Certificate signing.</description>
+            </enumeration>
+            <enumeration value="CRLSign">
+              <description>CRL signing.</description>
+            </enumeration>
+            <enumeration value="EncipherOnly">
+              <description>Encipher only.</description>
+            </enumeration>
+            <enumeration value="DecipherOnly">
+              <description>Decipher only.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExtendedKeyUsageList" access="readOnly">
+        <description>
+          Each item specifies an Extended Key Usage (EKU) purpose for the
+          certificate, as defined in {{bibref|RFC5280|Section 4.2.1.12}}. The
+          EKU extension indicates the purposes for which the certificate public
+          key may be used.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="ServerAuth">
+              <description>TLS server authentication.</description>
+            </enumeration>
+            <enumeration value="ClientAuth">
+              <description>TLS client authentication.</description>
+            </enumeration>
+            <enumeration value="CodeSigning">
+              <description>Code signing.</description>
+            </enumeration>
+            <enumeration value="EmailProtection">
+              <description>Email protection (S/MIME).</description>
+            </enumeration>
+            <enumeration value="TimeStamping">
+              <description>Timestamping.</description>
+            </enumeration>
+            <enumeration value="OCSPSigning">
+              <description>OCSP response signing.</description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RenewalMode" access="readOnly">
+        <description>
+          The automatic certificate update mode requested when this CSR was
+          created.
+        </description>
+        <syntax>
+          <string>
+            <enumeration value="None">
+              <description>
+                Auto-update is disabled.
+              </description>
+            </enumeration>
+            <enumeration value="Renew">
+              <description>
+                When auto-update is triggered, the device creates a new
+                CSR. If an existing key pair is available for this
+                certificate, it is reused (certificate renewal as defined
+                in {{bibref|RFC3647|Section 4.4.6}}). Otherwise, a new
+                key pair is generated.
+              </description>
+            </enumeration>
+            <enumeration value="ReKey">
+              <description>
+                When auto-update is triggered, the device always generates
+                a new key pair and creates a new CSR, regardless of
+                whether an existing private key is available (certificate
+                re-key as defined in {{bibref|RFC3647|Section 4.4.6}}).
+                The existing private key is replaced once the new
+                certificate is installed.
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="RenewalInterval" access="readOnly">
+        <description>
+          Number of {{units}} before the NotAfter date at which the
+          device automatically initiates a new CSR, as determined by
+          {{param|RenewalMode}}. A value of 0, or
+          {{enum|None|RenewalMode}} for {{param|RenewalMode}},
+          disables auto-update.
+
+          If {{param}} is greater than or equal to the certificate
+          validity period (see {{bibref|RFC5280|Section 4.1.2.5}}), or
+          if the computed trigger date already lies in the past, the
+          device SHOULD initiate auto-update immediately.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="days"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="CommandKey" access="readOnly">
+        <description>
+          The ''command_key'' supplied in the
+          {{command|.Security.CreateCSR()}} Operate message that generated
+          this CSR. This value can be used to correlate this CSR entry with
+          the resulting {{event|#.CSRCreated!}} or {{event|#.CSRFailure!}}
+          event, and eventually the certificate added via
+          {{command|.Security.AddCertificate()}}. This will be {{empty}} if
+          the CSR was automatically created due to certificate auto-update
+          rather than an explicit controller request.
+        </description>
+        <syntax>
+          <string/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Security.Certificate.{i}." >
+      <parameter base="RenewalInterval">
+        <description action="append">
+          When auto-update is triggered, a {{event|#.CSRCreated!}} event is
+          generated upon successful creation of the new CSR, or a
+          {{event|#.CSRFailure!}} event if the attempt fails.
+        </description>
+      </parameter>
+
+      <command name="GetCertificateURI()" async="false" version="2.20">
+        <description>
+          Returns the path to the X.509 certificate and its corresponding private key that is
+          associated with the entry of the {{object}} table.
+        </description>
+        <output>
+          <parameter name="CertificateURI">
+            <description>
+              The absolute or relative path to the certificate file,
+              specified as an {{bibref|RFC8089}} (The file URI Scheme).
+            </description>
+            <syntax>
+              <dataType ref="FileURI"/>
+            </syntax>
+          </parameter>
+
+          <parameter name="PrivateKeyURI">
+            <description>
+              The URI for the private key associated with this certificate, formatted according to
+              {{bibref|RFC7512}}. This URI should point to the key's location on a hardware security
+              module (HSM) or other cryptographic token.
+
+              For security reasons, the URI MUST NOT include any PIN information (e.g.,`pin-value`). The
+              service responsible for managing the token should inject the required PIN at runtime. This
+              practice prevents unauthorized access and malicious reuse of the private key by other
+              services. 
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+        </output>
+      </command>
+
+      <command name="Delete()" async="false" version="2.21">
+        <description>
+          Deletes the certificate.
+        </description>
+      </command>
+    </object>
+
+    <object base="Device.Security.CABundle.{i}.">
+      <command name="CADir()" async="false">
+        <description>
+          Returns the path to the directory containing CA certificates.
+
+          This is necessary for services, especially microservices in host or
+          container environments requiring mTLS, to locate the appropriate
+          CA certificates during configuration.
+
+          Depending on the security requirements a service-specific CA directory
+          may be required.
+        </description>
+        <output>
+          <parameter name="CADir">
+            <description>
+              This parameter specifies the absolute or relative path to the
+              directory containing the CA certificate bundle,
+              specified as an {{bibref|RFC8089}} URI (The file URI Scheme).
+            </description>
+            <syntax>
+              <dataType ref="FileURI"/>
+            </syntax>
+          </parameter>
+        </output>
+      </command>
+
+      <command name="CAFile()" async="false">
+        <description>
+          Returns the path to a file containing one or more CA certificates.
+
+          This is necessary for services, especially microservices in host or
+          container environments requiring mTLS, to locate the appropriate
+          CA certificates during configuration.
+
+          Depending on the security requirements a service-specific CA file
+          may be required.
+        </description>
+        <output>
+          <parameter name="CAFile">
+            <description>
+              The absolute or relative path to the file containing the
+              CA certificate(s), specified as an {{bibref|RFC8089}} URI (The file URI Scheme).
+            </description>
+            <syntax>
+              <dataType ref="FileURI"/>
+            </syntax>
+          </parameter>
+        </output>
+      </command>
+
+      <command name="Update()" async="false" version="2.21">
+        <description>
+          Updates the CA bundle with new certificate content. The new
+          bundle completely replaces the existing CA certificates.
+
+          For example, if the current bundle contains 5 CA
+          certificates and the new bundle contains only 3 CA
+          certificates, the 2 CA certificates that are not present in
+          the new bundle will be deleted.
+
+          If the update fails, the previous bundle is kept as-is.
+
+          The device SHOULD reject the operation with the following
+          fault codes for specific error conditions:
+
+          * If the bundle does not contain valid PEM formatted
+           certificates, the device SHOULD reject the operation with a
+           7265 (Invalid PEM Format) fault code.
+
+          * If the bundle could not be imported, the device SHOULD
+           reject the operation with a 7262 (Failed To Import Bundle)
+           fault code.
+
+          * If one or more certificates in the bundle could not be
+           imported, the device SHOULD reject the operation with a 7263
+           (Failed To Import Certificate) fault code.
+
+          * If there is insufficient disk space to store the CA bundle,
+           the device SHOULD reject the operation with a 7266
+           (Insufficient Disk Space) fault code.
+        </description>
+        <input>
+          <parameter name="Bundle" mandatory="true">
+            <description>
+              One or more X.509 CA certificates in PEM format,
+              concatenated into a single PEM file.
+            </description>
+            <syntax>
+              <hexBinary/>
+            </syntax>
+          </parameter>
+        </input>
+        <output>
+          <parameter name="NumberOfCertificates">
+            <description>
+              The number of CA certificates successfully installed
+              from the bundle.
+            </description>
+            <syntax>
+              <unsignedInt/>
+            </syntax>
+          </parameter>
+        </output>
+      </command>
+
+      <command name="Delete()" async="false" version="2.21">
+        <description>
+          Deletes the CA bundle.
+        </description>
+      </command>
+    </object>
+
+    <object base="Device.Security.ClientCertificateDefault.{i}.">
+      <description action="replace">
+       This table provides a default Certificate and CABundle for commands such as {{command|Device.DeviceInfo.FirmwareImage.{i}.Download()}} when called without an explicit Certificate or CABundle as a parameter.
+      </description>
+      <parameter base="Type" access="readWrite">
+        <description>
+          Specifies the command this entry applies to.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="FirmwareImageDownload">
+              <description action="replace">
+                Default applies to {{command|Device.DeviceInfo.FirmwareImage.{i}.Download()}}
+              </description>
+            </enumeration>
+            <enumeration value="KernelFaultUpload">
+              <description action="replace">
+                Default applies to {{command|Device.DeviceInfo.KernelFaults.KernelFault.{i}.Upload()}}
+              </description>
+            </enumeration>
+            <enumeration value="ProcessFaultUpload">
+              <description action="replace">
+                Default applies to {{command|Device.DeviceInfo.ProcessFaults.ProcessFault.{i}.Upload()}}
+              </description>
+            </enumeration>
+            <enumeration value="VendorConfigFileBackup">
+              <description action="replace">
+                Default applies to {{command|Device.DeviceInfo.VendorConfigFile.{i}.Backup()}}
+              </description>
+            </enumeration>
+            <enumeration value="VendorConfigFileRestore">
+              <description action="replace">
+                Default applies to {{command|Device.DeviceInfo.VendorConfigFile.{i}.Restore()}}
+              </description>
+            </enumeration>
+            <enumeration value="VendorLogFileUpload">
+              <description action="replace">
+                Default applies to {{command|Device.DeviceInfo.VendorLogFile.{i}.Upload()}}
+              </description>
+            </enumeration>
+          </string>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object base="Device.Security.">
+      <parameter name="SupportedBundleFormats" access="readOnly"
+          version="2.21">
+        <description>
+          Each item indicates a bundle format that is supported by the
+          {{command|AddCertificateBundle()}} command.
+        </description>
+        <syntax>
+          <list/>
+          <string>
+            <enumeration value="PKCS12"/>
+            <enumeration value="PEM"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <command name="AddCertificateBundle()" async="false" version="2.21">
+        <description>
+          The device installs the new bundle and updates the
+          `Device.Security.Certificate.{i}`. The bundle (e.g., PKCS#12,
+          PEM) contains both a certificate and a private key.
+
+          If a certificate with the same
+          {{param|Device.Security.Certificate.{i}.SerialNumber}} and
+          {{param|Device.Security.Certificate.{i}.Issuer}} already
+          exists in the device, the existing certificate is replaced
+          with the new certificate, and the {{param|Certificate}}
+          output parameter references the updated entry.
+
+          The device SHOULD reject the operation with the following
+          fault codes for specific error conditions:
+
+          * If the specified bundle format is not supported, the device
+           SHOULD reject the operation with a 7260 (Bundle Format Not
+           Supported) fault code.
+
+          * If the bundle signature verification fails, the device
+           SHOULD reject the operation with a 7261 (Bundle Signature
+           Failure) fault code.
+
+          * If the bundle could not be imported, the device SHOULD
+           reject the operation with a 7262 (Failed To Import Bundle)
+           fault code.
+
+          * If the certificate in the bundle could not be imported, the
+           device SHOULD reject the operation with a 7263 (Failed To
+           Import Certificate) fault code.
+
+          * If the private key in the bundle could not be imported, the
+           device SHOULD reject the operation with a 7264 (Failed To
+           Import Private Key) fault code.
+
+          * If the certificate has a SerialNumber and Issuer that match an
+           existing certificate with a different Name, the device SHOULD
+           reject the operation with a 7270 (Certificate Identity Conflict)
+           fault code.
+        </description>
+        <input>
+          <parameter name="Alias">
+            <description>
+              An optional input the Controller can use to specify the
+              {{param|.Security.Certificate.{i}.Alias}} value for the added entry. 
+              
+              If provided as an input and the value already exists in
+              {{object|.Security.Certificate.{i}}}, this command will fail.
+            </description>
+            <syntax>
+              <dataType ref="Alias"/>
+            </syntax>
+          </parameter>
+
+          <parameter name="Name" mandatory="true">
+            <description>
+              User-defined name to identify the certificate.
+
+              If a certificate with the same Name already exists in
+              {{object|.Security.Certificate.{i}.}}, the existing certificate will be
+              replaced with the certificate from the bundle.
+            </description>
+            <syntax>
+              <string>
+                <size maxLength="64"/>
+              </string>
+            </syntax>
+          </parameter>
+
+          <parameter name="BundleFormat" mandatory="true">
+            <description>
+              The format of the bundle.
+            </description>
+            <syntax>
+              <string>
+                <enumerationRef
+                    targetParam="SupportedBundleFormats"/>
+              </string>
+            </syntax>
+          </parameter>
+
+          <parameter name="Bundle" mandatory="true">
+            <description>
+              The bundle containing the certificate and private key.
+              It is good practice for the bundle to be encrypted and
+              signed.
+
+              How the bundle is decrypted, verified, and installed on
+              the system depends on the device design and is
+              considered implementation specific.
+            </description>
+            <syntax>
+              <hexBinary/>
+            </syntax>
+          </parameter>
+        </input>
+        <output>
+          <parameter name="Certificate">
+            <description>
+              Specifies the location where the certificate was
+              installed.
+            </description>
+            <syntax>
+              <string>
+                <pathRef refType="strong"
+                    targetParent=".Security.Certificate."
+                    targetType="row"/>
+              </string>
+            </syntax>
+          </parameter>
+        </output>
+      </command>
+
+      <command name="AddCABundle()" async="false" version="2.21">
+        <description>
+          The device installs the new CA bundle and adds an entry to
+          the {{object|Device.Security.CABundle.{i}.}} table.
+
+          If a CA bundle with the same
+          {{param|Device.Security.CABundle.{i}.Name}} already exists
+          in the device, the device SHOULD reject the operation with a
+          7267 (Duplicate CA Bundle Name) fault code.
+
+          The device SHOULD reject the operation with the following
+          fault codes for specific error conditions:
+
+          * If the bundle does not contain valid PEM formatted
+           certificates, the device SHOULD reject the operation with a
+           7265 (Invalid PEM Format) fault code.
+
+          * If the bundle could not be imported, the device SHOULD
+           reject the operation with a 7262 (Failed To Import Bundle)
+           fault code.
+
+          * If one or more certificates in the bundle could not be
+           imported, the device SHOULD reject the operation with a 7263
+           (Failed To Import Certificate) fault code.
+
+          * If there is insufficient disk space to store the CA bundle,
+           the device SHOULD reject the operation with a 7266
+           (Insufficient Disk Space) fault code.
+        </description>
+        <input>
+           <parameter name="Alias" version="2.22">
+            <description>
+              An optional input the Controller can use to specify the
+              {{param|.Security.CABundle.{i}.Alias}} value for the added entry.
+
+              If provided as an input and the value already exists in
+              {{object|.Security.CABundle.{i}}}, this command will fail.
+            </description>
+            <syntax>
+              <dataType ref="Alias"/>
+            </syntax>
+          </parameter>
+          <parameter name="Name" mandatory="true">
+            <description>
+              The name of the new CA bundle.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+
+          <parameter name="Bundle" mandatory="true">
+            <description>
+              One or more X.509 CA certificates in PEM format,
+              concatenated into a single PEM file.
+            </description>
+            <syntax>
+              <hexBinary/>
+            </syntax>
+          </parameter>
+        </input>
+        <output>
+          <parameter name="CABundle">
+            <description>
+              Specifies the location where the CA bundle was installed.
+            </description>
+            <syntax>
+              <string>
+                <pathRef refType="strong"
+                    targetParent=".Security.CABundle." targetType="row"/>
+              </string>
+            </syntax>
+          </parameter>
+
+          <parameter name="NumberOfCertificates">
+            <description>
+              The number of CA certificates successfully installed
+              from the bundle.
+            </description>
+            <syntax>
+              <unsignedInt/>
+            </syntax>
+          </parameter>
+        </output>
+      </command>
+    </object>
+
+    <object base="Device.Security.">
+      <parameter name="CSRTimeout" access="readWrite" version="2.22">
+        <description>
+          The number of {{units}} a pending
+          {{object|.Security.CSR.{i}.}} entry is retained before being
+          automatically deleted. Its associated private key is also
+          deleted, unless it is already referenced by an existing
+          {{object|.Security.Certificate.{i}.}} entry (e.g., in
+          {{enum|Renew|.Security.CSR.{i}.RenewalMode}} mode).
+
+          A CSR entry is considered pending until a matching certificate
+          is installed via {{command|.Security.AddCertificate()}}. This
+          timeout applies to all CSR entries, regardless of whether they
+          were created explicitly via {{command|.Security.CreateCSR()}}
+          or automatically during an auto-update cycle.
+
+          A value of 0 disables automatic expiry.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="seconds"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <command name="CreateCSR()" async="true" version="2.22">
+        <description>
+          This command causes the device to generate a CSR using a
+          locally-created and secure private key.
+          {{param|RenewalMode}} determines whether an existing key
+          pair is reused ({{enum|Renew|RenewalMode}}) or a new one
+          is always generated ({{enum|ReKey|RenewalMode}}), both for
+          the current invocation and for future auto-update cycles.
+
+          {{param|RenewalInterval}} controls when the auto-update is
+          triggered relative to the certificate expiry date.
+
+          If a pending {{object|.Security.CSR.{i}.}} entry with the same
+          {{param|Name}} already exists, the device SHOULD reject the
+          operation with a 7005 (Resources Exceeded) fault code. The
+          Controller MAY cancel the pending request via
+          {{command|.LocalAgent.Request.{i}.Cancel()}}, which causes the
+          device to remove the CSR entry and its associated private key
+          (unless referenced by an existing
+          {{object|.Security.Certificate.{i}.}} entry), before
+          retrying.
+
+          If a {{object|.Security.Certificate.{i}.}} entry with the same
+          {{param|Name}} already exists, it remains in place until the new
+          certificate is installed via {{command|AddCertificate()}}.
+        </description>
+        <input>
+          <parameter name="Name" mandatory="true">
+            <description>
+              User-defined name to identify and categorize the certificate
+              (e.g., "mqtt-broker", "webserver", "vpn-client"). The
+              implementation MAY use this name to determine which secure
+              storage to use and how to persist the key.
+            </description>
+            <syntax>
+              <string>
+                <size maxLength="64"/>
+              </string>
+            </syntax>
+          </parameter>
+          <parameter name="KeyType" mandatory="true">
+            <description>
+              Identifier for the type of asymmetric key pair the device is to
+              create for the CSR. Common examples include RSA (see
+              {{bibref|RFC8017}}), ECDSA with P-256, ECDSA with P-384, Ed25519,
+              and Ed448.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="KeyLength" mandatory="false">
+            <description>
+              The length of the key to be created, in {{units}}. Only applicable when
+              {{param|KeyType}} specifies RSA; for RSA, common values are 2048 and
+              4096 {{units}}. For other key types (e.g., ECDSA, Ed25519, Ed448), the
+              key length is fixed by the algorithm and this parameter is ignored.
+            </description>
+            <syntax>
+              <unsignedInt>
+                <units value="bits"/>
+              </unsignedInt>
+            </syntax>
+          </parameter>
+          <parameter name="BasicConstraints" mandatory="true">
+            <description>
+              The Basic Constraints extension specified when creating the CSR, as
+              defined in {{bibref|RFC5280|Section 4.2.1.9}}. 
+
+              When {{true}}, the certificate is a CA certificate (CA:TRUE).
+
+              When {{false}}, the certificate is an end-entity certificate (CA:FALSE).
+            </description>
+            <syntax>
+              <boolean />
+            </syntax>
+          </parameter>
+          <parameter name="PathLengthConstraint" mandatory="false">
+            <description>
+              The path length constraint to request in the CSR, as defined in
+              {{bibref|RFC5280|Section 4.2.1.9}}.
+
+              Only applicable when {{param|BasicConstraints}} is {{true}}. Specifies the
+              maximum number of non-self-issued intermediate certificates that may follow
+              this certificate in a valid certification path. A value of zero means this
+              certificate may be directly followed only by end-entity certificates.
+
+              The value -1 indicates that no path length constraint is requested.
+            </description>
+            <syntax>
+              <int>
+                <range minInclusive="-1"/>
+              </int>
+              <default type="parameter" value="-1"/>
+            </syntax>
+          </parameter>
+          <parameter name="KeyUsageList" mandatory="true">
+            <description>
+              Each item specifies a Key Usage purpose for the certificate, as
+              defined in {{bibref|RFC5280|Section 4.2.1.3}}. The Key Usage
+              extension defines the cryptographic operations for which the
+              certificate public key may be used. This parameter is optional in
+              the CSR, and the CA may apply its own policy when issuing the
+              certificate.
+            </description>
+            <syntax>
+              <list/>
+              <string>
+                <enumeration value="DigitalSignature">
+                  <description>
+                    Digital signature (verify signatures on data other than
+                    certificates and CRLs).
+                  </description>
+                </enumeration>
+                <enumeration value="NonRepudiation">
+                  <description>
+                    Non-repudiation (content commitment).
+                  </description>
+                </enumeration>
+                <enumeration value="KeyEncipherment">
+                  <description>
+                    Key encipherment (encrypt keys for transport).
+                  </description>
+                </enumeration>
+                <enumeration value="DataEncipherment">
+                  <description>
+                    Data encipherment (encrypt user data).
+                  </description>
+                </enumeration>
+                <enumeration value="KeyAgreement">
+                  <description>
+                    Key agreement (e.g., Diffie-Hellman).
+                  </description>
+                </enumeration>
+                <enumeration value="KeyCertSign">
+                  <description>
+                    Certificate signing (sign certificates). Typically used for
+                    CA certificates.
+                  </description>
+                </enumeration>
+                <enumeration value="CRLSign">
+                  <description>
+                    CRL signing (sign certificate revocation lists). Typically
+                    used for CA certificates.
+                  </description>
+                </enumeration>
+                <enumeration value="EncipherOnly">
+                  <description>
+                    Encipher only (used with KeyAgreement).
+                  </description>
+                </enumeration>
+                <enumeration value="DecipherOnly">
+                  <description>
+                    Decipher only (used with KeyAgreement).
+                  </description>
+                </enumeration>
+              </string>
+            </syntax>
+          </parameter>
+          <parameter name="ExtendedKeyUsageList" mandatory="true">
+            <description>
+              Each item specifies an Extended Key Usage (EKU) purpose for the
+              certificate, as defined in {{bibref|RFC5280|Section 4.2.1.12}}.
+              The EKU extension indicates the purposes for which the
+              certificate public key may be used. This parameter is optional in
+              the CSR, and the CA may apply its own policy when issuing the
+              certificate.
+            </description>
+            <syntax>
+              <list/>
+              <string>
+                <enumeration value="ServerAuth">
+                  <description>TLS server authentication.</description>
+                </enumeration>
+                <enumeration value="ClientAuth">
+                  <description>TLS client authentication.</description>
+                </enumeration>
+                <enumeration value="CodeSigning">
+                  <description>Code signing.</description>
+                </enumeration>
+                <enumeration value="EmailProtection">
+                  <description>Email protection (S/MIME).</description>
+                </enumeration>
+                <enumeration value="TimeStamping">
+                  <description>Timestamping.</description>
+                </enumeration>
+                <enumeration value="OCSPSigning">
+                  <description>OCSP response signing.</description>
+                </enumeration>
+              </string>
+            </syntax>
+          </parameter>
+          <parameter name="SubjectAlternativeName" mandatory="false">
+            <description>
+              Subject Alternative Name entries to include in the CSR. The SAN
+              extension allows additional identities to be bound to the
+              certificate subject, such as DNS names, IP addresses, URIs, or
+              email addresses. Modern certificates often rely primarily on SAN
+              rather than the CN field. At least one of
+              {{param}} or {{param|CommonName}} must be
+              specified to identify the certificate subject. See
+              {{bibref|RFC5280|Section 4.2.1.6}} for the Subject Alternative
+              Name extension.
+            </description>
+            <syntax>
+              <list/>
+              <string>
+                <size maxLength="256"/>
+              </string>
+            </syntax>
+          </parameter>
+          <parameter name="CommonName" mandatory="false">
+            <description>
+              Common Name to include in the CSR. This maps to the CN attribute
+              in the Subject field of the certificate's Distinguished Name. The
+              CN typically identifies the entity to which the certificate is
+              issued, such as a hostname or service name. At least one of
+              {{param}} or {{param|SubjectAlternativeName}} must be
+              specified to identify the certificate subject. See
+              {{bibref|RFC5280|Section 4.1.2.4}} for DN attribute type
+              definitions and {{bibref|RFC5280|Section 4.1.2.6}} for usage in
+              the Subject field.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="OrganizationName" mandatory="false">
+            <description>
+              Organization Name to include in the CSR. This maps to the O
+              attribute in the Subject field of the certificate's Distinguished
+              Name. The O attribute identifies the organization to which the
+              certificate subject belongs. See
+              {{bibref|RFC5280|Section 4.1.2.4}} for DN attribute type
+              definitions and {{bibref|RFC5280|Section 4.1.2.6}} for usage in
+              the Subject field.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="OrganizationalUnit" mandatory="false">
+            <description>
+              Organizational Unit to include in the CSR. This maps to the OU
+              attribute in the Subject field of the certificate's Distinguished
+              Name. The OU attribute identifies a subdivision or department
+              within the organization. See
+              {{bibref|RFC5280|Section 4.1.2.4}} for DN attribute type
+              definitions and {{bibref|RFC5280|Section 4.1.2.6}} for usage in
+              the Subject field.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="Locality" mandatory="false">
+            <description>
+              Locality to include in the CSR. This maps to the L attribute in
+              the Subject field of the certificate's Distinguished Name. The L
+              attribute identifies the city, town, or village where the
+              organization is located. See
+              {{bibref|RFC5280|Section 4.1.2.4}} for DN attribute type
+              definitions and {{bibref|RFC5280|Section 4.1.2.6}} for usage in
+              the Subject field.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="State" mandatory="false">
+            <description>
+              State or province name to include in the CSR. This maps to the ST
+              attribute in the Subject field of the certificate's Distinguished
+              Name. The ST attribute identifies the state or province where the
+              organization is located. See
+              {{bibref|RFC5280|Section 4.1.2.4}} for DN attribute type
+              definitions and {{bibref|RFC5280|Section 4.1.2.6}} for usage in
+              the Subject field.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="Country" mandatory="false">
+            <description>
+              Country name to include in the CSR. This maps to the C attribute
+              in the Subject field of the certificate's Distinguished Name. The
+              C attribute is a two-letter country code as defined in
+              {{bibref|ISO3166-1}}. See {{bibref|RFC5280|Section 4.1.2.4}} for
+              DN attribute type definitions and
+              {{bibref|RFC5280|Section 4.1.2.6}} for usage in the Subject
+              field.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="Email" mandatory="false">
+            <description>
+              Email address to include in the CSR. This maps to the Email
+              attribute in the Subject field of the certificate's Distinguished
+              Name. The EMAIL attribute provides a contact email address for
+              the certificate subject. See
+              {{bibref|RFC5280|Section 4.1.2.4}} for DN attribute type
+              definitions and {{bibref|RFC5280|Section 4.1.2.6}} for usage in
+              the Subject field.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="RenewalMode" mandatory="true">
+            <description>
+              The automatic certificate update mode to apply once the
+              certificate is installed.
+            </description>
+            <syntax>
+              <string>
+                <enumeration value="None">
+                  <description>
+                    Auto-update is disabled.
+                  </description>
+                </enumeration>
+                <enumeration value="Renew">
+                  <description>
+                    When auto-update is triggered, the device creates a
+                    new CSR. If an existing key pair is available for
+                    this certificate, it is reused (certificate renewal
+                    as defined in {{bibref|RFC3647|Section 4.4.6}}).
+                    Otherwise, a new key pair is generated.
+                  </description>
+                </enumeration>
+                <enumeration value="ReKey">
+                  <description>
+                    When auto-update is triggered, the device always
+                    generates a new key pair and creates a new CSR,
+                    regardless of whether an existing private key is
+                    available (certificate re-key as defined in
+                    {{bibref|RFC3647|Section 4.4.6}}). The existing
+                    private key is replaced once the new certificate
+                    is installed.
+                  </description>
+                </enumeration>
+              </string>
+            </syntax>
+          </parameter>
+          <parameter name="RenewalInterval" mandatory="true">
+            <description>
+              Number of {{units}} before the certificate expires at
+              which the device automatically initiates a new CSR, as
+              determined by {{param|RenewalMode}}. A value of 0
+              disables auto-update.
+
+              If {{param}} is greater than or equal to the certificate
+              validity period, or if the computed trigger date already
+              lies in the past, the device SHOULD initiate auto-update
+              immediately.
+            </description>
+            <syntax>
+              <unsignedInt>
+                <units value="days"/>
+              </unsignedInt>
+            </syntax>
+          </parameter>
+        </input>
+        <output>
+          <parameter name="EncodedCSR">
+            <description>
+              The CSR in PEM format (PKCS#10, signed by the device,
+              Base64 encoded with header and footer). Returned upon
+              successful completion of the command.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+        </output>
+      </command>
+
+      <command name="AddCertificate()" async="false" version="2.22">
+        <description>
+          This command is issued to add a new certificate to
+          {{object|.Security.Certificate.{i}.}}. The certificate, provided in PEM format, is
+          parsed to populate the parameters of the Certificate table. If
+          {{param|MatchToCSR}} is {{true}}, the private key that was used to
+          sign the matching CSR is associated with the certificate and the CSR
+          is deleted.
+
+          If a certificate with the same {{param|Name}} already exists, the existing certificate
+          entry is replaced with the new certificate. This replacement involves:
+          * The old certificate and its associated private key are securely deleted
+          * The new certificate is added with the new private key (from the matching CSR)
+          * The {{param|Name}} is assigned to the new certificate entry
+
+          The device SHOULD reject the operation with the following
+          fault codes for specific error conditions:
+
+          * If {{param|MatchToCSR}} is {{true}} and no matching CSR was
+           found for the certificate, the device SHOULD reject the
+           operation with a 7268 (No Matching CSR) fault code.
+
+          * If the certificate could not be imported, the device SHOULD
+           reject the operation with a 7263 (Failed To Import Certificate)
+           fault code.
+
+          * If the certificate has a SerialNumber and Issuer that match an
+           existing certificate with a different Name, the device SHOULD
+           reject the operation with a 7270 (Certificate Identity Conflict)
+           fault code.
+        </description>
+        <input>
+          <parameter name="Alias">
+            <description>
+              An optional input the Controller can use to specify the
+              {{param|.Security.Certificate.{i}.Alias}} value for the
+              added entry.
+
+              If provided as an input and the value already exists in
+              {{object|.Security.Certificate.{i}.}}, this command will
+              fail.
+            </description>
+            <syntax>
+              <dataType ref="Alias"/>
+            </syntax>
+          </parameter>
+
+          <parameter name="Name" mandatory="false">
+            <description>
+              User-defined name to identify the certificate.
+
+              When {{param|MatchToCSR}} is {{true}}, the name from the matching
+              CSR is used instead.
+
+              When {{param|MatchToCSR}} is {{false}}, this parameter MUST be
+              specified.
+
+              If a certificate with the same name already exists, it will be
+              replaced.
+            </description>
+            <syntax>
+              <string>
+                <size maxLength="64"/>
+              </string>
+            </syntax>
+          </parameter>
+          <parameter name="Certificate" mandatory="true">
+            <description>
+              The X.509 certificate in PEM {{bibref|RFC7468}} format.
+            </description>
+            <syntax>
+              <string/>
+            </syntax>
+          </parameter>
+          <parameter name="MatchToCSR" mandatory="true">
+            <description>
+              {{true}} if the certificate being added is in response to a CSR
+              sent by the device, otherwise {{false}}. If {{true}}, info from
+              the matching CSR, including private key and name, is associated with the
+              certificate and the CSR deleted. If {{true}} and no matching CSR
+              is found, the device SHOULD reject the operation with a 7268
+              (No Matching CSR) fault code.
+            </description>
+            <syntax>
+              <boolean/>
+            </syntax>
+          </parameter>
+          <parameter name="RenewalMode" mandatory="true">
+            <description>
+              The automatic certificate update mode to apply to the
+              resulting {{object|.Security.Certificate.{i}.}} entry.
+            </description>
+            <syntax>
+              <string>
+                <enumeration value="None"/>
+                <enumeration value="Renew"/>
+                <enumeration value="ReKey"/>
+              </string>
+            </syntax>
+          </parameter>
+          <parameter name="RenewalInterval" mandatory="true">
+            <description>
+              Number of {{units}} before the certificate expires at
+              which the device automatically initiates a new CSR, as
+              determined by {{param|RenewalMode}}. A value of 0
+              disables auto-update.
+            </description>
+            <syntax>
+              <unsignedInt>
+                <units value="days"/>
+              </unsignedInt>
+            </syntax>
+          </parameter>
+        </input>
+      </command>
+
+      <event name="CSRCreated!" version="2.22">
+        <description>
+          This event notifies a USP Controller that the device has created a new CSR.
+        </description>
+        <parameter name="CommandKey">
+          <description>
+            The ''command_key'' supplied in the
+            {{command|.Security.CreateCSR()}} Operate message that generated
+            this CSR. This value correlates the event with the original
+            command invocation and the CSR entry in
+            {{object|.Security.CSR.{i}.}}. This will be {{empty}} if the
+            CSR was automatically created due to certificate auto-update.
+          </description>
+          <syntax>
+            <string/>
+          </syntax>
+        </parameter>
+        <parameter name="Name">
+          <description>
+            User-defined name to identify the certificate, as specified in the
+            {{command|.Security.CreateCSR()}} command that generated this CSR.
+            This name is associated with the certificate when it is added
+            via {{command|.Security.AddCertificate()}}.
+          </description>
+          <syntax>
+            <string>
+              <size maxLength="64"/>
+            </string>
+          </syntax>
+        </parameter>
+        <parameter name="EncodedCSR">
+          <description>
+            The CSR in PEM format (PKCS#10, signed by the device,
+            Base64 encoded with header and footer).
+          </description>
+          <syntax>
+            <string/>
+          </syntax>
+        </parameter>
+      </event>
+
+      <event name="CSRFailure!" version="2.22">
+        <description>
+          This event notifies a USP Controller that the device has tried but failed
+          to create a new CSR.
+        </description>
+        <parameter name="CommandKey">
+          <description>
+            The ''command_key'' supplied in the
+            {{command|.Security.CreateCSR()}} Operate message that failed.
+            This value correlates the event with the original command
+            invocation. This will be {{empty}} if the failure occurred
+            during an automatic certificate auto-update attempt.
+          </description>
+          <syntax>
+            <string/>
+          </syntax>
+        </parameter>
+        
+        <parameter name="Name">
+          <description>
+            User-defined name to identify the certificate, as specified in the
+            {{command|.Security.CreateCSR()}} command that generated this CSR.
+            This name is associated with the certificate when it is added
+            via {{command|.Security.AddCertificate()}}.
+          </description>
+          <syntax>
+            <string>
+              <size maxLength="64"/>
+            </string>
+          </syntax>
+        </parameter>
+
+        <parameter name="FaultCode">
+          <description>
+            A non-zero USP fault code indicating the reason the CSR
+            creation failed. If the failure occurred during an
+            auto-update cycle and no {{command|.Security.CreateCSR()}}
+            Operate message was involved, this reflects the internal
+            error condition.
+          </description>
+          <syntax>
+            <unsignedInt/>
+          </syntax>
+        </parameter>
+
+        <parameter name="FaultString">
+          <description>
+            A human-readable description of the fault. SHOULD be
+            {{empty}} if {{param|FaultCode}} is 0.
+          </description>
+          <syntax>
+            <string>
+              <size maxLength="256"/>
+            </string>
+          </syntax>
+        </parameter>
+      </event>
+    </object>
+  </component>
+
+  <model name="Security:2.22">
+    <component ref="Root"/>
+    <component ref="Security"/>
+  </model>
+
+</dm:document>

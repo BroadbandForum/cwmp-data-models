@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Device:2 Root Data Model: Common Object definitions [WiFi Sensing]
+
+  Copyright (c) 2010-2026, Broadband Forum
+
+  The undersigned members have elected to grant the copyright to
+  their contributed material used in this software:
+    Copyright (c) 2017-2019 ARRIS Enterprises, LLC.
+
+  Redistribution and use in source and binary forms, with or
+  without modification, are permitted provided that the following
+  conditions are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above
+     copyright notice, this list of conditions and the following
+     disclaimer in the documentation and/or other materials
+     provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+     contributors may be used to endorse or promote products
+     derived from this software without specific prior written
+     permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  The above license is used as a license under copyright only.
+  Please reference the Forum IPR Policy for patent licensing terms
+  <https://www.broadband-forum.org/ipr-policy>.
+
+  Any moral rights which are necessary to exercise under the above
+  license grant are also deemed granted under this license.
+
+  Comments or questions about this Broadband Forum data model should be
+  directed to <info@broadband-forum.org>.
+-->
+
+<dm:document
+    xmlns:dm="urn:broadband-forum-org:cwmp:datamodel-1-18"
+    xmlns:dmr="urn:broadband-forum-org:cwmp:datamodel-report-1-0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      urn:broadband-forum-org:cwmp:datamodel-1-18
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-1-18.xsd
+      urn:broadband-forum-org:cwmp:datamodel-report-1-0
+        https://www.broadband-forum.org/cwmp/cwmp-datamodel-report-1-0.xsd"
+    spec="urn:broadband-forum-org:tr-181-2-22-0-wifi-sensing"
+    file="tr-181-2-22-0-wifi-sensing.xml">
+
+  <import file="tr-069-biblio.xml" spec="urn:broadband-forum-org:tr-069"/>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <component name="Alias"/>
+  </import>
+
+  <import file="tr-106-types.xml" spec="urn:broadband-forum-org:tr-106">
+    <dataType name="MACAddress"/>
+    <dataType name="URI"/>
+  </import>
+
+  <import file="tr-181-2-root.xml"
+      spec="urn:broadband-forum-org:tr-181-2-22-root">
+    <component name="Root"/>
+  </import>
+
+  <dataType name="SensingDataType">  
+    <description>
+      A 4-byte hexadecimal value representing a sensing data type. A sensing
+      data type identifies the format of the sensing measurement data, e.g. 
+      {{bibref|802.11bf|Section 9.4.1.81}} or vendor-specific.
+
+      The first three bytes represent either 
+      the CID (Company Identifier) or OUI (Organizationally Unique 
+      Identifier) assigned and registered by the IEEE Registration Authority.
+
+      The last byte identifies the format belonging to the CID, or OUI.
+
+      The value of 000FAC00 represents the format defined in 
+      {{bibref|802.11bf|Section 9.4.1.81}}.
+      See {{bibref|EasyMesh|Section 21.2, Sensing Capabilities}}.
+    </description>
+    <hexBinary>
+      <size minLength="8" maxLength="8"/>
+    </hexBinary>  
+  </dataType>
+
+  <dataType name="SensingExchangeType">
+    <description>
+      Indicates the sensing exchange types:
+
+      {{enum}}
+
+      See {{bibref|EasyMesh|Section 17.2.116, Sensing Exchange Request TLV}}.
+    </description>
+    <string>
+      <enumeration value="QosNull">
+        <description>QoS Null exchange</description>
+      </enumeration>
+      <enumeration value="TriggerBased">
+        <description>A TB (trigger-based) exchange variant</description>
+      </enumeration>
+      <enumeration value="NonTriggerBased">
+        <description>A non-TB (non-trigger-based) exchange variant</description>
+      </enumeration>
+    </string>
+  </dataType>
+
+  <component name="SensingCapabilities">
+    <parameter name="MaxTxBandwidth" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum bandwidth in {{units}} supported for any sensing NDP
+        (null data physical layer protocol data unit) transmission.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="MHz"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxTxSTSLE80MHz" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of STS (space-time streams) supported for
+        any sensing NDP transmission using bandwidths less than or equal to
+        80 MHz.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxTxSTS160MHz" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of STS supported for any sensing NDP
+        transmission using a bandwidth equal to 160 MHz.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxTxSTS320MHz" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of STS supported for any sensing NDP
+        transmission using a bandwidth equal to 320 MHz.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxRxSTSLE80MHz" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of STS supported for any sensing NDP
+        reception using bandwidths less than or equal to 80 MHz.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxRxSTS160MHz" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of STS supported for any sensing NDP
+        reception using a bandwidth equal to 160 MHz.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxRxSTS320MHz" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of STS supported for any sensing NDP
+        reception using a bandwidth equal to 320 MHz.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxTxLTFRepetition" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of LTF (long training field) repetitions
+        minus 1 supported for any sensing NDP transmission.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxRxLTFRepetition" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum number of LTF repetitions minus 1 supported for
+        any sensing NDP reception.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxTxLTFTotal" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum total number of LTF repetitions supported for any
+        sensing NDP transmission, which includes all STS.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="4" maxInclusive="4"/>
+          <range minInclusive="8" maxInclusive="8"/>
+          <range minInclusive="16" maxInclusive="16"/>
+          <range minInclusive="64" maxInclusive="64"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxRxLTFTotal" access="readOnly" version="2.22">
+      <description>
+        Indicates the maximum total number of LTF repetitions supported for any
+        sensing NDP reception, which includes all STS.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <range minInclusive="4" maxInclusive="4"/>
+          <range minInclusive="8" maxInclusive="8"/>
+          <range minInclusive="16" maxInclusive="16"/>
+          <range minInclusive="64" maxInclusive="64"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="MaxSupportedSessions" access="readOnly" version="2.22">
+      <description>
+        Indicates maximum number of concurrent sessions supported as
+        a Sensing Responder.
+      </description>
+      <syntax>
+        <unsignedInt/>
+      </syntax>
+    </parameter>
+
+    <parameter name="MinMeasurementInterval" access="readOnly" version="2.22">
+      <description>
+        Indicates the minimum time between two consecutive non-TB
+        (non-trigger-based) measurement exchanges, in {{units}}.
+      </description>
+      <syntax>
+        <unsignedInt>
+          <units value="100 usec"/>
+        </unsignedInt>
+      </syntax>
+    </parameter>
+
+    <parameter name="Sensing20MHzOnlyTx" access="readOnly" version="2.22">
+      <description>
+        Indicates support for a Sensing Transmitter role only in a bandwidth of
+        20 MHz.
+      </description>
+      <syntax>
+        <boolean/>
+      </syntax>
+    </parameter>
+
+  </component>
+
+  <component name="SensingExchangeParameters">
+      <parameter name="SensingPeriod" access="readOnly" mandatory="true" version="2.22">
+        <description>
+          The requested period to perform the sensing measurement exchange in
+          {{units}} intervals, where 1 TU = 1024 microseconds.
+
+          Note: A value of 0 identifies a one-shot measurement.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="10 TU"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SensingBandwidth" access="readOnly" mandatory="false" version="2.22">
+        <description>
+          Requested bandwidth in {{units}}, on which to perform the sensing
+          measurement. If not present, the maximum available bandwidth will
+          be used.
+
+          Notes:
+          * A bandwidth of 80+80MHz is not supported.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <units value="MHz"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SensingNTx" access="readOnly" mandatory="false" version="2.22">
+        <description>
+          Requested number of transmit chains to use. This only applies to
+          Advanced sensing exchange types
+          {{bibref|EasyMesh|Section 21.6, Sensing Operation Advanced}}. When
+          not applicable then set to a value of 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SensingNRx" access="readOnly" mandatory="false" version="2.22">
+        <description>
+          Requested number of receive chains to use. This only applies to
+          Advanced sensing exchange types
+          {{bibref|EasyMesh|Section 21.6, Sensing Operation Advanced}}. When not
+          applicable then set to a value of 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SensingLTFRep" access="readOnly" mandatory="false" version="2.22">
+        <description>
+          Requested number of LTF (long training field) repetitions per STS
+          (space-time stream). This only applies to Advanced sensing TB
+          (trigger-based) and non-TB (non-trigger-based) exchange types
+          {{bibref|EasyMesh|Section 21.6, Sensing Operation Advanced}}.
+          When not applicable then set to a value of 0.
+        </description>
+        <syntax>
+          <unsignedInt>
+            <range maxInclusive="255"/>
+          </unsignedInt>
+        </syntax>
+      </parameter>
+
+      <parameter name="SensingExchangeType" access="readOnly" mandatory="true" version="2.22">
+        <description>
+          The type of measurement exchange to create.
+        </description>
+        <syntax>
+          <dataType ref="SensingExchangeType"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="SensingDataType" access="readOnly" mandatory="true" version="2.22">
+        <description>
+          The data type format of the sensing measurement results.
+        </description>
+        <syntax>
+          <dataType ref="SensingDataType"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="TransmitterMACAddress" access="readOnly" mandatory="true" version="2.22">
+        <description>
+          MAC address of the sensing transmitter.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ReceiverMACAddress" access="readOnly" mandatory="true" version="2.22">
+        <description>
+          MAC address of the sensing receiver.
+        </description>
+        <syntax>
+          <dataType ref="MACAddress"/>
+        </syntax>
+      </parameter>
+
+      <parameter name="MeasurementsRequested" access="readOnly" mandatory="true" version="2.22">
+        <description>
+          Indicates if sensing measurement results are sent to the
+          established Layer3Path, or not.
+
+          : {{true}}: sensing measurement results are sent to the established
+           Layer3Path.
+
+          : {{false}}: sensing measurement results are not sent to the
+           established Layer3Path.
+        </description>
+        <syntax>
+          <boolean/>
+        </syntax>
+      </parameter>
+  </component>
+
+  <component name="WiFiAllianceSensing">
+
+    <object name="Device.WiFi.Sensing."
+        access="readOnly" minEntries="1" maxEntries="1" version="2.22">
+      <description>
+        This object represents the Wi-Fi Alliance Sensing functionality
+        on local Wi-Fi radios for Basic and Advanced functionality as defined
+        in {{bibref|EasyMesh|Section 21, Sensing}}.
+      </description>
+      <parameter name="SessionNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.Sensing.Session.{i}."
+        access="readOnly" numEntriesParameter="SessionNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.22">
+      <description>
+        This object represents a sensing session, which is a connection from a
+        client sensing application.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="SessionID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="ApplicationName" access="readOnly">
+        <description>
+          Name or identifier of the sensing application which has created the {{object}} instance.
+        </description>
+        <syntax>
+          <string>
+            <size maxLength="64"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <parameter name="SessionID" access="readOnly">
+        <description>
+          Unique session identifier, as communicated by the lower-layer
+          implementation.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="ExchangeNumberOfEntries" access="readOnly">
+        <description>
+          {{numentries}}
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DataSocketPath" access="readOnly">
+        <description>
+          The destination path and filename for a UNIX domain socket of type
+          SOCK_SEQPACKET, which an application can use to obtain sensing
+          measurement data for all exchanges belonging to this session.
+          The format is the URI scheme file
+          {{bibref|RFC8089|The file URI Scheme}}.
+
+          Note: Any sensing measurement data obtained while no application
+          is connected to the socket may be discarded.
+        </description>
+        <syntax>
+          <dataType ref="URI"/>
+        </syntax>
+      </parameter>
+    </object>
+
+    <object name="Device.WiFi.Sensing.Session.{i}.Exchange.{i}."
+        access="readOnly" numEntriesParameter="ExchangeNumberOfEntries"
+        minEntries="0" maxEntries="unbounded" version="2.22">
+      <description>
+        This object represents a specific measurement exchange created by a sensing
+        application.
+      </description>
+      <uniqueKey functional="true">
+        <parameter ref="SensingExchangeID"/>
+      </uniqueKey>
+      <uniqueKey functional="false">
+        <parameter ref="Alias"/>
+      </uniqueKey>
+
+      <component ref="Alias"/>
+
+      <parameter name="SensingExchangeID" access="readOnly">
+        <description>
+          Indicates the unique Sensing Exchange ID corresponding to this exchange
+          {{bibref|EasyMesh|Section 17.2.116, Sensing Exchange Request TLV}}.
+        </description>
+        <syntax>
+          <unsignedInt/>
+        </syntax>
+      </parameter>
+
+      <parameter name="DeviceRef" access="readOnly">
+        <description>
+          {{param}} specifies the Multi-AP Agent which initiates the
+          sensing exchange.
+        </description>
+        <syntax>
+          <string>
+            <pathRef refType="strong"
+                targetParent="####.WiFi.DataElements.Network.Device."
+                targetType="row"/>
+          </string>
+        </syntax>
+      </parameter>
+
+      <component ref="SensingExchangeParameters"/>
+    </object>
+  </component>
+
+  <model name="WiFiSE:2.22">
+    <component ref="Root"/>
+    <component ref="WiFiAllianceSensing"/>
+  </model>
+</dm:document>

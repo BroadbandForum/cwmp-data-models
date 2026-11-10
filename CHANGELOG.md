@@ -7,6 +7,80 @@ can be found at <https://cwmp-data-models.broadband-forum.org>.
 
 [CWMP]: https://www.broadband-forum.org/technical/download/TR-069.pdf
 
+## 2026-11-09: [TR-106 Amendment 18] and [TR-181 Issue 2 Amendment 22]
+
+*Tags: [v2026.3] (data models), 
+       [v2.22.0][TR-181-v2.22.0] (TR-181), 
+       [v1.18.0][TR-106-v1.18.0] (TR-106)*
+
+### TR-106
+* Add more bibrefs
+
+### TR-181
+* Added BrightnessLimiter parameter to Device.LEDs.LED.{i}. to allow
+  per-LED brightness limiting
+* Added IsStatic parameter to Device.DHCPv4.Server.Pool.{i}.Client.{i}.IPv4Address.{i}.
+* Added DHCPv6 RENEW/REBIND timestamps, renewal statuses, and binding
+  timestamp parameters to Device.DHCPv6.Client.{i}.
+* Extended Device.UserInterface.HTTPAccess.{i}. with session limiting
+  (MaxSessionEntries), access logging (AccessLog.{i}.,
+  MaxAccessLogEntries, AccessLogNumberOfEntries), and updated
+  Session.{i}. to reflect active sessions only
+* Added StructuredData parameter to Device.Syslog.Source.{i}.Network.
+* Added MaxNumberOfPinholes parameter to Device.Firewall. to indicate the system limit for pinhole table entries
+* Added IPv4AcceptUDPTraceroute and IPv6AcceptUDPTraceroute parameters
+  to Device.Firewall.InterfaceSetting.{i}. to control acceptance of
+  UDP-based traceroute packets (port range 33434-33534)
+* Added IsolateInterface parameter to Device.Firewall.InterfaceSetting.{i}.
+  to support blocking traffic between the associated interface and a
+  configurable list of other IP interfaces
+* Added MLDCapabilities component with parameters MaxNumMLDs, APMLDMaxLinks, and bSTAMLDMaxLinks
+* Added TIDLinkMapCapabilities component with parameter TIDLinkMapCapability
+* Added APMLDTable object and bSTAMLD/bSTAMLDTable objects for managing MLO capable APs and backhaul STAs
+* Added MLDConfig component with parameters EMLMREnabled, EMLSREnabled, STREnabled, NSTREnabled, and TIDLinkMapNegotiation
+* Added TIDLinkMap component and associated configuration objects APMLD.{i}.TIDLinkMap.{i} and STAMLD.{i}.STATIDLinkMap.{i}.
+* Added MaxSupportedBandwidth component and parameter to various STA and AP objects
+* Added Wi-Fi Sensing support via Device.WiFi.Sensing. object tree
+* Updated neighbor SSID encryption parameter to replace generic AES with specific cipher values CCMP-128, CCMP-256, GCMP-128, and GCMP-256
+* Marked generic AES enumeration as deprecated in favor of specific CCMP/GCMP values
+* Updated WPA/WPA3 security mode validation logic to properly handle WPA3-SAE, OWE, and mixed-mode transitions
+* Added Layer3PathCapabilities parameter with enumerations for UDPoverIPv6, TCPoverIPv6, UDPoverIPv4, and TCPoverIPv4
+* Added limit descriptions to MaxBridgeEntries, MaxProviderBridgeEntries, and MaxFilterEntries parameters to Bridging
+* Added CellRFData component with parameters Band, UplinkBandwidth, DownlinkBandwidth, UplinkChannel, DownlinkChannel, PCI, UplinkPRBCount, DownlinkPRBCount, UplinkMIMOLayers, DownlinkMIMOLayers, RSRP, SINR, RSSI, RSRQ, and TxPower
+* Added CarrierAggregation object with MasterCellGroup and SecondaryCellGroup sub-objects for LTE and NR dual connectivity support
+* Added History tracking for both MasterCellGroup and SecondaryCellGroup with StartTime, Duration, and CurrentAccessTechnology parameters
+* Added PrimaryCell and SecondaryCell objects with DownlinkOnly boolean parameter for both current and historical configurations
+* Added new functional key to DMZ and PortMapping objects using DestIP, SourcePrefix, RemoteHost, ExternalPort, and Protocol
+* Updated RFC8415 references to RFC9915 throughout the data model
+* Added PriorityMap component with PriorityMapNumberOfEntries and associated PriorityMap.{i} firewall objects
+* Added Display hardware component with Screen objects containing Width, Height, PhysicalWidth, PhysicalHeight, RefreshDuration, PixelFormat, Type, PosX, and PosY parameters
+* Renamed IoTBlobSensorType dataType to IoTBlobType
+* Added BlobControl class enumeration value for IoTCapability.Class parameter
+* Added IoTCapability.{i}.BlobControl object with Type (IoTBlobType), Description, and Value (base64) parameters
+* Added BlobControl profile requiring IoTCapability.{i}.BlobControl object with Type and Value parameters
+* Added DownloadDiagnosticsMaxConnections parameter for connection limit configuration
+* Added LastChange and StatusChangeCount parameters to Device.IP.Interface.{i} objects for change tracking
+* Added AllowedEncryptionKeyLengths parameter for IPSec cipher key length preferences
+* Added Device.QoS.Chain.{i}. table with ChainNumberOfEntries parameter for grouping classification entries
+* Added Device.QoS.Chain.{i}.Classification.{i}. object with Enable, Status, ClassificationRef, and Order parameters
+* Added RenewalMode, RenewalInterval and HasPrivateKey parameters to Device.Certificate. to control automatic certificate update modes
+* Added Device.Security.CADefaults.{i}. table to manage default CAs
+* Added Device.Security.CSR.{i}. table with to manage certificate signing requests
+* Added Device.Security.CSRTimeout parameter controlling pending CSR entry retention period in seconds
+* Added Device.Security.CreateCSR() and Device.Security.AddCertificate() commands
+* Added Device.Security.CSRCreated! and Device.Security.CSRFailure! events with CommandKey, Name, and EncodedCSR output parameters
+* Added EnableHostNSCapabilities, DisableAutoStart, RunLevel, and NumRequiredUIDs parameters to SMM deployment units
+* Added RestartCount, RestartReason, and LastStartTime to SMM execution units
+* Added Device.Syslog.StructuredData boolean parameter enabling RFC5424 structured syslog message support
+* Added Device.Thread.BorderAgent.{i}. table to manage border Agents in Thread networks
+* Deprecated Device.Thread.BorderRouter.BorderAgentID in favor of Device.Thread.BorderRouter.BorderAgentReference parameter
+* Replaced Device.UserInterface.HTTPAccess.CACertificate parameter by Device.UserInterface.HTTPAccess.CABundle
+* Added Device.UserInterface.HTTPAccess.AccessLog.{i}. table to provide an access log of UI use
+* Fixed Device.LocalAgent.Subscription.{i}.ReferenceList access type to have write-once semantics and update profile
+* Fixed PCP HighestVersion range to maxInclusive=255
+* Refactored Origin parameter into a component and use it everywhere
+* Added EthernetPriorityMark to Device.PPP.Interface.{i}.PPPoE.
+
 ## 2026-06-01: [TR-106 Amendment 17] and [TR-181 Issue 2 Amendment 21]
 
 *Tags: [v2026.1] (data models), 
@@ -521,6 +595,7 @@ version of the BBF report tool
 [TR-106 Amendment 13]: https://www.broadband-forum.org/download/TR-106_Amendment-13.pdf
 [TR-106 Amendment 14]: https://www.broadband-forum.org/download/TR-106_Amendment-14.pdf
 [TR-106 Amendment 17]: https://www.broadband-forum.org/download/TR-106_Amendment-17.pdf
+[TR-106 Amendment 18]: https://www.broadband-forum.org/download/TR-106_Amendment-18.pdf
 [TR-106-v1.7.0+]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.7.0+
 [TR-106-v1.10.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.10.0
 [TR-106-v1.11.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.11.0
@@ -531,6 +606,7 @@ version of the BBF report tool
 [TR-106-v1.16.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.16.0
 [TR-106-v1.16.1]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.16.1
 [TR-106-v1.17.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.17.0
+[TR-106-v1.18.0]: https://github.com/BroadbandForum/data-model-template/releases/tag/v1.18.0
 [TR-181 Issue 2 Amendment 12]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-12.pdf
 [TR-181 Issue 2 Amendment 13]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-13.pdf
 [TR-181 Issue 2 Amendment 14]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-14.pdf
@@ -543,6 +619,7 @@ version of the BBF report tool
 [TR-181 Issue 2 Amendment 20]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-20.pdf
 [TR-181 Issue 2 Amendment 20 Corrigendum 1]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-20_Corrigendum-1.pdf
 [TR-181 Issue 2 Amendment 21]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-21.pdf
+[TR-181 Issue 2 Amendment 22]: https://www.broadband-forum.org/download/TR-181_Issue-2_Amendment-22.pdf
 [TR-181-v2.12.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.12.0
 [TR-181-v2.13.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.13.0
 [TR-181-v2.14.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.14.0
@@ -558,6 +635,7 @@ version of the BBF report tool
 [TR-181-v2.20.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.20.0
 [TR-181-v2.20.1]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.20.1
 [TR-181-v2.21.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.21.0
+[TR-181-v2.22.0]: https://github.com/BroadbandForum/device-data-model/releases/tag/v2.22.0
 [v1.6.0]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0
 [v1.6.0+]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0+
 [v1.6.0c1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v1.6.0c1
@@ -576,3 +654,4 @@ version of the BBF report tool
 [v2025.3]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2025.3
 [v2025.4]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2025.4
 [v2026.1]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2026.1
+[v2026.3]: https://github.com/BroadbandForum/cwmp-data-models/releases/tag/v2026.3
